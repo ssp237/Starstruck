@@ -10,13 +10,13 @@
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * LibGDX version, 2/6/2015
  */
-package edu.cornell.gdiac.planetdemo;
+package edu.cornell.gdiac.planetdemo.obstacle;
 
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
-import edu.cornell.gdiac.physics.*;  // For GameCanvas
+import edu.cornell.gdiac.planetdemo.*;  // For GameCanvas
 
 /**
  * Box-shaped model to support collisions.
