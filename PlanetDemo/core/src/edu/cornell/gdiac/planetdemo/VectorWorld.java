@@ -38,6 +38,14 @@ public class VectorWorld {
     /** The width of a cell*/
     private float width;
 
+    /**
+     *  Initializes a VectorWorld to contain World world and be bounded by Rectangle Bounds.
+     *  Sets every point in the vector field to have an effective force of (0,0). Assumes that
+     *  world has no bodies that have a gravitational force.
+     * @param world The world that is bound in this vector field. Must not currently contain
+     *              any bodies that have a gravitational force.
+     * @param bounds The bounds on this world (used for calculate cell height).
+     */
     public VectorWorld(World world, Rectangle bounds){
         this.world = world;
         this.bounds = bounds;
