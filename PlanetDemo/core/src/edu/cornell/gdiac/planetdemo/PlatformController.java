@@ -19,8 +19,8 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.util.*;
-import edu.cornell.gdiac.planetdemo.*;
-import edu.cornell.gdiac.planetdemo.obstacle.*;
+//import edu.cornell.gdiac.physics.*;
+//import edu.cornell.gdiac.physics.obstacle.*;
 
 /**
  * Gameplay specific controller for the platformer game.  
@@ -115,17 +115,18 @@ public class PlatformController extends WorldController implements ContactListen
         bulletTexture = createTexture(manager,BULLET_FILE,false);
         bridgeTexture = createTexture(manager,ROPE_FILE,false);
 
-        SoundController sounds = SoundController.getInstance();
-        sounds.allocate(manager, JUMP_FILE);
-        sounds.allocate(manager, PEW_FILE);
-        sounds.allocate(manager, POP_FILE);
+        //TODO Sound stuffs
+//        SoundController sounds = SoundController.getInstance();
+//        sounds.allocate(manager, JUMP_FILE);
+//        sounds.allocate(manager, PEW_FILE);
+//        sounds.allocate(manager, POP_FILE);
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
     }
 
     // Physics constants for initialization
     /** The new heavier gravity for this world (so it is not so floaty) */
-    private static final float  DEFAULT_GRAVITY = -14.7f;
+    private static final float  DEFAULT_GRAVITY = 0f;//-14.7f;
     /** The density for most physics objects */
     private static final float  BASIC_DENSITY = 0.0f;
     /** The density for a bullet */
@@ -181,7 +182,7 @@ public class PlatformController extends WorldController implements ContactListen
     /** Reference to the character avatar */
     private DudeModel avatar;
     /** Reference to the goalDoor (for collision detection) */
-    private BoxObstacle goalDoor;
+//    private BoxObstacle goalDoor;
 
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
@@ -227,46 +228,46 @@ public class PlatformController extends WorldController implements ContactListen
      */
     private void populateLevel() {
         // Add level goal
-        float dwidth  = goalTile.getRegionWidth()/scale.x;
-        float dheight = goalTile.getRegionHeight()/scale.y;
-        goalDoor = new BoxObstacle(GOAL_POS.x,GOAL_POS.y,dwidth,dheight);
-        goalDoor.setBodyType(BodyDef.BodyType.StaticBody);
-        goalDoor.setDensity(0.0f);
-        goalDoor.setFriction(0.0f);
-        goalDoor.setRestitution(0.0f);
-        goalDoor.setSensor(true);
-        goalDoor.setDrawScale(scale);
-        goalDoor.setTexture(goalTile);
-        goalDoor.setName("goal");
-        addObject(goalDoor);
+        float dwidth;//  = goalTile.getRegionWidth()/scale.x;
+        float dheight;// = goalTile.getRegionHeight()/scale.y;
+//        goalDoor = new BoxObstacle(GOAL_POS.x,GOAL_POS.y,dwidth,dheight);
+//        goalDoor.setBodyType(BodyDef.BodyType.StaticBody);
+//        goalDoor.setDensity(0.0f);
+//        goalDoor.setFriction(0.0f);
+//        goalDoor.setRestitution(0.0f);
+//        goalDoor.setSensor(true);
+//        goalDoor.setDrawScale(scale);
+//        goalDoor.setTexture(goalTile);
+//        goalDoor.setName("goal");
+//        addObject(goalDoor);
 
-        String wname = "wall";
-        for (int ii = 0; ii < WALLS.length; ii++) {
-            PolygonObstacle obj;
-            obj = new PolygonObstacle(WALLS[ii], 0, 0);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(BASIC_DENSITY);
-            obj.setFriction(BASIC_FRICTION);
-            obj.setRestitution(BASIC_RESTITUTION);
-            obj.setDrawScale(scale);
-            obj.setTexture(earthTile);
-            obj.setName(wname+ii);
-            addObject(obj);
-        }
+//        String wname = "wall";
+//        for (int ii = 0; ii < WALLS.length; ii++) {
+//            PolygonObstacle obj;
+//            obj = new PolygonObstacle(WALLS[ii], 0, 0);
+//            obj.setBodyType(BodyDef.BodyType.StaticBody);
+//            obj.setDensity(BASIC_DENSITY);
+//            obj.setFriction(BASIC_FRICTION);
+//            obj.setRestitution(BASIC_RESTITUTION);
+//            obj.setDrawScale(scale);
+//            obj.setTexture(earthTile);
+//            obj.setName(wname+ii);
+//            addObject(obj);
+//        }
 
-        String pname = "platform";
-        for (int ii = 0; ii < PLATFORMS.length; ii++) {
-            PolygonObstacle obj;
-            obj = new PolygonObstacle(PLATFORMS[ii], 0, 0);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(BASIC_DENSITY);
-            obj.setFriction(BASIC_FRICTION);
-            obj.setRestitution(BASIC_RESTITUTION);
-            obj.setDrawScale(scale);
-            obj.setTexture(earthTile);
-            obj.setName(pname+ii);
-            addObject(obj);
-        }
+//        String pname = "platform";
+//        for (int ii = 0; ii < PLATFORMS.length; ii++) {
+//            PolygonObstacle obj;
+//            obj = new PolygonObstacle(PLATFORMS[ii], 0, 0);
+//            obj.setBodyType(BodyDef.BodyType.StaticBody);
+//            obj.setDensity(BASIC_DENSITY);
+//            obj.setFriction(BASIC_FRICTION);
+//            obj.setRestitution(BASIC_RESTITUTION);
+//            obj.setDrawScale(scale);
+//            obj.setTexture(earthTile);
+//            obj.setName(pname+ii);
+//            addObject(obj);
+//        }
 
         // Create dude
         dwidth  = avatarTexture.getRegionWidth()/scale.x;
@@ -277,20 +278,20 @@ public class PlatformController extends WorldController implements ContactListen
         addObject(avatar);
 
         // Create rope bridge
-        dwidth  = bridgeTexture.getRegionWidth()/scale.x;
-        dheight = bridgeTexture.getRegionHeight()/scale.y;
-        RopeBridge bridge = new RopeBridge(BRIDGE_POS.x, BRIDGE_POS.y, BRIDGE_WIDTH, dwidth, dheight);
-        bridge.setTexture(bridgeTexture);
-        bridge.setDrawScale(scale);
-        addObject(bridge);
+//        dwidth  = bridgeTexture.getRegionWidth()/scale.x;
+//        dheight = bridgeTexture.getRegionHeight()/scale.y;
+//        RopeBridge bridge = new RopeBridge(BRIDGE_POS.x, BRIDGE_POS.y, BRIDGE_WIDTH, dwidth, dheight);
+//        bridge.setTexture(bridgeTexture);
+//        bridge.setDrawScale(scale);
+//        addObject(bridge);
 
         // Create spinning platform
-        dwidth  = barrierTexture.getRegionWidth()/scale.x;
-        dheight = barrierTexture.getRegionHeight()/scale.y;
-        Spinner spinPlatform = new Spinner(SPIN_POS.x,SPIN_POS.y,dwidth,dheight);
-        spinPlatform.setDrawScale(scale);
-        spinPlatform.setTexture(barrierTexture);
-        addObject(spinPlatform);
+//        dwidth  = barrierTexture.getRegionWidth()/scale.x;
+//        dheight = barrierTexture.getRegionHeight()/scale.y;
+//        Spinner spinPlatform = new Spinner(SPIN_POS.x,SPIN_POS.y,dwidth,dheight);
+//        spinPlatform.setDrawScale(scale);
+//        spinPlatform.setTexture(barrierTexture);
+//        addObject(spinPlatform);
     }
 
     /**
@@ -339,12 +340,13 @@ public class PlatformController extends WorldController implements ContactListen
         }
 
         avatar.applyForce();
-        if (avatar.isJumping()) {
-            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
-        }
+        //TODO Removed sound stuffs
+//        if (avatar.isJumping()) {
+//            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
+//        }
 
         // If we use sound, we must remember this.
-        SoundController.getInstance().update();
+//        SoundController.getInstance().update();
     }
 
     /**
@@ -367,7 +369,7 @@ public class PlatformController extends WorldController implements ContactListen
         bullet.setVX(speed);
         addQueuedObject(bullet);
 
-        SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
+//        SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
     }
 
     /**
@@ -377,7 +379,7 @@ public class PlatformController extends WorldController implements ContactListen
      */
     public void removeBullet(Obstacle bullet) {
         bullet.markRemoved(true);
-        SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
+//        SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
     }
 
 
@@ -421,10 +423,11 @@ public class PlatformController extends WorldController implements ContactListen
             }
 
             // Check for win condition
-            if ((bd1 == avatar   && bd2 == goalDoor) ||
-                    (bd1 == goalDoor && bd2 == avatar)) {
-                setComplete(true);
-            }
+            //TODO Removed win
+//            if ((bd1 == avatar   && bd2 == goalDoor) ||
+//                    (bd1 == goalDoor && bd2 == avatar)) {
+//                setComplete(true);
+//            }
         } catch (Exception e) {
             e.printStackTrace();
         }

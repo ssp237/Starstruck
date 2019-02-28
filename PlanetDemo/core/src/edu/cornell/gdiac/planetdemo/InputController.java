@@ -15,7 +15,6 @@ package edu.cornell.gdiac.planetdemo;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.math.*;
-
 import edu.cornell.gdiac.util.*;
 
 /**
@@ -83,7 +82,7 @@ public class InputController {
     private float momentum;
 
     /** An X-Box controller (if it is connected) */
-    XBox360Controller xbox;
+//    XBox360Controller xbox;
 
     /**
      * Returns the amount of sideways movement.
@@ -211,7 +210,7 @@ public class InputController {
      */
     public InputController() {
         // If we have a game-pad for id, then use it.
-        xbox = new XBox360Controller(0);
+//        xbox = new XBox360Controller(0);
         crosshair = new Vector2();
         crosscache = new Vector2();
     }
@@ -238,12 +237,12 @@ public class InputController {
         prevPrevious = prevPressed;
 
         // Check to see if a GamePad is connected
-        if (xbox.isConnected()) {
-            readGamepad(bounds, scale);
-            readKeyboard(bounds, scale, true); // Read as a back-up
-        } else {
+//        if (xbox.isConnected()) {
+//            readGamepad(bounds, scale);
+//            readKeyboard(bounds, scale, true); // Read as a back-up
+//        } else {
             readKeyboard(bounds, scale, false);
-        }
+//        }
     }
 
     /**
@@ -256,33 +255,33 @@ public class InputController {
      * @param bounds The input bounds for the crosshair.
      * @param scale  The drawing scale
      */
-    private void readGamepad(Rectangle bounds, Vector2 scale) {
-        resetPressed = xbox.getStart();
-        exitPressed  = xbox.getBack();
-        nextPressed  = xbox.getRB();
-        prevPressed  = xbox.getLB();
-        primePressed = xbox.getA();
-        debugPressed  = xbox.getY();
-
-        // Increase animation frame, but only if trying to move
-        horizontal = xbox.getLeftX();
-        vertical   = xbox.getLeftY();
-        secondPressed = xbox.getRightTrigger() > 0.6f;
-
-        // Move the crosshairs with the right stick.
-        tertiaryPressed = xbox.getA();
-        crosscache.set(xbox.getLeftX(), xbox.getLeftY());
-        if (crosscache.len2() > GP_THRESHOLD) {
-            momentum += GP_ACCELERATE;
-            momentum = Math.min(momentum, GP_MAX_SPEED);
-            crosscache.scl(momentum);
-            crosscache.scl(1/scale.x,1/scale.y);
-            crosshair.add(crosscache);
-        } else {
-            momentum = 0;
-        }
-        clampPosition(bounds);
-    }
+//    private void readGamepad(Rectangle bounds, Vector2 scale) {
+//        resetPressed = xbox.getStart();
+//        exitPressed  = xbox.getBack();
+//        nextPressed  = xbox.getRB();
+//        prevPressed  = xbox.getLB();
+//        primePressed = xbox.getA();
+//        debugPressed  = xbox.getY();
+//
+//        // Increase animation frame, but only if trying to move
+//        horizontal = xbox.getLeftX();
+//        vertical   = xbox.getLeftY();
+//        secondPressed = xbox.getRightTrigger() > 0.6f;
+//
+//        // Move the crosshairs with the right stick.
+//        tertiaryPressed = xbox.getA();
+//        crosscache.set(xbox.getLeftX(), xbox.getLeftY());
+//        if (crosscache.len2() > GP_THRESHOLD) {
+//            momentum += GP_ACCELERATE;
+//            momentum = Math.min(momentum, GP_MAX_SPEED);
+//            crosscache.scl(momentum);
+//            crosscache.scl(1/scale.x,1/scale.y);
+//            crosshair.add(crosscache);
+//        } else {
+//            momentum = 0;
+//        }
+//        clampPosition(bounds);
+//    }
 
     /**
      * Reads input from the keyboard.

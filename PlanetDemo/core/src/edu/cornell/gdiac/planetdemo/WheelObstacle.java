@@ -14,7 +14,7 @@ package edu.cornell.gdiac.planetdemo;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
-import edu.cornell.gdiac.physics.*;  // For GameCanvas
+//import edu.cornell.gdiac.physics.*;  // For GameCanvas
 
 /**
  * Circle-shaped model to support collisions.
