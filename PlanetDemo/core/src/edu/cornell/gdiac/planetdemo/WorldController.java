@@ -27,7 +27,7 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
 import edu.cornell.gdiac.util.*;
-import edu.cornell.gdiac.planetdemo.obstacle.*;
+import edu.cornell.gdiac.physics.obstacle.*;
 
 /**
  * Base class for a world-specific controller.

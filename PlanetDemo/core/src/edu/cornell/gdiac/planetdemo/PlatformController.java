@@ -19,8 +19,8 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.util.*;
-import edu.cornell.gdiac.planetdemo.*;
-import edu.cornell.gdiac.planetdemo.obstacle.*;
+import edu.cornell.gdiac.physics.*;
+import edu.cornell.gdiac.physics.obstacle.*;
 
 /**
  * Gameplay specific controller for the platformer game.  
