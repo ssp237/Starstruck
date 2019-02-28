@@ -14,8 +14,8 @@ import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
-import edu.cornell.gdiac.physics.*;
-import edu.cornell.gdiac.physics.obstacle.*;
+//import edu.cornell.gdiac.physics.*;
+//import edu.cornell.gdiac.physics.obstacle.*;
 
 /**
  * Player avatar for the plaform game.

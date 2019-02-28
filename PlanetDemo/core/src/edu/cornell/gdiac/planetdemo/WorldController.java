@@ -26,8 +26,8 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
-import edu.cornell.gdiac.util.*;
-import edu.cornell.gdiac.physics.obstacle.*;
+//import edu.cornell.gdiac.util.*;
+//import edu.cornell.gdiac.physics.obstacle.*;
 
 /**
  * Base class for a world-specific controller.
@@ -175,14 +175,15 @@ public abstract class WorldController implements Screen {
      *
      * @return a newly loaded texture region for the given file.
      */
-    protected FilmStrip createFilmStrip(AssetManager manager, String file, int rows, int cols, int size) {
-        if (manager.isLoaded(file)) {
-            FilmStrip strip = new FilmStrip(manager.get(file, Texture.class),rows,cols,size);
-            strip.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-            return strip;
-        }
-        return null;
-    }
+    //TODO No assets
+//    protected FilmStrip createFilmStrip(AssetManager manager, String file, int rows, int cols, int size) {
+//        if (manager.isLoaded(file)) {
+//            FilmStrip strip = new FilmStrip(manager.get(file, Texture.class),rows,cols,size);
+//            strip.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+//            return strip;
+//        }
+//        return null;
+//    }
 
     /**
      * Unloads the assets for this game.

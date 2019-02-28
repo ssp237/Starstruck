@@ -22,7 +22,7 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
-import edu.cornell.gdiac.physics.GameCanvas;
+//import edu.cornell.gdiac.physics.GameCanvas;
 
 /**
  * Base model class to support collisions.

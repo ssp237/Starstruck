@@ -16,7 +16,7 @@ import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
-import edu.cornell.gdiac.physics.*;  // For GameCanvas
+//import edu.cornell.gdiac.physics.*;  // For GameCanvas
 
 /**
  * Box-shaped model to support collisions.
