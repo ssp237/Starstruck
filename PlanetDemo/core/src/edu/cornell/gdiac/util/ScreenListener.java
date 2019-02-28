@@ -21,7 +21,7 @@
   * Based on original Optimization Lab by Don Holden, 2007
   * LibGDX version, 2/2/2015
   */
- package edu.cornell.gdiac.planetdemo;
+ package edu.cornell.gdiac.util;
 
  import com.badlogic.gdx.Screen;
 

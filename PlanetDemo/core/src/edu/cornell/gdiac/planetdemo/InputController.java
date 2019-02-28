@@ -15,8 +15,7 @@ package edu.cornell.gdiac.planetdemo;
 
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.math.*;
-
-//import edu.cornell.gdiac.util.*;
+import edu.cornell.gdiac.util.*;
 
 /**
  * Class for reading player input. 
