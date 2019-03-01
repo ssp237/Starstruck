@@ -2,9 +2,7 @@ package edu.cornell.gdiac.planetdemo;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.*;
 
 import java.util.HashMap;
 
@@ -24,16 +22,16 @@ public class VectorWorld {
     /** Number of points in the vector field (y direction)*/
     private final int NUM_VY = 50;
     /** Gravitational constant (will probably change)*/
-    private final double G = 6.67E-11;
+    private final double G = 6.67E-2;
 
     /** Vector field representing this World's gravity*/
     /** Each key represents the (x,y) coordinate of a point in a grid on the screen, and
      * each value represents the effective force experienced by a body at that location.*/
     private HashMap<Vector2, Vector2> vField;
     /** The world tied to this object*/
-    public World world;
+    private World world;
     /** HashMap to store all bodies in the world (to track if a body has gravity)*/
-    private HashMap<BodyDef, Boolean> bodies;
+    private HashMap<Body, Boolean> bodies;
     /** The bounds of this world*/
     private Rectangle bounds;
     /** The height of a cell*/
@@ -52,7 +50,7 @@ public class VectorWorld {
         height = bounds.height/NUM_VY;
         width = bounds.width/NUM_VX;
 
-        bodies = new HashMap<BodyDef, Boolean>();
+        bodies = new HashMap<Body, Boolean>();
         vField = new HashMap<Vector2, Vector2>();
         for (int i = 0; i < NUM_VX; i++){
             for (int j = 0; j < NUM_VY; j++){
@@ -65,11 +63,13 @@ public class VectorWorld {
     /**
      * Add the specified body to the world, without changing the vector field
      * (i.e. the specified body is not massive enough to have its own force of gravity).
-     * @param body The body to be added to the world.
+     * @param def The body to be added to the world.
+     * @return The body added to the world.
      */
-    public void addBodyNoGravity(BodyDef body){
-        world.createBody(body);
+    public Body addBodyNoGravity(BodyDef def){
+        Body body = world.createBody(def);
         bodies.put(body, false);
+        return body;
     }
 
     /**
@@ -95,15 +95,16 @@ public class VectorWorld {
     }
 
     /**
-     * Add the specified body to the world with the specified mass. Alters the vector
+     * Add the specified body to the world. Alters the vector
      * field to take into account the force of gravity to the new object.
-     * @param body The body to be added to the world.
-     * @param mass The mass of the new body.
+     * @param def The body to be added to the world.
+     * @return The body added to the world
      */
-    public void addBody(BodyDef body, float mass){
-        world.createBody(body);
+    public Body addBody(BodyDef def){
+        Body body = world.createBody(def);
         bodies.put(body, true);
-        Vector2 pos = body.position;
+        Vector2 pos = body.getPosition();
+        float mass = body.getMass();
 
         //inefficient, need to change
         for (int i = 0; i < NUM_VX; i++){
@@ -112,5 +113,54 @@ public class VectorWorld {
                 vField.put(v, vField.get(v).add(gForce(pos, i, j, mass)));
             }
         }
+        return body;
     }
+
+    /**
+     * Create a joint to constrain bodies together.
+     * @param def A definition for the join.
+     * @return The created joint.
+     */
+    public Joint creatJoint(JointDef def){
+        return world.createJoint(def);
+    }
+
+    /**
+     * Remove the effect of gravity due to the given body from the vector field.
+     * @param body The body who's gravity is to be removed.
+     */
+    private void remGrav(Body body){
+        Vector2 pos = body.getPosition();
+        float mass = body.getMass();
+
+        //inefficient, need to change
+        for (int i = 0; i < NUM_VX; i++){
+            for (int j = 0; j < NUM_VY; j++){
+                Vector2 v = new Vector2(i,j);
+                vField.put(v, vField.get(v).sub(gForce(pos, i, j, mass)));
+            }
+        }
+    }
+
+    /**
+     * Destroy a rigid body from the world. If the body has gravity, remove the effects of gravity
+     * due to the body. If the gravity is not in the world, nothing is changed.
+     * @param body The body to be destroyed.
+     */
+    public void destroyBody(Body body){
+        if (!bodies.containsKey(body)) return;
+        if (bodies.get(body)) remGrav(body);
+        bodies.remove(body);
+        world.destroyBody(body);
+    }
+
+    /**
+     * Destroy a joint from the world.
+     * @param joint The joint to be destroyed.
+     */
+    public void destroyJoint(Joint joint){
+        world.destroyJoint(joint);
+    }
+
+
 }

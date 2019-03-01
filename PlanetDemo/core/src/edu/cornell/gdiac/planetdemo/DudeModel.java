@@ -227,6 +227,7 @@ public class DudeModel extends CapsuleObstacle {
      *
      * The size is expressed in physics units NOT pixels.  In order for
      * drawing to work properly, you MUST set the drawScale. The drawScale
+     * drawing to work properly, you MUST set the drawScale. The drawScaled
      * converts the physics units to pixels.
      *
      * @param x  		Initial x position of the avatar center
