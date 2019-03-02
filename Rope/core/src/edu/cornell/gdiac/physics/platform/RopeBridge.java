@@ -148,20 +148,20 @@ public class RopeBridge extends ComplexObstacle {
 		// Create the leftmost anchor
 		// Normally, we would do this in constructor, but we have
 		// reasons to not add the anchor to the bodies list.
-		Vector2 pos = avatar.getPosition();
-		pos.x -= linksize / 2;
-		start = new WheelObstacle(pos.x,pos.y,BRIDGE_PIN_RADIUS);
-		start.setName(BRIDGE_PIN_NAME+0);
-		start.setDensity(BASIC_DENSITY);
-		start.setBodyType(BodyDef.BodyType.DynamicBody);
-		start.activatePhysics(world);
+//		Vector2 pos = avatar.getPosition();
+//		pos.x -= linksize / 2;
+//		start = new WheelObstacle(pos.x,pos.y,BRIDGE_PIN_RADIUS);
+//		start.setName(BRIDGE_PIN_NAME+0);
+//		start.setDensity(BASIC_DENSITY);
+//		start.setBodyType(BodyDef.BodyType.DynamicBody);
+//		start.activatePhysics(world);
 
 		// Definition for a revolute joint
 		RevoluteJointDef jointDef = new RevoluteJointDef();
 
 		// Initial joint
-		jointDef.bodyA = start.getBody();
-		jointDef.bodyB = avatar.getBody();
+		jointDef.bodyA = avatar.getBody();
+		jointDef.bodyB = bodies.get(0).getBody();
 		jointDef.localAnchorA.set(anchor1);
 		jointDef.localAnchorB.set(anchor2);
 		jointDef.collideConnected = false;
@@ -184,20 +184,20 @@ public class RopeBridge extends ComplexObstacle {
 		}
 
 		// Create the rightmost anchor
-		Obstacle last = bodies.get(bodies.size-1);
-		
-		pos = last.getPosition();
-		pos.x += linksize / 2;
-		finish = new WheelObstacle(pos.x,pos.y,BRIDGE_PIN_RADIUS);
-		finish.setName(BRIDGE_PIN_NAME+1);
-		finish.setDensity(BASIC_DENSITY);
-		finish.setBodyType(BodyDef.BodyType.DynamicBody);
-		finish.activatePhysics(world);
+//		Obstacle last = bodies.get(bodies.size-1);
+//
+//		pos = avatar2.getPosition();
+//		pos.x += linksize / 2;
+//		finish = new WheelObstacle(pos.x,pos.y,BRIDGE_PIN_RADIUS);
+//		finish.setName(BRIDGE_PIN_NAME+1);
+//		finish.setDensity(BASIC_DENSITY);
+//		finish.setBodyType(BodyDef.BodyType.DynamicBody);
+//		finish.activatePhysics(world);
 
 		// Final joint
 		anchor2.x = 0;
-		jointDef.bodyA = last.getBody();
-		jointDef.bodyB = finish.getBody();
+		jointDef.bodyA = bodies.get(bodies.size - 1).getBody();
+		jointDef.bodyB = avatar2.getBody();
 		jointDef.localAnchorA.set(anchor1);
 		jointDef.localAnchorB.set(anchor2);
 		joint = world.createJoint(jointDef);
