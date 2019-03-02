@@ -162,5 +162,26 @@ public class VectorWorld {
         world.destroyJoint(joint);
     }
 
+    /**
+     *  Return a Vector2 that represents the closest cell coordinates (of the vector field) to
+     *  Vector2 pos. Rounds down.
+     * @param pos A Vector2 where both components are strictly positive.
+     * @return A Vector2 representing the closest cell coordinates in the vector field to pos,
+     * rounding down.
+     */
+    private Vector2 screenToCell(Vector2 pos){
+        return new Vector2((float) Math.floor(pos.x/width), (float) Math.floor(pos.y/width));
+    }
+
+    /**
+     * Returns the effective force experienced at the position with coordinates pos.
+     * @param pos A Vector2 representing a position with strictly positive coordinates.
+     * @return A Vector2 representing the effective force experienced at position pos.
+     */
+    public Vector2 getForce(Vector2 pos){
+        Vector2 newPos = screenToCell(pos);
+        return vField.get(newPos);
+    }
+
 
 }
