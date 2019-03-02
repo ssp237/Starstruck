@@ -234,7 +234,9 @@ public abstract class WorldController implements Screen {
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
 
-    /** The Box2D world */
+    /** The VectorWorld containing the Box2D world and the custom "gravity" */
+    protected VectorWorld vectorWorld;
+    /** The Box2D world from the VectorWorld*/
     protected World world;
     /** The boundary of the world */
     protected Rectangle bounds;
@@ -397,7 +399,8 @@ public abstract class WorldController implements Screen {
      */
     protected WorldController(Rectangle bounds, Vector2 gravity) {
         assets = new Array<String>();
-        world = new World(gravity,false);
+        vectorWorld = new VectorWorld(bounds);
+        world = vectorWorld.getWorld();
         this.bounds = new Rectangle(bounds);
         this.scale = new Vector2(1,1);
         complete = false;

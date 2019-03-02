@@ -322,7 +322,7 @@ public class DudeModel extends CapsuleObstacle {
             body.applyForce(forceCache,getPosition(),true);
         }
 
-        if (Math.abs(getAngularVelocity()) >= DUDE_MAXROT) {
+        if (Math.abs(getAngularVelocity()) >= DUDE_MAXSPEED) {
             setAngularVelocity(Math.signum(getVX())*getMaxSpeed());
         }
         else {

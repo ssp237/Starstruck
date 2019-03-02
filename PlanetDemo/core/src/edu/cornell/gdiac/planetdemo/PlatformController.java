@@ -216,7 +216,8 @@ public class PlatformController extends WorldController implements ContactListen
         addQueue.clear();
         world.dispose();
 
-        world = new World(gravity,false);
+        vectorWorld = new VectorWorld(bounds);
+        world = vectorWorld.getWorld();
         world.setContactListener(this);
         setComplete(false);
         setFailure(false);
@@ -302,7 +303,7 @@ public class PlatformController extends WorldController implements ContactListen
      * to switch to a new game mode.  If not, the update proceeds
      * normally.
      *
-     * @param delta Number of seconds since last animation frame
+     * @param dt Number of seconds since last animation frame
      *
      * @return whether to process the update loop
      */
@@ -327,7 +328,7 @@ public class PlatformController extends WorldController implements ContactListen
      * This method is called after input is read, but before collisions are resolved.
      * The very last thing that it should do is apply forces to the appropriate objects.
      *
-     * @param delta Number of seconds since last animation frame
+     * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
         // Process actions in object model

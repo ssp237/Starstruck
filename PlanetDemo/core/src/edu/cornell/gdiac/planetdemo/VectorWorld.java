@@ -61,6 +61,15 @@ public class VectorWorld {
     }
 
     /**
+     * Gets the world attached to this VectorWorld
+     *
+     * @return world
+     */
+    public World getWorld() {
+        return world;
+    }
+
+    /**
      * Add the specified body to the world, without changing the vector field
      * (i.e. the specified body is not massive enough to have its own force of gravity).
      * @param def The body to be added to the world.
