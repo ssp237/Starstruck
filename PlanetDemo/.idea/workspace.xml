@@ -154,6 +154,16 @@
       </list>
     </option>
   </component>
+  <component name="RunManager">
+    <configuration name="PlanetDemo" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="edu.cornell.gdiac.planetdemo.desktop.DesktopLauncher" />
+      <module name="PlanetDemo.desktop.main" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/core/assets" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SvnConfiguration">
     <configuration />
   </component>
