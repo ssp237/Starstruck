@@ -125,7 +125,7 @@ public class PlatformController extends WorldController implements ContactListen
 	
 	// Physics constants for initialization
 	/** The new heavier gravity for this world (so it is not so floaty) */
-	private static final float  DEFAULT_GRAVITY = -14.7f;
+	private static final float  DEFAULT_GRAVITY = 0f;
 	/** The density for most physics objects */
 	private static final float  BASIC_DENSITY = 0.0f;
 	/** The density for a bullet */
@@ -155,16 +155,16 @@ public class PlatformController extends WorldController implements ContactListen
 	
 	/** The outlines of all of the platforms */
 	private static final float[][] PLATFORMS = { 
-												{ 1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
-												{ 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
-												{23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
-												{26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
-												{29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
-												{24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
-												{29.0f,10.0f,31.0f,10.0f,31.0f, 9.5f,29.0f, 9.5f},
-												{23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
-												{19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
-												{ 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
+												{ 1.0f, 1.0f, 32.0f, 1.0f, 32.0f, 0.0f, 1.0f, 0.0f},
+//												{ 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
+//												{23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
+//												{26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
+//												{29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
+//												{24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
+//												{29.0f,10.0f,31.0f,10.0f,31.0f, 9.5f,29.0f, 9.5f},
+//												{23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
+//												{19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
+//												{ 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
 											   };
 
 	// Other game objects
@@ -180,6 +180,8 @@ public class PlatformController extends WorldController implements ContactListen
 	// Physics objects for the game
 	/** Reference to the character avatar */
 	private DudeModel avatar;
+
+	private DudeModel avatar2;
 	/** Reference to the goalDoor (for collision detection) */
 	private BoxObstacle goalDoor;
 
@@ -276,6 +278,17 @@ public class PlatformController extends WorldController implements ContactListen
 		avatar.setTexture(avatarTexture);
 		addObject(avatar);
 
+		dwidth  = avatarTexture.getRegionWidth()/scale.x;
+		dheight = avatarTexture.getRegionHeight()/scale.y;
+		avatar2 = new DudeModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight);
+		avatar2.setDrawScale(scale);
+		avatar2.setTexture(avatarTexture);
+		addObject(avatar2);
+
+
+
+
+
 		// Create rope bridge
 		dwidth  = bridgeTexture.getRegionWidth()/scale.x;
 		dheight = bridgeTexture.getRegionHeight()/scale.y;
@@ -313,7 +326,11 @@ public class PlatformController extends WorldController implements ContactListen
 			setFailure(true);
 			return false;
 		}
-		
+
+		if (!isFailure() && avatar2.getY() < -1) {
+			setFailure(true);
+			return false;
+		}
 		return true;
 	}
 
@@ -332,13 +349,22 @@ public class PlatformController extends WorldController implements ContactListen
 		avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
 		avatar.setJumping(InputController.getInstance().didPrimary());
 		avatar.setShooting(InputController.getInstance().didSecondary());
+
+		avatar2.setMovement(InputController.getInstance().getHorizontal2() *avatar.getForce());
+		avatar2.setJumping(InputController.getInstance().didPrimary());
+		avatar2.setShooting(InputController.getInstance().didSecondary());
 		
 		// Add a bullet if we fire
 		if (avatar.isShooting()) {
 			createBullet();
 		}
+		if (avatar2.isShooting()) {
+			createBullet();
+		}
 		
 		avatar.applyForce();
+		avatar2.applyForce();
+
 	    if (avatar.isJumping()) {
 	        SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
 	    }
