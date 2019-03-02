@@ -51,6 +51,8 @@ public class PlatformController extends WorldController implements ContactListen
 	/** The sound file for a bullet collision */
 	private static final String POP_FILE = "platform/plop.mp3";
 
+	private static final String PLANET_FILE = "platform/planet.png";
+
 	/** Texture asset for character avatar */
 	private TextureRegion avatarTexture;
 	/** Texture asset for the spinning barrier */
@@ -61,6 +63,8 @@ public class PlatformController extends WorldController implements ContactListen
 	private TextureRegion bridgeTexture;
 	/** Texture asset for background image */
 	private TextureRegion backgroundTexture;
+
+	private TextureRegion planetTexture;
 
 	
 	/** Track asset loading from all instances and subclasses */
@@ -121,6 +125,7 @@ public class PlatformController extends WorldController implements ContactListen
 		bulletTexture = createTexture(manager,BULLET_FILE,false);
 		bridgeTexture = createTexture(manager,ROPE_FILE,false);
 		backgroundTexture = createTexture(manager,BACKG_FILE,false);
+		planetTexture = createTexture(manager, PLANET_FILE, false);
 
 
 		SoundController sounds = SoundController.getInstance();
@@ -313,12 +318,12 @@ public class PlatformController extends WorldController implements ContactListen
 		bridge.setDrawScale(scale);
 		addObject(bridge);
 		
-		// Create spinning platform
-		dwidth  = barrierTexture.getRegionWidth()/scale.x;
-		dheight = barrierTexture.getRegionHeight()/scale.y;
+		// Create planet
+		dwidth  = planetTexture.getRegionWidth()/scale.x;
+		dheight = planetTexture.getRegionHeight()/scale.y;
 		Spinner spinPlatform = new Spinner(SPIN_POS.x,SPIN_POS.y,dwidth,dheight);
 		spinPlatform.setDrawScale(scale);
-		spinPlatform.setTexture(barrierTexture);
+		spinPlatform.setTexture(planetTexture);
 		addObject(spinPlatform);
 	}
 	

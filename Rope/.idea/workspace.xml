@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="855b880e-1611-4154-9aba-4ebfb529f5bd" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/out/production/classes/edu/cornell/gdiac/physics/platform/PlatformController.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/out/production/classes/edu/cornell/gdiac/physics/platform/PlatformController.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/classes/" />
@@ -31,8 +29,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="169">
-              <caret line="244" column="21" lean-forward="true" selection-start-line="244" selection-start-column="21" selection-end-line="244" selection-end-column="21" />
+            <state relative-caret-position="1127">
+              <caret line="326" column="32" lean-forward="true" selection-start-line="326" selection-start-column="32" selection-end-line="326" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -98,10 +96,10 @@
       <find>getPosition()</find>
       <find>scale</find>
       <find>linksi</find>
-      <find>linksize</find>
       <find>loadContent</find>
-      <find>draw</find>
       <find>background</find>
+      <find>draw</find>
+      <find>linksize</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -200,7 +198,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551566290196" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551566836023" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/build.gradle" />
   </component>
   <component name="RunDashboard">
@@ -383,17 +381,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/RopeBridge.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="173">
-          <caret line="95" column="16" selection-start-line="95" selection-start-column="8" selection-end-line="95" selection-end-column="16" />
-          <folding>
-            <element signature="e#0#7127#0" expanded="true" />
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/GDXRoot.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="97">
@@ -422,10 +409,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/RopeBridge.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="173">
+          <caret line="95" column="16" selection-start-line="95" selection-start-column="8" selection-end-line="95" selection-end-column="16" />
+          <folding>
+            <element signature="e#0#7127#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="169">
-          <caret line="244" column="21" lean-forward="true" selection-start-line="244" selection-start-column="21" selection-end-line="244" selection-end-column="21" />
+        <state relative-caret-position="1127">
+          <caret line="326" column="32" lean-forward="true" selection-start-line="326" selection-start-column="32" selection-end-line="326" selection-end-column="32" />
         </state>
       </provider>
     </entry>
