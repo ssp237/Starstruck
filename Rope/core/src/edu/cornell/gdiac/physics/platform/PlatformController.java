@@ -173,7 +173,7 @@ public class PlatformController extends WorldController implements ContactListen
 	/** The position of the spinning barrier */
 	private static Vector2 SPIN_POS = new Vector2(13.0f,12.5f);
 	/** The initial position of the dude */
-	private static Vector2 DUDE_POS = new Vector2(2.5f, 5.0f);
+	private static Vector2 DUDE_POS = new Vector2(2.5f, 1f);
 	/** The position of the rope bridge */
 	private static Vector2 BRIDGE_POS  = new Vector2(9.0f, 3.8f);
 
@@ -188,6 +188,9 @@ public class PlatformController extends WorldController implements ContactListen
 	/** Mark set to handle more sophisticated collision callbacks */
 	protected ObjectSet<Fixture> sensorFixtures;
 
+
+	public DudeModel getAvatar() {return avatar;}
+	public DudeModel getAvatar2() {return avatar2;}
 	/**
 	 * Creates and initialize a new instance of the platformer game
 	 *
@@ -240,7 +243,7 @@ public class PlatformController extends WorldController implements ContactListen
 		goalDoor.setDrawScale(scale);
 		goalDoor.setTexture(goalTile);
 		goalDoor.setName("goal");
-		addObject(goalDoor);
+		//addObject(goalDoor);
 
 	    String wname = "wall";
 	    for (int ii = 0; ii < WALLS.length; ii++) {
@@ -280,7 +283,7 @@ public class PlatformController extends WorldController implements ContactListen
 
 		dwidth  = avatarTexture.getRegionWidth()/scale.x;
 		dheight = avatarTexture.getRegionHeight()/scale.y;
-		avatar2 = new DudeModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight);
+		avatar2 = new DudeModel(DUDE_POS.x + 1, DUDE_POS.y, dwidth, dheight);
 		avatar2.setDrawScale(scale);
 		avatar2.setTexture(avatarTexture);
 		addObject(avatar2);
@@ -292,7 +295,7 @@ public class PlatformController extends WorldController implements ContactListen
 		// Create rope bridge
 		dwidth  = bridgeTexture.getRegionWidth()/scale.x;
 		dheight = bridgeTexture.getRegionHeight()/scale.y;
-		RopeBridge bridge = new RopeBridge(BRIDGE_POS.x, BRIDGE_POS.y, BRIDGE_WIDTH, dwidth, dheight);
+		RopeBridge bridge = new RopeBridge(BRIDGE_POS.x, BRIDGE_POS.y, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
 		bridge.setTexture(bridgeTexture);
 		bridge.setDrawScale(scale);
 		addObject(bridge);
@@ -347,11 +350,11 @@ public class PlatformController extends WorldController implements ContactListen
 	public void update(float dt) {
 		// Process actions in object model
 		avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
-		avatar.setJumping(InputController.getInstance().didPrimary());
+		avatar.setMovementVert(InputController.getInstance().getVertical() * avatar.getForce());
 		avatar.setShooting(InputController.getInstance().didSecondary());
 
-		avatar2.setMovement(InputController.getInstance().getHorizontal2() *avatar.getForce());
-		avatar2.setJumping(InputController.getInstance().didPrimary());
+		avatar2.setMovement(InputController.getInstance().getHorizontal2() *avatar2.getForce());
+		avatar2.setMovementVert(InputController.getInstance().getVertical2() * avatar2.getForce());
 		avatar2.setShooting(InputController.getInstance().didSecondary());
 		
 		// Add a bullet if we fire

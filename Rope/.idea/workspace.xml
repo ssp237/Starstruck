@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="855b880e-1611-4154-9aba-4ebfb529f5bd" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/core/out/production/classes/edu/cornell/gdiac/physics/InputController.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/out/production/classes/edu/cornell/gdiac/physics/InputController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/out/production/classes/edu/cornell/gdiac/physics/platform/PlatformController.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/out/production/classes/edu/cornell/gdiac/physics/platform/PlatformController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/InputController.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/InputController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/DudeModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/DudeModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/RopeBridge.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/RopeBridge.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/classes/" />
     <ignored path="$PROJECT_DIR$/core/.gradle/" />
@@ -28,33 +29,21 @@
     </projectState>
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/RopeBridge.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-170">
-              <caret line="147" column="37" selection-start-line="147" selection-start-column="37" selection-end-line="147" selection-end-column="37" />
-              <folding>
-                <element signature="e#0#7127#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="101">
-              <caret line="353" column="67" lean-forward="true" selection-start-line="353" selection-start-column="67" selection-end-line="353" selection-end-column="67" />
+            <state relative-caret-position="108">
+              <caret line="297" column="38" lean-forward="true" selection-start-line="297" selection-start-column="38" selection-end-line="297" selection-end-column="38" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/InputController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-353">
-              <caret line="327" column="9" lean-forward="true" selection-start-line="327" selection-start-column="9" selection-end-line="327" selection-end-column="9" />
+            <state relative-caret-position="3115">
+              <caret line="330" column="9" lean-forward="true" selection-start-line="330" selection-start-column="9" selection-end-line="330" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -62,26 +51,50 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/DudeModel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="177">
-              <caret line="36" column="52" lean-forward="true" selection-start-line="36" selection-start-column="52" selection-end-line="36" selection-end-column="52" />
+            <state relative-caret-position="123">
+              <caret line="331" column="46" selection-start-line="331" selection-start-column="46" selection-end-line="331" selection-end-column="46" />
+              <folding>
+                <element signature="e#3618#3619#0" expanded="true" />
+                <element signature="e#3641#3642#0" expanded="true" />
+                <element signature="e#3863#3864#0" expanded="true" />
+                <element signature="e#4047#4048#0" expanded="true" />
+                <element signature="e#4250#4251#0" expanded="true" />
+                <element signature="e#4433#4434#0" expanded="true" />
+                <element signature="e#4597#4598#0" expanded="true" />
+                <element signature="e#4776#4777#0" expanded="true" />
+                <element signature="e#5022#5023#0" expanded="true" />
+                <element signature="e#5236#5237#0" expanded="true" />
+                <element signature="e#5477#5478#0" expanded="true" />
+                <element signature="e#5675#5676#0" expanded="true" />
+                <element signature="e#5849#5850#0" expanded="true" />
+                <element signature="e#6271#6272#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/WorldController.java">
+        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/obstacle/SimpleObstacle.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-9142">
-              <caret line="45" column="22" selection-start-line="45" selection-start-column="22" selection-end-line="45" selection-end-column="22" />
+            <state relative-caret-position="140">
+              <caret line="85" column="60" selection-start-line="85" selection-start-column="60" selection-end-line="85" selection-end-column="60" />
+              <folding>
+                <element signature="e#2670#2671#0" expanded="true" />
+                <element signature="e#2741#2742#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/GDXRoot.java">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/RopeBridge.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1247">
-              <caret line="36" column="13" selection-start-line="36" selection-start-column="13" selection-end-line="36" selection-end-column="13" />
+            <state relative-caret-position="171">
+              <caret line="156" column="37" lean-forward="true" selection-start-line="156" selection-start-column="37" selection-end-line="156" selection-end-column="37" />
+              <folding>
+                <element signature="e#0#7127#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -92,6 +105,12 @@
     <findStrings>
       <find>gravity</find>
       <find>dwidth</find>
+      <find>movement</find>
+      <find>setMove</find>
+      <find>Dud</find>
+      <find>RopeB</find>
+      <find>getPosition</find>
+      <find>getPosition()</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -100,16 +119,17 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/InputController.java" />
         <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/DudeModel.java" />
         <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java" />
-        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/InputController.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/RopeBridge.java" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="339" />
+    <option name="x" value="75" />
     <option name="y" value="23" />
-    <option name="width" value="941" />
+    <option name="width" value="1205" />
     <option name="height" value="688" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -160,15 +180,6 @@
               <item name="src" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="gdiac" type="462c0819:PsiDirectoryNode" />
               <item name="physics" type="462c0819:PsiDirectoryNode" />
-              <item name="obstacle" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="Rope" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Rope" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="core" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="gdiac" type="462c0819:PsiDirectoryNode" />
-              <item name="physics" type="462c0819:PsiDirectoryNode" />
               <item name="platform" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -182,13 +193,6 @@
               <item name="desktop" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="src" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
-            <path>
-              <item name="Rope" type="b2602c69:ProjectViewProjectNode" />
-              <item name="Rope" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="desktop" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="src" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name="desktop" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -196,6 +200,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551556266573" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/build.gradle" />
   </component>
   <component name="RunDashboard">
@@ -242,10 +247,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="339" y="23" width="941" height="688" extended-state="0" />
+    <frame x="75" y="23" width="1205" height="688" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.25472748" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2416165" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -254,7 +259,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Messages" order="0" />
       <window_info anchor="bottom" id="Message" order="1" />
-      <window_info anchor="bottom" id="Find" order="2" />
+      <window_info anchor="bottom" id="Find" order="2" weight="0.32885906" />
       <window_info active="true" anchor="bottom" id="Run" order="3" visible="true" weight="0.32885906" />
       <window_info anchor="bottom" id="Debug" order="4" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
@@ -320,34 +325,72 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/RopeBridge.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-170">
-          <caret line="147" column="37" selection-start-line="147" selection-start-column="37" selection-end-line="147" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#7127#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+    <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java">
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/rocket/RocketController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="101">
-          <caret line="353" column="67" lean-forward="true" selection-start-line="353" selection-start-column="67" selection-end-line="353" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/DudeModel.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="177">
-          <caret line="36" column="52" lean-forward="true" selection-start-line="36" selection-start-column="52" selection-end-line="36" selection-end-column="52" />
+        <state relative-caret-position="125">
+          <caret line="325" column="52" selection-start-line="325" selection-start-column="52" selection-end-line="325" selection-end-column="52" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/InputController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-353">
-          <caret line="327" column="9" lean-forward="true" selection-start-line="327" selection-start-column="9" selection-end-line="327" selection-end-column="9" />
+        <state relative-caret-position="3115">
+          <caret line="330" column="9" lean-forward="true" selection-start-line="330" selection-start-column="9" selection-end-line="330" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="297" column="38" lean-forward="true" selection-start-line="297" selection-start-column="38" selection-end-line="297" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/obstacle/SimpleObstacle.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="85" column="60" selection-start-line="85" selection-start-column="60" selection-end-line="85" selection-end-column="60" />
+          <folding>
+            <element signature="e#2670#2671#0" expanded="true" />
+            <element signature="e#2741#2742#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/DudeModel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="123">
+          <caret line="331" column="46" selection-start-line="331" selection-start-column="46" selection-end-line="331" selection-end-column="46" />
+          <folding>
+            <element signature="e#3618#3619#0" expanded="true" />
+            <element signature="e#3641#3642#0" expanded="true" />
+            <element signature="e#3863#3864#0" expanded="true" />
+            <element signature="e#4047#4048#0" expanded="true" />
+            <element signature="e#4250#4251#0" expanded="true" />
+            <element signature="e#4433#4434#0" expanded="true" />
+            <element signature="e#4597#4598#0" expanded="true" />
+            <element signature="e#4776#4777#0" expanded="true" />
+            <element signature="e#5022#5023#0" expanded="true" />
+            <element signature="e#5236#5237#0" expanded="true" />
+            <element signature="e#5477#5478#0" expanded="true" />
+            <element signature="e#5675#5676#0" expanded="true" />
+            <element signature="e#5849#5850#0" expanded="true" />
+            <element signature="e#6271#6272#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/RopeBridge.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="171">
+          <caret line="156" column="37" lean-forward="true" selection-start-line="156" selection-start-column="37" selection-end-line="156" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#7127#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

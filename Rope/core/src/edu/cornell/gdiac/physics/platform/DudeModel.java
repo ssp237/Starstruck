@@ -56,6 +56,8 @@ public class DudeModel extends CapsuleObstacle {
 	
 	/** The current horizontal movement of the character */
 	private float   movement;
+
+	private float movementVert;
 	/** Which direction is the character facing */
 	private boolean faceRight;
 	/** How long until we can jump again */
@@ -85,7 +87,8 @@ public class DudeModel extends CapsuleObstacle {
 	public float getMovement() {
 		return movement;
 	}
-	
+
+	public float getMovementVert() {return movementVert; }
 	/**
 	 * Sets left/right movement of this character.
 	 * 
@@ -102,12 +105,15 @@ public class DudeModel extends CapsuleObstacle {
 			faceRight = true;
 		}
 	}
-	
-	/**
-	 * Returns true if the dude is actively firing.
-	 *
-	 * @return true if the dude is actively firing.
-	 */
+
+	public void setMovementVert(float value) {
+		movementVert = value;
+	}
+		/**
+         * Returns true if the dude is actively firing.
+         *
+         * @return true if the dude is actively firing.
+         */
 	public boolean isShooting() {
 		return isShooting && shootCooldown <= 0;
 	}
@@ -136,7 +142,7 @@ public class DudeModel extends CapsuleObstacle {
 	 * @param value whether the dude is actively jumping.
 	 */
 	public void setJumping(boolean value) {
-		isJumping = value; 
+		isJumping = value;
 	}
 
 	/**
@@ -154,7 +160,7 @@ public class DudeModel extends CapsuleObstacle {
 	 * @param value whether the dude is on the ground.
 	 */
 	public void setGrounded(boolean value) {
-		isGrounded = value; 
+		isGrounded = value;
 	}
 
 	/**
@@ -313,11 +319,25 @@ public class DudeModel extends CapsuleObstacle {
 			body.applyForce(forceCache,getPosition(),true);
 		}
 
-		// Jump!
-		if (isJumping()) {
-			forceCache.set(0, DUDE_JUMP);
-			body.applyLinearImpulse(forceCache,getPosition(),true);
+		if (getMovementVert() == 0f) {
+			forceCache.set(0, -getDamping()*getVY());
+			body.applyForce(forceCache,getPosition(),true);
 		}
+
+		// Velocity too high, clamp it
+		if (Math.abs(getVY()) >= getMaxSpeed()) {
+			setVY(Math.signum(getVY())*getMaxSpeed());
+		} else {
+			forceCache.set(0, getMovementVert());
+			body.applyForce(forceCache,getPosition(),true);
+		}
+
+
+		// Jump!
+//		if (isJumping()) {
+//			forceCache.set(0, DUDE_JUMP);
+//			body.applyLinearImpulse(forceCache,getPosition(),true);
+//		}
 	}
 	
 	/**
@@ -325,7 +345,7 @@ public class DudeModel extends CapsuleObstacle {
 	 *
 	 * We use this method to reset cooldowns.
 	 *
-	 * @param delta Number of seconds since last animation frame
+	 * @param //delta Number of seconds since last animation frame
 	 */
 	public void update(float dt) {
 		// Apply cooldowns

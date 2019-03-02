@@ -55,6 +55,9 @@ public class RopeBridge extends ComplexObstacle {
 	/** The spacing between each link */
 	protected float spacing = 0.0f;
 
+	private DudeModel avatar;
+	private DudeModel avatar2;
+
 	/**
 	 * Creates a new rope bridge at the given position.
 	 *
@@ -66,9 +69,13 @@ public class RopeBridge extends ComplexObstacle {
 	 * @param width		The length of the bridge
 	 * @param lwidth	The plank length
 	 * @param lheight	The bridge thickness
+	 * @param avatar 	avatar
+	 * @param avatar2   avatar2
 	 */
-	public RopeBridge(float x, float y, float width, float lwidth, float lheight) {
+	public RopeBridge(float x, float y, float width, float lwidth, float lheight, DudeModel avatar, DudeModel avatar2) {
 		this(x, y, x+width, y, lwidth, lheight);
+		this.avatar = avatar;
+		this.avatar2 = avatar2;
 	}
 
     /**
@@ -133,18 +140,20 @@ public class RopeBridge extends ComplexObstacle {
 	protected boolean createJoints(World world) {
 		assert bodies.size > 0;
 		
-		Vector2 anchor1 = new Vector2(); 
+		Vector2 anchor1 = new Vector2();
 		Vector2 anchor2 = new Vector2(-linksize / 2, 0);
+
+		//DudeModel avatar =
 		
 		// Create the leftmost anchor
 		// Normally, we would do this in constructor, but we have
 		// reasons to not add the anchor to the bodies list.
-		Vector2 pos = bodies.get(0).getPosition();
+		Vector2 pos = avatar.getPosition();
 		pos.x -= linksize / 2;
 		start = new WheelObstacle(pos.x,pos.y,BRIDGE_PIN_RADIUS);
 		start.setName(BRIDGE_PIN_NAME+0);
 		start.setDensity(BASIC_DENSITY);
-		start.setBodyType(BodyDef.BodyType.StaticBody);
+		start.setBodyType(BodyDef.BodyType.DynamicBody);
 		start.activatePhysics(world);
 
 		// Definition for a revolute joint
@@ -152,7 +161,7 @@ public class RopeBridge extends ComplexObstacle {
 
 		// Initial joint
 		jointDef.bodyA = start.getBody();
-		jointDef.bodyB = bodies.get(0).getBody();
+		jointDef.bodyB = avatar.getBody();
 		jointDef.localAnchorA.set(anchor1);
 		jointDef.localAnchorB.set(anchor2);
 		jointDef.collideConnected = false;
@@ -182,7 +191,7 @@ public class RopeBridge extends ComplexObstacle {
 		finish = new WheelObstacle(pos.x,pos.y,BRIDGE_PIN_RADIUS);
 		finish.setName(BRIDGE_PIN_NAME+1);
 		finish.setDensity(BASIC_DENSITY);
-		finish.setBodyType(BodyDef.BodyType.StaticBody);
+		finish.setBodyType(BodyDef.BodyType.DynamicBody);
 		finish.activatePhysics(world);
 
 		// Final joint

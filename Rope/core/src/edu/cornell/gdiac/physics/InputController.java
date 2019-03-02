@@ -330,6 +330,7 @@ public class InputController {
 			vertical -= 1.0f;
 		}
 
+		vertical2 = (secondary ? vertical : 0.0f);
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			vertical2 += 1.0f;
 		}
@@ -338,6 +339,7 @@ public class InputController {
 			vertical2 -= 1.0f;
 		}
 
+		horizontal2 = (secondary ? horizontal : 0.0f);
 		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 			horizontal2 -= 1.0f;
 		}
