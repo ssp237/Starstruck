@@ -125,7 +125,7 @@ public class PlatformController extends WorldController implements ContactListen
 	
 	// Physics constants for initialization
 	/** The new heavier gravity for this world (so it is not so floaty) */
-	private static final float  DEFAULT_GRAVITY = 0f;
+	private static final float  DEFAULT_GRAVITY = -1f;
 	/** The density for most physics objects */
 	private static final float  BASIC_DENSITY = 0.0f;
 	/** The density for a bullet */
