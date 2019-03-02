@@ -75,6 +75,13 @@ public class InputController {
 	private float horizontal;
 	/** How much did we move vertically? */
 	private float vertical;
+
+	/** Controls for Dude2 **/
+	private float horizontal2;
+
+	private float vertical2;
+
+
 	/** The crosshair position (for raddoll) */
 	private Vector2 crosshair;
 	/** The crosshair cache (for using as a return value) */
@@ -106,7 +113,10 @@ public class InputController {
 	public float getVertical() {
 		return vertical;
 	}
-	
+
+
+	public float getHorizontal2() {return horizontal2;}
+	public float getVertical2() {return vertical2;}
 	/**
 	 * Returns the current position of the crosshairs on the screen.
 	 *
@@ -296,7 +306,7 @@ public class InputController {
 	private void readKeyboard(Rectangle bounds, Vector2 scale, boolean secondary) {
 		// Give priority to gamepad results
 		resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
-		debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.D));
+		debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.G));
 		primePressed = (secondary && primePressed) || (Gdx.input.isKeyPressed(Input.Keys.UP));
 		secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
 		prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
@@ -319,6 +329,25 @@ public class InputController {
 		if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
 			vertical -= 1.0f;
 		}
+
+		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+			vertical2 += 1.0f;
+		}
+
+		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+			vertical2 -= 1.0f;
+		}
+
+		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+			horizontal2 -= 1.0f;
+		}
+
+		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+			horizontal2 += 1.0f;
+		}
+
+
+
 		
 		// Mouse results
         tertiaryPressed = Gdx.input.isButtonPressed(Input.Buttons.LEFT);
