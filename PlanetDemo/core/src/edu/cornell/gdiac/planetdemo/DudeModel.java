@@ -35,6 +35,7 @@ public class DudeModel extends CapsuleObstacle {
     private static final float DUDE_FRICTION = 0.0f;
     /** The maximum character speed */
     private static final float DUDE_MAXSPEED = 5.0f;
+    private static final float DUDE_MAXROT = (float) Math.PI/16;
     /** The impulse for the character jump */
     private static final float DUDE_JUMP = 5.5f;
     /** Cooldown (in animation frames) for jumping */
@@ -56,6 +57,7 @@ public class DudeModel extends CapsuleObstacle {
 
     /** The current horizontal movement of the character */
     private float   movement;
+    private float rotation;
     /** Which direction is the character facing */
     private boolean faceRight;
     /** How long until we can jump again */
@@ -101,6 +103,12 @@ public class DudeModel extends CapsuleObstacle {
         } else if (movement > 0) {
             faceRight = true;
         }
+    }
+
+    public float getRotation() { return rotation; }
+
+    public void setRotation(float value) {
+        rotation = value;
     }
 
     /**
@@ -238,7 +246,7 @@ public class DudeModel extends CapsuleObstacle {
         super(x,y,width*DUDE_HSHRINK,height*DUDE_VSHRINK);
         setDensity(DUDE_DENSITY);
         setFriction(DUDE_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
-        setFixedRotation(true);
+        //setFixedRotation(true);
 
         // Gameplay attributes
         isGrounded = false;
@@ -300,10 +308,10 @@ public class DudeModel extends CapsuleObstacle {
         }
 
         // Don't want to be moving. Damp out player motion
-        if (getMovement() == 0f) {
-            forceCache.set(-getDamping()*getVX(),0);
-            body.applyForce(forceCache,getPosition(),true);
-        }
+//        if (getMovement() == 0f) {
+//            forceCache.set(-getDamping()*getVX(),0);
+//            body.applyForce(forceCache,getPosition(),true);
+//        }
 
         // Velocity too high, clamp it
         if (Math.abs(getVX()) >= getMaxSpeed()) {
@@ -311,6 +319,13 @@ public class DudeModel extends CapsuleObstacle {
         } else {
             forceCache.set(getMovement(),0);
             body.applyForce(forceCache,getPosition(),true);
+        }
+
+        if (Math.abs(getAngularVelocity()) >= DUDE_MAXROT) {
+            setAngularVelocity(Math.signum(getVX())*getMaxSpeed());
+        }
+        else {
+            body.applyTorque(-getRotation(), true);
         }
 
         // Jump!
@@ -351,6 +366,7 @@ public class DudeModel extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? 1.0f : -1.0f;
+        //setAngle((float)Math.PI);
         canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 

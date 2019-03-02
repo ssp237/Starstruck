@@ -275,6 +275,7 @@ public class PlatformController extends WorldController implements ContactListen
         avatar = new DudeModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight);
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarTexture);
+        //avatar.setAngle((float)Math.PI/2);
         addObject(avatar);
 
         // Create rope bridge
@@ -333,6 +334,7 @@ public class PlatformController extends WorldController implements ContactListen
         avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
         avatar.setJumping(InputController.getInstance().didPrimary());
         avatar.setShooting(InputController.getInstance().didSecondary());
+        avatar.setRotation(InputController.getInstance().getTurn());
 
         // Add a bullet if we fire
         if (avatar.isShooting()) {
