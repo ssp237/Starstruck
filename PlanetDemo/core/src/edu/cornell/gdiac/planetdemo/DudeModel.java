@@ -235,6 +235,7 @@ public class DudeModel extends CapsuleObstacle {
      *
      * The size is expressed in physics units NOT pixels.  In order for
      * drawing to work properly, you MUST set the drawScale. The drawScale
+     * drawing to work properly, you MUST set the drawScale. The drawScaled
      * converts the physics units to pixels.
      *
      * @param x  		Initial x position of the avatar center
@@ -365,8 +366,7 @@ public class DudeModel extends CapsuleObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        float effect = faceRight ? 1.0f : -1.0f;
-        //setAngle((float)Math.PI);
+        float effect = faceRight ? -1.0f : 1.0f;
         canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 

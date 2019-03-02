@@ -33,7 +33,7 @@ import edu.cornell.gdiac.util.*;
  */
 public class PlatformController extends WorldController implements ContactListener {
     /** The texture file for the character avatar (no animation) */
-    private static final String DUDE_FILE  = "platform/dude.png";
+    private static final String DUDE_FILE  = "platform/bloop.png";
     /** The texture file for the spinning barrier */
     private static final String BARRIER_FILE = "platform/barrier.png";
     /** The texture file for the bullet */
