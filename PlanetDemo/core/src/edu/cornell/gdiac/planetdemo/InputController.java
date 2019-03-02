@@ -74,6 +74,7 @@ public class InputController {
     private float horizontal;
     /** How much did we move vertically? */
     private float vertical;
+    private float turn;
     /** The crosshair position (for raddoll) */
     private Vector2 crosshair;
     /** The crosshair cache (for using as a return value) */
@@ -104,6 +105,10 @@ public class InputController {
      */
     public float getVertical() {
         return vertical;
+    }
+
+    public float getTurn() {
+        return turn;
     }
 
     /**
@@ -317,6 +322,15 @@ public class InputController {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             vertical -= 1.0f;
+        }
+
+        // Rotate/turn, no controller support
+        turn = 0f;
+        if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+            turn = turn + 1f;//(float) (Math.PI/180);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
+            turn = turn - 1f;//(float) (Math.PI/180);
         }
 
         // Mouse results
