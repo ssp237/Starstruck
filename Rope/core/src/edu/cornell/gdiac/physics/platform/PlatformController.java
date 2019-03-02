@@ -135,7 +135,7 @@ public class PlatformController extends WorldController implements ContactListen
 	/** The restitution for all physics objects */
 	private static final float  BASIC_RESTITUTION = 0.1f;
 	/** The width of the rope bridge */
-	private static final float  BRIDGE_WIDTH = 14.0f;
+	private static final float  BRIDGE_WIDTH = 9.0f;
 	/** Offset for bullet when firing */
 	private static final float  BULLET_OFFSET = 0.2f;
 	/** The speed of the bullet after firing */
