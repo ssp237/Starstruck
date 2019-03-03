@@ -94,6 +94,8 @@ public class PlatformController extends WorldController implements ContactListen
 		assets.add(BULLET_FILE);
 		manager.load(ROPE_FILE, Texture.class);
 		assets.add(ROPE_FILE);
+		manager.load(PLANET_FILE, Texture.class);
+		assets.add(PLANET_FILE);
 		
 		manager.load(JUMP_FILE, Sound.class);
 		assets.add(JUMP_FILE);
@@ -245,9 +247,9 @@ public class PlatformController extends WorldController implements ContactListen
 	 */
 	private void populateLevel() {
 		//Background
-		canvas.begin();
-		canvas.draw(backgroundTexture, Color.WHITE, 0, 0,canvas.getWidth(),canvas.getHeight());
-		canvas.end();
+//		canvas.begin();
+//		canvas.draw(backgroundTexture, Color.WHITE, 0, 0,canvas.getWidth(),canvas.getHeight());
+//		canvas.end();
 
 		// Add level goal
 		float dwidth  = goalTile.getRegionWidth()/scale.x;
