@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e33915a5-5d18-4cce-9876-2f26f4a8ca30" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/core/assets/shared/background.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/assets/shared/loading.png" beforeDir="false" afterPath="$PROJECT_DIR$/core/assets/shared/loading.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/PlatformController.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/PlatformController.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
@@ -29,7 +29,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/DudeModel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="960">
+            <state relative-caret-position="-4705">
               <caret line="73" column="1" selection-start-line="73" selection-start-column="1" selection-end-line="73" selection-end-column="1" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -73,8 +73,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/PlatformController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="29" column="75" lean-forward="true" selection-start-line="29" selection-start-column="75" selection-end-line="29" selection-end-column="75" />
+            <state relative-caret-position="187">
+              <caret line="559" column="30" lean-forward="true" selection-start-line="559" selection-start-column="30" selection-end-line="559" selection-end-column="30" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../Labs/PhysicsLab/core/src/edu/cornell/gdiac/physics/ragdoll/RagdollController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="498">
+              <caret line="380" column="21" lean-forward="true" selection-start-line="355" selection-start-column="8" selection-end-line="380" selection-end-column="21" />
+              <folding>
+                <element signature="e#0#12501#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -82,10 +94,9 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/VectorWorld.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="410">
-              <caret line="211" selection-start-line="211" selection-end-line="211" />
+            <state>
+              <caret column="24" selection-start-column="24" selection-end-column="24" />
               <folding>
-                <element signature="imports" expanded="true" />
                 <element signature="e#2382#2383#0" expanded="true" />
                 <element signature="e#2410#2411#0" expanded="true" />
               </folding>
@@ -94,18 +105,41 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/LoadingMode.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="123">
+              <caret line="273" column="8" selection-start-line="273" selection-start-column="8" selection-end-line="273" selection-end-column="38" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/WorldController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4080">
-              <caret line="305" column="1" selection-start-line="305" selection-start-column="1" selection-end-line="305" selection-end-column="1" />
+            <state relative-caret-position="476">
+              <caret line="613" column="9" lean-forward="true" selection-start-line="586" selection-start-column="8" selection-end-line="613" selection-end-column="9" />
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>draw</find>
+    </findStrings>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/VectorWorld.java" />
+        <option value="$PROJECT_DIR$/../../Labs/PhysicsLab/core/src/edu/cornell/gdiac/physics/ragdoll/RagdollController.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/PlatformController.java" />
+      </list>
+    </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="695" />
@@ -247,7 +281,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3295583" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.3997735" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -284,12 +318,25 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/GameCanvas.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="33" column="13" selection-start-line="33" selection-start-column="13" selection-end-line="33" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/LoadingMode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="123">
+          <caret line="273" column="8" selection-start-line="273" selection-start-column="8" selection-end-line="273" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/VectorWorld.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="410">
-          <caret line="211" selection-start-line="211" selection-end-line="211" />
+        <state>
+          <caret column="24" selection-start-column="24" selection-end-column="24" />
           <folding>
-            <element signature="imports" expanded="true" />
             <element signature="e#2382#2383#0" expanded="true" />
             <element signature="e#2410#2411#0" expanded="true" />
           </folding>
@@ -298,14 +345,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/WorldController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4080">
-          <caret line="305" column="1" selection-start-line="305" selection-start-column="1" selection-end-line="305" selection-end-column="1" />
+        <state relative-caret-position="476">
+          <caret line="613" column="9" lean-forward="true" selection-start-line="586" selection-start-column="8" selection-end-line="613" selection-end-column="9" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/DudeModel.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="960">
+        <state relative-caret-position="-4705">
           <caret line="73" column="1" selection-start-line="73" selection-start-column="1" selection-end-line="73" selection-end-column="1" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -345,10 +392,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../../Labs/PhysicsLab/core/src/edu/cornell/gdiac/physics/ragdoll/RagdollController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="498">
+          <caret line="380" column="21" lean-forward="true" selection-start-line="355" selection-start-column="8" selection-end-line="380" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#12501#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/PlatformController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="29" column="75" lean-forward="true" selection-start-line="29" selection-start-column="75" selection-end-line="29" selection-end-column="75" />
+        <state relative-caret-position="187">
+          <caret line="559" column="30" lean-forward="true" selection-start-line="559" selection-start-column="30" selection-end-line="559" selection-end-column="30" />
         </state>
       </provider>
     </entry>

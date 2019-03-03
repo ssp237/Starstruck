@@ -32,6 +32,8 @@ import edu.cornell.gdiac.util.*;
  * place nicely with the static assets.
  */
 public class PlatformController extends WorldController implements ContactListener {
+    /** The texture file for the background*/
+    private static final String BACKGROUND_FILE = "platform/background.png";
     /** The texture file for the character avatar (no animation) */
     private static final String DUDE_FILE  = "platform/bloop.png";
     /** The texture file for the spinning barrier */
@@ -48,6 +50,8 @@ public class PlatformController extends WorldController implements ContactListen
     /** The sound file for a bullet collision */
     private static final String POP_FILE = "platform/plop.mp3";
 
+    /** Background texture for start-up */
+    private Texture background;
     /** Texture asset for character avatar */
     private TextureRegion avatarTexture;
     /** Texture asset for the spinning barrier */
@@ -76,6 +80,9 @@ public class PlatformController extends WorldController implements ContactListen
         }
 
         platformAssetState = AssetState.LOADING;
+
+        background = new Texture(BACKGROUND_FILE);
+
         manager.load(DUDE_FILE, Texture.class);
         assets.add(DUDE_FILE);
         manager.load(BARRIER_FILE, Texture.class);
@@ -537,4 +544,36 @@ public class PlatformController extends WorldController implements ContactListen
     public void postSolve(Contact contact, ContactImpulse impulse) {}
     /** Unused ContactListener method */
     public void preSolve(Contact contact, Manifold oldManifold) {}
+
+    /**
+     * Draw the physics objects to the canvas and the background
+     *
+     * The method draws all objects in the order that they were added.
+     *
+     * @param delta The delay in seconds since the last update
+     */
+    public void draw(float delta) {
+        canvas.clear();
+
+        // Draw background unscaled.
+        canvas.begin();
+        canvas.draw(background, Color.WHITE, 0, 0,canvas.getWidth(),canvas.getHeight());
+        canvas.end();
+
+        canvas.begin();
+        for(Obstacle obj : objects) {
+            obj.draw(canvas);
+        }
+        canvas.end();
+
+        if (isDebug()) {
+            canvas.beginDebug();
+            for(Obstacle obj : objects) {
+                obj.drawDebug(canvas);
+            }
+            canvas.endDebug();
+        }
+
+
+    }
 }
