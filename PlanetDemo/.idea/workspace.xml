@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e33915a5-5d18-4cce-9876-2f26f4a8ca30" name="Default Changelist" comment="" />
+    <list default="true" id="e33915a5-5d18-4cce-9876-2f26f4a8ca30" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gradle/4.6/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.6/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/4.6/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/4.6/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/ComplexObstacle.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/ComplexObstacle.java" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/.gradle/" />
     <ignored path="$PROJECT_DIR$/build/" />
     <ignored path="$PROJECT_DIR$/core/.gradle/" />
@@ -21,25 +26,197 @@
       <ProjectState />
     </projectState>
   </component>
+  <component name="FavoritesManager">
+    <favorites_list name="PlanetDemo" />
+  </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/VectorWorld.java">
+        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/Obstacle.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="140">
-              <caret line="158" column="46" selection-start-line="158" selection-start-column="46" selection-end-line="158" selection-end-column="46" />
+            <state relative-caret-position="174">
+              <caret line="267" column="90" selection-start-line="267" selection-start-column="90" selection-end-line="267" selection-end-column="90" />
               <folding>
                 <element signature="imports" expanded="true" />
+                <element signature="e#8050#8051#0" expanded="true" />
+                <element signature="e#8097#8098#0" expanded="true" />
+                <element signature="e#8919#8920#0" expanded="true" />
+                <element signature="e#8957#8958#0" expanded="true" />
+                <element signature="e#9424#9425#0" expanded="true" />
+                <element signature="e#9463#9464#0" expanded="true" />
+                <element signature="e#9959#9960#0" expanded="true" />
+                <element signature="e#9996#9997#0" expanded="true" />
+                <element signature="e#10506#10507#0" expanded="true" />
+                <element signature="e#10544#10545#0" expanded="true" />
+                <element signature="e#11086#11087#0" expanded="true" />
+                <element signature="e#11128#11129#0" expanded="true" />
+                <element signature="e#11678#11679#0" expanded="true" />
+                <element signature="e#11721#11722#0" expanded="true" />
+                <element signature="e#12556#12557#0" expanded="true" />
+                <element signature="e#12594#12595#0" expanded="true" />
+                <element signature="e#13443#13444#0" expanded="true" />
+                <element signature="e#13482#13483#0" expanded="true" />
+                <element signature="e#13742#13743#0" expanded="true" />
+                <element signature="e#13787#13788#0" expanded="true" />
+                <element signature="e#14061#14062#0" expanded="true" />
+                <element signature="e#14107#14108#0" expanded="true" />
+                <element signature="e#14409#14410#0" expanded="true" />
+                <element signature="e#14453#14454#0" expanded="true" />
+                <element signature="e#14768#14769#0" expanded="true" />
+                <element signature="e#14813#14814#0" expanded="true" />
+                <element signature="e#15489#15490#0" expanded="true" />
+                <element signature="e#15534#15535#0" expanded="true" />
+                <element signature="e#16223#16224#0" expanded="true" />
+                <element signature="e#16269#16270#0" expanded="true" />
+                <element signature="e#16880#16881#0" expanded="true" />
+                <element signature="e#16926#16927#0" expanded="true" />
+                <element signature="e#17550#17551#0" expanded="true" />
+                <element signature="e#17597#17598#0" expanded="true" />
+                <element signature="e#18846#18847#0" expanded="true" />
+                <element signature="e#18884#18885#0" expanded="true" />
+                <element signature="e#19258#19259#0" expanded="true" />
+                <element signature="e#19297#19298#0" expanded="true" />
+                <element signature="e#19842#19843#0" expanded="true" />
+                <element signature="e#19881#19882#0" expanded="true" />
+                <element signature="e#20439#20440#0" expanded="true" />
+                <element signature="e#20479#20480#0" expanded="true" />
+                <element signature="e#21008#21009#0" expanded="true" />
+                <element signature="e#21050#21051#0" expanded="true" />
+                <element signature="e#21592#21593#0" expanded="true" />
+                <element signature="e#21635#21636#0" expanded="true" />
+                <element signature="e#22028#22029#0" expanded="true" />
+                <element signature="e#22067#22068#0" expanded="true" />
+                <element signature="e#22474#22475#0" expanded="true" />
+                <element signature="e#22514#22515#0" expanded="true" />
+                <element signature="e#23149#23150#0" expanded="true" />
+                <element signature="e#23186#23187#0" expanded="true" />
+                <element signature="e#24648#24649#0" expanded="true" />
+                <element signature="e#24705#24706#0" expanded="true" />
+                <element signature="e#25458#25459#0" expanded="true" />
+                <element signature="e#25491#25492#0" expanded="true" />
+                <element signature="e#26180#26181#0" expanded="true" />
+                <element signature="e#26216#26217#0" expanded="true" />
+                <element signature="e#26724#26725#0" expanded="true" />
+                <element signature="e#26758#26759#0" expanded="true" />
+                <element signature="e#27108#27109#0" expanded="true" />
+                <element signature="e#27139#27140#0" expanded="true" />
+                <element signature="e#27469#27470#0" expanded="true" />
+                <element signature="e#27501#27502#0" expanded="true" />
+                <element signature="e#27894#27895#0" expanded="true" />
+                <element signature="e#27924#27925#0" expanded="true" />
+                <element signature="e#28332#28333#0" expanded="true" />
+                <element signature="e#28363#28364#0" expanded="true" />
+                <element signature="e#28573#28574#0" expanded="true" />
+                <element signature="e#28600#28601#0" expanded="true" />
+                <element signature="e#30085#30086#0" expanded="true" />
+                <element signature="e#30130#30131#0" expanded="true" />
+                <element signature="e#30772#30773#0" expanded="true" />
+                <element signature="e#30806#30807#0" expanded="true" />
+                <element signature="e#31053#31054#0" expanded="true" />
+                <element signature="e#31083#31084#0" expanded="true" />
+                <element signature="e#31323#31324#0" expanded="true" />
+                <element signature="e#31354#31355#0" expanded="true" />
+                <element signature="e#31448#31449#0" expanded="true" />
+                <element signature="e#31473#31474#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/InputController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="215" column="28" selection-start-line="215" selection-start-column="28" selection-end-line="215" selection-end-column="28" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#3546#3547#0" expanded="true" />
+                <element signature="e#3573#3574#0" expanded="true" />
+                <element signature="e#4138#4139#0" expanded="true" />
+                <element signature="e#4186#4187#0" expanded="true" />
+                <element signature="e#4511#4512#0" expanded="true" />
+                <element signature="e#4564#4565#0" expanded="true" />
+                <element signature="e#4895#4896#0" expanded="true" />
+                <element signature="e#4950#4951#0" expanded="true" />
+                <element signature="e#5243#5244#0" expanded="true" />
+                <element signature="e#5281#5282#0" expanded="true" />
+                <element signature="e#5443#5444#0" expanded="true" />
+                <element signature="e#5496#5497#0" expanded="true" />
+                <element signature="e#5684#5685#0" expanded="true" />
+                <element signature="e#5735#5736#0" expanded="true" />
+                <element signature="e#5931#5932#0" expanded="true" />
+                <element signature="e#5982#5983#0" expanded="true" />
+                <element signature="e#6176#6177#0" expanded="true" />
+                <element signature="e#6229#6230#0" expanded="true" />
+                <element signature="e#6388#6389#0" expanded="true" />
+                <element signature="e#6439#6440#0" expanded="true" />
+                <element signature="e#6659#6660#0" expanded="true" />
+                <element signature="e#6695#6696#0" expanded="true" />
+                <element signature="e#6726#6727#0" expanded="true" />
+                <element signature="e#6760#6761#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
+        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/PlatformController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="9" column="53" lean-forward="true" selection-start-line="9" selection-start-column="53" selection-end-line="9" selection-end-column="53" />
+            <state relative-caret-position="-426">
+              <caret line="380" column="59" selection-start-line="380" selection-start-column="59" selection-end-line="380" selection-end-column="59" />
+              <folding>
+                <element signature="e#0#17748#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/SimpleObstacle.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="172">
+              <caret line="177" column="6" lean-forward="true" selection-start-line="177" selection-start-column="6" selection-end-line="177" selection-end-column="6" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1759#1760#0" expanded="true" />
+                <element signature="e#1835#1836#0" expanded="true" />
+                <element signature="e#5200#5201#0" expanded="true" />
+                <element signature="e#5274#5275#0" expanded="true" />
+                <element signature="e#6050#6051#0" expanded="true" />
+                <element signature="e#6142#6143#0" expanded="true" />
+                <element signature="e#6707#6708#0" expanded="true" />
+                <element signature="e#6789#6790#0" expanded="true" />
+                <element signature="e#26306#26307#0" expanded="true" />
+                <element signature="e#26331#26332#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/WheelObstacle.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="238">
+              <caret line="83" column="32" lean-forward="true" selection-start-line="83" selection-start-column="32" selection-end-line="83" selection-end-column="32" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1484#1485#0" expanded="true" />
+                <element signature="e#1513#1514#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/VectorWorld.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="188">
+              <caret line="102" column="20" selection-start-line="102" selection-start-column="10" selection-end-line="102" selection-end-column="20" />
+              <folding>
+                <element signature="e#4767#4768#0" expanded="true" />
+                <element signature="e#4812#4813#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -47,8 +224,46 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/DudeModel.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="24">
-              <caret line="73" column="1" selection-start-line="73" selection-start-column="1" selection-end-line="73" selection-end-column="1" />
+            <state relative-caret-position="97">
+              <caret line="78" column="65" selection-start-line="78" selection-start-column="65" selection-end-line="78" selection-end-column="65" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#4538#4539#0" expanded="true" />
+                <element signature="e#4605#4606#0" expanded="true" />
+                <element signature="e#4781#4782#0" expanded="true" />
+                <element signature="e#4814#4815#0" expanded="true" />
+                <element signature="e#4972#4973#0" expanded="true" />
+                <element signature="e#5005#5006#0" expanded="true" />
+                <element signature="e#5388#5389#0" expanded="true" />
+                <element signature="e#5431#5432#0" expanded="true" />
+                <element signature="e#5963#5964#0" expanded="true" />
+                <element signature="e#5999#6000#0" expanded="true" />
+                <element signature="e#6195#6196#0" expanded="true" />
+                <element signature="e#6229#6230#0" expanded="true" />
+                <element signature="e#6756#6757#0" expanded="true" />
+                <element signature="e#6785#6786#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/CapsuleObstacle.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="103">
+              <caret line="25" column="13" lean-forward="true" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/WorldController.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="100">
+              <caret line="640" selection-start-line="640" selection-end-line="640" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -58,13 +273,83 @@
       </file>
     </leaf>
   </component>
-  <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="754" />
-    <option name="y" value="23" />
-    <option name="width" value="926" />
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>system</find>
+      <find>grounded</find>
+      <find>contact</find>
+      <find>getuser</find>
+      <find>name</find>
+      <find>setcon</find>
+      <find>origin</find>
+      <find>centroid</find>
+      <find>wheelobstacle</find>
+      <find>getbodyty</find>
+      <find>setangle</find>
+      <find>setang</find>
+      <find>sensor</find>
+      <find>for</find>
+      <find>forcedude</find>
+      <find>setposition</find>
+      <find>onplanet</find>
+      <find>null</find>
+      <find>true</find>
+      <find>inputcon</find>
+      <find>horizontal</find>
+      <find>resetpressed</find>
+      <find>bodyinfo</find>
+      <find>bullet</find>
+      <find>prime</find>
+      <find>jump</find>
+      <find>world =</find>
+      <find>movement</find>
+      <find>system.out</find>
+      <find>body</find>
+    </findStrings>
+    <dirStrings>
+      <dir>C:\Users\joyxy\Documents\School\Sophomore\3152\Starstruck\PlanetDemo\core\src\edu\cornell\gdiac\planetdemo</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/GameCanvas.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/GDXRoot.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/SimpleObstacle.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/obstacle/BoxObstacle.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/obstacle/SimpleObstacle.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/obstacle/Obstacle.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/obstacle/CapsuleObstacle.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/obstacle/ComplexObstacle.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/RopeBridge.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/obstacle/PolygonObstacle.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/WorldController.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/Spinner.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/CompelxObstacle.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/ComplexObstacle.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/WheelObstacle.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/VectorWorld.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/Obstacle.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/InputController.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/DudeModel.java" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/PlatformController.java" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="753" />
+    <option name="y" value="21" />
+    <option name="width" value="927" />
     <option name="height" value="975" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -73,7 +358,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -84,12 +368,13 @@
             <path>
               <item name="PlanetDemo" type="b2602c69:ProjectViewProjectNode" />
               <item name="PlanetDemo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
-              <item name=".idea" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
             <path>
               <item name="PlanetDemo" type="b2602c69:ProjectViewProjectNode" />
               <item name="PlanetDemo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="core" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="assets" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="PlanetDemo" type="b2602c69:ProjectViewProjectNode" />
@@ -115,6 +400,14 @@
             <path>
               <item name="PlanetDemo" type="b2602c69:ProjectViewProjectNode" />
               <item name="PlanetDemo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="core" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="src" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
+              <item name="gdiac" type="462c0819:PsiDirectoryNode" />
+              <item name="util" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="PlanetDemo" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PlanetDemo" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
               <item name="desktop" type="8a07ba80:GradleTreeStructureProvider$GradleModuleDirectoryNode" />
             </path>
             <path>
@@ -134,10 +427,12 @@
           <select />
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
       <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551639892180" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -178,27 +473,27 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="23" width="992" height="975" extended-state="0" />
+    <frame x="-7" y="-7" width="1380" height="743" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.19789474" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Capture Tool" order="2" />
-      <window_info id="Image Layers" order="3" />
-      <window_info id="Designer" order="4" />
-      <window_info id="UI Designer" order="5" />
-      <window_info id="Favorites" order="6" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info anchor="bottom" id="Build" order="10" visible="true" weight="0.3295583" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.5171849" visible="true" weight="0.19242424" />
+      <window_info id="Capture Tool" order="1" />
+      <window_info id="Image Layers" order="2" />
+      <window_info id="Designer" order="3" />
+      <window_info id="UI Designer" order="4" />
+      <window_info id="Favorites" order="5" side_tool="true" />
+      <window_info anchor="bottom" id="Messages" order="0" weight="0.3289689" />
+      <window_info anchor="bottom" id="Message" order="1" />
+      <window_info anchor="bottom" id="Find" order="2" weight="0.3502455" />
+      <window_info active="true" anchor="bottom" id="Run" order="3" visible="true" weight="0.27168575" />
+      <window_info anchor="bottom" id="Debug" order="4" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="5" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="6" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="bottom" id="Build" order="11" weight="0.3295583" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -208,12 +503,300 @@
       <window_info anchor="right" id="Theme Preview" order="6" />
       <window_info anchor="right" id="Capture Analysis" order="7" />
       <window_info anchor="right" id="Palette&#9;" order="8" />
+      <window_info anchor="right" id="Structure" order="9" sideWeight="0.48281506" visible="true" weight="0.17045455" />
     </layout>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/build.gradle">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-637" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/GDXRoot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="366">
+          <caret line="78" column="29" selection-start-line="78" selection-start-column="29" selection-end-line="78" selection-end-column="29" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/LoadingMode.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7922">
+          <caret line="499" column="12" selection-start-line="499" selection-start-column="12" selection-end-line="499" selection-end-column="12" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/desktop/src/edu/cornell/gdiac/planetdemo/desktop/DesktopLauncher.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="45" selection-start-column="45" selection-end-column="45" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.9.9/1409aca6a4293a7ca8dbd60281c3211a195dd39a/gdx-1.9.9-sources.jar!/com/badlogic/gdx/math/Vector2.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="107">
+          <caret line="80" selection-start-line="80" selection-end-line="80" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/Spinner.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="109" column="26" lean-forward="true" selection-start-line="109" selection-start-column="26" selection-end-line="109" selection-end-column="26" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/ComplexObstacle.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="965" column="19" selection-start-line="965" selection-start-column="19" selection-end-line="965" selection-end-column="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2564#2565#0" expanded="true" />
+            <element signature="e#2631#2632#0" expanded="true" />
+            <element signature="e#31233#31234#0" expanded="true" />
+            <element signature="e#31297#31298#0" expanded="true" />
+            <element signature="e#31589#31590#0" expanded="true" />
+            <element signature="e#31611#31612#0" expanded="true" />
+            <element signature="e#32027#32028#0" expanded="true" />
+            <element signature="e#32043#32044#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/CapsuleObstacle.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="103">
+          <caret line="25" column="13" lean-forward="true" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/Obstacle.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="174">
+          <caret line="267" column="90" selection-start-line="267" selection-start-column="90" selection-end-line="267" selection-end-column="90" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#8050#8051#0" expanded="true" />
+            <element signature="e#8097#8098#0" expanded="true" />
+            <element signature="e#8919#8920#0" expanded="true" />
+            <element signature="e#8957#8958#0" expanded="true" />
+            <element signature="e#9424#9425#0" expanded="true" />
+            <element signature="e#9463#9464#0" expanded="true" />
+            <element signature="e#9959#9960#0" expanded="true" />
+            <element signature="e#9996#9997#0" expanded="true" />
+            <element signature="e#10506#10507#0" expanded="true" />
+            <element signature="e#10544#10545#0" expanded="true" />
+            <element signature="e#11086#11087#0" expanded="true" />
+            <element signature="e#11128#11129#0" expanded="true" />
+            <element signature="e#11678#11679#0" expanded="true" />
+            <element signature="e#11721#11722#0" expanded="true" />
+            <element signature="e#12556#12557#0" expanded="true" />
+            <element signature="e#12594#12595#0" expanded="true" />
+            <element signature="e#13443#13444#0" expanded="true" />
+            <element signature="e#13482#13483#0" expanded="true" />
+            <element signature="e#13742#13743#0" expanded="true" />
+            <element signature="e#13787#13788#0" expanded="true" />
+            <element signature="e#14061#14062#0" expanded="true" />
+            <element signature="e#14107#14108#0" expanded="true" />
+            <element signature="e#14409#14410#0" expanded="true" />
+            <element signature="e#14453#14454#0" expanded="true" />
+            <element signature="e#14768#14769#0" expanded="true" />
+            <element signature="e#14813#14814#0" expanded="true" />
+            <element signature="e#15489#15490#0" expanded="true" />
+            <element signature="e#15534#15535#0" expanded="true" />
+            <element signature="e#16223#16224#0" expanded="true" />
+            <element signature="e#16269#16270#0" expanded="true" />
+            <element signature="e#16880#16881#0" expanded="true" />
+            <element signature="e#16926#16927#0" expanded="true" />
+            <element signature="e#17550#17551#0" expanded="true" />
+            <element signature="e#17597#17598#0" expanded="true" />
+            <element signature="e#18846#18847#0" expanded="true" />
+            <element signature="e#18884#18885#0" expanded="true" />
+            <element signature="e#19258#19259#0" expanded="true" />
+            <element signature="e#19297#19298#0" expanded="true" />
+            <element signature="e#19842#19843#0" expanded="true" />
+            <element signature="e#19881#19882#0" expanded="true" />
+            <element signature="e#20439#20440#0" expanded="true" />
+            <element signature="e#20479#20480#0" expanded="true" />
+            <element signature="e#21008#21009#0" expanded="true" />
+            <element signature="e#21050#21051#0" expanded="true" />
+            <element signature="e#21592#21593#0" expanded="true" />
+            <element signature="e#21635#21636#0" expanded="true" />
+            <element signature="e#22028#22029#0" expanded="true" />
+            <element signature="e#22067#22068#0" expanded="true" />
+            <element signature="e#22474#22475#0" expanded="true" />
+            <element signature="e#22514#22515#0" expanded="true" />
+            <element signature="e#23149#23150#0" expanded="true" />
+            <element signature="e#23186#23187#0" expanded="true" />
+            <element signature="e#24648#24649#0" expanded="true" />
+            <element signature="e#24705#24706#0" expanded="true" />
+            <element signature="e#25458#25459#0" expanded="true" />
+            <element signature="e#25491#25492#0" expanded="true" />
+            <element signature="e#26180#26181#0" expanded="true" />
+            <element signature="e#26216#26217#0" expanded="true" />
+            <element signature="e#26724#26725#0" expanded="true" />
+            <element signature="e#26758#26759#0" expanded="true" />
+            <element signature="e#27108#27109#0" expanded="true" />
+            <element signature="e#27139#27140#0" expanded="true" />
+            <element signature="e#27469#27470#0" expanded="true" />
+            <element signature="e#27501#27502#0" expanded="true" />
+            <element signature="e#27894#27895#0" expanded="true" />
+            <element signature="e#27924#27925#0" expanded="true" />
+            <element signature="e#28332#28333#0" expanded="true" />
+            <element signature="e#28363#28364#0" expanded="true" />
+            <element signature="e#28573#28574#0" expanded="true" />
+            <element signature="e#28600#28601#0" expanded="true" />
+            <element signature="e#30085#30086#0" expanded="true" />
+            <element signature="e#30130#30131#0" expanded="true" />
+            <element signature="e#30772#30773#0" expanded="true" />
+            <element signature="e#30806#30807#0" expanded="true" />
+            <element signature="e#31053#31054#0" expanded="true" />
+            <element signature="e#31083#31084#0" expanded="true" />
+            <element signature="e#31323#31324#0" expanded="true" />
+            <element signature="e#31354#31355#0" expanded="true" />
+            <element signature="e#31448#31449#0" expanded="true" />
+            <element signature="e#31473#31474#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/InputController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="85">
+          <caret line="215" column="28" selection-start-line="215" selection-start-column="28" selection-end-line="215" selection-end-column="28" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3546#3547#0" expanded="true" />
+            <element signature="e#3573#3574#0" expanded="true" />
+            <element signature="e#4138#4139#0" expanded="true" />
+            <element signature="e#4186#4187#0" expanded="true" />
+            <element signature="e#4511#4512#0" expanded="true" />
+            <element signature="e#4564#4565#0" expanded="true" />
+            <element signature="e#4895#4896#0" expanded="true" />
+            <element signature="e#4950#4951#0" expanded="true" />
+            <element signature="e#5243#5244#0" expanded="true" />
+            <element signature="e#5281#5282#0" expanded="true" />
+            <element signature="e#5443#5444#0" expanded="true" />
+            <element signature="e#5496#5497#0" expanded="true" />
+            <element signature="e#5684#5685#0" expanded="true" />
+            <element signature="e#5735#5736#0" expanded="true" />
+            <element signature="e#5931#5932#0" expanded="true" />
+            <element signature="e#5982#5983#0" expanded="true" />
+            <element signature="e#6176#6177#0" expanded="true" />
+            <element signature="e#6229#6230#0" expanded="true" />
+            <element signature="e#6388#6389#0" expanded="true" />
+            <element signature="e#6439#6440#0" expanded="true" />
+            <element signature="e#6659#6660#0" expanded="true" />
+            <element signature="e#6695#6696#0" expanded="true" />
+            <element signature="e#6726#6727#0" expanded="true" />
+            <element signature="e#6760#6761#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/WorldController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="640" selection-start-line="640" selection-end-line="640" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/SimpleObstacle.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="172">
+          <caret line="177" column="6" lean-forward="true" selection-start-line="177" selection-start-column="6" selection-end-line="177" selection-end-column="6" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1759#1760#0" expanded="true" />
+            <element signature="e#1835#1836#0" expanded="true" />
+            <element signature="e#5200#5201#0" expanded="true" />
+            <element signature="e#5274#5275#0" expanded="true" />
+            <element signature="e#6050#6051#0" expanded="true" />
+            <element signature="e#6142#6143#0" expanded="true" />
+            <element signature="e#6707#6708#0" expanded="true" />
+            <element signature="e#6789#6790#0" expanded="true" />
+            <element signature="e#26306#26307#0" expanded="true" />
+            <element signature="e#26331#26332#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/DudeModel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="97">
+          <caret line="78" column="65" selection-start-line="78" selection-start-column="65" selection-end-line="78" selection-end-column="65" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#4538#4539#0" expanded="true" />
+            <element signature="e#4605#4606#0" expanded="true" />
+            <element signature="e#4781#4782#0" expanded="true" />
+            <element signature="e#4814#4815#0" expanded="true" />
+            <element signature="e#4972#4973#0" expanded="true" />
+            <element signature="e#5005#5006#0" expanded="true" />
+            <element signature="e#5388#5389#0" expanded="true" />
+            <element signature="e#5431#5432#0" expanded="true" />
+            <element signature="e#5963#5964#0" expanded="true" />
+            <element signature="e#5999#6000#0" expanded="true" />
+            <element signature="e#6195#6196#0" expanded="true" />
+            <element signature="e#6229#6230#0" expanded="true" />
+            <element signature="e#6756#6757#0" expanded="true" />
+            <element signature="e#6785#6786#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/VectorWorld.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="188">
+          <caret line="102" column="20" selection-start-line="102" selection-start-column="10" selection-end-line="102" selection-end-column="20" />
+          <folding>
+            <element signature="e#4767#4768#0" expanded="true" />
+            <element signature="e#4812#4813#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/WheelObstacle.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="83" column="32" lean-forward="true" selection-start-line="83" selection-start-column="32" selection-end-line="83" selection-end-column="32" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1484#1485#0" expanded="true" />
+            <element signature="e#1513#1514#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/PlatformController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-426">
+          <caret line="380" column="59" selection-start-line="380" selection-start-column="59" selection-end-line="380" selection-end-column="59" />
+          <folding>
+            <element signature="e#0#17748#0" expanded="true" />
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
       </provider>
     </entry>
   </component>
