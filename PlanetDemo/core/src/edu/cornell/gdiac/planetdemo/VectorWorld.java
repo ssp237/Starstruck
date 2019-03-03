@@ -100,6 +100,7 @@ public class VectorWorld {
         float dx = x - pos.x; float dy = y - pos.y;
         float dh = (float) Math.sqrt(dx*dx + dy*dy);
         float fx = (dx/dh) * mag; float fy = (dy/dh) * mag;
+        //System.out.println(fx + ", " + fy);
         return new Vector2(fx, fy);
     }
 
@@ -123,6 +124,24 @@ public class VectorWorld {
             }
         }
         return body;
+    }
+
+    /**
+     * Like addBody. Adds the specified obstacle to the world. Alters vector field. Ideal for adding planets.
+     *
+     * @param obj The obstacle/planet to be added to the world.
+     */
+    public void addPlanet(Obstacle obj, float mass) {
+        bodies.put(obj.getBody(), true);
+        Vector2 pos = obj.getBody().getPosition();
+
+        //inefficient, need to change
+        for (int i = 0; i < NUM_VX; i++){
+            for (int j = 0; j < NUM_VY; j++){
+                Vector2 v = new Vector2(i,j);
+                vField.put(v, vField.get(v).add(gForce(pos, i, j, mass)));
+            }
+        }
     }
 
     /**

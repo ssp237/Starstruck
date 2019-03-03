@@ -168,6 +168,13 @@ public class PlatformController extends WorldController implements ContactListen
             { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
     };
 
+    // Location, radius, and drawscale of all the planets.
+    // Each row is a planet. 1st col is x, 2nd is y, 3rd is radius, 4th is mass.
+    // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
+    private static final float[][] PLANETS = {
+            {15f, 5f, 4f, 200f}
+    };
+
     // Other game objects
     /** The goal door position */
     private static Vector2 GOAL_POS = new Vector2(4.0f,14.0f);
@@ -270,6 +277,19 @@ public class PlatformController extends WorldController implements ContactListen
 //            addObject(obj);
 //        }
 
+        String ptname = "planet";
+        for (int i = 0; i < PLANETS.length; i++) {
+            WheelObstacle obj = new WheelObstacle(PLANETS[i][0], PLANETS[i][1], PLANETS[i][2]);
+            obj.setBodyType(BodyDef.BodyType.StaticBody);
+            obj.setDensity(5f);
+            obj.setFriction(BASIC_FRICTION);
+            obj.setRestitution(BASIC_RESTITUTION);
+            obj.setDrawScale(scale);
+            obj.setName(ptname+i);
+            addObject(obj);
+            vectorWorld.addPlanet(obj, PLANETS[i][3]);
+        }
+
         // Create dude
         dwidth  = avatarTexture.getRegionWidth()/scale.x;
         dheight = avatarTexture.getRegionHeight()/scale.y;
@@ -341,6 +361,8 @@ public class PlatformController extends WorldController implements ContactListen
         if (avatar.isShooting()) {
             createBullet();
         }
+
+        avatar.setGravity(vectorWorld.getForce(avatar.getPosition()));
 
         avatar.applyForce();
         //TODO Removed sound stuffs

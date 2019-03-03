@@ -73,6 +73,7 @@ public class DudeModel extends CapsuleObstacle {
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
+    private Vector2 gravity = new Vector2();
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -163,6 +164,10 @@ public class DudeModel extends CapsuleObstacle {
      */
     public void setGrounded(boolean value) {
         isGrounded = value;
+    }
+
+    public void setGravity(Vector2 vec) {
+        gravity.set(-vec.x, -vec.y);
     }
 
     /**
@@ -316,7 +321,14 @@ public class DudeModel extends CapsuleObstacle {
 
         // Velocity too high, clamp it
         if (Math.abs(getVX()) >= getMaxSpeed()) {
-            setVX(Math.signum(getVX())*getMaxSpeed());
+            if (getVX() * movement > 0) {
+                setVX(Math.signum(getVX()) * getMaxSpeed());
+            }
+            else {
+                forceCache.set(getMovement(),0);
+                body.applyForce(forceCache,getPosition(),true);
+            }
+
         } else {
             forceCache.set(getMovement(),0);
             body.applyForce(forceCache,getPosition(),true);
@@ -334,6 +346,11 @@ public class DudeModel extends CapsuleObstacle {
             forceCache.set(0, DUDE_JUMP);
             body.applyLinearImpulse(forceCache,getPosition(),true);
         }
+
+        // Gravity from planets
+        System.out.println(gravity);
+        body.applyForce(gravity, getPosition(), true);
+
     }
 
     /**
@@ -341,7 +358,7 @@ public class DudeModel extends CapsuleObstacle {
      *
      * We use this method to reset cooldowns.
      *
-     * @param delta Number of seconds since last animation frame
+     * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
         // Apply cooldowns
