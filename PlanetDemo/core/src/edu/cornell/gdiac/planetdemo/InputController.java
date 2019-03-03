@@ -69,6 +69,11 @@ public class InputController {
     /** Whether the exit button was pressed. */
     private boolean exitPressed;
     private boolean exitPrevious;
+    /** Whether left and right keys are pressed */
+    private boolean rightPressed;
+    private boolean rightPrevious;
+    private boolean leftPressed;
+    private boolean leftPrevious;
 
     /** How much did we move horizontally? */
     private float horizontal;
@@ -207,6 +212,14 @@ public class InputController {
         return exitPressed && !exitPrevious;
     }
 
+    public boolean didRight() {
+        return rightPressed;
+    }
+
+    public boolean didLeft() {
+        return leftPressed;
+    }
+
     /**
      * Creates a new input controller
      *
@@ -240,6 +253,8 @@ public class InputController {
         exitPrevious = exitPressed;
         nextPrevious = nextPressed;
         prevPrevious = prevPressed;
+        rightPrevious = rightPressed;
+        leftPrevious = leftPressed;
 
         // Check to see if a GamePad is connected
 //        if (xbox.isConnected()) {
@@ -306,6 +321,9 @@ public class InputController {
         prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
         nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
         exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
+        // TODO no controlller support
+        rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT);
+        leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT);
 
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);

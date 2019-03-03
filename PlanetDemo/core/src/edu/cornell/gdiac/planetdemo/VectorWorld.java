@@ -131,9 +131,8 @@ public class VectorWorld {
      *
      * @param obj The obstacle/planet to be added to the world.
      */
-    public void addPlanet(Obstacle obj, float mass) {
+    public void addPlanet(Obstacle obj, float mass, Vector2 pos) {
         bodies.put(obj.getBody(), true);
-        Vector2 pos = obj.getBody().getPosition();
 
         //inefficient, need to change
         for (int i = 0; i < NUM_VX; i++){

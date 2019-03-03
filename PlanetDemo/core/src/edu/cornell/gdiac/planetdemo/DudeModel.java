@@ -74,6 +74,10 @@ public class DudeModel extends CapsuleObstacle {
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
     private Vector2 gravity = new Vector2();
+    /** Indicates whether astronaut is on planet */
+    private boolean onPlanet = false;
+    /** Direction the dude should go when jumping off a planet */
+    public Vector2 dudeJump = new Vector2();
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -221,6 +225,12 @@ public class DudeModel extends CapsuleObstacle {
         return faceRight;
     }
 
+    public boolean getOnPlanet() { return onPlanet; }
+
+    public void setOnPlanet(boolean value) {
+        onPlanet = value;
+    }
+
     /**
      * Creates a new dude at the origin.
      *
@@ -319,37 +329,44 @@ public class DudeModel extends CapsuleObstacle {
 //            body.applyForce(forceCache,getPosition(),true);
 //        }
 
-        // Velocity too high, clamp it
-        if (Math.abs(getVX()) >= getMaxSpeed()) {
-            if (getVX() * movement > 0) {
-                setVX(Math.signum(getVX()) * getMaxSpeed());
-            }
-            else {
-                forceCache.set(getMovement(),0);
-                body.applyForce(forceCache,getPosition(),true);
+//        if (getOnPlanet()) {
+//            if (movement > 0) {
+//
+//            }
+//        }
+
+        if (!getOnPlanet()) {
+            // Velocity too high, clamp it
+            if (Math.abs(getVX()) >= getMaxSpeed()) {
+                if (getVX() * movement > 0) {
+                    setVX(Math.signum(getVX()) * getMaxSpeed());
+                } else {
+                    forceCache.set(getMovement(), 0);
+                    body.applyForce(forceCache, getPosition(), true);
+                }
+
+            } else {
+                forceCache.set(getMovement(), 0);
+                body.applyForce(forceCache, getPosition(), true);
             }
 
-        } else {
-            forceCache.set(getMovement(),0);
-            body.applyForce(forceCache,getPosition(),true);
-        }
-
-        if (Math.abs(getAngularVelocity()) >= DUDE_MAXSPEED) {
-            setAngularVelocity(Math.signum(getVX())*getMaxSpeed());
-        }
-        else {
-            body.applyTorque(-getRotation(), true);
+            if (Math.abs(getAngularVelocity()) >= DUDE_MAXSPEED) {
+                setAngularVelocity(Math.signum(getVX()) * getMaxSpeed());
+            } else {
+                body.applyTorque(-getRotation(), true);
+            }
         }
 
         // Jump!
         if (isJumping()) {
-            forceCache.set(0, DUDE_JUMP);
+            forceCache.set(dudeJump.setLength(DUDE_JUMP));
             body.applyLinearImpulse(forceCache,getPosition(),true);
         }
 
         // Gravity from planets
-        System.out.println(gravity);
-        body.applyForce(gravity, getPosition(), true);
+        //System.out.println(gravity);
+        if (!getOnPlanet())
+            body.applyForce(gravity.setLength(3), getPosition(), true);
 
     }
 

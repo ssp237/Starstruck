@@ -172,7 +172,7 @@ public class PlatformController extends WorldController implements ContactListen
     // Each row is a planet. 1st col is x, 2nd is y, 3rd is radius, 4th is mass.
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     private static final float[][] PLANETS = {
-            {15f, 5f, 4f, 200f}
+            {15f, 10f, 4f, 200f}
     };
 
     // Other game objects
@@ -184,6 +184,9 @@ public class PlatformController extends WorldController implements ContactListen
     private static Vector2 DUDE_POS = new Vector2(2.5f, 5.0f);
     /** The position of the rope bridge */
     private static Vector2 BRIDGE_POS  = new Vector2(9.0f, 3.8f);
+    /** Temprary obstacle used for setting position on planet */
+    private Obstacle curPlanet;
+    private Vector2 contactPoint = new Vector2();
 
     // Physics objects for the game
     /** Reference to the character avatar */
@@ -281,13 +284,14 @@ public class PlatformController extends WorldController implements ContactListen
         for (int i = 0; i < PLANETS.length; i++) {
             WheelObstacle obj = new WheelObstacle(PLANETS[i][0], PLANETS[i][1], PLANETS[i][2]);
             obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(5f);
+            obj.setDensity(500f);
             obj.setFriction(BASIC_FRICTION);
             obj.setRestitution(BASIC_RESTITUTION);
             obj.setDrawScale(scale);
             obj.setName(ptname+i);
             addObject(obj);
-            vectorWorld.addPlanet(obj, PLANETS[i][3]);
+            //Vector2 pos = new Vector2(obj.getBody().getPosition().x, obj.getBody().getPosition().y - obj.getRadius());
+            vectorWorld.addPlanet(obj, PLANETS[i][3], obj.getCenter()); //Radius parameter is temporary fix for why center is off
         }
 
         // Create dude
@@ -351,6 +355,7 @@ public class PlatformController extends WorldController implements ContactListen
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+        avatar.setFixedRotation(false);
         // Process actions in object model
         avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
         avatar.setJumping(InputController.getInstance().didPrimary());
@@ -362,9 +367,36 @@ public class PlatformController extends WorldController implements ContactListen
             createBullet();
         }
 
-        avatar.setGravity(vectorWorld.getForce(avatar.getPosition()));
+        //System.out.println(avatar.isGrounded());
+        if (avatar.getOnPlanet()) {
+            Vector2 dir = new Vector2(0, 1);
+            dir.rotateRad(avatar.getAngle());
+            avatar.setFixedRotation(true);
+            Vector2 contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
+            //System.out.println(contactDir);
+            float angle = -contactDir.angleRad(new Vector2 (0, 1));
+            //System.out.println(angle*(float)(180/Math.PI));
+            avatar.setAngle(angle);
+            avatar.setPosition(contactPoint);
+            if (InputController.getInstance().didRight()) {
+                dir.rotateRad(-(float) Math.PI / 2);
+                avatar.setPosition(contactPoint.add(dir.setLength(0.03f)));
+            }
+            if (InputController.getInstance().didLeft()) {
+                dir.rotateRad(-(float) Math.PI / 2);
+                avatar.setPosition(contactPoint.sub(dir.setLength(0.03f)));
+            }
+            if (avatar.isJumping()) {
+                avatar.setOnPlanet(false);
+                avatar.dudeJump.set(dir);
+            }
 
+        }
+
+        if (!avatar.getOnPlanet() && vectorWorld.getForce(avatar.getPosition()) != null)
+            avatar.setGravity(vectorWorld.getForce(avatar.getPosition()));
         avatar.applyForce();
+
         //TODO Removed sound stuffs
 //        if (avatar.isJumping()) {
 //            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
@@ -430,6 +462,18 @@ public class PlatformController extends WorldController implements ContactListen
         try {
             Obstacle bd1 = (Obstacle)body1.getUserData();
             Obstacle bd2 = (Obstacle)body2.getUserData();
+            System.out.println(bd1.getName() + bd2.getName());
+
+            /** Force astronaut's position on planet */
+            curPlanet = (bd1 == avatar) ? bd2 : bd1;
+            if (curPlanet.getName().contains("planet")) {
+                //Vector2 angle = contact.getWorldManifold().getPoints()[0].cpy().sub(objCache.getCenter());
+                //contactDir.set(contact.getWorldManifold().getPoints()[0].cpy().sub(curPlanet.getCenter()));
+                contactPoint.set(contact.getWorldManifold().getPoints()[0].cpy());
+                avatar.setOnPlanet(true);
+            }
+
+
 
             // Test bullet collision with world
             if (bd1.getName().equals("bullet") && bd2 != avatar) {
@@ -467,6 +511,7 @@ public class PlatformController extends WorldController implements ContactListen
      * double jumping.
      */
     public void endContact(Contact contact) {
+        avatar.setOnPlanet(false);
         Fixture fix1 = contact.getFixtureA();
         Fixture fix2 = contact.getFixtureB();
 

@@ -13,6 +13,7 @@ package edu.cornell.gdiac.planetdemo;
 
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.math.*;
 
 //import edu.cornell.gdiac.physics.*;  // For GameCanvas
 
@@ -26,6 +27,8 @@ public class WheelObstacle extends SimpleObstacle {
     protected CircleShape shape;
     /** A cache value for the fixture (for resizing) */
     private Fixture geometry;
+    /** Center of the planet, temporary fix as to why the center does not appear to be at the center */
+    private Vector2 center = new Vector2();
 
     /**
      * Returns the radius of this circle
@@ -44,6 +47,10 @@ public class WheelObstacle extends SimpleObstacle {
     public void setRadius(float value) {
         shape.setRadius(value);
         markDirty(true);
+    }
+
+    public Vector2 getCenter() {
+        return center;
     }
 
     /**
@@ -74,6 +81,7 @@ public class WheelObstacle extends SimpleObstacle {
         super(x,y);
         shape = new CircleShape();
         shape.setRadius(radius);
+        center.set(x, y-radius);
     }
 
     /**

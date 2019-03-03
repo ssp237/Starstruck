@@ -265,6 +265,9 @@ public abstract class Obstacle {
         bodyinfo.angularVelocity = value;
     }
 
+    /** Temporary fix to get the actual center of a planet. Should only be used by planets */
+    public Vector2 getCenter() { return new Vector2(); }
+
     /**
      * Returns true if the body is active
      *
