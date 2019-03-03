@@ -288,6 +288,7 @@ public class PlatformController extends WorldController implements ContactListen
             obj.setFriction(BASIC_FRICTION);
             obj.setRestitution(BASIC_RESTITUTION);
             obj.setDrawScale(scale);
+            obj.setTexture(planet1);
             obj.setName(ptname+i);
             addObject(obj);
             //Vector2 pos = new Vector2(obj.getBody().getPosition().x, obj.getBody().getPosition().y - obj.getRadius());
