@@ -88,6 +88,8 @@ public abstract class WorldController implements Screen {
     protected TextureRegion planet3;
     protected TextureRegion planet4;
 
+    private WheelObstacle planetCache;
+
     /**
      * Preloads the assets for this controller.
      *
@@ -608,7 +610,15 @@ public abstract class WorldController implements Screen {
 
         canvas.begin();
         for(Obstacle obj : objects) {
-            obj.draw(canvas);
+            if (obj.getName().contains("planet")) {
+                planetCache = (WheelObstacle) obj;
+
+                canvas.draw(planetCache.getTexture(),Color.WHITE,planetCache.origin.x,planetCache.origin.y,planetCache.getX()*planetCache.drawScale.x,
+                        planetCache.getY()*planetCache.drawScale.x,planetCache.getAngle(),planetCache.scaleDraw,planetCache.scaleDraw);
+
+            }
+            else
+                obj.draw(canvas);
         }
         canvas.end();
 
