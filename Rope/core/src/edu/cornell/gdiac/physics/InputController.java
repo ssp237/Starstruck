@@ -126,6 +126,8 @@ public class InputController {
 	public float getVertical2() {return vertical2;}
 
 	public boolean getAnchored() {return anchored;}
+	public void setAnchored() {anchored = !anchored;}
+
 	/**
 	 * Returns the current position of the crosshairs on the screen.
 	 *

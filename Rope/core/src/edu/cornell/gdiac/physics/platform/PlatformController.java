@@ -348,7 +348,7 @@ public class PlatformController extends WorldController implements ContactListen
 		//add anchor
 		dwidth = bulletTexture.getRegionWidth()/scale.x;
 		dheight = bulletTexture.getRegionHeight()/scale.y;
-		Spinner anchor = new Spinner(SPIN_POS.x-1.5f,SPIN_POS.y-1,dwidth,dheight);
+		Spinner anchor = new Spinner(SPIN_POS.x-2.0f,SPIN_POS.y-1.0f,dwidth,dheight);
 		anchor.setDrawScale(scale);
 		anchor.setTexture(bulletTexture);
 		addObject(anchor);
@@ -416,7 +416,11 @@ public class PlatformController extends WorldController implements ContactListen
 			avatar.setMovementVert(InputController.getInstance().getVertical() * avatar.getForce());
 			avatar.setShooting(InputController.getInstance().didSecondary());
 		} else {
-			avatar.setPosition(SPIN_POS.x-1f,SPIN_POS.y-1);
+			if (avatar.getPosition().dst(SPIN_POS.x-1.0f, SPIN_POS.y-1.0f) < 3.0f) {
+				avatar.setPosition(SPIN_POS.x-2.0f,SPIN_POS.y-1.0f);
+			} else {
+				InputController.getInstance().setAnchored();
+			}
 		}
 
 		avatar2.setMovement(InputController.getInstance().getHorizontal2() *avatar2.getForce());

@@ -2,18 +2,46 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="855b880e-1611-4154-9aba-4ebfb529f5bd" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/core/assets/hs_err_pid38357.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/assets/hs_err_pid38385.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/assets/hs_err_pid38394.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/assets/hs_err_pid38405.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/assets/hs_err_pid38418.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/assets/hs_err_pid38426.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/assets/hs_err_pid38440.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/assets/hs_err_pid38491.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/assets/hs_err_pid38508.log" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/core/assets/hs_err_pid38524.log" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid34226.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid34241.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid34260.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid36657.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid36692.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid36936.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid36943.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37118.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37189.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37207.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37242.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37257.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37263.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37277.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37290.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37295.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37301.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37314.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37319.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37336.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37753.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid37782.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid38357.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid38385.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid38394.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid38405.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid38418.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid38426.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid38440.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid38491.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid38508.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid38524.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid38578.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid39157.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/hs_err_pid39495.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/platform/bullet.png" beforeDir="false" afterPath="$PROJECT_DIR$/core/assets/platform/bullet.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/assets/platform/star.png" beforeDir="false" afterPath="$PROJECT_DIR$/core/assets/platform/star.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/out/production/classes/edu/cornell/gdiac/physics/platform/PlatformController.class" beforeDir="false" afterPath="$PROJECT_DIR$/core/out/production/classes/edu/cornell/gdiac/physics/platform/PlatformController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/InputController.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/InputController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/classes/" />
@@ -42,7 +70,7 @@
         <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/GDXRoot.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="214">
-              <caret line="81" column="9" lean-forward="true" selection-start-line="81" selection-start-column="9" selection-end-line="81" selection-end-column="9" />
+              <caret line="81" column="9" selection-start-line="81" selection-start-column="9" selection-end-line="81" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -65,20 +93,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/ragdoll/RagdollController.java">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="107">
-              <caret line="168" column="29" selection-start-line="168" selection-start-column="29" selection-end-line="168" selection-end-column="29" />
+            <state relative-caret-position="61">
+              <caret line="419" column="63" selection-start-line="419" selection-start-column="63" selection-end-line="419" selection-end-column="63" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/InputController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="111">
-              <caret line="202" column="28" selection-start-line="202" selection-start-column="28" selection-end-line="202" selection-end-column="28" />
+            <state relative-caret-position="125">
+              <caret line="128" column="52" lean-forward="true" selection-start-line="128" selection-start-column="52" selection-end-line="128" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -102,6 +130,10 @@
       <find>position</find>
       <find>draw</find>
       <find>background</find>
+      <find>backgroundTexture</find>
+      <find>background.png</find>
+      <find>anchor</find>
+      <find>keys.r</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -203,7 +235,7 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551672072376" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1551673701900" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/build.gradle" />
   </component>
   <component name="RunDashboard">
@@ -314,13 +346,6 @@
     </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/WorldController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-375">
-          <caret line="60" column="32" selection-start-line="60" selection-start-column="32" selection-end-line="60" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -425,17 +450,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/InputController.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1193">
-          <caret line="96" column="41" lean-forward="true" selection-start-line="96" selection-start-column="41" selection-end-line="96" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/GDXRoot.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="214">
-          <caret line="81" column="9" lean-forward="true" selection-start-line="81" selection-start-column="9" selection-end-line="81" selection-end-column="9" />
+          <caret line="81" column="9" selection-start-line="81" selection-start-column="9" selection-end-line="81" selection-end-column="9" />
         </state>
       </provider>
     </entry>
@@ -446,10 +464,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/WorldController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-375">
+          <caret line="60" column="32" selection-start-line="60" selection-start-column="32" selection-end-line="60" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/InputController.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="125">
+          <caret line="128" column="52" lean-forward="true" selection-start-line="128" selection-start-column="52" selection-end-line="128" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/physics/platform/PlatformController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="202" column="28" selection-start-line="202" selection-start-column="28" selection-end-line="202" selection-end-column="28" />
+        <state relative-caret-position="61">
+          <caret line="419" column="63" selection-start-line="419" selection-start-column="63" selection-end-line="419" selection-end-column="63" />
         </state>
       </provider>
     </entry>
