@@ -134,6 +134,8 @@ public class VectorWorld {
     public void addPlanet(Obstacle obj, float mass) {
         bodies.put(obj.getBody(), true);
         Vector2 pos = obj.getBody().getPosition();
+        pos.y -= 5.5;
+        System.out.println(pos);
 
         //inefficient, need to change
         for (int i = 0; i < NUM_VX; i++){
@@ -210,7 +212,6 @@ public class VectorWorld {
      */
     public Vector2 getForce(Vector2 pos){
         Vector2 newPos = screenToCell(pos);
-        System.out.println(newPos);
         return vField.get(newPos);
     }
 
