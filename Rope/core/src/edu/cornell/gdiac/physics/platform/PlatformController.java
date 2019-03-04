@@ -138,9 +138,7 @@ public class PlatformController extends WorldController implements ContactListen
 		backgroundTexture = createTexture(manager,BACKG_FILE,false);
 		planetTexture = createTexture(manager, PLANET_FILE, false);
 		starTexture = createTexture(manager, STAR_FILE, false);
-		backgroundTexture = createTexture(manager,BACKG_FILE,false);
-
-
+		backgroundTexture = createTexture(manager, BACKG_FILE, false);
 
 		SoundController sounds = SoundController.getInstance();
 		sounds.allocate(manager, JUMP_FILE);
@@ -328,10 +326,40 @@ public class PlatformController extends WorldController implements ContactListen
 		// Create star
 		dwidth  = starTexture.getRegionWidth()/scale.x;
 		dheight = starTexture.getRegionHeight()/scale.y;
-		Spinner spinPlatform = new Spinner(SPIN_POS.x,SPIN_POS.y,dwidth,dheight);
-		spinPlatform.setDrawScale(scale);
-		spinPlatform.setTexture(starTexture);
-		addObject(spinPlatform);
+		Spinner star1 = new Spinner(SPIN_POS.x,SPIN_POS.y,dwidth,dheight);
+		star1.setDrawScale(scale);
+		star1.setTexture(starTexture);
+		addObject(star1);
+
+		dwidth  = starTexture.getRegionWidth()/scale.x;
+		dheight = starTexture.getRegionHeight()/scale.y;
+		Spinner star2 = new Spinner(SPIN_POS.x+0.5f,SPIN_POS.y-1,dwidth,dheight);
+		star2.setDrawScale(scale);
+		star2.setTexture(starTexture);
+		addObject(star2);
+
+		dwidth  = starTexture.getRegionWidth()/scale.x;
+		dheight = starTexture.getRegionHeight()/scale.y;
+		Spinner star3 = new Spinner(SPIN_POS.x-0.5f,SPIN_POS.y-1,dwidth,dheight);
+		star3.setDrawScale(scale);
+		star3.setTexture(starTexture);
+		addObject(star3);
+
+		//add anchor
+		dwidth = bulletTexture.getRegionWidth()/scale.x;
+		dheight = bulletTexture.getRegionHeight()/scale.y;
+		Spinner anchor = new Spinner(SPIN_POS.x-1.5f,SPIN_POS.y-1,dwidth,dheight);
+		anchor.setDrawScale(scale);
+		anchor.setTexture(bulletTexture);
+		addObject(anchor);
+
+
+//		dwidth  = starTexture.getRegionWidth()/scale.x;
+//		dheight = starTexture.getRegionHeight()/scale.y;
+//		Spinner star4 = new Spinner(SPIN_POS.x-1,SPIN_POS.y-0.5f,dwidth,dheight);
+//		star4.setDrawScale(scale);
+//		star4.setTexture(starTexture);
+//		addObject(star4);
 
 //		dwidth  = starTexture.getRegionWidth()/scale.x;
 //		dheight = starTexture.getRegionHeight()/scale.y;
@@ -388,10 +416,7 @@ public class PlatformController extends WorldController implements ContactListen
 			avatar.setMovementVert(InputController.getInstance().getVertical() * avatar.getForce());
 			avatar.setShooting(InputController.getInstance().didSecondary());
 		} else {
-			if (InputController.getInstance().getTime() == 0) {
-				Vector2 pos = avatar.getPosition();
-				avatar.setPosition(pos);
-			}
+			avatar.setPosition(SPIN_POS.x-1f,SPIN_POS.y-1);
 		}
 
 		avatar2.setMovement(InputController.getInstance().getHorizontal2() *avatar2.getForce());
