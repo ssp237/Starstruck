@@ -183,8 +183,11 @@ public class PlatformController extends WorldController implements ContactListen
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-//            /{7f, 7f, 4f, 7000f, 0.58f},
-            {20f, 13f, 4f, 7000f, 0.58f}
+            {-7f, -7f, 14.1f, 57000f, 1.99f},
+            {13f, 15f, 4f, 6000f, 0.43f},
+            {30f, 5f, 4f, 6000f, 0.81f},
+            {25f, 15f, 3f, 2500f, 0.43f},
+            {18f, 0f, 3f, 2500f, 0.43f},
     };
 
     // Other game objects
@@ -300,7 +303,24 @@ public class PlatformController extends WorldController implements ContactListen
             obj.setFriction(BASIC_FRICTION);
             obj.setRestitution(BASIC_RESTITUTION);
             obj.setDrawScale(scale);
-            obj.setTexture(planet1);
+            int numPlanet = i % 4;
+            switch(numPlanet) {
+                case 0:
+                    obj.setTexture(planet1);
+                    break;
+                case 1:
+                    obj.setTexture(planet2);
+                    break;
+                case 2:
+                    obj.setTexture(planet3);
+                    break;
+                case 3:
+                    obj.setTexture(planet4);
+                    break;
+                default:
+                    obj.setTexture(planet1);
+                    break;
+            }
             obj.setName(ptname+i);
             obj.scaleDraw = PLANETS[i][4];
             addObject(obj);
@@ -490,6 +510,7 @@ public class PlatformController extends WorldController implements ContactListen
             if (curPlanet.getName().contains("planet")) {
                 //Vector2 angle = contact.getWorldManifold().getPoints()[0].cpy().sub(objCache.getCenter());
                 //contactDir.set(contact.getWorldManifold().getPoints()[0].cpy().sub(curPlanet.getCenter()));
+                //contactPoint.set(contact.getWorldManifold().getPoints()[0].cpy());
                 contactPoint.set(contact.getWorldManifold().getPoints()[0].cpy());
                 avatar.setOnPlanet(true);
             }
@@ -509,6 +530,8 @@ public class PlatformController extends WorldController implements ContactListen
             if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
                     (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
                 avatar.setGrounded(true);
+                avatar.setOnPlanet(true);
+                contactPoint.set(avatar.getPosition());
                 sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
             }
 
@@ -576,9 +599,10 @@ public class PlatformController extends WorldController implements ContactListen
 
         canvas.begin();
         for(Obstacle obj : objects) {
+            System.out.println(obj.getName());
             if (obj.getName().contains("planet")) {
+                System.out.println("yeet");
                 planetCache = (WheelObstacle) obj;
-
                 canvas.draw(planetCache.getTexture(),Color.WHITE,planetCache.origin.x,planetCache.origin.y,
                         planetCache.getX()*planetCache.drawScale.x,planetCache.getY()*planetCache.drawScale.x,
                         planetCache.getAngle(),planetCache.scaleDraw,planetCache.scaleDraw);
