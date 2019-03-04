@@ -81,6 +81,9 @@ public class InputController {
 
 	private float vertical2;
 
+	private boolean anchored;
+
+	private Vector2 anchoredPosition;
 
 	/** The crosshair position (for raddoll) */
 	private Vector2 crosshair;
@@ -88,6 +91,10 @@ public class InputController {
 	private Vector2 crosscache;
 	/** For the gamepad crosshair control */
 	private float momentum;
+
+	private float time = 1;
+
+	public float getTime() {return time;}
 	
 	/** An X-Box controller (if it is connected) */
 	XBox360Controller xbox;
@@ -117,6 +124,8 @@ public class InputController {
 
 	public float getHorizontal2() {return horizontal2;}
 	public float getVertical2() {return vertical2;}
+
+	public boolean getAnchored() {return anchored;}
 	/**
 	 * Returns the current position of the crosshairs on the screen.
 	 *
@@ -348,7 +357,13 @@ public class InputController {
 			horizontal2 += 1.0f;
 		}
 
+		if (Gdx.input.isKeyPressed(Input.Keys.X)) {
+			anchored = !anchored;
+			time = 0;
 
+		} else {
+			time++;
+		}
 
 		
 		// Mouse results

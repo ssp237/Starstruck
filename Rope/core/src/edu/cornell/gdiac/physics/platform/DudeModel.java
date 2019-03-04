@@ -73,7 +73,10 @@ public class DudeModel extends CapsuleObstacle {
 	/** Ground sensor to represent our feet */
 	private Fixture sensorFixture;
 	private PolygonShape sensorShape;
-	
+
+
+	private boolean isAnchored;
+
 	/** Cache for internal force calculations */
 	private Vector2 forceCache = new Vector2();
 
@@ -89,6 +92,8 @@ public class DudeModel extends CapsuleObstacle {
 	}
 
 	public float getMovementVert() {return movementVert; }
+
+	//public void setIsAnchored(boolean anchored) {isAnchored = anchored;}
 	/**
 	 * Sets left/right movement of this character.
 	 * 

@@ -53,6 +53,8 @@ public class PlatformController extends WorldController implements ContactListen
 
 	private static final String PLANET_FILE = "platform/planet.png";
 
+	private static final String STAR_FILE = "platform/star.png";
+
 	/** Texture asset for character avatar */
 	private TextureRegion avatarTexture;
 	/** Texture asset for the spinning barrier */
@@ -65,6 +67,10 @@ public class PlatformController extends WorldController implements ContactListen
 	private TextureRegion backgroundTexture;
 
 	private TextureRegion planetTexture;
+
+	private TextureRegion starTexture;
+
+	private Vector2 pos;
 
 	
 	/** Track asset loading from all instances and subclasses */
@@ -94,6 +100,11 @@ public class PlatformController extends WorldController implements ContactListen
 		assets.add(BULLET_FILE);
 		manager.load(ROPE_FILE, Texture.class);
 		assets.add(ROPE_FILE);
+		manager.load(PLANET_FILE, Texture.class);
+		assets.add(PLANET_FILE);
+		manager.load(STAR_FILE, Texture.class);
+		assets.add(STAR_FILE);
+
 		
 		manager.load(JUMP_FILE, Sound.class);
 		assets.add(JUMP_FILE);
@@ -126,6 +137,7 @@ public class PlatformController extends WorldController implements ContactListen
 		bridgeTexture = createTexture(manager,ROPE_FILE,false);
 		backgroundTexture = createTexture(manager,BACKG_FILE,false);
 		planetTexture = createTexture(manager, PLANET_FILE, false);
+		starTexture = createTexture(manager, STAR_FILE, false);
 
 
 		SoundController sounds = SoundController.getInstance();
@@ -245,9 +257,9 @@ public class PlatformController extends WorldController implements ContactListen
 	 */
 	private void populateLevel() {
 		//Background
-		canvas.begin();
-		canvas.draw(backgroundTexture, Color.WHITE, 0, 0,canvas.getWidth(),canvas.getHeight());
-		canvas.end();
+//		canvas.begin();
+//		canvas.draw(backgroundTexture, Color.WHITE, 0, 0,canvas.getWidth(),canvas.getHeight());
+//		canvas.end();
 
 		// Add level goal
 		float dwidth  = goalTile.getRegionWidth()/scale.x;
@@ -307,9 +319,6 @@ public class PlatformController extends WorldController implements ContactListen
 		addObject(avatar2);
 
 
-
-
-
 		// Create rope bridge
 		dwidth  = bridgeTexture.getRegionWidth()/scale.x;
 		dheight = bridgeTexture.getRegionHeight()/scale.y;
@@ -318,13 +327,20 @@ public class PlatformController extends WorldController implements ContactListen
 		bridge.setDrawScale(scale);
 		addObject(bridge);
 		
-		// Create planet
-		dwidth  = planetTexture.getRegionWidth()/scale.x;
-		dheight = planetTexture.getRegionHeight()/scale.y;
+		// Create star
+		dwidth  = starTexture.getRegionWidth()/scale.x;
+		dheight = starTexture.getRegionHeight()/scale.y;
 		Spinner spinPlatform = new Spinner(SPIN_POS.x,SPIN_POS.y,dwidth,dheight);
 		spinPlatform.setDrawScale(scale);
-		spinPlatform.setTexture(planetTexture);
+		spinPlatform.setTexture(starTexture);
 		addObject(spinPlatform);
+
+//		dwidth  = starTexture.getRegionWidth()/scale.x;
+//		dheight = starTexture.getRegionHeight()/scale.y;
+//		Spinner star = new Spinner(SPIN_POS.x,SPIN_POS.y,10,10);
+//		//star.setDrawScale(scale);
+//		star.setTexture(planetTexture);
+//		addObject(star);
 	}
 	
 	/**
@@ -367,13 +383,24 @@ public class PlatformController extends WorldController implements ContactListen
 	 */
 	public void update(float dt) {
 		// Process actions in object model
-		avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
-		avatar.setMovementVert(InputController.getInstance().getVertical() * avatar.getForce());
-		avatar.setShooting(InputController.getInstance().didSecondary());
+		//avatar.setIsAnchored(InputController.getInstance().getAnchored());
+
+		if (!InputController.getInstance().getAnchored()) {
+			avatar.setMovement(InputController.getInstance().getHorizontal() * avatar.getForce());
+			avatar.setMovementVert(InputController.getInstance().getVertical() * avatar.getForce());
+			avatar.setShooting(InputController.getInstance().didSecondary());
+		} else {
+			if (InputController.getInstance().getTime() == 0) {
+				Vector2 pos = avatar.getPosition();
+				avatar.setPosition(pos);
+			}
+		}
 
 		avatar2.setMovement(InputController.getInstance().getHorizontal2() *avatar2.getForce());
 		avatar2.setMovementVert(InputController.getInstance().getVertical2() * avatar2.getForce());
 		avatar2.setShooting(InputController.getInstance().didSecondary());
+
+
 		
 		// Add a bullet if we fire
 		if (avatar.isShooting()) {
