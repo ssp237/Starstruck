@@ -104,8 +104,8 @@ public class PlatformController extends WorldController implements ContactListen
 		assets.add(PLANET_FILE);
 		manager.load(STAR_FILE, Texture.class);
 		assets.add(STAR_FILE);
-
-		
+		manager.load(BACKG_FILE, Texture.class);
+		assets.add(BACKG_FILE);
 		manager.load(JUMP_FILE, Sound.class);
 		assets.add(JUMP_FILE);
 		manager.load(PEW_FILE, Sound.class);
@@ -138,6 +138,8 @@ public class PlatformController extends WorldController implements ContactListen
 		backgroundTexture = createTexture(manager,BACKG_FILE,false);
 		planetTexture = createTexture(manager, PLANET_FILE, false);
 		starTexture = createTexture(manager, STAR_FILE, false);
+		backgroundTexture = createTexture(manager,BACKG_FILE,false);
+
 
 
 		SoundController sounds = SoundController.getInstance();
@@ -256,10 +258,6 @@ public class PlatformController extends WorldController implements ContactListen
 	 * Lays out the game geography.
 	 */
 	private void populateLevel() {
-		//Background
-//		canvas.begin();
-//		canvas.draw(backgroundTexture, Color.WHITE, 0, 0,canvas.getWidth(),canvas.getHeight());
-//		canvas.end();
 
 		// Add level goal
 		float dwidth  = goalTile.getRegionWidth()/scale.x;
@@ -532,6 +530,32 @@ public class PlatformController extends WorldController implements ContactListen
 				avatar.setGrounded(false);
 			}
 		}
+	}
+
+	public void draw(float dt) {
+		canvas.clear();
+
+		// Draw background unscaled.
+		canvas.begin();
+		canvas.draw(backgroundTexture, Color.WHITE, 0, 0,canvas.getWidth(),canvas.getHeight());
+		canvas.end();
+
+		canvas.begin();
+		for(Obstacle obj : objects) {
+			obj.draw(canvas);
+		}
+		canvas.end();
+
+		canvas.begin();
+		if (isDebug()) {
+			canvas.beginDebug();
+			for(Obstacle obj : objects) {
+				obj.drawDebug(canvas);
+			}
+			canvas.endDebug();
+		}
+
+		canvas.end();
 	}
 	
 	/** Unused ContactListener method */
