@@ -198,7 +198,9 @@ public class VectorWorld {
      * rounding down.
      */
     private Vector2 screenToCell(Vector2 pos){
-        return new Vector2((float) Math.floor(pos.x/width), (float) Math.floor(pos.y/width));
+        float x = Math.max(0, Math.min(NUM_VX - 1, (float) Math.floor(pos.x/width)));
+        float y = Math.max(0, Math.min(NUM_VY - 1, (float) Math.floor(pos.y/width)));
+        return new Vector2(x, y);
     }
 
     /**
@@ -208,6 +210,7 @@ public class VectorWorld {
      */
     public Vector2 getForce(Vector2 pos){
         Vector2 newPos = screenToCell(pos);
+        System.out.println(newPos);
         return vField.get(newPos);
     }
 
