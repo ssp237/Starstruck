@@ -360,7 +360,7 @@ public class DudeModel extends CapsuleObstacle {
         // Jump!
         if (isJumping()) {
             forceCache.set(dudeJump.setLength(DUDE_JUMP));
-            body.applyLinearImpulse(forceCache,getPosition(),true);
+            body.setLinearVelocity(forceCache);//,getPosition(),true);
         }
 
         // Gravity from planets

@@ -402,9 +402,11 @@ public class PlatformController extends WorldController implements ContactListen
                 contactDir.rotateRad(-(float) Math.PI / 2);
                 avatar.setPosition(contactPoint.sub(contactDir.setLength(0.03f)));
             }
+            System.out.println(avatar.getPosition() + ", " + curPlanet.getPosition());
             if (avatar.isJumping()) {
+                contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
+                System.out.println(contactDir);
                 avatar.setOnPlanet(false);
-                contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
                 avatar.dudeJump.set(contactDir);
             }
 
@@ -479,7 +481,7 @@ public class PlatformController extends WorldController implements ContactListen
         try {
             Obstacle bd1 = (Obstacle)body1.getUserData();
             Obstacle bd2 = (Obstacle)body2.getUserData();
-            System.out.println(bd1.getName() + bd2.getName());
+            //System.out.println(bd1.getName() + bd2.getName());
 
             /** Force astronaut's position on planet */
             curPlanet = (bd1 == avatar) ? bd2 : bd1;
