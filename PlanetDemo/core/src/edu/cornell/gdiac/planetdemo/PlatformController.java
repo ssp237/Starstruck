@@ -371,10 +371,10 @@ public class PlatformController extends WorldController implements ContactListen
     public void update(float dt) {
         avatar.setFixedRotation(false);
         // Process actions in object model
-        avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
+        //avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
         avatar.setJumping(InputController.getInstance().didPrimary());
         avatar.setShooting(InputController.getInstance().didSecondary());
-        avatar.setRotation(InputController.getInstance().getTurn());
+        avatar.setRotation(InputController.getInstance().getHorizontal());
 
         // Add a bullet if we fire
         if (avatar.isShooting()) {
@@ -383,8 +383,8 @@ public class PlatformController extends WorldController implements ContactListen
 
         //System.out.println(avatar.isGrounded());
         if (avatar.getOnPlanet()) {
-            Vector2 dir = new Vector2(0, 1);
-            dir.rotateRad(avatar.getAngle());
+//            Vector2 dir = new Vector2(0, 1);
+//            dir.rotateRad(avatar.getAngle());
             avatar.setFixedRotation(true);
             Vector2 contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
             //System.out.println(contactDir);
@@ -393,16 +393,19 @@ public class PlatformController extends WorldController implements ContactListen
             avatar.setAngle(angle);
             avatar.setPosition(contactPoint);
             if (InputController.getInstance().didRight()) {
-                dir.rotateRad(-(float) Math.PI / 2);
-                avatar.setPosition(contactPoint.add(dir.setLength(0.03f)));
+                contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
+                contactDir.rotateRad(-(float) Math.PI / 2);
+                avatar.setPosition(contactPoint.add(contactDir.setLength(0.03f)));
             }
             if (InputController.getInstance().didLeft()) {
-                dir.rotateRad(-(float) Math.PI / 2);
-                avatar.setPosition(contactPoint.sub(dir.setLength(0.03f)));
+                //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
+                contactDir.rotateRad(-(float) Math.PI / 2);
+                avatar.setPosition(contactPoint.sub(contactDir.setLength(0.03f)));
             }
             if (avatar.isJumping()) {
                 avatar.setOnPlanet(false);
-                avatar.dudeJump.set(dir);
+                contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
+                avatar.dudeJump.set(contactDir);
             }
 
         }

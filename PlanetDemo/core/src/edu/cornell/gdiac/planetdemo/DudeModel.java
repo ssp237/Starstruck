@@ -337,18 +337,18 @@ public class DudeModel extends CapsuleObstacle {
 
         if (!getOnPlanet()) {
             // Velocity too high, clamp it
-            if (Math.abs(getVX()) >= getMaxSpeed()) {
-                if (getVX() * movement > 0) {
-                    setVX(Math.signum(getVX()) * getMaxSpeed());
-                } else {
-                    forceCache.set(getMovement(), 0);
-                    body.applyForce(forceCache, getPosition(), true);
-                }
-
-            } else {
-                forceCache.set(getMovement(), 0);
-                body.applyForce(forceCache, getPosition(), true);
-            }
+//            if (Math.abs(getVX()) >= getMaxSpeed()) {
+//                if (getVX() * movement > 0) {
+//                    setVX(Math.signum(getVX()) * getMaxSpeed());
+//                } else {
+//                    forceCache.set(getMovement(), 0);
+//                    body.applyForce(forceCache, getPosition(), true);
+//                }
+//
+//            } else {
+//                forceCache.set(getMovement(), 0);
+//                body.applyForce(forceCache, getPosition(), true);
+//            }
 
             if (Math.abs(getAngularVelocity()) >= DUDE_MAXSPEED) {
                 setAngularVelocity(Math.signum(getVX()) * getMaxSpeed());
