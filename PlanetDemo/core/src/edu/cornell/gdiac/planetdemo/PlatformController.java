@@ -183,7 +183,8 @@ public class PlatformController extends WorldController implements ContactListen
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-            {15f, 10f, 4f, 200f, 0.10f}
+            {7f, 7f, 4f, 200f, 0.58f},
+            {20f, 13f, 4f, 200f, 0.58f}
     };
 
     // Other game objects
@@ -571,8 +572,9 @@ public class PlatformController extends WorldController implements ContactListen
             if (obj.getName().contains("planet")) {
                 planetCache = (WheelObstacle) obj;
 
-                canvas.draw(planetCache.getTexture(),Color.WHITE,planetCache.origin.x,planetCache.origin.y,planetCache.getX()*planetCache.drawScale.x,
-                        planetCache.getY()*planetCache.drawScale.x,planetCache.getAngle(),planetCache.scaleDraw,planetCache.scaleDraw);
+                canvas.draw(planetCache.getTexture(),Color.WHITE,planetCache.origin.x,planetCache.origin.y,
+                        planetCache.getX()*planetCache.drawScale.x,planetCache.getY()*planetCache.drawScale.x,
+                        planetCache.getAngle(),planetCache.scaleDraw,planetCache.scaleDraw);
 
             }
             else

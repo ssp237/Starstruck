@@ -29,8 +29,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/PlatformController.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="377">
-              <caret line="66" column="58" selection-start-line="66" selection-start-column="58" selection-end-line="66" selection-end-column="58" />
+            <state relative-caret-position="472">
+              <caret line="185" column="18" selection-start-line="185" selection-start-column="18" selection-end-line="185" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -47,8 +47,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/VectorWorld.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1380">
-              <caret line="211" selection-start-line="211" selection-end-line="211" />
+            <state relative-caret-position="221">
+              <caret line="97" column="28" selection-start-line="97" selection-start-column="28" selection-end-line="97" selection-end-column="28" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#2382#2383#0" expanded="true" />
@@ -103,6 +103,7 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/.idea/workspace.xml" />
+        <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/VectorWorld.java" />
         <option value="$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/PlatformController.java" />
       </list>
     </option>
@@ -320,18 +321,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/VectorWorld.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1380">
-          <caret line="211" selection-start-line="211" selection-end-line="211" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2382#2383#0" expanded="true" />
-            <element signature="e#2410#2411#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/Obstacle.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="11205">
@@ -353,10 +342,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/VectorWorld.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="97" column="28" selection-start-line="97" selection-start-column="28" selection-end-line="97" selection-end-column="28" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2382#2383#0" expanded="true" />
+            <element signature="e#2410#2411#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/core/src/edu/cornell/gdiac/planetdemo/PlatformController.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="377">
-          <caret line="66" column="58" selection-start-line="66" selection-start-column="58" selection-end-line="66" selection-end-column="58" />
+        <state relative-caret-position="472">
+          <caret line="185" column="18" selection-start-line="185" selection-start-column="18" selection-end-line="185" selection-end-column="18" />
         </state>
       </provider>
     </entry>
