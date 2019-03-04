@@ -176,10 +176,11 @@ public class PlatformController extends WorldController implements ContactListen
     };
 
     // Location, radius, and drawscale of all the planets.
-    // Each row is a planet. 1st col is x, 2nd is y, 3rd is radius, 4th is mass.
+    // Each row is a planet. 1st col is x, 2nd is y, 3rd is radius, 4th is mass, 5th is scale for drawing.
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
+    // Better solution for drawing?
     private static final float[][] PLANETS = {
-            {15f, 10f, 4f, 200f}
+            {15f, 10f, 4f, 200f, 0.58f}
     };
 
     // Other game objects
@@ -295,7 +296,9 @@ public class PlatformController extends WorldController implements ContactListen
             obj.setFriction(BASIC_FRICTION);
             obj.setRestitution(BASIC_RESTITUTION);
             obj.setDrawScale(scale);
+            obj.setTexture(planet1);
             obj.setName(ptname+i);
+            obj.scaleDraw = PLANETS[i][4];
             addObject(obj);
             //Vector2 pos = new Vector2(obj.getBody().getPosition().x, obj.getBody().getPosition().y - obj.getRadius());
             vectorWorld.addPlanet(obj, PLANETS[i][3], obj.getCenter()); //Radius parameter is temporary fix for why center is off
