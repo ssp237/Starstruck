@@ -22,7 +22,7 @@ public class VectorWorld {
     /** Number of points in the vector field (y direction)*/
     private final int NUM_VY = 50;
     /** Gravitational constant (will probably change)*/
-    private final double G = 6.67E-2;
+    private final double G = 2.67E-2;
 
     /** Vector field representing this World's gravity*/
     /** Each key represents the (x,y) coordinate of a point in a grid on the screen, and
@@ -131,10 +131,10 @@ public class VectorWorld {
      *
      * @param obj The obstacle/planet to be added to the world.
      */
-    public void addPlanet(Obstacle obj, float mass) {
+    public void addPlanet(WheelObstacle obj, float mass) {
         bodies.put(obj.getBody(), true);
-        Vector2 pos = obj.getBody().getPosition();
-        pos.y -= 5.5;
+        Vector2 pos = obj.getCenter();
+        pos.y -= 1.75;
         System.out.println(pos);
 
         //inefficient, need to change
