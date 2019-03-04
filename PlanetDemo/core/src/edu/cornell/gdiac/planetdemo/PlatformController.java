@@ -64,6 +64,9 @@ public class PlatformController extends WorldController implements ContactListen
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
 
+    /** Cache variable to store current planet being drawn*/
+    private WheelObstacle planetCache;
+
     /**
      * Preloads the assets for this controller.
      *
@@ -565,7 +568,15 @@ public class PlatformController extends WorldController implements ContactListen
 
         canvas.begin();
         for(Obstacle obj : objects) {
-            obj.draw(canvas);
+            if (obj.getName().contains("planet")) {
+                planetCache = (WheelObstacle) obj;
+
+                canvas.draw(planetCache.getTexture(),Color.WHITE,planetCache.origin.x,planetCache.origin.y,planetCache.getX()*planetCache.drawScale.x,
+                        planetCache.getY()*planetCache.drawScale.x,planetCache.getAngle(),planetCache.scaleDraw,planetCache.scaleDraw);
+
+            }
+            else
+                obj.draw(canvas);
         }
         canvas.end();
 
