@@ -366,8 +366,10 @@ public class DudeModel extends CapsuleObstacle {
 
         // Gravity from planets
         //System.out.println(gravity);
-        if (!getOnPlanet())
-            body.applyForce(gravity.scl(3), getPosition(), true);
+        if (!getOnPlanet()) {
+            body.applyForce(gravity, getPosition(), true);
+        }
+        System.out.println(body.getLinearVelocity());
 
     }
 

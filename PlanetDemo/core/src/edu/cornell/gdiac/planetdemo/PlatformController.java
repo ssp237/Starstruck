@@ -183,8 +183,8 @@ public class PlatformController extends WorldController implements ContactListen
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-            {7f, 7f, 4f, 200f, 0.58f},
-            {20f, 13f, 4f, 200f, 0.58f}
+//            {7f, 7f, 4f, 200f, 0.58f},
+            {20f, 13f, 4f, 10000f, 0.58f}
     };
 
     // Other game objects
@@ -305,7 +305,8 @@ public class PlatformController extends WorldController implements ContactListen
             obj.scaleDraw = PLANETS[i][4];
             addObject(obj);
             //Vector2 pos = new Vector2(obj.getBody().getPosition().x, obj.getBody().getPosition().y - obj.getRadius());
-            vectorWorld.addPlanet(obj, PLANETS[i][3], obj.getCenter()); //Radius parameter is temporary fix for why center is off
+            //vectorWorld.addPlanet(obj, PLANETS[i][3], obj.getCenter()); //Radius parameter is temporary fix for why center is off
+             vectorWorld.addPlanet(obj, PLANETS[i][3]);
         }
 
         // Create dude
@@ -385,6 +386,7 @@ public class PlatformController extends WorldController implements ContactListen
         if (avatar.getOnPlanet()) {
 //            Vector2 dir = new Vector2(0, 1);
 //            dir.rotateRad(avatar.getAngle());
+            avatar.setLinearVelocity(new Vector2(0,0));
             avatar.setFixedRotation(true);
             Vector2 contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
             //System.out.println(contactDir);
@@ -402,17 +404,17 @@ public class PlatformController extends WorldController implements ContactListen
                 contactDir.rotateRad(-(float) Math.PI / 2);
                 avatar.setPosition(contactPoint.sub(contactDir.setLength(0.03f)));
             }
-            System.out.println(avatar.getPosition() + ", " + curPlanet.getPosition());
+            //System.out.println(avatar.getPosition() + ", " + curPlanet.getPosition());
             if (avatar.isJumping()) {
                 contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
-                System.out.println(contactDir);
+                //System.out.println(contactDir);
                 avatar.setOnPlanet(false);
                 avatar.dudeJump.set(contactDir);
             }
 
         }
 
-        if (!avatar.getOnPlanet() && vectorWorld.getForce(avatar.getPosition()) != null)
+        //if (!avatar.getOnPlanet() && vectorWorld.getForce(avatar.getPosition()) != null)
             avatar.setGravity(vectorWorld.getForce(avatar.getPosition()));
         avatar.applyForce();
 
