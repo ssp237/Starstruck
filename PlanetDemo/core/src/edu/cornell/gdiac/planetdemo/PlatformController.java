@@ -183,8 +183,8 @@ public class PlatformController extends WorldController implements ContactListen
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-//            {7f, 7f, 4f, 200f, 0.58f},
-            {20f, 13f, 4f, 10000f, 0.58f}
+//            /{7f, 7f, 4f, 7000f, 0.58f},
+            {20f, 13f, 4f, 7000f, 0.58f}
     };
 
     // Other game objects
