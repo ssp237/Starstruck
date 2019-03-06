@@ -22,7 +22,7 @@ public class VectorWorld {
     /** Number of points in the vector field (y direction)*/
     private final int NUM_VY = 50;
     /** Gravitational constant (will probably change)*/
-    private final double G = 2.67E-2;
+    private final double G = 2.66E-2;
 
     /** Vector field representing this World's gravity*/
     /** Each key represents the (x,y) coordinate of a point in a grid on the screen, and
