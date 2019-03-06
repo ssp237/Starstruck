@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/PlanetDemo.iml" filepath="$PROJECT_DIR$/PlanetDemo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/PlanetDemo.core.iml" filepath="$PROJECT_DIR$/.idea/modules/core/PlanetDemo.core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/PlanetDemo.core.main.iml" filepath="$PROJECT_DIR$/.idea/modules/core/PlanetDemo.core.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/core/PlanetDemo.core.test.iml" filepath="$PROJECT_DIR$/.idea/modules/core/PlanetDemo.core.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/desktop/PlanetDemo.desktop.iml" filepath="$PROJECT_DIR$/.idea/modules/desktop/PlanetDemo.desktop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/desktop/PlanetDemo.desktop.main.iml" filepath="$PROJECT_DIR$/.idea/modules/desktop/PlanetDemo.desktop.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/desktop/PlanetDemo.desktop.test.iml" filepath="$PROJECT_DIR$/.idea/modules/desktop/PlanetDemo.desktop.test.iml" />
+    </modules>
+  </component>
+</project>
