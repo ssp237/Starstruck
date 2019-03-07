@@ -815,6 +815,12 @@ public class PlatformController extends WorldController implements ContactListen
         canvas.end();
 
         canvas.begin();
+        for (Spinner a : anchors) {
+            a.draw(canvas);
+        }
+        for (Spinner s : stars) {
+            s.draw(canvas);
+        }
         for(Obstacle obj : objects) {
             //System.out.println(obj.getName());
             if (obj.getName().contains("planet")) {
@@ -827,12 +833,6 @@ public class PlatformController extends WorldController implements ContactListen
             }
             else
                 obj.draw(canvas);
-        }
-        for (Spinner a : anchors) {
-            a.draw(canvas);
-        }
-        for (Spinner s : stars) {
-            s.draw(canvas);
         }
         canvas.end();
 
