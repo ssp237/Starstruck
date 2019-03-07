@@ -79,6 +79,9 @@ public class InputController {
     private boolean dPrevious;
     private boolean aPressed;
     private boolean aPrevious;
+    /** Whether space was pressed */
+    private boolean spacePressed;
+    private boolean spacePrevious;
 
     /** How much did we move horizontally? */
     private float horizontal;
@@ -88,9 +91,6 @@ public class InputController {
     private float horizontal2;
     /** How much did the second player move vertically?*/
     private float vertical2;
-    /** For anchoring */
-    private boolean anchored;
-    private Vector2 anchoredPosition;
     /** HOw much to rotate */
     private float turn;
     /** The crosshair position (for raddoll) */
@@ -99,7 +99,6 @@ public class InputController {
     private Vector2 crosscache;
     /** For the gamepad crosshair control */
     private float momentum;
-    private float time = 1;
 
     /** An X-Box controller (if it is connected) */
 //    XBox360Controller xbox;
@@ -144,10 +143,6 @@ public class InputController {
      */
     public float getVertical2() {return vertical2;}
 
-    public boolean getAnchored() {return anchored;}
-    public void setAnchored() {anchored = !anchored;}
-
-
     public float getTurn() {
         return turn;
     }
@@ -189,6 +184,18 @@ public class InputController {
      */
     public boolean didSecondary() {
         return secondPressed && !secondPrevious;
+    }
+
+    /**
+     * Returns true if the secondary action button was pressed.
+     *
+     * This is a one-press button. It only returns true at the moment it was
+     * pressed, and returns false at any frame afterwards.
+     *
+     * @return true if the secondary action button was pressed.
+     */
+    public boolean didSpace() {
+        return spacePressed && !spacePrevious;
     }
 
     /**
@@ -301,6 +308,7 @@ public class InputController {
         leftPrevious = leftPressed;
         aPrevious = aPressed;
         dPrevious = dPressed;
+        spacePrevious = spacePressed;
 
         // Check to see if a GamePad is connected
 //        if (xbox.isConnected()) {
@@ -366,6 +374,7 @@ public class InputController {
         prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
         nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
         exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
+        spacePressed = (secondary && spacePressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
         // TODO no controller support
         rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT);
         leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT);
@@ -414,13 +423,6 @@ public class InputController {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
             turn = turn - 1f;//(float) (Math.PI/180);
-        }
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            anchored = !anchored;
-            time = 0;
-
-        } else {
-            time++;
         }
 
         // Mouse results

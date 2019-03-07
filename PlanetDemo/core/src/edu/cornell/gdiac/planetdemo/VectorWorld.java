@@ -48,9 +48,9 @@ public class VectorWorld {
         world = new World(new Vector2(0, 0), false);
         this.bounds = bounds;
         height = bounds.height/NUM_VY;
-        System.out.println(height);
+        //System.out.println(height);
         width = bounds.width/NUM_VX;
-        System.out.println(width);
+        //System.out.println(width);
 
         bodies = new HashMap<Body, Boolean>();
         vField = new HashMap<Vector2, Vector2>();
@@ -139,7 +139,7 @@ public class VectorWorld {
         Vector2 off = obj.getDrawScale();
         pos.y -= 1.75;
         pos.x *= off.x; pos.y *= off.y;
-        System.out.println(pos);
+        //System.out.println(pos);
 
         //inefficient, need to change
         for (int i = 0; i < NUM_VX; i++){

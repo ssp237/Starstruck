@@ -17,6 +17,8 @@ import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.physics.box2d.*;
+import java.util.*;
 
 import edu.cornell.gdiac.util.*;
 //import edu.cornell.gdiac.physics.*;
@@ -160,6 +162,8 @@ public class PlatformController extends WorldController implements ContactListen
     private static final float  BULLET_SPEED = 20.0f;
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
+    /** The distance from an anchor at which an astronaut will be able to anchor */
+    private static float ANCHOR_DIST = 1f;
 
     // Since these appear only once, we do not care about the magic numbers.
     // In an actual game, this information would go in a data file.
@@ -236,6 +240,10 @@ public class PlatformController extends WorldController implements ContactListen
     private DudeModel avatar;
     /** Reference to the second character avatar*/
     private DudeModel avatar2;
+    /** List of anchors, temporary quick solution */
+    private ArrayList<Spinner> anchors = new ArrayList<Spinner>();
+    /** WHY GRAVITY */
+    private ArrayList<Spinner> stars = new ArrayList<Spinner>();
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -411,9 +419,12 @@ public class PlatformController extends WorldController implements ContactListen
         for (int ii = 0; ii < STARS.length; ii++) {
             Spinner star = new Spinner(STARS[ii][0],STARS[ii][1],dwidth,dheight);
             star.setName(sname + ii);
+            star.setDensity(0f);
+            star.setBodyType(BodyDef.BodyType.StaticBody);
             star.setDrawScale(scale);
             star.setTexture(starTexture);
-            addObject(star);
+            stars.add(star);
+            //addObject(star);
         }
 
         //add anchor
@@ -423,9 +434,12 @@ public class PlatformController extends WorldController implements ContactListen
         for (int ii = 0; ii < ANCHORS.length; ii++){
             Spinner anchor = new Spinner(ANCHORS[ii][0],ANCHORS[ii][1],dwidth,dheight);
             anchor.setName(aname + ii);
+            anchor.setBodyType(BodyDef.BodyType.StaticBody);
+            anchor.setDensity(0f);
             anchor.setDrawScale(scale);
             anchor.setTexture(bulletTexture);
-            addObject(anchor);
+            anchors.add(anchor);
+            //addObject(anchor);
         }
 
     }
@@ -474,92 +488,146 @@ public class PlatformController extends WorldController implements ContactListen
     public void update(float dt) {
         avatar.setFixedRotation(false);
         avatar2.setFixedRotation(false);
-//        if (!InputController.getInstance().getAnchored()) {
-//            avatar.setJumping(InputController.getInstance().didPrimary());
-//            avatar.setRotation(InputController.getInstance().getHorizontal());
-//        } else {
-//            if (avatar.getPosition().dst(SPIN_POS.x-1.0f, SPIN_POS.y-1.0f) < 3.0f) {
-//                avatar.setPosition(SPIN_POS.x-2.0f,SPIN_POS.y-1.0f);
-//            } else {
-//                InputController.getInstance().setAnchored();
-//            }
-//        }
-        // Process actions in object model
-        //avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
-        avatar.setJumping(InputController.getInstance().didPrimary());
-//        avatar.setShooting(InputController.getInstance().didSecondary());
-        avatar.setRotation(InputController.getInstance().getHorizontal());
+        boolean anchorChange = false;
 
-        avatar2.setRotation(InputController.getInstance().getHorizontal2());
-        avatar2.setJumping(InputController.getInstance().didSecondary());
+        if (InputController.getInstance().didSpace()) {
+            if (avatar.isAnchored) {
+                for (Spinner a : anchors) {
+                    SPIN_POS.set(a.getPosition());
+                    if (!avatar2.getOnPlanet() && avatar2.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                        avatar2.isAnchored = true;
+                        avatar2.setPosition(SPIN_POS.x, SPIN_POS.y);
+                        avatar2.setLinearVelocity(new Vector2(0, 0));
+                        avatar2.setAngularVelocity(0);
+                        avatar.isAnchored = false;
+//                        avatar.isAnchored = false;
+//                        anchorChange = true;
+                        break;
+                    }
+//                else {
+//                    avatar.isAnchored = false;
+//                }
+                }
+                //avatar.isAnchored = false;
+            }
+
+            else if (avatar2.isAnchored) {
+                anchorChange = false;
+                for (Spinner a : anchors) {
+                    SPIN_POS = a.getPosition();
+                    if (!avatar.getOnPlanet() && avatar.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                        avatar.isAnchored = true;
+                        avatar.setPosition(SPIN_POS.x, SPIN_POS.y);
+                        avatar.setLinearVelocity(new Vector2(0, 0));
+                        avatar.setAngularVelocity(0);
+                        avatar2.isAnchored = false;
+//                        avatar2.isAnchored = false;
+//                        anchorChange = true;
+                        break;
+                    }
+//                else {
+//                    avatar2.isAnchored = false;
+//                }
+                }
+                //avatar2.isAnchored = false;
+            }
+
+            else if ((!avatar.getOnPlanet() || !avatar2.getOnPlanet()) && !avatar.isAnchored && !avatar2.isAnchored){
+                for (Spinner a : anchors) {
+                    SPIN_POS = a.getPosition();
+                    if (!avatar.getOnPlanet() && avatar.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                        avatar.isAnchored = true;
+                        avatar.setPosition(SPIN_POS.x, SPIN_POS.y);
+                        avatar.setLinearVelocity(new Vector2(0, 0));
+                        avatar.setAngularVelocity(0);
+                        break;
+                    }
+
+                    else if (!avatar2.getOnPlanet() && avatar2.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                        avatar2.isAnchored = true;
+                        avatar2.setPosition(SPIN_POS.x, SPIN_POS.y);
+                        avatar2.setLinearVelocity(new Vector2(0, 0));
+                        avatar2.setAngularVelocity(0);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!avatar.isAnchored) {
+            // Process actions in object model
+            //avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
+            avatar.setJumping(InputController.getInstance().didPrimary());
+//        avatar.setShooting(InputController.getInstance().didSecondary());
+            avatar.setRotation(InputController.getInstance().getHorizontal());
+            //System.out.println(avatar.isGrounded());
+            if (avatar.getOnPlanet()) {
+//            Vector2 dir = new Vector2(0, 1);
+//            dir.rotateRad(avatar.getAngle());
+                avatar.setLinearVelocity(new Vector2(0,0));
+                avatar.setFixedRotation(true);
+                Vector2 contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
+                //System.out.println(contactDir);
+                float angle = -contactDir.angleRad(new Vector2 (0, 1));
+                //System.out.println(angle*(float)(180/Math.PI));
+                avatar.setAngle(angle);
+                avatar.setPosition(contactPoint);
+                if (InputController.getInstance().didRight()) {
+                    contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
+                    contactDir.rotateRad(-(float) Math.PI / 2);
+                    avatar.setPosition(contactPoint.add(contactDir.setLength(0.03f)));
+                }
+                if (InputController.getInstance().didLeft()) {
+                    //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
+                    contactDir.rotateRad(-(float) Math.PI / 2);
+                    avatar.setPosition(contactPoint.sub(contactDir.setLength(0.03f)));
+                }
+                //System.out.println(avatar.getPosition() + ", " + curPlanet.getPosition());
+                if (avatar.isJumping()) {
+                    contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
+                    //System.out.println(contactDir);
+                    avatar.setOnPlanet(false);
+                    avatar.dudeJump.set(contactDir);
+                }
+            }
+            //if (!avatar.getOnPlanet() && vectorWorld.getForce(avatar.getPosition()) != null)
+            avatar.setGravity(vectorWorld.getForce(avatar.getPosition()));
+            avatar.applyForce();
+        }
+
+        if (!avatar2.isAnchored) {
+            avatar2.setRotation(InputController.getInstance().getHorizontal2());
+            avatar2.setJumping(InputController.getInstance().didSecondary());
+            if (avatar2.getOnPlanet()) {
+                avatar2.setLinearVelocity(new Vector2(0,0));
+                avatar2.setFixedRotation(true);
+                Vector2 contactDir = contactPoint2.cpy().sub(curPlanet2.getPosition());
+                float angle = -contactDir.angleRad(new Vector2 (0, 1));
+                avatar2.setAngle(angle);
+                avatar2.setPosition(contactPoint2);
+                if (InputController.getInstance().didD()) {
+                    contactDir = contactPoint2.cpy().sub(curPlanet2.getPosition());
+                    contactDir.rotateRad(-(float) Math.PI / 2);
+                    avatar2.setPosition(contactPoint2.add(contactDir.setLength(0.03f)));
+                }
+                if (InputController.getInstance().didA()) {
+                    contactDir.rotateRad(-(float) Math.PI / 2);
+                    avatar2.setPosition(contactPoint2.sub(contactDir.setLength(0.03f)));
+                }
+                if (avatar2.isJumping()) {
+                    contactDir.set(avatar2.getPosition().cpy().sub(curPlanet2.getPosition()));
+                    avatar2.setOnPlanet(false);
+                    avatar2.dudeJump.set(contactDir);
+                }
+            }
+            avatar2.setGravity(vectorWorld.getForce(avatar2.getPosition()));
+            avatar2.applyForce();
+        }
 
         // Add a bullet if we fire
         if (avatar.isShooting()) {
             createBullet();
         }
-
-        //System.out.println(avatar.isGrounded());
-        if (avatar.getOnPlanet()) {
-//            Vector2 dir = new Vector2(0, 1);
-//            dir.rotateRad(avatar.getAngle());
-            avatar.setLinearVelocity(new Vector2(0,0));
-            avatar.setFixedRotation(true);
-            Vector2 contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
-            //System.out.println(contactDir);
-            float angle = -contactDir.angleRad(new Vector2 (0, 1));
-            //System.out.println(angle*(float)(180/Math.PI));
-            avatar.setAngle(angle);
-            avatar.setPosition(contactPoint);
-            if (InputController.getInstance().didRight()) {
-                contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
-                contactDir.rotateRad(-(float) Math.PI / 2);
-                avatar.setPosition(contactPoint.add(contactDir.setLength(0.03f)));
-            }
-            if (InputController.getInstance().didLeft()) {
-                //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
-                contactDir.rotateRad(-(float) Math.PI / 2);
-                avatar.setPosition(contactPoint.sub(contactDir.setLength(0.03f)));
-            }
-            //System.out.println(avatar.getPosition() + ", " + curPlanet.getPosition());
-            if (avatar.isJumping()) {
-                contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
-                //System.out.println(contactDir);
-                avatar.setOnPlanet(false);
-                avatar.dudeJump.set(contactDir);
-            }
-
-        }
-
-        if (avatar2.getOnPlanet()) {
-            avatar2.setLinearVelocity(new Vector2(0,0));
-            avatar2.setFixedRotation(true);
-            Vector2 contactDir = contactPoint2.cpy().sub(curPlanet2.getPosition());
-            float angle = -contactDir.angleRad(new Vector2 (0, 1));
-            avatar2.setAngle(angle);
-            avatar2.setPosition(contactPoint2);
-            if (InputController.getInstance().didD()) {
-                contactDir = contactPoint2.cpy().sub(curPlanet2.getPosition());
-                contactDir.rotateRad(-(float) Math.PI / 2);
-                avatar2.setPosition(contactPoint2.add(contactDir.setLength(0.03f)));
-            }
-            if (InputController.getInstance().didA()) {
-                contactDir.rotateRad(-(float) Math.PI / 2);
-                avatar2.setPosition(contactPoint2.sub(contactDir.setLength(0.03f)));
-            }
-            if (avatar2.isJumping()) {
-                contactDir.set(avatar2.getPosition().cpy().sub(curPlanet2.getPosition()));
-                avatar2.setOnPlanet(false);
-                avatar2.dudeJump.set(contactDir);
-            }
-
-        }
-
-        //if (!avatar.getOnPlanet() && vectorWorld.getForce(avatar.getPosition()) != null)
-        avatar.setGravity(vectorWorld.getForce(avatar.getPosition()));
-        avatar.applyForce();
-
-        avatar2.setGravity(vectorWorld.getForce(avatar2.getPosition()));
-        avatar2.applyForce();
 
         //TODO Removed sound stuffs
 //        if (avatar.isJumping()) {
@@ -627,6 +695,10 @@ public class PlatformController extends WorldController implements ContactListen
             Obstacle bd1 = (Obstacle)body1.getUserData();
             Obstacle bd2 = (Obstacle)body2.getUserData();
             //System.out.println(bd1.getName() + bd2.getName());
+
+            if (bd1.getName().contains("star") || bd1.getName().contains("anchor") || bd2.getName().contains("star") || bd2.getName().contains("anchor")){
+                return;
+            }
 
             /** Force astronaut's position on planet */
             if ((bd1 == avatar || bd2 == avatar) && bd1 != avatar2 && bd2 !=avatar2) {
@@ -755,6 +827,12 @@ public class PlatformController extends WorldController implements ContactListen
             }
             else
                 obj.draw(canvas);
+        }
+        for (Spinner a : anchors) {
+            a.draw(canvas);
+        }
+        for (Spinner s : stars) {
+            s.draw(canvas);
         }
         canvas.end();
 
