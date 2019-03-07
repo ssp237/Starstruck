@@ -199,12 +199,16 @@ public class PlatformController extends WorldController implements ContactListen
 
     // Location of each star (can add more fields later, SHOULD MAKE INTO A CLASS)
     private static final float[][] STARS = {
-
+            {5f, 14f},
+            {6f, 14f},
+            {5.5f, 13f},
     };
 
     // Location of anchor points (can add more fields later, SHOULD MAKE INTO A CLASS)
     private static final float[][] ANCHORS = {
-
+            {7f, 15f},
+            {3f, 16f},
+            {4f, 11f},
     };
 
 
