@@ -197,6 +197,17 @@ public class PlatformController extends WorldController implements ContactListen
             {18f, 0f, 3f, 2500f, 0.43f},
     };
 
+    // Location of each star (can add more fields later, SHOULD MAKE INTO A CLASS)
+    private static final float[][] STARS = {
+
+    };
+
+    // Location of anchor points (can add more fields later, SHOULD MAKE INTO A CLASS)
+    private static final float[][] ANCHORS = {
+
+    };
+
+
     // Other game objects
     /** The goal door position */
     private static Vector2 GOAL_POS = new Vector2(4.0f,14.0f);
@@ -388,30 +399,30 @@ public class PlatformController extends WorldController implements ContactListen
 //        addObject(spinPlatform);
 
         // Create star
+
+
         dwidth  = starTexture.getRegionWidth()/scale.x;
         dheight = starTexture.getRegionHeight()/scale.y;
-        Spinner star1 = new Spinner(SPIN_POS.x,SPIN_POS.y,dwidth,dheight);
-        star1.setDrawScale(scale);
-        star1.setTexture(starTexture);
-        addObject(star1);
-
-        Spinner star2 = new Spinner(SPIN_POS.x+0.5f,SPIN_POS.y-1,dwidth,dheight);
-        star2.setDrawScale(scale);
-        star2.setTexture(starTexture);
-        addObject(star2);
-
-        Spinner star3 = new Spinner(SPIN_POS.x-0.5f,SPIN_POS.y-1,dwidth,dheight);
-        star3.setDrawScale(scale);
-        star3.setTexture(starTexture);
-        addObject(star3);
+        String sname = "star";
+        for (int ii = 0; ii < STARS.length; ii++) {
+            Spinner star = new Spinner(STARS[ii][0],STARS[ii][1],dwidth,dheight);
+            star.setName(sname + ii);
+            star.setDrawScale(scale);
+            star.setTexture(starTexture);
+            addObject(star);
+        }
 
         //add anchor
         dwidth = bulletTexture.getRegionWidth()/scale.x;
         dheight = bulletTexture.getRegionHeight()/scale.y;
-        Spinner anchor = new Spinner(SPIN_POS.x-2.0f,SPIN_POS.y-1.0f,dwidth,dheight);
-        anchor.setDrawScale(scale);
-        anchor.setTexture(bulletTexture);
-        addObject(anchor);
+        String aname = "anchor";
+        for (int ii = 0; ii < ANCHORS.length; ii++){
+            Spinner anchor = new Spinner(ANCHORS[ii][0],ANCHORS[ii][1],dwidth,dheight);
+            anchor.setName(aname + ii);
+            anchor.setDrawScale(scale);
+            anchor.setTexture(bulletTexture);
+            addObject(anchor);
+        }
 
     }
 
