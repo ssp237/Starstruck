@@ -78,6 +78,7 @@ public class DudeModel extends CapsuleObstacle {
     private boolean onPlanet = false;
     /** Direction the dude should go when jumping off a planet */
     public Vector2 dudeJump = new Vector2();
+    private boolean isAnchored;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();

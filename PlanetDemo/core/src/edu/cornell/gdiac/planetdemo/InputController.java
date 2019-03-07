@@ -88,7 +88,10 @@ public class InputController {
     private float horizontal2;
     /** How much did the second player move vertically?*/
     private float vertical2;
-
+    /** For anchoring */
+    private boolean anchored;
+    private Vector2 anchoredPosition;
+    /** HOw much to rotate */
     private float turn;
     /** The crosshair position (for raddoll) */
     private Vector2 crosshair;
@@ -96,6 +99,7 @@ public class InputController {
     private Vector2 crosscache;
     /** For the gamepad crosshair control */
     private float momentum;
+    private float time = 1;
 
     /** An X-Box controller (if it is connected) */
 //    XBox360Controller xbox;
@@ -139,6 +143,9 @@ public class InputController {
      * @return the amount of vertical movement.
      */
     public float getVertical2() {return vertical2;}
+
+    public boolean getAnchored() {return anchored;}
+    public void setAnchored() {anchored = !anchored;}
 
 
     public float getTurn() {
@@ -407,6 +414,13 @@ public class InputController {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
             turn = turn - 1f;//(float) (Math.PI/180);
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            anchored = !anchored;
+            time = 0;
+
+        } else {
+            time++;
         }
 
         // Mouse results
