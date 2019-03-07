@@ -22,7 +22,7 @@ public class VectorWorld {
     /** Number of points in the vector field (y direction)*/
     private final int NUM_VY = 50;
     /** Gravitational constant (will probably change)*/
-    private final double G = 2.66E-2;
+    private final double G = 2.66E1;
 
     /** Vector field representing this World's gravity*/
     /** Each key represents the (x,y) coordinate of a point in a grid on the screen, and
@@ -48,7 +48,9 @@ public class VectorWorld {
         world = new World(new Vector2(0, 0), false);
         this.bounds = bounds;
         height = bounds.height/NUM_VY;
+        System.out.println(height);
         width = bounds.width/NUM_VX;
+        System.out.println(width);
 
         bodies = new HashMap<Body, Boolean>();
         vField = new HashMap<Vector2, Vector2>();
@@ -90,7 +92,7 @@ public class VectorWorld {
      * @param mass the mass of the gravitating object.
      * @return The gravitational force experienced by the object at position (i,j).
      */
-    private Vector2 gForce(Vector2 pos, int i, int j, float mass){
+    private Vector2 gForce(Vector2 pos, float i, float j, float mass){
         float x = i * width; float y = j * height;
         //Get r
         float dist = pos.dst(new Vector2(x,y));
@@ -99,7 +101,7 @@ public class VectorWorld {
 
         float dx = x - pos.x; float dy = y - pos.y;
         float dh = (float) Math.sqrt(dx*dx + dy*dy);
-        float fx = (dx/dh) * mag; float fy = (dy/dh) * mag;
+        float fx = (dx/dist) * mag; float fy = (dy/dist) * mag;
         //System.out.println(fx + ", " + fy);
         return new Vector2(fx, fy);
     }
@@ -134,14 +136,16 @@ public class VectorWorld {
     public void addPlanet(WheelObstacle obj, float mass) {
         bodies.put(obj.getBody(), true);
         Vector2 pos = obj.getCenter();
+        Vector2 off = obj.getDrawScale();
         pos.y -= 1.75;
+        pos.x *= off.x; pos.y *= off.y;
         System.out.println(pos);
 
         //inefficient, need to change
         for (int i = 0; i < NUM_VX; i++){
             for (int j = 0; j < NUM_VY; j++){
                 Vector2 v = new Vector2(i,j);
-                vField.put(v, vField.get(v).add(gForce(pos, i, j, mass)));
+                vField.put(v, vField.get(v).add(gForce(pos, i*off.x, j*off.y, mass)));
             }
         }
     }

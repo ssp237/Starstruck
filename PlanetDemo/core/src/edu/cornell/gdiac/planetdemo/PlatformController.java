@@ -42,6 +42,8 @@ public class PlatformController extends WorldController implements ContactListen
     private static final String BULLET_FILE  = "platform/bullet.png";
     /** The texture file for the bridge plank */
     private static final String ROPE_FILE  = "platform/ropebridge.png";
+    /** The texture file for the Star*/
+    private static final String STAR_FILE = "platform/star.png";
 
     /** The sound file for a jump */
     private static final String JUMP_FILE = "platform/jump.mp3";
@@ -60,6 +62,8 @@ public class PlatformController extends WorldController implements ContactListen
     private TextureRegion bulletTexture;
     /** Texture asset for the bridge plank */
     private TextureRegion bridgeTexture;
+    /** Texture asset for the star */
+    private TextureRegion starTexture;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -94,6 +98,8 @@ public class PlatformController extends WorldController implements ContactListen
         assets.add(BULLET_FILE);
         manager.load(ROPE_FILE, Texture.class);
         assets.add(ROPE_FILE);
+        manager.load(STAR_FILE, Texture.class);
+        assets.add(STAR_FILE);
 
         manager.load(JUMP_FILE, Sound.class);
         assets.add(JUMP_FILE);
@@ -124,6 +130,7 @@ public class PlatformController extends WorldController implements ContactListen
         barrierTexture = createTexture(manager,BARRIER_FILE,false);
         bulletTexture = createTexture(manager,BULLET_FILE,false);
         bridgeTexture = createTexture(manager,ROPE_FILE,false);
+        starTexture = createTexture(manager, STAR_FILE, false);
 
         //TODO Sound stuffs
 //        SoundController sounds = SoundController.getInstance();
@@ -197,6 +204,8 @@ public class PlatformController extends WorldController implements ContactListen
     private static Vector2 SPIN_POS = new Vector2(13.0f,12.5f);
     /** The initial position of the dude */
     private static Vector2 DUDE_POS = new Vector2(2.5f, 5.0f);
+    /** The initial position of the second dude */
+    private static Vector2 DUDE2_POS = new Vector2(3.5f, 6.5f);
     /** The position of the rope bridge */
     private static Vector2 BRIDGE_POS  = new Vector2(9.0f, 3.8f);
     /** Temprary obstacle used for setting position on planet */
@@ -206,11 +215,26 @@ public class PlatformController extends WorldController implements ContactListen
     // Physics objects for the game
     /** Reference to the character avatar */
     private DudeModel avatar;
+    /** Reference to the second character avatar*/
+    private DudeModel avatar2;
+
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
 
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
+
+    /**
+     * Return a reference to the primary avatar
+     * @return Return a reference to the primary avatar.
+     */
+    public DudeModel getAvatar() {return avatar;}
+
+    /**
+     * Return a reference to the secondary avatar.
+     * @return Return a reference to the secondary avatar.
+     */
+    public DudeModel getAvatar2() {return avatar2;}
 
     /**
      * Creates and initialize a new instance of the platformer game
@@ -338,6 +362,11 @@ public class PlatformController extends WorldController implements ContactListen
         //avatar.setAngle((float)Math.PI/2);
         addObject(avatar);
 
+        avatar2 = new DudeModel(DUDE_POS.x + 1, DUDE_POS.y, dwidth, dheight);
+        avatar2.setDrawScale(scale);
+        avatar2.setTexture(avatarTexture);
+        addObject(avatar2);
+
         // Create rope bridge
 //        dwidth  = bridgeTexture.getRegionWidth()/scale.x;
 //        dheight = bridgeTexture.getRegionHeight()/scale.y;
@@ -353,6 +382,33 @@ public class PlatformController extends WorldController implements ContactListen
 //        spinPlatform.setDrawScale(scale);
 //        spinPlatform.setTexture(barrierTexture);
 //        addObject(spinPlatform);
+
+        // Create star
+        dwidth  = starTexture.getRegionWidth()/scale.x;
+        dheight = starTexture.getRegionHeight()/scale.y;
+        Spinner star1 = new Spinner(SPIN_POS.x,SPIN_POS.y,dwidth,dheight);
+        star1.setDrawScale(scale);
+        star1.setTexture(starTexture);
+        addObject(star1);
+
+        Spinner star2 = new Spinner(SPIN_POS.x+0.5f,SPIN_POS.y-1,dwidth,dheight);
+        star2.setDrawScale(scale);
+        star2.setTexture(starTexture);
+        addObject(star2);
+
+        Spinner star3 = new Spinner(SPIN_POS.x-0.5f,SPIN_POS.y-1,dwidth,dheight);
+        star3.setDrawScale(scale);
+        star3.setTexture(starTexture);
+        addObject(star3);
+
+        //add anchor
+        dwidth = bulletTexture.getRegionWidth()/scale.x;
+        dheight = bulletTexture.getRegionHeight()/scale.y;
+        Spinner anchor = new Spinner(SPIN_POS.x-2.0f,SPIN_POS.y-1.0f,dwidth,dheight);
+        anchor.setDrawScale(scale);
+        anchor.setTexture(bulletTexture);
+        addObject(anchor);
+
     }
 
     /**
@@ -371,7 +427,14 @@ public class PlatformController extends WorldController implements ContactListen
             return false;
         }
 
-        if (!isFailure() && avatar.getY() < -1) {
+        if (!isFailure() && (avatar.getY() < -1 || avatar.getY() > bounds.height + 1
+        || avatar.getX() < -1 || avatar.getX() > bounds.getWidth() + 1)) {
+            setFailure(true);
+            return false;
+        }
+
+        if (!isFailure() && (avatar2.getY() < -1|| avatar2.getY() > bounds.height + 1
+                || avatar2.getX() < -1 || avatar2.getX() > bounds.getWidth() + 1)) {
             setFailure(true);
             return false;
         }
@@ -599,9 +662,9 @@ public class PlatformController extends WorldController implements ContactListen
 
         canvas.begin();
         for(Obstacle obj : objects) {
-            System.out.println(obj.getName());
+            //System.out.println(obj.getName());
             if (obj.getName().contains("planet")) {
-                System.out.println("yeet");
+                //System.out.println("yeet");
                 planetCache = (WheelObstacle) obj;
                 canvas.draw(planetCache.getTexture(),Color.WHITE,planetCache.origin.x,planetCache.origin.y,
                         planetCache.getX()*planetCache.drawScale.x,planetCache.getY()*planetCache.drawScale.x,

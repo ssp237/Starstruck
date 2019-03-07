@@ -79,6 +79,11 @@ public class InputController {
     private float horizontal;
     /** How much did we move vertically? */
     private float vertical;
+    /** How much did the second player move horizontally? **/
+    private float horizontal2;
+    /** How much did the second player move vertically?*/
+    private float vertical2;
+
     private float turn;
     /** The crosshair position (for raddoll) */
     private Vector2 crosshair;
@@ -111,6 +116,25 @@ public class InputController {
     public float getVertical() {
         return vertical;
     }
+
+    /**
+     * Returns the amount of sideways movement for player 2.
+     *
+     * -1 = left, 1 = right, 0 = still
+     *
+     * @return the amount of sideways movement.
+     */
+    public float getHorizontal2() {return horizontal2;}
+
+    /**
+     * Returns the amount of vertical movement for player 2.
+     *
+     * -1 = down, 1 = up, 0 = still
+     *
+     * @return the amount of vertical movement.
+     */
+    public float getVertical2() {return vertical2;}
+
 
     public float getTurn() {
         return turn;
@@ -315,13 +339,13 @@ public class InputController {
     private void readKeyboard(Rectangle bounds, Vector2 scale, boolean secondary) {
         // Give priority to gamepad results
         resetPressed = (secondary && resetPressed) || (Gdx.input.isKeyPressed(Input.Keys.R));
-        debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.D));
+        debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.Y));
         primePressed = (secondary && primePressed) || (Gdx.input.isKeyPressed(Input.Keys.UP));
         secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
         prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
         nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
         exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
-        // TODO no controlller support
+        // TODO no controller support
         rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT);
         leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT);
 
@@ -340,6 +364,24 @@ public class InputController {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
             vertical -= 1.0f;
+        }
+
+        vertical2 = (secondary ? vertical : 0.0f);
+        if (Gdx.input.isKeyPressed(Input.Keys.W)) {
+            vertical2 += 1.0f;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+            vertical2 -= 1.0f;
+        }
+
+        horizontal2 = (secondary ? horizontal : 0.0f);
+        if (Gdx.input.isKeyPressed(Input.Keys.A)) {
+            horizontal2 -= 1.0f;
+        }
+
+        if (Gdx.input.isKeyPressed(Input.Keys.D)) {
+            horizontal2 += 1.0f;
         }
 
         // Rotate/turn, no controller support
