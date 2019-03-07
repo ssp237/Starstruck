@@ -163,7 +163,7 @@ public class PlatformController extends WorldController implements ContactListen
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
     /** The distance from an anchor at which an astronaut will be able to anchor */
-    private static float ANCHOR_DIST = 1f;
+    private static float ANCHOR_DIST = 2f;
 
     // Since these appear only once, we do not care about the magic numbers.
     // In an actual game, this information would go in a data file.
