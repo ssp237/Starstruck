@@ -367,10 +367,10 @@ public class PlatformController extends WorldController implements ContactListen
         avatar2.setTexture(avatarTexture);
         addObject(avatar2);
 
-        // Create rope bridge
+//        // Create rope bridge
 //        dwidth  = bridgeTexture.getRegionWidth()/scale.x;
 //        dheight = bridgeTexture.getRegionHeight()/scale.y;
-//        RopeBridge bridge = new RopeBridge(BRIDGE_POS.x, BRIDGE_POS.y, BRIDGE_WIDTH, dwidth, dheight);
+//        RopeBridge bridge = new RopeBridge(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
 //        bridge.setTexture(bridgeTexture);
 //        bridge.setDrawScale(scale);
 //        addObject(bridge);
