@@ -212,6 +212,10 @@ public class PlatformController extends WorldController implements ContactListen
     private Obstacle curPlanet;
     private Vector2 contactPoint = new Vector2();
 
+    /** Temprary obstacle used for setting position on planet for avatar 2*/
+    private Obstacle curPlanet2;
+    private Vector2 contactPoint2 = new Vector2();
+
     // Physics objects for the game
     /** Reference to the character avatar */
     private DudeModel avatar;
@@ -362,7 +366,7 @@ public class PlatformController extends WorldController implements ContactListen
         //avatar.setAngle((float)Math.PI/2);
         addObject(avatar);
 
-        avatar2 = new DudeModel(DUDE_POS.x + 1, DUDE_POS.y, dwidth, dheight);
+        avatar2 = new DudeModel(DUDE2_POS.x + 1, DUDE2_POS.y, dwidth, dheight);
         avatar2.setDrawScale(scale);
         avatar2.setTexture(avatarTexture);
         addObject(avatar2);
@@ -460,6 +464,9 @@ public class PlatformController extends WorldController implements ContactListen
         avatar.setShooting(InputController.getInstance().didSecondary());
         avatar.setRotation(InputController.getInstance().getHorizontal());
 
+        avatar2.setRotation(InputController.getInstance().getHorizontal2());
+        avatar2.setShooting(InputController.getInstance().didSecondary());
+
         // Add a bullet if we fire
         if (avatar.isShooting()) {
             createBullet();
@@ -500,6 +507,9 @@ public class PlatformController extends WorldController implements ContactListen
         //if (!avatar.getOnPlanet() && vectorWorld.getForce(avatar.getPosition()) != null)
             avatar.setGravity(vectorWorld.getForce(avatar.getPosition()));
         avatar.applyForce();
+
+        avatar2.setGravity(vectorWorld.getForce(avatar2.getPosition()));
+        avatar2.applyForce();
 
         //TODO Removed sound stuffs
 //        if (avatar.isJumping()) {

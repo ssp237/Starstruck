@@ -74,6 +74,11 @@ public class InputController {
     private boolean rightPrevious;
     private boolean leftPressed;
     private boolean leftPrevious;
+    /** Whether a and d keys are pressed */
+    private boolean dPressed;
+    private boolean dPrevious;
+    private boolean aPressed;
+    private boolean aPrevious;
 
     /** How much did we move horizontally? */
     private float horizontal;
@@ -244,6 +249,14 @@ public class InputController {
         return leftPressed;
     }
 
+    public boolean didA() {
+        return aPressed;
+    }
+
+    public boolean didD() {
+        return dPressed;
+    }
+
     /**
      * Creates a new input controller
      *
@@ -279,6 +292,8 @@ public class InputController {
         prevPrevious = prevPressed;
         rightPrevious = rightPressed;
         leftPrevious = leftPressed;
+        aPrevious = aPressed;
+        dPrevious = dPressed;
 
         // Check to see if a GamePad is connected
 //        if (xbox.isConnected()) {
@@ -348,6 +363,8 @@ public class InputController {
         // TODO no controller support
         rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT);
         leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT);
+        aPressed = Gdx.input.isKeyPressed (Input.Keys.A);
+        dPressed = Gdx.input.isKeyPressed (Input.Keys.D);
 
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);
