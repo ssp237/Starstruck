@@ -29,7 +29,10 @@ public class WheelObstacle extends SimpleObstacle {
     private Fixture geometry;
     /** Center of the planet, temporary fix as to why the center does not appear to be at the center */
     private Vector2 center = new Vector2();
-    protected float scaleDraw;
+
+    /** MADE PUBLIC TO AVOID ISSUE, NEED TO MAKE PROTECTED*/
+    //TODO: Make protected
+    public float scaleDraw;
 
     /**
      * Returns the radius of this circle

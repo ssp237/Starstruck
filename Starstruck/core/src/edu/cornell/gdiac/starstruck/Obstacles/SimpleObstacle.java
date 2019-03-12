@@ -40,7 +40,9 @@ public abstract class SimpleObstacle extends Obstacle {
     protected TextureRegion texture;
 
     /** The texture origin for drawing */
-    protected Vector2 origin;
+    /** MADE PUBLIC TO AVOID ISSUE, NEED TO MAKE PROTECTED*/
+    //TODO: Make protected
+    public Vector2 origin;
 
     /// BodyDef Methods
     /**

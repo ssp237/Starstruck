@@ -12,14 +12,14 @@
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * LibGDX version, 2/6/2015
  */
-package edu.cornell.gdiac.planetdemo;
+package edu.cornell.gdiac.starstruck.Obstacles;
 
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.*;
 
-import edu.cornell.gdiac.planetdemo.*;
+import edu.cornell.gdiac.starstruck.*;
 
 /**
  * A bridge with planks connected by revolute joints.

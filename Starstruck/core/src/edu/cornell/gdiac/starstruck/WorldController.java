@@ -14,7 +14,7 @@
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * LibGDX version, 2/6/2015
  */
-package edu.cornell.gdiac.planetdemo;
+package edu.cornell.gdiac.starstruck;
 
 import java.util.Iterator;
 
@@ -29,7 +29,8 @@ import com.badlogic.gdx.graphics.g2d.freetype.*;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
 import edu.cornell.gdiac.util.*;
-//import edu.cornell.gdiac.physics.obstacle.*;
+import edu.cornell.gdiac.starstruck.Obstacles.*;
+import edu.cornell.gdiac.starstruck.Gravity.*;
 
 /**
  * Base class for a world-specific controller.

@@ -49,7 +49,9 @@ public abstract class Obstacle {
     /** A tag for debugging purposes */
     private String nametag;
     /** Drawing scale to convert physics units to pixels */
-    protected Vector2 drawScale;
+    /** MADE PUBLIC TO AVOID ISSUE, NEED TO MAKE PROTECTED*/
+    //TODO: Make protected
+    public Vector2 drawScale;
 
     /// Track garbage collection status
     /** Whether the object should be removed from the world on next pass */

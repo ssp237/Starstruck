@@ -8,7 +8,7 @@
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * LibGDX version, 2/6/2015
  */
-package edu.cornell.gdiac.planetdemo;
+package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
@@ -22,7 +22,8 @@ import java.util.*;
 
 import edu.cornell.gdiac.util.*;
 //import edu.cornell.gdiac.physics.*;
-//import edu.cornell.gdiac.physics.obstacle.*;
+import edu.cornell.gdiac.starstruck.Obstacles.*;
+import edu.cornell.gdiac.starstruck.Gravity.*;
 
 /**
  * Gameplay specific controller for the platformer game.  
