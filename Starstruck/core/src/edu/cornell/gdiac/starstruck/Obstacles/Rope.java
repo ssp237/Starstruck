@@ -1,5 +1,5 @@
 /*
- * RopeBridge.java
+ * Rope.java
  *
  * The class is a classic example of how to subclass ComplexPhysicsObject.
  * You have to implement the createJoints() method to stick in all of the
@@ -27,7 +27,7 @@ import edu.cornell.gdiac.starstruck.*;
  * Note that this class returns to static loading.  That is because there are
  * no other subclasses that we might loop through.
  */
-public class RopeBridge extends ComplexObstacle {
+public class Rope extends ComplexObstacle {
     /** The debug name for the entire obstacle */
     private static final String BRIDGE_NAME = "bridge";
     /** The debug name for each plank */
@@ -55,8 +55,8 @@ public class RopeBridge extends ComplexObstacle {
     /** The spacing between each link */
     protected float spacing = 0.0f;
 
-    private DudeModel avatar;
-    private DudeModel avatar2;
+    private AstronautModel avatar;
+    private AstronautModel avatar2;
 
     /**
      * Creates a new rope bridge at the given position.
@@ -72,7 +72,7 @@ public class RopeBridge extends ComplexObstacle {
      * @param avatar 	avatar
      * @param avatar2   avatar2
      */
-    public RopeBridge(float x, float y, float width, float lwidth, float lheight, DudeModel avatar, DudeModel avatar2) {
+    public Rope(float x, float y, float width, float lwidth, float lheight, AstronautModel avatar, AstronautModel avatar2) {
         this(x, y, x+width, y, lwidth, lheight);
         this.avatar = avatar;
         this.avatar2 = avatar2;
@@ -88,7 +88,7 @@ public class RopeBridge extends ComplexObstacle {
      * @param lwidth	The plank length
      * @param lheight	The bridge thickness
      */
-    public RopeBridge(float x0, float y0, float x1, float y1, float lwidth, float lheight) {
+    public Rope(float x0, float y0, float x1, float y1, float lwidth, float lheight) {
         super(x0,y0);
         setName(BRIDGE_NAME);
 
@@ -143,7 +143,7 @@ public class RopeBridge extends ComplexObstacle {
         Vector2 anchor1 = new Vector2();
         Vector2 anchor2 = new Vector2(-linksize / 2, 0);
 
-        //DudeModel avatar =
+        //AstronautModel avatar =
 
         // Create the leftmost anchor
         // Normally, we would do this in constructor, but we have

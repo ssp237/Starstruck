@@ -1,5 +1,5 @@
 /*
- * Spinner.java
+ * Anchor.java
  *
  * This class provides a spinning rectangle on a fixed pin.  We did not really need
  * a separate class for this, as it has no update.  However, ComplexObstacles always
@@ -15,13 +15,10 @@
 package edu.cornell.gdiac.starstruck.Obstacles;
 
 import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.*;
 
-import edu.cornell.gdiac.starstruck.*;
-
-public class Spinner extends ComplexObstacle {
+public class Anchor extends ComplexObstacle {
     /** The debug name for the entire obstacle */
     private static final String SPINNER_NAME = "spinner";
     /** The debug name for the spinning barrier */
@@ -50,7 +47,7 @@ public class Spinner extends ComplexObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Spinner(float width, float height) {
+    public Anchor(float width, float height) {
         this(0,0,width,height);
     }
 
@@ -66,7 +63,7 @@ public class Spinner extends ComplexObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Spinner(float x, float y, float width, float height) {
+    public Anchor(float x, float y, float width, float height) {
         super(x,y);
         setName(SPINNER_NAME);
 

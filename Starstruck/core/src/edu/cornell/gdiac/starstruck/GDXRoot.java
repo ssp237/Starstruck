@@ -20,8 +20,6 @@ import com.badlogic.gdx.graphics.g2d.freetype.*;
 import com.badlogic.gdx.assets.loaders.*;
 import com.badlogic.gdx.assets.loaders.resolvers.*;
 import edu.cornell.gdiac.util.ScreenListener;
-
-import edu.cornell.gdiac.util.*;
 //import edu.cornell.gdiac.physics.rocket.*;
 //import edu.cornell.gdiac.physics.ragdoll.*;
 //import edu.cornell.gdiac.physics.platform.*;
@@ -76,7 +74,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		// Initialize the three game worlds
 		controllers = new WorldController[1];
 //		controllers[0] = new RocketController();
-		controllers[0] = new PlatformController();
+		controllers[0] = new GameController();
 //		controllers[2] = new RagdollController();
 		for(int ii = 0; ii < controllers.length; ii++) {
 			controllers[ii].preLoadContent(manager);

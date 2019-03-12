@@ -1,5 +1,5 @@
 /*
- * DudeModel.java
+ * AstronautModel.java
  *
  * You SHOULD NOT need to modify this file.  However, you may learn valuable lessons
  * for the rest of the lab by looking at it.
@@ -23,7 +23,7 @@ import edu.cornell.gdiac.starstruck.Obstacles.*;
  * Note that this class returns to static loading.  That is because there are
  * no other subclasses that we might loop through.
  */
-public class DudeModel extends CapsuleObstacle {
+public class AstronautModel extends CapsuleObstacle {
     // Physics constants
     /** The density of the character */
     private static final float DUDE_DENSITY = 1.0f;
@@ -242,7 +242,7 @@ public class DudeModel extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public DudeModel(float width, float height) {
+    public AstronautModel(float width, float height) {
         this(0,0,width,height);
     }
 
@@ -259,7 +259,7 @@ public class DudeModel extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public DudeModel(float x, float y, float width, float height) {
+    public AstronautModel(float x, float y, float width, float height) {
         super(x,y,width*DUDE_HSHRINK,height*DUDE_VSHRINK);
         setDensity(DUDE_DENSITY);
         setFriction(DUDE_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET

@@ -1,5 +1,5 @@
 /*
- * PlatformController.java
+ * GameController.java
  *
  * This is one of the files that you are expected to modify. Please limit changes to
  * the regions that say INSERT CODE HERE.
@@ -17,10 +17,9 @@ import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.physics.box2d.*;
+
 import java.util.*;
 
-import edu.cornell.gdiac.util.*;
 //import edu.cornell.gdiac.physics.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.starstruck.Gravity.*;
@@ -34,7 +33,7 @@ import edu.cornell.gdiac.starstruck.Gravity.*;
  * This is the purpose of our AssetState variable; it ensures that multiple instances
  * place nicely with the static assets.
  */
-public class PlatformController extends WorldController implements ContactListener {
+public class GameController extends WorldController implements ContactListener {
     /** The texture file for the background*/
     private static final String BACKGROUND_FILE = "platform/background.png";
     /** The texture file for the character avatar (no animation) */
@@ -238,13 +237,13 @@ public class PlatformController extends WorldController implements ContactListen
 
     // Physics objects for the game
     /** Reference to the character avatar */
-    private DudeModel avatar;
+    private AstronautModel avatar;
     /** Reference to the second character avatar*/
-    private DudeModel avatar2;
+    private AstronautModel avatar2;
     /** List of anchors, temporary quick solution */
-    private ArrayList<Spinner> anchors = new ArrayList<Spinner>();
+    private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
     /** WHY GRAVITY */
-    private ArrayList<Spinner> stars = new ArrayList<Spinner>();
+    private ArrayList<Anchor> stars = new ArrayList<Anchor>();
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -256,20 +255,20 @@ public class PlatformController extends WorldController implements ContactListen
      * Return a reference to the primary avatar
      * @return Return a reference to the primary avatar.
      */
-    public DudeModel getAvatar() {return avatar;}
+    public AstronautModel getAvatar() {return avatar;}
 
     /**
      * Return a reference to the secondary avatar.
      * @return Return a reference to the secondary avatar.
      */
-    public DudeModel getAvatar2() {return avatar2;}
+    public AstronautModel getAvatar2() {return avatar2;}
 
     /**
      * Creates and initialize a new instance of the platformer game
      *
      * The game has default gravity and other settings
      */
-    public PlatformController() {
+    public GameController() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
         setDebug(false);
         setComplete(false);
@@ -384,13 +383,13 @@ public class PlatformController extends WorldController implements ContactListen
         // Create dude
         dwidth  = avatarTexture.getRegionWidth()/scale.x;
         dheight = avatarTexture.getRegionHeight()/scale.y;
-        avatar = new DudeModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight);
+        avatar = new AstronautModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight);
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarTexture);
         //avatar.setAngle((float)Math.PI/2);
         addObject(avatar);
 
-        avatar2 = new DudeModel(DUDE2_POS.x + 1, DUDE2_POS.y, dwidth, dheight);
+        avatar2 = new AstronautModel(DUDE2_POS.x + 1, DUDE2_POS.y, dwidth, dheight);
         avatar2.setDrawScale(scale);
         avatar2.setTexture(avatarTexture);
         addObject(avatar2);
@@ -398,7 +397,7 @@ public class PlatformController extends WorldController implements ContactListen
 //        // Create rope bridge
 //        dwidth  = bridgeTexture.getRegionWidth()/scale.x;
 //        dheight = bridgeTexture.getRegionHeight()/scale.y;
-//        RopeBridge bridge = new RopeBridge(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
+//        Rope bridge = new Rope(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
 //        bridge.setTexture(bridgeTexture);
 //        bridge.setDrawScale(scale);
 //        addObject(bridge);
@@ -406,7 +405,7 @@ public class PlatformController extends WorldController implements ContactListen
         // Create spinning platform
 //        dwidth  = barrierTexture.getRegionWidth()/scale.x;
 //        dheight = barrierTexture.getRegionHeight()/scale.y;
-//        Spinner spinPlatform = new Spinner(SPIN_POS.x,SPIN_POS.y,dwidth,dheight);
+//        Anchor spinPlatform = new Anchor(SPIN_POS.x,SPIN_POS.y,dwidth,dheight);
 //        spinPlatform.setDrawScale(scale);
 //        spinPlatform.setTexture(barrierTexture);
 //        addObject(spinPlatform);
@@ -418,7 +417,7 @@ public class PlatformController extends WorldController implements ContactListen
         dheight = starTexture.getRegionHeight()/scale.y;
         String sname = "star";
         for (int ii = 0; ii < STARS.length; ii++) {
-            Spinner star = new Spinner(STARS[ii][0],STARS[ii][1],dwidth,dheight);
+            Anchor star = new Anchor(STARS[ii][0],STARS[ii][1],dwidth,dheight);
             star.setName(sname + ii);
             star.setDensity(0f);
             star.setBodyType(BodyDef.BodyType.StaticBody);
@@ -433,7 +432,7 @@ public class PlatformController extends WorldController implements ContactListen
         dheight = bulletTexture.getRegionHeight()/scale.y;
         String aname = "anchor";
         for (int ii = 0; ii < ANCHORS.length; ii++){
-            Spinner anchor = new Spinner(ANCHORS[ii][0],ANCHORS[ii][1],dwidth,dheight);
+            Anchor anchor = new Anchor(ANCHORS[ii][0],ANCHORS[ii][1],dwidth,dheight);
             anchor.setName(aname + ii);
             anchor.setBodyType(BodyDef.BodyType.StaticBody);
             anchor.setDensity(0f);
@@ -493,7 +492,7 @@ public class PlatformController extends WorldController implements ContactListen
 
         if (InputController.getInstance().didSpace()) {
             if (avatar.isAnchored) {
-                for (Spinner a : anchors) {
+                for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (!avatar2.getOnPlanet() && avatar2.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
                         avatar2.isAnchored = true;
@@ -514,7 +513,7 @@ public class PlatformController extends WorldController implements ContactListen
 
             else if (avatar2.isAnchored) {
                 anchorChange = false;
-                for (Spinner a : anchors) {
+                for (Anchor a : anchors) {
                     SPIN_POS = a.getPosition();
                     if (!avatar.getOnPlanet() && avatar.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
                         avatar.isAnchored = true;
@@ -534,7 +533,7 @@ public class PlatformController extends WorldController implements ContactListen
             }
 
             else if ((!avatar.getOnPlanet() || !avatar2.getOnPlanet()) && !avatar.isAnchored && !avatar2.isAnchored){
-                for (Spinner a : anchors) {
+                for (Anchor a : anchors) {
                     SPIN_POS = a.getPosition();
                     if (!avatar.getOnPlanet() && avatar.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
                         avatar.isAnchored = true;
@@ -816,10 +815,10 @@ public class PlatformController extends WorldController implements ContactListen
         canvas.end();
 
         canvas.begin();
-        for (Spinner a : anchors) {
+        for (Anchor a : anchors) {
             a.draw(canvas);
         }
-        for (Spinner s : stars) {
+        for (Anchor s : stars) {
             s.draw(canvas);
         }
         for(Obstacle obj : objects) {
