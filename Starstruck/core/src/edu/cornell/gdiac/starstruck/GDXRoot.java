@@ -20,9 +20,6 @@ import com.badlogic.gdx.graphics.g2d.freetype.*;
 import com.badlogic.gdx.assets.loaders.*;
 import com.badlogic.gdx.assets.loaders.resolvers.*;
 import edu.cornell.gdiac.util.ScreenListener;
-//import edu.cornell.gdiac.physics.rocket.*;
-//import edu.cornell.gdiac.physics.ragdoll.*;
-//import edu.cornell.gdiac.physics.platform.*;
 
 /**
  * Root class for a LibGDX.
