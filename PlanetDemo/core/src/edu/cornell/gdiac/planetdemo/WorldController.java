@@ -26,8 +26,10 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
+import edu.cornell.gdiac.util.PooledList;
+import edu.cornell.gdiac.util.ScreenListener;
 import edu.cornell.gdiac.util.*;
-import edu.cornell.gdiac.planetdemo.obstacle.*;
+//import edu.cornell.gdiac.physics.obstacle.*;
 
 /**
  * Base class for a world-specific controller.
@@ -70,6 +72,10 @@ public abstract class WorldController implements Screen {
     /** Retro font for displaying messages */
     private static String FONT_FILE = "shared/RetroGame.ttf";
     private static int FONT_SIZE = 64;
+    private static String PLANET1_FILE = "planets/planet1.png";
+    private static String PLANET2_FILE = "planets/planet2.png";
+    private static String PLANET3_FILE = "planets/planet3.png";
+    private static String PLANET4_FILE = "planets/planet4.png";
 
     /** The texture for walls and platforms */
     protected TextureRegion earthTile;
@@ -77,6 +83,12 @@ public abstract class WorldController implements Screen {
     protected TextureRegion goalTile;
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
+    protected TextureRegion planet1;
+    protected TextureRegion planet2;
+    protected TextureRegion planet3;
+    protected TextureRegion planet4;
+
+    private WheelObstacle planetCache;
 
     /**
      * Preloads the assets for this controller.
@@ -99,6 +111,14 @@ public abstract class WorldController implements Screen {
         assets.add(EARTH_FILE);
         manager.load(GOAL_FILE,Texture.class);
         assets.add(GOAL_FILE);
+        manager.load(PLANET1_FILE, Texture.class);
+        assets.add(PLANET1_FILE);
+        manager.load(PLANET2_FILE, Texture.class);
+        assets.add(PLANET2_FILE);
+        manager.load(PLANET3_FILE, Texture.class);
+        assets.add(PLANET3_FILE);
+        manager.load(PLANET4_FILE, Texture.class);
+        assets.add(PLANET4_FILE);
 
         // Load the font
         FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -126,6 +146,10 @@ public abstract class WorldController implements Screen {
         // Allocate the tiles
         earthTile = createTexture(manager,EARTH_FILE,true);
         goalTile  = createTexture(manager,GOAL_FILE,true);
+        planet1 = createTexture(manager, PLANET1_FILE, true);
+        planet2 = createTexture(manager, PLANET2_FILE, true);
+        planet3 = createTexture(manager, PLANET3_FILE, true);
+        planet4 = createTexture(manager, PLANET4_FILE, true);
 
         // Allocate the font
         if (manager.isLoaded(FONT_FILE)) {
@@ -232,7 +256,9 @@ public abstract class WorldController implements Screen {
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
 
-    /** The Box2D world */
+    /** The VectorWorld containing the Box2D world and the custom "gravity" */
+    protected VectorWorld vectorWorld;
+    /** The Box2D world from the VectorWorld*/
     protected World world;
     /** The boundary of the world */
     protected Rectangle bounds;
@@ -336,7 +362,7 @@ public abstract class WorldController implements Screen {
      *
      * The canvas is shared across all controllers
      *
-     * @param the canvas associated with this controller
+     * @return canvas associated with this controller
      */
     public GameCanvas getCanvas() {
         return canvas;
@@ -348,7 +374,7 @@ public abstract class WorldController implements Screen {
      * The canvas is shared across all controllers.  Setting this value will compute
      * the drawing scale from the canvas size.
      *
-     * @param value the canvas associated with this controller
+     * @param canvas the canvas associated with this controller
      */
     public void setCanvas(GameCanvas canvas) {
         this.canvas = canvas;
@@ -395,7 +421,8 @@ public abstract class WorldController implements Screen {
      */
     protected WorldController(Rectangle bounds, Vector2 gravity) {
         assets = new Array<String>();
-        world = new World(gravity,false);
+        vectorWorld = new VectorWorld(bounds);
+        world = vectorWorld.getWorld();
         this.bounds = new Rectangle(bounds);
         this.scale = new Vector2(1,1);
         complete = false;
@@ -477,7 +504,7 @@ public abstract class WorldController implements Screen {
      * to switch to a new game mode.  If not, the update proceeds
      * normally.
      *
-     * @param delta Number of seconds since last animation frame
+     * @param dt Number of seconds since last animation frame
      *
      * @return whether to process the update loop
      */
@@ -529,7 +556,7 @@ public abstract class WorldController implements Screen {
      * This method is called after input is read, but before collisions are resolved.
      * The very last thing that it should do is apply forces to the appropriate objects.
      *
-     * @param delta Number of seconds since last animation frame
+     * @param dt Number of seconds since last animation frame
      */
     public abstract void update(float dt);
 
@@ -540,7 +567,7 @@ public abstract class WorldController implements Screen {
      * physics.  The primary method is the step() method in world.  This implementation
      * works for all applications and should not need to be overwritten.
      *
-     * @param delta Number of seconds since last animation frame
+     * @param dt Number of seconds since last animation frame
      */
     public void postUpdate(float dt) {
         // Add any objects created by actions
@@ -576,14 +603,22 @@ public abstract class WorldController implements Screen {
      *
      * The method draws all objects in the order that they were added.
      *
-     * @param canvas The drawing context
+     * @param delta The drawing context
      */
     public void draw(float delta) {
         canvas.clear();
 
         canvas.begin();
         for(Obstacle obj : objects) {
-            obj.draw(canvas);
+            if (obj.getName().contains("planet")) {
+                planetCache = (WheelObstacle) obj;
+
+                canvas.draw(planetCache.getTexture(),Color.WHITE,planetCache.origin.x,planetCache.origin.y,planetCache.getX()*planetCache.drawScale.x,
+                        planetCache.getY()*planetCache.drawScale.x,planetCache.getAngle(),planetCache.scaleDraw,planetCache.scaleDraw);
+
+            }
+            else
+                obj.draw(canvas);
         }
         canvas.end();
 

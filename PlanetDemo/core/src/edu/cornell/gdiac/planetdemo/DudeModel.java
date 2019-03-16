@@ -14,8 +14,8 @@ import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
-import edu.cornell.gdiac.planetdemo.*;
-import edu.cornell.gdiac.planetdemo.obstacle.*;
+//import edu.cornell.gdiac.physics.*;
+//import edu.cornell.gdiac.physics.obstacle.*;
 
 /**
  * Player avatar for the plaform game.
@@ -35,6 +35,7 @@ public class DudeModel extends CapsuleObstacle {
     private static final float DUDE_FRICTION = 0.0f;
     /** The maximum character speed */
     private static final float DUDE_MAXSPEED = 5.0f;
+    private static final float DUDE_MAXROT = (float) Math.PI/16;
     /** The impulse for the character jump */
     private static final float DUDE_JUMP = 5.5f;
     /** Cooldown (in animation frames) for jumping */
@@ -56,6 +57,7 @@ public class DudeModel extends CapsuleObstacle {
 
     /** The current horizontal movement of the character */
     private float   movement;
+    private float rotation;
     /** Which direction is the character facing */
     private boolean faceRight;
     /** How long until we can jump again */
@@ -71,6 +73,12 @@ public class DudeModel extends CapsuleObstacle {
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
+    private Vector2 gravity = new Vector2();
+    /** Indicates whether astronaut is on planet */
+    private boolean onPlanet = false;
+    /** Direction the dude should go when jumping off a planet */
+    public Vector2 dudeJump = new Vector2();
+    public boolean isAnchored = false;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -101,6 +109,12 @@ public class DudeModel extends CapsuleObstacle {
         } else if (movement > 0) {
             faceRight = true;
         }
+    }
+
+    public float getRotation() { return rotation; }
+
+    public void setRotation(float value) {
+        rotation = value;
     }
 
     /**
@@ -157,6 +171,10 @@ public class DudeModel extends CapsuleObstacle {
         isGrounded = value;
     }
 
+    public void setGravity(Vector2 vec) {
+        gravity.set(-vec.x, -vec.y);
+    }
+
     /**
      * Returns how much force to apply to get the dude moving
      *
@@ -208,6 +226,12 @@ public class DudeModel extends CapsuleObstacle {
         return faceRight;
     }
 
+    public boolean getOnPlanet() { return onPlanet; }
+
+    public void setOnPlanet(boolean value) {
+        onPlanet = value;
+    }
+
     /**
      * Creates a new dude at the origin.
      *
@@ -227,6 +251,7 @@ public class DudeModel extends CapsuleObstacle {
      *
      * The size is expressed in physics units NOT pixels.  In order for
      * drawing to work properly, you MUST set the drawScale. The drawScale
+     * drawing to work properly, you MUST set the drawScale. The drawScaled
      * converts the physics units to pixels.
      *
      * @param x  		Initial x position of the avatar center
@@ -238,7 +263,7 @@ public class DudeModel extends CapsuleObstacle {
         super(x,y,width*DUDE_HSHRINK,height*DUDE_VSHRINK);
         setDensity(DUDE_DENSITY);
         setFriction(DUDE_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
-        setFixedRotation(true);
+        //setFixedRotation(true);
 
         // Gameplay attributes
         isGrounded = false;
@@ -300,24 +325,54 @@ public class DudeModel extends CapsuleObstacle {
         }
 
         // Don't want to be moving. Damp out player motion
-        if (getMovement() == 0f) {
-            forceCache.set(-getDamping()*getVX(),0);
-            body.applyForce(forceCache,getPosition(),true);
-        }
+//        if (getMovement() == 0f) {
+//            forceCache.set(-getDamping()*getVX(),0);
+//            body.applyForce(forceCache,getPosition(),true);
+//        }
 
-        // Velocity too high, clamp it
-        if (Math.abs(getVX()) >= getMaxSpeed()) {
-            setVX(Math.signum(getVX())*getMaxSpeed());
-        } else {
-            forceCache.set(getMovement(),0);
-            body.applyForce(forceCache,getPosition(),true);
+//        if (getOnPlanet()) {
+//            if (movement > 0) {
+//
+//            }
+//        }
+
+        if (!getOnPlanet()) {
+            // Velocity too high, clamp it
+//            if (Math.abs(getVX()) >= getMaxSpeed()) {
+//                if (getVX() * movement > 0) {
+//                    setVX(Math.signum(getVX()) * getMaxSpeed());
+//                } else {
+//                    forceCache.set(getMovement(), 0);
+//                    body.applyForce(forceCache, getPosition(), true);
+//                }
+//
+//            } else {
+//                forceCache.set(getMovement(), 0);
+//                body.applyForce(forceCache, getPosition(), true);
+//            }
+
+            if (Math.abs(getAngularVelocity()) >= DUDE_MAXSPEED) {
+                setAngularVelocity(Math.signum(getVX()) * getMaxSpeed());
+            } else {
+                body.applyTorque(-getRotation(), true);
+            }
         }
 
         // Jump!
         if (isJumping()) {
-            forceCache.set(0, DUDE_JUMP);
-            body.applyLinearImpulse(forceCache,getPosition(),true);
+            forceCache.set(dudeJump.setLength(DUDE_JUMP));
+            body.setLinearVelocity(forceCache);//,getPosition(),true);
+            body.setAwake(true);
         }
+
+        // Gravity from planets
+        //System.out.println(gravity);
+        if (!getOnPlanet()) {
+            body.applyForce(gravity, getPosition(), true);
+            //System.out.println(body.getLinearVelocity() + ", " + gravity);
+        }
+        //System.out.println(body.getLinearVelocity());
+
     }
 
     /**
@@ -325,7 +380,7 @@ public class DudeModel extends CapsuleObstacle {
      *
      * We use this method to reset cooldowns.
      *
-     * @param delta Number of seconds since last animation frame
+     * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
         // Apply cooldowns
@@ -350,7 +405,7 @@ public class DudeModel extends CapsuleObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        float effect = faceRight ? 1.0f : -1.0f;
+        float effect = faceRight ? -1.0f : 1.0f;
         canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 
