@@ -386,7 +386,7 @@ public abstract class WorldController implements Screen {
     /**
      * Creates a new game world with the default values.
      *
-     * The game world is scaled so that the screen coordinates do not agree
+     * The game world is scaled so that the sbcreen coordinates do not agree
      * with the Box2d coordinates.  The bounds are in terms of the Box2d
      * world, not the screen.
      */

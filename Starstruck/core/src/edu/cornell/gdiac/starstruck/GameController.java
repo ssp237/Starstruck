@@ -56,6 +56,8 @@ public class GameController extends WorldController implements ContactListener {
 
     /** Background texture for start-up */
     private Texture background;
+    /** Background texture region for tiling */
+    private TextureRegion backgroundTR;
     /** Texture asset for character avatar */
     private TextureRegion avatarTexture;
     /** Texture asset for the spinning barrier */
@@ -244,6 +246,9 @@ public class GameController extends WorldController implements ContactListener {
     private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
     /** WHY GRAVITY */
     private ArrayList<Anchor> stars = new ArrayList<Anchor>();
+    /** For tiling the background*/
+    int srcX = 10;
+    int srcY = 10;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -460,14 +465,14 @@ public class GameController extends WorldController implements ContactListener {
             return false;
         }
 
-        if (!isFailure() && (avatar.getY() < -1 || avatar.getY() > bounds.height + 1
-        || avatar.getX() < -1 || avatar.getX() > bounds.getWidth() + 1)) {
+        if (!isFailure() && (avatar.getY() < -1 || avatar.getY() > bounds.height + 1)) {
+        //|| avatar.getX() < -1 || avatar.getX() > bounds.getWidth() + 1)) {
             setFailure(true);
             return false;
         }
 
-        if (!isFailure() && (avatar2.getY() < -1|| avatar2.getY() > bounds.height + 1
-                || avatar2.getX() < -1 || avatar2.getX() > bounds.getWidth() + 1)) {
+        if (!isFailure() && (avatar2.getY() < -1|| avatar2.getY() > bounds.height + 1)) {
+                //|| avatar2.getX() < -1 || avatar2.getX() > bounds.getWidth() + 1)) {
             setFailure(true);
             return false;
         }
@@ -486,6 +491,14 @@ public class GameController extends WorldController implements ContactListener {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+        float a1x = avatar.getPosition().x * avatar.drawScale.x;
+        float a2x = avatar2.getPosition().x * avatar2.drawScale.x;
+        float xCam = (a1x + a2x) / 2;
+        if (xCam < canvas.getWidth()/2) xCam = canvas.getWidth()/2;
+        canvas.getCamera().position.set(new Vector3(xCam, canvas.getCamera().position.y, 0));
+        canvas.getCamera().update();
+//        System.out.println(canvas.getCamera().position);
+//        System.out.println(canvas.getHeight());
         avatar.setFixedRotation(false);
         avatar2.setFixedRotation(false);
         boolean anchorChange = false;
@@ -802,13 +815,15 @@ public class GameController extends WorldController implements ContactListener {
     /**
      * Draw the physics objects to the canvas and the background
      *
-     * The method draws all objects in the order that they were added.
+     * The method draws all objects in the order that they weret added.
      *
      * @param delta The delay in seconds since the last update
      */
     public void draw(float delta) {
         canvas.clear();
 
+//        background.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+//        backgroundTR = new TextureRegion(background, canvas.getWidth()*srcX, canvas.getHeight());
         // Draw background unscaled.
         canvas.begin();
         canvas.draw(background, Color.WHITE, 0, 0,canvas.getWidth(),canvas.getHeight());

@@ -380,6 +380,7 @@ public class InputController {
         leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT);
         aPressed = Gdx.input.isKeyPressed (Input.Keys.A);
         dPressed = Gdx.input.isKeyPressed (Input.Keys.D);
+        resetPressed = Gdx.input.isKeyPressed(Input.Keys.R);
 
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);

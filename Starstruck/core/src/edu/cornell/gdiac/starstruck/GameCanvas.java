@@ -103,7 +103,7 @@ public class GameCanvas {
         debugRender = new ShapeRenderer();
 
         // Set the projection matrix (for proper scaling)
-        camera = new OrthographicCamera(getWidth(),getHeight());
+        camera = new OrthographicCamera(1024,576);
         camera.setToOrtho(false);
         spriteBatch.setProjectionMatrix(camera.combined);
         debugRender.setProjectionMatrix(camera.combined);
@@ -130,6 +130,13 @@ public class GameCanvas {
         vertex = null;
         holder = null;
     }
+
+    /**
+     * Returns the camera
+     *
+     * @return the camera
+     */
+    public Camera getCamera() { return camera; }
 
     /**
      * Returns the width of this canvas
