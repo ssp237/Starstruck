@@ -194,11 +194,11 @@ public class GameController extends WorldController implements ContactListener {
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-            {-7f, -7f, 14.1f, 57000f, 1.99f},
-            {13f, 15f, 4f, 6000f, 0.43f},
-            {30f, 5f, 4f, 6000f, 0.81f},
-            {25f, 15f, 3f, 2500f, 0.43f},
-            {18f, 0f, 3f, 2500f, 0.43f},
+            {-7f, -7f, 14.1f, 57000f, 1.99f, 1},
+            {13f, 15f, 4f, 6000f, 0.43f, 1},
+            {30f, 5f, 4f, 6000f, 0.81f, 1},
+            {25f, 15f, 3f, 2500f, 0.43f, 1},
+            {18f, 0f, 3f, 2500f, 0.43f, 1},
     };
 
     // Location of each star (can add more fields later, SHOULD MAKE INTO A CLASS)
