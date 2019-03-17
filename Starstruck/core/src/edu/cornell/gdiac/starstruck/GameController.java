@@ -141,6 +141,8 @@ public class GameController extends WorldController implements ContactListener {
 //        sounds.allocate(manager, POP_FILE);
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
+
+        planets = new PlanetList(PLANETS, manager, galaxy, scale, vectorWorld, world);
     }
 
     // Physics constants for initialization
@@ -165,29 +167,6 @@ public class GameController extends WorldController implements ContactListener {
     /** The distance from an anchor at which an astronaut will be able to anchor */
     private static float ANCHOR_DIST = 2f;
 
-    // Since these appear only once, we do not care about the magic numbers.
-    // In an actual game, this information would go in a data file.
-    // Wall vertices
-    private static final float[][] WALLS = {
-            {16.0f, 18.0f, 16.0f, 17.0f,  1.0f, 17.0f,
-                    1.0f,  0.0f,  0.0f,  0.0f,  0.0f, 18.0f},
-            {32.0f, 18.0f, 32.0f,  0.0f, 31.0f,  0.0f,
-                    31.0f, 17.0f, 16.0f, 17.0f, 16.0f, 18.0f}
-    };
-
-    /** The outlines of all of the platforms */
-    private static final float[][] PLATFORMS = {
-            { 1.0f, 3.0f, 6.0f, 3.0f, 6.0f, 2.5f, 1.0f, 2.5f},
-            { 6.0f, 4.0f, 9.0f, 4.0f, 9.0f, 2.5f, 6.0f, 2.5f},
-            {23.0f, 4.0f,31.0f, 4.0f,31.0f, 2.5f,23.0f, 2.5f},
-            {26.0f, 5.5f,28.0f, 5.5f,28.0f, 5.0f,26.0f, 5.0f},
-            {29.0f, 7.0f,31.0f, 7.0f,31.0f, 6.5f,29.0f, 6.5f},
-            {24.0f, 8.5f,27.0f, 8.5f,27.0f, 8.0f,24.0f, 8.0f},
-            {29.0f,10.0f,31.0f,10.0f,31.0f, 9.5f,29.0f, 9.5f},
-            {23.0f,11.5f,27.0f,11.5f,27.0f,11.0f,23.0f,11.0f},
-            {19.0f,12.5f,23.0f,12.5f,23.0f,12.0f,19.0f,12.0f},
-            { 1.0f,12.5f, 7.0f,12.5f, 7.0f,12.0f, 1.0f,12.0f}
-    };
 
     // Location, radius, and drawscale of all the planets.
     // Each row is a planet. 1st col is x, 2nd is y, 3rd is radius, 4th is mass, 5th is scale for drawing.
@@ -195,10 +174,10 @@ public class GameController extends WorldController implements ContactListener {
     // Better solution for drawing?
     private static final float[][] PLANETS = {
             {-7f, -7f, 14.1f, 57000f, 1.99f, 1},
-            {13f, 15f, 4f, 6000f, 0.43f, 1},
-            {30f, 5f, 4f, 6000f, 0.81f, 1},
-            {25f, 15f, 3f, 2500f, 0.43f, 1},
-            {18f, 0f, 3f, 2500f, 0.43f, 1},
+            //{13f, 15f, 4f, 6000f, 0.43f, 1},
+            //{30f, 5f, 4f, 6000f, 0.81f, 1},
+            //{25f, 15f, 3f, 2500f, 0.43f, 1},
+            //{18f, 0f, 3f, 2500f, 0.43f, 1},
     };
 
     // Location of each star (can add more fields later, SHOULD MAKE INTO A CLASS)
@@ -244,6 +223,10 @@ public class GameController extends WorldController implements ContactListener {
     private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
     /** WHY GRAVITY */
     private ArrayList<Anchor> stars = new ArrayList<Anchor>();
+    /** Planets */
+    private PlanetList planets;
+    /** Planets */
+    private Galaxy galaxy = Galaxy.DEFAULT;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -305,80 +288,8 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void populateLevel() {
         // Add level goal
-        float dwidth;//  = goalTile.getRegionWidth()/scale.x;
-        float dheight;// = goalTile.getRegionHeight()/scale.y;
-//        goalDoor = new BoxObstacle(GOAL_POS.x,GOAL_POS.y,dwidth,dheight);
-//        goalDoor.setBodyType(BodyDef.BodyType.StaticBody);
-//        goalDoor.setDensity(0.0f);
-//        goalDoor.setFriction(0.0f);
-//        goalDoor.setRestitution(0.0f);
-//        goalDoor.setSensor(true);
-//        goalDoor.setDrawScale(scale);
-//        goalDoor.setTexture(goalTile);
-//        goalDoor.setName("goal");
-//        addObject(goalDoor);
-
-//        String wname = "wall";
-//        for (int ii = 0; ii < WALLS.length; ii++) {
-//            PolygonObstacle obj;
-//            obj = new PolygonObstacle(WALLS[ii], 0, 0);
-//            obj.setBodyType(BodyDef.BodyType.StaticBody);
-//            obj.setDensity(BASIC_DENSITY);
-//            obj.setFriction(BASIC_FRICTION);
-//            obj.setRestitution(BASIC_RESTITUTION);
-//            obj.setDrawScale(scale);
-//            obj.setTexture(earthTile);
-//            obj.setName(wname+ii);
-//            addObject(obj);
-//        }
-
-//        String pname = "platform";
-//        for (int ii = 0; ii < PLATFORMS.length; ii++) {
-//            PolygonObstacle obj;
-//            obj = new PolygonObstacle(PLATFORMS[ii], 0, 0);
-//            obj.setBodyType(BodyDef.BodyType.StaticBody);
-//            obj.setDensity(BASIC_DENSITY);
-//            obj.setFriction(BASIC_FRICTION);
-//            obj.setRestitution(BASIC_RESTITUTION);
-//            obj.setDrawScale(scale);
-//            obj.setTexture(earthTile);
-//            obj.setName(pname+ii);
-//            addObject(obj);
-//        }
-
-        String ptname = "planet";
-        for (int i = 0; i < PLANETS.length; i++) {
-            WheelObstacle obj = new WheelObstacle(PLANETS[i][0], PLANETS[i][1], PLANETS[i][2]);
-            obj.setBodyType(BodyDef.BodyType.StaticBody);
-            obj.setDensity(500f);
-            obj.setFriction(BASIC_FRICTION);
-            obj.setRestitution(BASIC_RESTITUTION);
-            obj.setDrawScale(scale);
-            int numPlanet = i % 4;
-            switch(numPlanet) {
-                case 0:
-                    obj.setTexture(planet1);
-                    break;
-                case 1:
-                    obj.setTexture(planet2);
-                    break;
-                case 2:
-                    obj.setTexture(planet3);
-                    break;
-                case 3:
-                    obj.setTexture(planet4);
-                    break;
-                default:
-                    obj.setTexture(planet1);
-                    break;
-            }
-            obj.setName(ptname+i);
-            obj.scaleDraw = PLANETS[i][4];
-            addObject(obj);
-            //Vector2 pos = new Vector2(obj.getBody().getPosition().x, obj.getBody().getPosition().y - obj.getRadius());
-            //vectorWorld.addPlanet(obj, PLANETS[i][3], obj.getCenter()); //Radius parameter is temporary fix for why center is off
-             vectorWorld.addPlanet(obj, PLANETS[i][3]);
-        }
+        float dwidth;
+        float dheight;
 
         // Create dude
         dwidth  = avatarTexture.getRegionWidth()/scale.x;
@@ -401,14 +312,6 @@ public class GameController extends WorldController implements ContactListener {
 //        bridge.setTexture(bridgeTexture);
 //        bridge.setDrawScale(scale);
 //        addObject(bridge);
-
-        // Create spinning platform
-//        dwidth  = barrierTexture.getRegionWidth()/scale.x;
-//        dheight = barrierTexture.getRegionHeight()/scale.y;
-//        Anchor spinPlatform = new Anchor(SPIN_POS.x,SPIN_POS.y,dwidth,dheight);
-//        spinPlatform.setDrawScale(scale);
-//        spinPlatform.setTexture(barrierTexture);
-//        addObject(spinPlatform);
 
         // Create star
 
@@ -739,8 +642,6 @@ public class GameController extends WorldController implements ContactListener {
                 }
             }
 
-
-
             // Test bullet collision with world
             if (bd1.getName().equals("bullet") && bd2 != avatar) {
                 removeBullet(bd1);
@@ -749,8 +650,6 @@ public class GameController extends WorldController implements ContactListener {
             if (bd2.getName().equals("bullet") && bd1 != avatar) {
                 removeBullet(bd2);
             }
-
-
 
             // Check for win condition
             //TODO Removed win
@@ -822,18 +721,12 @@ public class GameController extends WorldController implements ContactListener {
             s.draw(canvas);
         }
         for(Obstacle obj : objects) {
-            //System.out.println(obj.getName());
-            if (obj.getName().contains("planet")) {
-                //System.out.println("yeet");
-                planetCache = (WheelObstacle) obj;
-                canvas.draw(planetCache.getTexture(),Color.WHITE,planetCache.origin.x,planetCache.origin.y,
-                        planetCache.getX()*planetCache.drawScale.x,planetCache.getY()*planetCache.drawScale.x,
-                        planetCache.getAngle(),planetCache.scaleDraw,planetCache.scaleDraw);
-
-            }
-            else
                 obj.draw(canvas);
         }
+        for(Planet p : planets.getPlanets()){
+            p.draw(canvas);
+        }
+
         canvas.end();
 
         if (isDebug()) {

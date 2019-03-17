@@ -4,13 +4,11 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import edu.cornell.gdiac.starstruck.Galaxy;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 
-import javax.xml.soap.Text;
 import java.util.ArrayList;
 
 /**
@@ -21,7 +19,7 @@ import java.util.ArrayList;
 public class PlanetList {
 
     /** Track all loaded assets (for unloading purposes) */
-    protected Array<String> assets;
+    private Array<String> assets;
 
     /** Files for default galaxy planets*/
     private static String GALAXY1_PLANET1_FILE = "planets/planet1.png";
@@ -36,10 +34,10 @@ public class PlanetList {
     private String PLANET4_FILE;
 
     /** Textures to be used when drawing planets*/
-    TextureRegion planet1_texture;
-    TextureRegion planet2_texture;
-    TextureRegion planet3_texture;
-    TextureRegion planet4_texture;
+    private TextureRegion planet1_texture;
+    private TextureRegion planet2_texture;
+    private TextureRegion planet3_texture;
+    private TextureRegion planet4_texture;
 
     /** The planets in this PlanetList*/
     private ArrayList<Planet> planets;
@@ -61,6 +59,8 @@ public class PlanetList {
                       World world) {
         setPlanetFiles(galaxy);
 
+        assets = new Array<String>();
+
         manager.load(PLANET1_FILE, Texture.class);
         assets.add(PLANET1_FILE);
         manager.load(PLANET2_FILE, Texture.class);
@@ -75,6 +75,8 @@ public class PlanetList {
         planet3_texture = createTexture(manager, PLANET3_FILE, true);
         planet4_texture = createTexture(manager, PLANET4_FILE, true);
 
+        planets = new ArrayList<Planet>();
+
         String ptname = "planet";
         for (int i = 0; i < planetSpecs.length; i++) {
             TextureRegion texture = getPlanetTexture((int) planetSpecs[i][5]);
@@ -88,8 +90,9 @@ public class PlanetList {
             //vectorWorld.addPlanet(obj, PLANETS[i][3], obj.getCenter()); //Radius parameter is temporary fix for why center is off
 
             vectorWorld.addPlanet(planet, planetSpecs[i][3]);
-        }
 
+            planets.add(planet);
+        }
 
     }
 
@@ -105,7 +108,7 @@ public class PlanetList {
      *
      * @return a newly loaded texture region for the given file.
      */
-    protected TextureRegion createTexture(AssetManager manager, String file, boolean repeat) {
+    private TextureRegion createTexture(AssetManager manager, String file, boolean repeat) {
         if (manager.isLoaded(file)) {
             TextureRegion region = new TextureRegion(manager.get(file, Texture.class));
             region.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -158,5 +161,13 @@ public class PlanetList {
             default:
                 return planet1_texture;
         }
+    }
+
+    /**
+     * Return a reference to the array of planets.
+     * @return a reference to the array of planets.
+     */
+    public ArrayList<Planet> getPlanets(){
+        return planets;
     }
 }
