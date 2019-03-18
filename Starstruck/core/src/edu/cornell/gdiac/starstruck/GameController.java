@@ -809,9 +809,6 @@ public class GameController extends WorldController implements ContactListener {
             for (Anchor a : anchors) {
                 a.drawDebug(canvas);
             }
-            for (Anchor s : stars) {
-                s.drawDebug(canvas);
-            }
             canvas.endDebug();
         }
     }
