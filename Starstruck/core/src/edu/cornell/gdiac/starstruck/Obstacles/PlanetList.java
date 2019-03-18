@@ -211,16 +211,15 @@ public class PlanetList {
      * @param y Y coordinate of planet's origin
      * @param radius Planet's radius
      * @param mass Planet's mass
-     * @param scaleDraw Scale for drawing planet
      * @param grange The range from which gravity is effective for this planet
      * @param sprite Sprite to be used when drawing this planet
      * @param world World that owns this planet
      * @param vectorWorld VectorWorld that controls this planet's gravity
      */
-    public void addPlanet(float x, float y, float radius, float mass, float scaleDraw, float grange,
+    public void addPlanet(float x, float y, float radius, float mass, float grange,
                           int sprite, World world, VectorWorld vectorWorld) {
         TextureRegion texture = getPlanetTexture(sprite);
-        Planet p = new Planet(x, y, radius, mass, scaleDraw, grange, texture, world, scale, gring_texture);
+        Planet p = new Planet(x, y, radius, mass, grange, texture, world, scale, gring_texture);
         vectorWorld.addPlanet(p, mass);
         planets.add(p);
     }
@@ -238,7 +237,7 @@ public class PlanetList {
         for (int i = 0; i < planetSpecs.length; i++) {
 
             addPlanet(planetSpecs[i][0], planetSpecs[i][1], planetSpecs[i][2], planetSpecs[i][3],
-                    planetSpecs[i][4], planetSpecs[i][5], (int) planetSpecs[i][6], world, vectorWorld);
+                    planetSpecs[i][4], (int) planetSpecs[i][5], world, vectorWorld);
 
             //Vector2 pos = new Vector2(obj.getBody().getPosition().x, obj.getBody().getPosition().y - obj.getRadius());
             //vectorWorld.addPlanet(obj, PLANETS[i][3], obj.getCenter()); //Radius parameter is temporary fix for why center is off

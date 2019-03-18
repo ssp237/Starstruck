@@ -30,7 +30,7 @@ public class Planet extends WheelObstacle {
      * @param radius The planet's radius
      * @param mass The planet's mass
      */
-    public Planet(float x, float y, float radius, float mass, float scaleDraw, float grange,
+    public Planet(float x, float y, float radius, float mass, float grange,
                   TextureRegion texture, World world, Vector2 scale, TextureRegion ringTexture) {
         super(x, y, radius);
         this.mass = mass;
@@ -44,7 +44,9 @@ public class Planet extends WheelObstacle {
         activatePhysics(world);
         setDrawScale(scale);
 
-        this.scaleDraw = scaleDraw;
+        //Set drawing scale
+        float newScale = (2 * radius * drawScale.x)/texture.getRegionWidth();
+        this.scaleDraw = newScale;
 
         setName("planet" + counter);
         counter++;
