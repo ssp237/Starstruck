@@ -245,7 +245,7 @@ public class GameController extends WorldController implements ContactListener {
     /** List of anchors, temporary quick solution */
     private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
     /** WHY GRAVITY */
-    private ArrayList<Anchor> stars = new ArrayList<Anchor>();
+    private ArrayList<Star> stars = new ArrayList<Star>();
     /** For tiling the background*/
     int srcX = 10;
     int srcY = 10;
@@ -422,7 +422,7 @@ public class GameController extends WorldController implements ContactListener {
         dheight = starTexture.getRegionHeight()/scale.y;
         String sname = "star";
         for (int ii = 0; ii < STARS.length; ii++) {
-            Anchor star = new Anchor(STARS[ii][0],STARS[ii][1],dwidth,dheight);
+            Star star = new Star(STARS[ii][0],STARS[ii][1],dwidth,dheight);
             star.setName(sname + ii);
             star.setDensity(0f);
             star.setBodyType(BodyDef.BodyType.StaticBody);
@@ -447,6 +447,79 @@ public class GameController extends WorldController implements ContactListener {
             //addObject(anchor);
         }
 
+    }
+
+    /**
+     * Helper method for update for anchoring
+     *
+     * @param avatar avatar 1
+     * @param avatar2 avatar 2
+     */
+    private void anchor(AstronautModel avatar, AstronautModel avatar2) {
+        boolean anchorChange = false;
+        if (InputController.getInstance().didSpace()) {
+            if (avatar.isAnchored()) {
+                for (Anchor a : anchors) {
+                    SPIN_POS.set(a.getPosition());
+                    if (!avatar2.getOnPlanet() && avatar2.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                        avatar2.setAnchored(true);
+                        avatar2.setPosition(SPIN_POS.x, SPIN_POS.y);
+                        avatar2.setLinearVelocity(new Vector2(0, 0));
+                        avatar2.setAngularVelocity(0);
+                        avatar.setAnchored(false);
+//                        avatar.isAnchored = false;
+//                        anchorChange = true;
+                        break;
+                    }
+//                else {
+//                    avatar.isAnchored = false;
+//                }
+                }
+                //avatar.isAnchored = false;
+            }
+
+            else if (avatar2.isAnchored()) {
+                anchorChange = false;
+                for (Anchor a : anchors) {
+                    SPIN_POS = a.getPosition();
+                    if (!avatar.getOnPlanet() && avatar.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                        avatar.setAnchored(true);
+                        avatar.setPosition(SPIN_POS.x, SPIN_POS.y);
+                        avatar.setLinearVelocity(new Vector2(0, 0));
+                        avatar.setAngularVelocity(0);
+                        avatar2.setAnchored(false);
+//                        avatar2.isAnchored = false;
+//                        anchorChange = true;
+                        break;
+                    }
+//                else {
+//                    avatar2.isAnchored = false;
+//                }
+                }
+                //avatar2.isAnchored = false;
+            }
+
+            else if ((!avatar.getOnPlanet() || !avatar2.getOnPlanet()) && !avatar.isAnchored() && !avatar2.isAnchored()){
+                for (Anchor a : anchors) {
+                    SPIN_POS = a.getPosition();
+                    if (!avatar.getOnPlanet() && avatar.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                        avatar.setAnchored(true);
+                        avatar.setPosition(SPIN_POS.x, SPIN_POS.y);
+                        avatar.setLinearVelocity(new Vector2(0, 0));
+                        avatar.setAngularVelocity(0);
+                        break;
+                    }
+
+                    else if (!avatar2.getOnPlanet() && avatar2.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                        avatar2.setAnchored(true);
+                        avatar2.setPosition(SPIN_POS.x, SPIN_POS.y);
+                        avatar2.setLinearVelocity(new Vector2(0, 0));
+                        avatar2.setAngularVelocity(0);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -501,73 +574,10 @@ public class GameController extends WorldController implements ContactListener {
 //        System.out.println(canvas.getHeight());
         avatar.setFixedRotation(false);
         avatar2.setFixedRotation(false);
-        boolean anchorChange = false;
 
-        if (InputController.getInstance().didSpace()) {
-            if (avatar.isAnchored) {
-                for (Anchor a : anchors) {
-                    SPIN_POS.set(a.getPosition());
-                    if (!avatar2.getOnPlanet() && avatar2.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
-                        avatar2.isAnchored = true;
-                        avatar2.setPosition(SPIN_POS.x, SPIN_POS.y);
-                        avatar2.setLinearVelocity(new Vector2(0, 0));
-                        avatar2.setAngularVelocity(0);
-                        avatar.isAnchored = false;
-//                        avatar.isAnchored = false;
-//                        anchorChange = true;
-                        break;
-                    }
-//                else {
-//                    avatar.isAnchored = false;
-//                }
-                }
-                //avatar.isAnchored = false;
-            }
+        anchor(avatar, avatar2);
 
-            else if (avatar2.isAnchored) {
-                anchorChange = false;
-                for (Anchor a : anchors) {
-                    SPIN_POS = a.getPosition();
-                    if (!avatar.getOnPlanet() && avatar.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
-                        avatar.isAnchored = true;
-                        avatar.setPosition(SPIN_POS.x, SPIN_POS.y);
-                        avatar.setLinearVelocity(new Vector2(0, 0));
-                        avatar.setAngularVelocity(0);
-                        avatar2.isAnchored = false;
-//                        avatar2.isAnchored = false;
-//                        anchorChange = true;
-                        break;
-                    }
-//                else {
-//                    avatar2.isAnchored = false;
-//                }
-                }
-                //avatar2.isAnchored = false;
-            }
-
-            else if ((!avatar.getOnPlanet() || !avatar2.getOnPlanet()) && !avatar.isAnchored && !avatar2.isAnchored){
-                for (Anchor a : anchors) {
-                    SPIN_POS = a.getPosition();
-                    if (!avatar.getOnPlanet() && avatar.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
-                        avatar.isAnchored = true;
-                        avatar.setPosition(SPIN_POS.x, SPIN_POS.y);
-                        avatar.setLinearVelocity(new Vector2(0, 0));
-                        avatar.setAngularVelocity(0);
-                        break;
-                    }
-
-                    else if (!avatar2.getOnPlanet() && avatar2.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
-                        avatar2.isAnchored = true;
-                        avatar2.setPosition(SPIN_POS.x, SPIN_POS.y);
-                        avatar2.setLinearVelocity(new Vector2(0, 0));
-                        avatar2.setAngularVelocity(0);
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!avatar.isAnchored) {
+        if (!avatar.isAnchored()) {
             // Process actions in object model
             //avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
             avatar.setJumping(InputController.getInstance().didPrimary());
@@ -600,7 +610,7 @@ public class GameController extends WorldController implements ContactListener {
                     contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
                     //System.out.println(contactDir);
                     avatar.setOnPlanet(false);
-                    avatar.dudeJump.set(contactDir);
+                    avatar.setPlanetJump(contactDir);
                 }
             }
             //if (!avatar.getOnPlanet() && vectorWorld.getForce(avatar.getPosition()) != null)
@@ -608,7 +618,7 @@ public class GameController extends WorldController implements ContactListener {
             avatar.applyForce();
         }
 
-        if (!avatar2.isAnchored) {
+        if (!avatar2.isAnchored()) {
             avatar2.setRotation(InputController.getInstance().getHorizontal2());
             avatar2.setJumping(InputController.getInstance().didSecondary());
             if (avatar2.getOnPlanet()) {
@@ -630,7 +640,7 @@ public class GameController extends WorldController implements ContactListener {
                 if (avatar2.isJumping()) {
                     contactDir.set(avatar2.getPosition().cpy().sub(curPlanet2.getPosition()));
                     avatar2.setOnPlanet(false);
-                    avatar2.dudeJump.set(contactDir);
+                    avatar2.setPlanetJump(contactDir);
                 }
             }
             avatar2.setGravity(vectorWorld.getForce(avatar2.getPosition()));
@@ -833,7 +843,7 @@ public class GameController extends WorldController implements ContactListener {
         for (Anchor a : anchors) {
             a.draw(canvas);
         }
-        for (Anchor s : stars) {
+        for (Star s : stars) {
             s.draw(canvas);
         }
         for(Obstacle obj : objects) {
@@ -855,6 +865,12 @@ public class GameController extends WorldController implements ContactListener {
             canvas.beginDebug();
             for(Obstacle obj : objects) {
                 obj.drawDebug(canvas);
+            }
+            for(Anchor a : anchors) {
+                a.drawDebug(canvas);
+            }
+            for(Star s: stars) {
+                s.drawDebug(canvas);
             }
             canvas.endDebug();
         }

@@ -76,9 +76,9 @@ public class AstronautModel extends CapsuleObstacle {
     private Vector2 gravity = new Vector2();
     /** Indicates whether astronaut is on planet */
     private boolean onPlanet = false;
-    /** Direction the dude should go when jumping off a planet */
-    public Vector2 dudeJump = new Vector2();
-    public boolean isAnchored = false;
+    /** Direction the character should go when jumping off a planet */
+    private Vector2 planetJump = new Vector2();
+    private boolean isAnchored = false;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -233,6 +233,27 @@ public class AstronautModel extends CapsuleObstacle {
     }
 
     /**
+     * Sets the direction to launch off planet.
+     *
+     * @param dir the direction the astronaut should jump
+     */
+    public void setPlanetJump(Vector2 dir) { planetJump.set(dir); }
+
+    /**
+     * Returns whether the astronoaut is anchored
+     *
+     * @return true if the astronaut is anchored, false otherwise
+     */
+    public boolean isAnchored() { return isAnchored; }
+
+    /**
+     * Sets whether the astronaut is anchored
+     *
+     * @param anchored true if the astronaut is anchored, false otherwise
+     */
+    public void setAnchored(boolean anchored) { isAnchored = anchored; }
+
+    /**
      * Creates a new dude at the origin.
      *
      * The size is expressed in physics units NOT pixels.  In order for
@@ -360,7 +381,7 @@ public class AstronautModel extends CapsuleObstacle {
 
         // Jump!
         if (isJumping()) {
-            forceCache.set(dudeJump.setLength(DUDE_JUMP));
+            forceCache.set(planetJump.setLength(DUDE_JUMP));
             body.setLinearVelocity(forceCache);//,getPosition(),true);
             body.setAwake(true);
         }
