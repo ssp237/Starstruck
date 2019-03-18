@@ -19,7 +19,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 
 /**
- * Player avatar for the plaform game.
+ * Avatar avatar for the plaform game.
  *
  * Note that this class returns to static loading.  That is because there are
  * no other subclasses that we might loop through.
@@ -87,6 +87,13 @@ public class AstronautModel extends CapsuleObstacle {
     private TextureRegion glowTexture;
     /** Origin of the glow texture */
     private Vector2 glowOrigin;
+
+    /** Is this player one?*/
+    private boolean isPlayerOne;
+    /** Player 1 glow color*/
+    private static final Color p1glow = new Color(1, 0, (float) 210/255, 0.5f);
+    /** Player 2 glow color*/
+    private static final Color p2glow = new Color(1, 0, (float) 210/255, 0.5f);
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -290,8 +297,8 @@ public class AstronautModel extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public AstronautModel(float width, float height, boolean active) {
-        this(0,0,width,height, active);
+    public AstronautModel(float width, float height, boolean active, boolean playerOne) {
+        this(0,0,width,height, active, playerOne);
     }
 
     /**
@@ -307,7 +314,7 @@ public class AstronautModel extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public AstronautModel(float x, float y, float width, float height, boolean active) {
+    public AstronautModel(float x, float y, float width, float height, boolean active, boolean playerOne) {
         super(x,y,width*DUDE_HSHRINK,height*DUDE_VSHRINK);
         setDensity(DUDE_DENSITY);
         setFriction(DUDE_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
@@ -325,6 +332,7 @@ public class AstronautModel extends CapsuleObstacle {
         isAnchored = false;
         /** Is this astronaut the active character*/
         isActive = active;
+        isPlayerOne = playerOne;
 
         shootCooldown = 0;
         jumpCooldown = 0;
@@ -457,10 +465,13 @@ public class AstronautModel extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? -1.0f : 1.0f;
-        if (isActive())
-            canvas.draw(glowTexture,Color.WHITE,glowOrigin.x,glowOrigin.y,(getX())*drawScale.x,
-                    (getY())*drawScale.y,getAngle(),effect,1.0f);
-        canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        if (isActive()) {
+            Color color = isPlayerOne ? p1glow : p2glow;
+            canvas.draw(glowTexture, color, glowOrigin.x, glowOrigin.y, (getX()) * drawScale.x,
+                    (getY()) * drawScale.y, getAngle(), effect, 1.0f);
+        }
+        canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,
+                getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 
     /**
