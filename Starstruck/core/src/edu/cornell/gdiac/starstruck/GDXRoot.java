@@ -35,9 +35,9 @@ public class GDXRoot extends Game implements ScreenListener {
 	private AssetManager manager;
 	/** Drawing context to display graphics (VIEW CLASS) */
 	private GameCanvas canvas;
-	/** Player mode for the asset loading screen (CONTROLLER CLASS) */
+	/** Avatar mode for the asset loading screen (CONTROLLER CLASS) */
 	private LoadingMode loading;
-	/** Player mode for the the game proper (CONTROLLER CLASS) */
+	/** Avatar mode for the the game proper (CONTROLLER CLASS) */
 	private int current;
 	/** List of all WorldControllers */
 	private WorldController[] controllers;

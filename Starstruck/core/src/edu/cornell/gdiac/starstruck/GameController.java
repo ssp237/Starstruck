@@ -316,7 +316,7 @@ public class GameController extends WorldController implements ContactListener {
         // Create dude
         dwidth  = avatarTexture.getRegionWidth()/scale.x;
         dheight = avatarTexture.getRegionHeight()/scale.y;
-        avatar = new AstronautModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight, true);
+        avatar = new AstronautModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight, true, true);
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarTexture);
         avatar.setGlow(activeTexture);
@@ -324,7 +324,7 @@ public class GameController extends WorldController implements ContactListener {
         //avatar.setAngle((float)Math.PI/2);
         addObject(avatar);
 
-        avatar2 = new AstronautModel(DUDE2_POS.x + 1, DUDE2_POS.y, dwidth, dheight, false);
+        avatar2 = new AstronautModel(DUDE2_POS.x + 1, DUDE2_POS.y, dwidth, dheight, false, false);
         avatar2.setDrawScale(scale);
         avatar2.setTexture(avatarTexture);
         avatar2.setGlow(activeTexture);
