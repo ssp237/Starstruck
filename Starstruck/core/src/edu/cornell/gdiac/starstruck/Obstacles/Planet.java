@@ -72,14 +72,17 @@ public class Planet extends WheelObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
+
         //Draw planet
         canvas.draw(getTexture(), Color.WHITE, origin.x, origin.y,getX() * drawScale.x - texture.getRegionWidth()/(2/scaleDraw),
                 getY() * drawScale.x - texture.getRegionHeight()/(2/scaleDraw), getAngle(), scaleDraw,scaleDraw);
 
         float rScale = grscale * scaleDraw * ((getRadius() + grange) / getRadius());
 
+        Color color = new Color(1,1,1,0.75f);
+
         //Draw ring
-        canvas.draw(ringTexture, Color.WHITE, origin.x, origin.y,getX() * drawScale.x - ringTexture.getRegionWidth()/(2/rScale),
+        canvas.draw(ringTexture, color, origin.x, origin.y,getX() * drawScale.x - ringTexture.getRegionWidth()/(2/rScale),
                 getY() * drawScale.x - ringTexture.getRegionHeight()/(2/rScale), getAngle(), rScale, rScale);
 
     }

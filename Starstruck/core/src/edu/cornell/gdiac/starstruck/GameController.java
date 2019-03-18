@@ -174,11 +174,11 @@ public class GameController extends WorldController implements ContactListener {
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-            {7f, 7f, 3f, 5000f, 3, 0},
+            {-7f, -7f, 14f, 5000f, 4, 0},
             {13f, 15f, 4f, 6000f, 2, 1},
-            //{30f, 5f, 4f, 6000f, 1, 1},
-            //{25f, 15f, 3f, 2500f, 1, 1},
-            //{18f, 0f, 3f, 2500f, 1, 1},
+            {30f, 5f, 4f, 6000f, 2, 2},
+            {25f, 15f, 3f, 2500f, 3, 3},
+            {18f, 0f, 3f, 2500f, 2, 4},
     };
 
     // Location of each star (can add more fields later, SHOULD MAKE INTO A CLASS)
@@ -744,6 +744,12 @@ public class GameController extends WorldController implements ContactListener {
             }
             for(Planet p : planets.getPlanets()) {
                 p.drawDebug(canvas);
+            }
+            for (Anchor a : anchors) {
+                a.drawDebug(canvas);
+            }
+            for (Anchor s : stars) {
+                s.drawDebug(canvas);
             }
             canvas.endDebug();
         }
