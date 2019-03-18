@@ -83,6 +83,8 @@ public abstract class WorldController implements Screen {
     private static String WHIRL_P4 = "planets/whirlpool planet4.png";
     private static String WHIRL_P5 = "planets/whirlpool planet5.png";
     private static String WHIRL_P6 = "planets/whirlpool planet6.png";
+    /** File for gravity ring */
+    private static String GRING_FILE = "planets/gravity ring.png";
 
     /** The texture for walls and platforms */
     protected TextureRegion earthTile;
@@ -138,6 +140,8 @@ public abstract class WorldController implements Screen {
         assets.add(WHIRL_P6);
         manager.load(WHIRL_P6, Texture.class);
         assets.add(WHIRL_P1);
+        manager.load(GRING_FILE, Texture.class);
+        assets.add(GRING_FILE);
 
 
         // Load the font

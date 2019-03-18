@@ -15,6 +15,10 @@ public class Planet extends WheelObstacle {
 
     /** The mass of a planet in [slightly arbitrary] units. */
     protected float mass;
+    /** The range from which gravity is effective for this planet (physics units)*/
+    protected float grange;
+    /** Texture for gravity ring */
+    protected TextureRegion ringTexture;
 
     /** Counts the number of planets created to assign names */
     private static int counter = 0;
@@ -26,11 +30,13 @@ public class Planet extends WheelObstacle {
      * @param radius The planet's radius
      * @param mass The planet's mass
      */
-    public Planet(float x, float y, float radius, float mass, float scaleDraw,
-                  TextureRegion texture, World world, Vector2 scale) {
+    public Planet(float x, float y, float radius, float mass, float scaleDraw, float grange,
+                  TextureRegion texture, World world, Vector2 scale, TextureRegion ringTexture) {
         super(x, y, radius);
         this.mass = mass;
         this.texture = texture;
+        this.grange = grange;
+        this.ringTexture = ringTexture;
 
         setBodyType(BodyDef.BodyType.StaticBody);
         setDensity(500f);
@@ -54,12 +60,16 @@ public class Planet extends WheelObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        System.out.println(texture.getRegionWidth());
-        //System.out.println(getY());
-        //System.out.println(getPosition());
-        //System.out.println(scaleDraw);
-        canvas.draw(getTexture(), Color.WHITE, origin.x, origin.y,getX() * drawScale.x,
-                getY() * drawScale.x, getAngle(), scaleDraw,scaleDraw);
+        //Draw planet
+        canvas.draw(getTexture(), Color.WHITE, origin.x, origin.y,getX() * drawScale.x - texture.getRegionWidth()/(2/scaleDraw),
+                getY() * drawScale.x - texture.getRegionHeight()/(2/scaleDraw), getAngle(), scaleDraw,scaleDraw);
+
+        float rScale = scaleDraw * ((getRadius() + grange) / getRadius());
+
+        //Draw ring
+        canvas.draw(ringTexture, Color.WHITE, origin.x, origin.y,getX() * drawScale.x - ringTexture.getRegionWidth()/(2/rScale),
+                getY() * drawScale.x - ringTexture.getRegionHeight()/(2/rScale), getAngle(), rScale, rScale);
+
     }
 
 

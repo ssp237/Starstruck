@@ -21,6 +21,9 @@ public class PlanetList {
     /** Track all loaded assets (for unloading purposes) */
     private Array<String> assets;
 
+    /** File for gravity ring */
+    private static String GRING_FILE = "planets/gravity ring.png";
+
     /** Files for default galaxy planets*/
     private static String GALAXY1_PLANET1_FILE = "planets/planet1.png";
     private static String GALAXY1_PLANET2_FILE = "planets/planet2.png";
@@ -51,6 +54,9 @@ public class PlanetList {
     private TextureRegion planet5_texture;
     private TextureRegion planet6_texture;
 
+    /** Texture for gravity ring */
+    private TextureRegion gring_texture;
+
     /** The planets in this PlanetList*/
     private ArrayList<Planet> planets;
 
@@ -80,6 +86,8 @@ public class PlanetList {
         assets.add(PLANET5_FILE);
         manager.load(PLANET6_FILE, Texture.class);
         assets.add(PLANET6_FILE);
+        manager.load(GRING_FILE, Texture.class);
+        assets.add(GRING_FILE);
 
         planet1_texture = createTexture(manager, PLANET1_FILE, true);
         planet2_texture = createTexture(manager, PLANET2_FILE, true);
@@ -87,6 +95,7 @@ public class PlanetList {
         planet4_texture = createTexture(manager, PLANET4_FILE, true);
         planet5_texture = createTexture(manager, PLANET5_FILE, true);
         planet6_texture = createTexture(manager, PLANET6_FILE, true);
+        gring_texture = createTexture(manager, GRING_FILE, true);
 
         planets = new ArrayList<Planet>();
 
@@ -171,6 +180,10 @@ public class PlanetList {
                 return planet3_texture;
             case 3:
                 return planet4_texture;
+            case 4:
+                return planet5_texture;
+            case 5:
+                return planet6_texture;
             default:
                 return planet1_texture;
         }
@@ -199,14 +212,15 @@ public class PlanetList {
      * @param radius Planet's radius
      * @param mass Planet's mass
      * @param scaleDraw Scale for drawing planet
+     * @param grange The range from which gravity is effective for this planet
      * @param sprite Sprite to be used when drawing this planet
      * @param world World that owns this planet
      * @param vectorWorld VectorWorld that controls this planet's gravity
      */
-    public void addPlanet(float x, float y, float radius, float mass, float scaleDraw,
+    public void addPlanet(float x, float y, float radius, float mass, float scaleDraw, float grange,
                           int sprite, World world, VectorWorld vectorWorld) {
         TextureRegion texture = getPlanetTexture(sprite);
-        Planet p = new Planet(x, y, radius, mass, scaleDraw, texture, world, scale);
+        Planet p = new Planet(x, y, radius, mass, scaleDraw, grange, texture, world, scale, gring_texture);
         vectorWorld.addPlanet(p, mass);
         planets.add(p);
     }
@@ -215,7 +229,7 @@ public class PlanetList {
      * Add the specified planets to the list.
      * @param planetSpecs A 2D array of specifications for the planets to be constructed. Each row specifies
      *                    a planet, and must contain in order: x coord, y coord, radius, mass, draw scale,
-     *                    planet sprite to use (1-4).
+     *                    gravitation range, planet sprite to use (1-4).
      *                    Will probably need to edit eventually.
      * @param vectorWorld The vectorWorld controlling the gravity for this level
      * @param world The world idk why we need this but sure
@@ -224,7 +238,7 @@ public class PlanetList {
         for (int i = 0; i < planetSpecs.length; i++) {
 
             addPlanet(planetSpecs[i][0], planetSpecs[i][1], planetSpecs[i][2], planetSpecs[i][3],
-                    planetSpecs[i][4], (int) planetSpecs[i][5], world, vectorWorld);
+                    planetSpecs[i][4], planetSpecs[i][5], (int) planetSpecs[i][6], world, vectorWorld);
 
             //Vector2 pos = new Vector2(obj.getBody().getPosition().x, obj.getBody().getPosition().y - obj.getRadius());
             //vectorWorld.addPlanet(obj, PLANETS[i][3], obj.getCenter()); //Radius parameter is temporary fix for why center is off
