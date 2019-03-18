@@ -773,10 +773,12 @@ public class GameController extends WorldController implements ContactListener {
 //        backgroundTR = new TextureRegion(background, canvas.getWidth()*srcX, canvas.getHeight());
         // Draw background unscaled.
         canvas.begin();
-        canvas.draw(background, Color.WHITE, 0, 0,canvas.getWidth(),canvas.getHeight());
-        canvas.end();
 
-        canvas.begin();
+        float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
+
+        canvas.draw(background, Color.WHITE, x, 0,canvas.getWidth(),canvas.getHeight());
+        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), 0,canvas.getWidth(),canvas.getHeight());
+
         for(Planet p : planets.getPlanets()){
             p.draw(canvas);
         }
