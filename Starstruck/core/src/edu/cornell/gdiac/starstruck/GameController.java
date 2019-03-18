@@ -169,13 +169,13 @@ public class GameController extends WorldController implements ContactListener {
 
 
     // Location, radius, and drawscale of all the planets.
-    // Each row is a planet. 1st col is x, 2nd is y, 3rd is radius, 4th is mass, 5th is sprite to use and
-    // 6th is gravitational pull range.
+    // Each row is a planet. 1st col is x, 2nd is y, 3rd is radius, 4th is mass, 6th is sprite to use and
+    // 5th is gravitational pull range.
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-            {7f, 7f, 3f, 5000f, 1, 0},
-            {13f, 15f, 4f, 6000f, 1, 1},
+            {7f, 7f, 3f, 5000f, 3, 0},
+            {13f, 15f, 4f, 6000f, 2, 1},
             //{30f, 5f, 4f, 6000f, 1, 1},
             //{25f, 15f, 3f, 2500f, 1, 1},
             //{18f, 0f, 3f, 2500f, 1, 1},
@@ -280,8 +280,8 @@ public class GameController extends WorldController implements ContactListener {
         addQueue.clear();
         world.dispose();
 
-        vectorWorld = new VectorWorld(bounds);
-        world = vectorWorld.getWorld();
+        vectorWorld = new VectorWorld();
+        world = new World(new Vector2(0,0), false);
         world.setContactListener(this);
         setComplete(false);
         setFailure(false);

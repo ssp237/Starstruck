@@ -445,8 +445,8 @@ public abstract class WorldController implements Screen {
      */
     protected WorldController(Rectangle bounds, Vector2 gravity) {
         assets = new Array<String>();
-        vectorWorld = new VectorWorld(bounds);
-        world = vectorWorld.getWorld();
+        vectorWorld = new VectorWorld();
+        world = new World(new Vector2(0,0), false);
         this.bounds = new Rectangle(bounds);
         this.scale = new Vector2(1,1);
         complete = false;

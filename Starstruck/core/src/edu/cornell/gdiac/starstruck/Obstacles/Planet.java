@@ -16,9 +16,11 @@ public class Planet extends WheelObstacle {
     /** The mass of a planet in [slightly arbitrary] units. */
     protected float mass;
     /** The range from which gravity is effective for this planet (physics units)*/
-    protected float grange;
+    public float grange;
     /** Texture for gravity ring */
     protected TextureRegion ringTexture;
+
+    private float grscale;
 
     /** Counts the number of planets created to assign names */
     private static int counter = 0;
@@ -48,6 +50,8 @@ public class Planet extends WheelObstacle {
         float newScale = (2 * radius * drawScale.x)/texture.getRegionWidth();
         this.scaleDraw = newScale;
 
+        grscale = (float) texture.getRegionWidth() / (float) ringTexture.getRegionWidth();
+
         setName("planet" + counter);
         counter++;
 
@@ -55,6 +59,12 @@ public class Planet extends WheelObstacle {
         //setFriction(BASIC_FRICTION);
         //setRestitution(BASIC_RESTITUTION);
     }
+
+    /**
+     * Return the mass of this planet
+     * @return The mass of this planet.
+     */
+    public float getMass() { return mass;}
 
 
     /**
@@ -66,7 +76,7 @@ public class Planet extends WheelObstacle {
         canvas.draw(getTexture(), Color.WHITE, origin.x, origin.y,getX() * drawScale.x - texture.getRegionWidth()/(2/scaleDraw),
                 getY() * drawScale.x - texture.getRegionHeight()/(2/scaleDraw), getAngle(), scaleDraw,scaleDraw);
 
-        float rScale = scaleDraw * ((getRadius() + grange) / getRadius());
+        float rScale = grscale * scaleDraw * ((getRadius() + grange) / getRadius());
 
         //Draw ring
         canvas.draw(ringTexture, Color.WHITE, origin.x, origin.y,getX() * drawScale.x - ringTexture.getRegionWidth()/(2/rScale),

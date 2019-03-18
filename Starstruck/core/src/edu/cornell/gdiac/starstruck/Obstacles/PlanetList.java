@@ -220,7 +220,7 @@ public class PlanetList {
                           int sprite, World world, VectorWorld vectorWorld) {
         TextureRegion texture = getPlanetTexture(sprite);
         Planet p = new Planet(x, y, radius, mass, grange, texture, world, scale, gring_texture);
-        vectorWorld.addPlanet(p, mass);
+        vectorWorld.addPlanet(p);
         planets.add(p);
     }
 
