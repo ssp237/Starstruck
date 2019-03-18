@@ -19,6 +19,8 @@ public class Planet extends WheelObstacle {
     /** The mass of a planet in [slightly arbitrary] units. */
     protected float mass;
 
+    /** Counts the number of planets created to assign names */
+    private static int counter = 0;
 
     /**
      * Constructor. Creates a planet centered at (x,y) with the specified radius, mass and galaxy.
@@ -41,6 +43,9 @@ public class Planet extends WheelObstacle {
 
         this.scaleDraw = scaleDraw;
 
+        setName("planet" + counter);
+        counter++;
+
         // Not needed?
         //setFriction(BASIC_FRICTION);
         //setRestitution(BASIC_RESTITUTION);
@@ -52,8 +57,12 @@ public class Planet extends WheelObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
+        System.out.println(origin);
+        //System.out.println(getY());
+        //System.out.println(getPosition());
+        //System.out.println(scaleDraw);
         canvas.draw(getTexture(), Color.WHITE, origin.x, origin.y,getX() * drawScale.x,
-                getY() * drawScale.x, getAngle(), scaleDraw, scaleDraw);
+                getY() * drawScale.x, getAngle(), 1,1);
     }
 
 

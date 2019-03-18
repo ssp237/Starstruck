@@ -142,7 +142,7 @@ public class GameController extends WorldController implements ContactListener {
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
 
-        planets = new PlanetList(PLANETS, manager, galaxy, scale, vectorWorld, world);
+        planets = new PlanetList(manager, galaxy, scale);
     }
 
     // Physics constants for initialization
@@ -173,7 +173,7 @@ public class GameController extends WorldController implements ContactListener {
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-            {-7f, -7f, 14.1f, 57000f, 1.99f, 1},
+            {-7f, -7f, 14.1f, 57000f, 1f, 1},
             //{13f, 15f, 4f, 6000f, 0.43f, 1},
             //{30f, 5f, 4f, 6000f, 0.81f, 1},
             //{25f, 15f, 3f, 2500f, 0.43f, 1},
@@ -226,7 +226,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Planets */
     private PlanetList planets;
     /** Planets */
-    private Galaxy galaxy = Galaxy.DEFAULT;
+    private Galaxy galaxy = Galaxy.WHIRLPOOL;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -304,6 +304,9 @@ public class GameController extends WorldController implements ContactListener {
         avatar2.setDrawScale(scale);
         avatar2.setTexture(avatarTexture);
         addObject(avatar2);
+
+        planets.addPlanets(PLANETS, world, vectorWorld);
+
 
 //        // Create rope bridge
 //        dwidth  = bridgeTexture.getRegionWidth()/scale.x;
@@ -733,6 +736,9 @@ public class GameController extends WorldController implements ContactListener {
             canvas.beginDebug();
             for(Obstacle obj : objects) {
                 obj.drawDebug(canvas);
+            }
+            for(Planet p : planets.getPlanets()) {
+                p.drawDebug(canvas);
             }
             canvas.endDebug();
         }

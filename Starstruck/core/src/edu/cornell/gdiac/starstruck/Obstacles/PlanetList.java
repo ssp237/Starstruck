@@ -27,36 +27,43 @@ public class PlanetList {
     private static String GALAXY1_PLANET3_FILE = "planets/planet3.png";
     private static String GALAXY1_PLANET4_FILE = "planets/planet4.png";
 
+    private static String WHIRL_P1 = "planets/whirlpool planet1.png";
+    private static String WHIRL_P2 = "planets/whirlpool planet2.png";
+    private static String WHIRL_P3 = "planets/whirlpool planet3.png";
+    private static String WHIRL_P4 = "planets/whirlpool planet4.png";
+    private static String WHIRL_P5 = "planets/whirlpool planet5.png";
+    private static String WHIRL_P6 = "planets/whirlpool planet6.png";
+
+
     /** Files for planets to be used when drawing. MUST BE SET IN CONSTRUCTOR BEFORE ANY TEXTURES ARE CREATED*/
     private String PLANET1_FILE;
     private String PLANET2_FILE;
     private String PLANET3_FILE;
     private String PLANET4_FILE;
+    private String PLANET5_FILE;
+    private String PLANET6_FILE;
 
     /** Textures to be used when drawing planets*/
     private TextureRegion planet1_texture;
     private TextureRegion planet2_texture;
     private TextureRegion planet3_texture;
     private TextureRegion planet4_texture;
+    private TextureRegion planet5_texture;
+    private TextureRegion planet6_texture;
 
     /** The planets in this PlanetList*/
     private ArrayList<Planet> planets;
 
+    /** Scale to convert physics to pixels */
+    private Vector2 scale;
+
     /**
-     *  Constructs a new PlanetList from the given array of planet specifications, using
-     *  the given assetManager to load the assets and in the specified galaxy.
-     * @param planetSpecs A 2D array of specifications for the planets to be constructed. Each row specifies
-     *                    a planet, and must contain in order: x coord, y coord, radius, mass, draw scale,
-     *                    planet sprite to use (1-4).
-     *                    Will probably need to edit eventually.
+     *  Constructs a new PlanetList by loading the appropriate sprites.
      * @param manager The asset manager idk
      * @param galaxy The galaxy for the planets in this level.
      * @param scale The drawing scale
-     * @param vectorWorld The vectorWorld controlling the gravity for this level
-     * @param world The world idk why we need this but sure
      */
-    public PlanetList(float[][] planetSpecs, AssetManager manager, Galaxy galaxy, Vector2 scale, VectorWorld vectorWorld,
-                      World world) {
+    public PlanetList(AssetManager manager, Galaxy galaxy, Vector2 scale) {
         setPlanetFiles(galaxy);
 
         assets = new Array<String>();
@@ -69,31 +76,21 @@ public class PlanetList {
         assets.add(PLANET3_FILE);
         manager.load(PLANET4_FILE, Texture.class);
         assets.add(PLANET4_FILE);
+        manager.load(PLANET5_FILE, Texture.class);
+        assets.add(PLANET5_FILE);
+        manager.load(PLANET6_FILE, Texture.class);
+        assets.add(PLANET6_FILE);
 
         planet1_texture = createTexture(manager, PLANET1_FILE, true);
         planet2_texture = createTexture(manager, PLANET2_FILE, true);
         planet3_texture = createTexture(manager, PLANET3_FILE, true);
         planet4_texture = createTexture(manager, PLANET4_FILE, true);
+        planet5_texture = createTexture(manager, PLANET5_FILE, true);
+        planet6_texture = createTexture(manager, PLANET6_FILE, true);
 
         planets = new ArrayList<Planet>();
 
-        String ptname = "planet";
-        for (int i = 0; i < planetSpecs.length; i++) {
-            TextureRegion texture = getPlanetTexture((int) planetSpecs[i][5]);
-
-            Planet planet = new Planet(planetSpecs[i][0], planetSpecs[i][1], planetSpecs[i][2], planetSpecs[i][3],
-                    planetSpecs[i][4], texture, world, scale);
-
-            planet.setName(ptname+i);
-
-            //Vector2 pos = new Vector2(obj.getBody().getPosition().x, obj.getBody().getPosition().y - obj.getRadius());
-            //vectorWorld.addPlanet(obj, PLANETS[i][3], obj.getCenter()); //Radius parameter is temporary fix for why center is off
-
-            vectorWorld.addPlanet(planet, planetSpecs[i][3]);
-
-            planets.add(planet);
-        }
-
+        this.scale = scale;
     }
 
     /**
@@ -126,6 +123,7 @@ public class PlanetList {
      */
     private void setPlanetFiles(Galaxy galaxy) {
         switch(galaxy){
+            case WHIRLPOOL: setWhirlpoolSprites(); break;
             case DEFAULT :
             default : setDefaultSprites();
 
@@ -140,6 +138,21 @@ public class PlanetList {
         PLANET2_FILE = GALAXY1_PLANET2_FILE;
         PLANET3_FILE = GALAXY1_PLANET3_FILE;
         PLANET4_FILE = GALAXY1_PLANET4_FILE;
+        PLANET5_FILE = GALAXY1_PLANET1_FILE;
+        PLANET6_FILE = GALAXY1_PLANET2_FILE;
+
+    }
+
+    /**
+     * Sets the planet files to the whirlpool sprite options.
+     */
+    private void setWhirlpoolSprites(){
+        PLANET1_FILE = WHIRL_P1;
+        PLANET2_FILE = WHIRL_P2;
+        PLANET3_FILE = WHIRL_P3;
+        PLANET4_FILE = WHIRL_P4;
+        PLANET5_FILE = WHIRL_P5;
+        PLANET6_FILE = WHIRL_P6;
 
     }
 
@@ -170,4 +183,53 @@ public class PlanetList {
     public ArrayList<Planet> getPlanets(){
         return planets;
     }
+
+    /**
+     * Add the specified planet to the planet list
+     * @param p The planet to be added
+     */
+    public void addPlanet(Planet p) {
+        planets.add(p);
+    }
+
+    /**
+     * Add the specified planet to the planet list
+     * @param x X coordinate of planet's origin
+     * @param y Y coordinate of planet's origin
+     * @param radius Planet's radius
+     * @param mass Planet's mass
+     * @param scaleDraw Scale for drawing planet
+     * @param sprite Sprite to be used when drawing this planet
+     * @param world World that owns this planet
+     * @param vectorWorld VectorWorld that controls this planet's gravity
+     */
+    public void addPlanet(float x, float y, float radius, float mass, float scaleDraw,
+                          int sprite, World world, VectorWorld vectorWorld) {
+        TextureRegion texture = getPlanetTexture(sprite);
+        Planet p = new Planet(x, y, radius, mass, scaleDraw, texture, world, scale);
+        vectorWorld.addPlanet(p, mass);
+        planets.add(p);
+    }
+
+    /**
+     * Add the specified planets to the list.
+     * @param planetSpecs A 2D array of specifications for the planets to be constructed. Each row specifies
+     *                    a planet, and must contain in order: x coord, y coord, radius, mass, draw scale,
+     *                    planet sprite to use (1-4).
+     *                    Will probably need to edit eventually.
+     * @param vectorWorld The vectorWorld controlling the gravity for this level
+     * @param world The world idk why we need this but sure
+     */
+    public void addPlanets(float[][] planetSpecs, World world, VectorWorld vectorWorld) {
+        for (int i = 0; i < planetSpecs.length; i++) {
+
+            addPlanet(planetSpecs[i][0], planetSpecs[i][1], planetSpecs[i][2], planetSpecs[i][3],
+                    planetSpecs[i][4], (int) planetSpecs[i][5], world, vectorWorld);
+
+            //Vector2 pos = new Vector2(obj.getBody().getPosition().x, obj.getBody().getPosition().y - obj.getRadius());
+            //vectorWorld.addPlanet(obj, PLANETS[i][3], obj.getCenter()); //Radius parameter is temporary fix for why center is off
+        }
+    }
+
+
 }
