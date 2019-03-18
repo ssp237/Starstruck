@@ -558,7 +558,8 @@ public class GameController extends WorldController implements ContactListener {
             avatar.setPosition(contactPoint.sub(contactDir.setLength(0.03f)));
         }
         //System.out.println(avatar.getPosition() + ", " + curPlanet.getPosition());
-        if (avatar.isJumping()) {
+        if (InputController.getInstance().didPrimary()) {
+            avatar.setJumping(true);
             contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
             //System.out.println(contactDir);
             avatar.setOnPlanet(false);
@@ -610,7 +611,7 @@ public class GameController extends WorldController implements ContactListener {
     public void update(float dt) {
         updateCam();
 
-        if (InputController.getInstance().didShift()) {
+        if (shifted()) {
             avatar.setActive(!avatar.isActive());
             avatar2.setActive(!avatar2.isActive());
         }
@@ -624,7 +625,7 @@ public class GameController extends WorldController implements ContactListener {
             // Process actions in object model
             //avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
             if (avatar.isActive()) {
-                avatar.setJumping(InputController.getInstance().didPrimary());
+                avatar.setJumping(false);
 //        avatar.setShooting(InputController.getInstance().didSecondary());
                 avatar.setRotation(InputController.getInstance().getHorizontal());
                 //System.out.println(avatar.isGrounded());
@@ -652,7 +653,7 @@ public class GameController extends WorldController implements ContactListener {
         if (!avatar2.isAnchored()) {
             if (avatar2.isActive()) {
                 avatar2.setRotation(InputController.getInstance().getHorizontal());
-                avatar2.setJumping(InputController.getInstance().didPrimary());
+                avatar2.setJumping(false);
             }
             if (avatar2.getOnPlanet()) {
                 avatar2.setLinearVelocity(new Vector2(0,0));
@@ -676,6 +677,8 @@ public class GameController extends WorldController implements ContactListener {
             avatar2.setGravity(vectorWorld.getForce(avatar2.getPosition()));
             avatar2.applyForce();
         }
+
+        System.out.println(avatar.getOnPlanet());
 
         // Add a bullet if we fire
         if (avatar.isShooting()) {
