@@ -399,13 +399,17 @@ public class GameController extends WorldController implements ContactListener {
         avatar2.setActive(true);
     }
 
+    private float dist(Vector2 v1, Vector2 v2) {
+        return (float) Math.sqrt((v1.x - v2.x)*(v1.x-v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
+    }
+
     private void anchor2(AstronautModel avatar1, AstronautModel avatar2) {
         //If both are unanchored and space is hit
         if (!avatar1.isAnchored() && !avatar2.isAnchored() && spaced()) {
             if (avatar1.isActive() && !avatar1.getOnPlanet()) {
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
-                    if (avatar1.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                    if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
                         anchorHelp(avatar1, avatar2);
                         return;
                     }
@@ -414,7 +418,7 @@ public class GameController extends WorldController implements ContactListener {
             else if (avatar2.isActive() && !avatar2.getOnPlanet()) {
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
-                    if (avatar2.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                    if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
                         anchorHelp(avatar2, avatar1);
                         return;
                     }
@@ -427,7 +431,7 @@ public class GameController extends WorldController implements ContactListener {
             if (spaced() && !avatar2.getOnPlanet()) { //If space was hit and avatar2 is not on planet -- couldb e anchored
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
-                    if (avatar2.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                    if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
                         anchorHelp(avatar2, avatar1);
                         return;
                     }
@@ -445,7 +449,7 @@ public class GameController extends WorldController implements ContactListener {
             if (spaced() && !avatar1.getOnPlanet()) { //If space was hit and avatar1 is not on planet -- could be anchored
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
-                    if (avatar1.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                    if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
                         anchorHelp(avatar1, avatar2);
                         return;
                     }
