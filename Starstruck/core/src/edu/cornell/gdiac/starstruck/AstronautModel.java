@@ -10,6 +10,7 @@
  */
 package edu.cornell.gdiac.starstruck;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
@@ -82,9 +83,18 @@ public class AstronautModel extends CapsuleObstacle {
     private boolean isAnchored;
     /** Is this astronaut the active character*/
     private boolean isActive;
+    /** Texture region for the flow */
+    private TextureRegion glowTexture;
+    /** Origin of the glow texture */
+    private Vector2 glowOrigin;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
+
+    public void setGlow(TextureRegion value) {
+        glowTexture = value;
+        glowOrigin = new Vector2(glowTexture.getRegionWidth()/2.0f, glowTexture.getRegionHeight()/2.0f);
+    }
 
     /**
      * Returns left/right movement of this character.
@@ -365,10 +375,6 @@ public class AstronautModel extends CapsuleObstacle {
      * This method should be called after the force attribute is set.
      */
     public void applyForce() {
-        if (!isActive()) {
-            return;
-        }
-
         // Don't want to be moving. Damp out player motion
 //        if (getMovement() == 0f) {
 //            forceCache.set(-getDamping()*getVX(),0);
@@ -451,6 +457,9 @@ public class AstronautModel extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? -1.0f : 1.0f;
+        if (isActive())
+            canvas.draw(glowTexture,Color.WHITE,glowOrigin.x,glowOrigin.y,(getX())*drawScale.x,
+                    (getY())*drawScale.y,getAngle(),effect,1.0f);
         canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 

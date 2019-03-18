@@ -46,6 +46,8 @@ public class GameController extends WorldController implements ContactListener {
     private static final String ROPE_FILE  = "platform/ropebridge.png";
     /** The texture file for the Star*/
     private static final String STAR_FILE = "platform/star.png";
+    /** The texture file for indicating active astronaut */
+    private static final String ACTIVE_FILE = "platform/static_glow_v1.png";
 
     /** The sound file for a jump */
     private static final String JUMP_FILE = "platform/jump.mp3";
@@ -68,6 +70,8 @@ public class GameController extends WorldController implements ContactListener {
     private TextureRegion bridgeTexture;
     /** Texture asset for the star */
     private TextureRegion starTexture;
+    /** Texture asset for the active glow */
+    private TextureRegion activeTexture;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -104,6 +108,8 @@ public class GameController extends WorldController implements ContactListener {
         assets.add(ROPE_FILE);
         manager.load(STAR_FILE, Texture.class);
         assets.add(STAR_FILE);
+        manager.load(ACTIVE_FILE, Texture.class);
+        assets.add(ACTIVE_FILE);
 
         manager.load(JUMP_FILE, Sound.class);
         assets.add(JUMP_FILE);
@@ -135,6 +141,7 @@ public class GameController extends WorldController implements ContactListener {
         bulletTexture = createTexture(manager,BULLET_FILE,false);
         bridgeTexture = createTexture(manager,ROPE_FILE,false);
         starTexture = createTexture(manager, STAR_FILE, false);
+        activeTexture = createTexture(manager, ACTIVE_FILE, false);
 
         //TODO Sound stuffs
 //        SoundController sounds = SoundController.getInstance();
@@ -312,12 +319,15 @@ public class GameController extends WorldController implements ContactListener {
         avatar = new AstronautModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight, true);
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarTexture);
+        avatar.setGlow(activeTexture);
+
         //avatar.setAngle((float)Math.PI/2);
         addObject(avatar);
 
         avatar2 = new AstronautModel(DUDE2_POS.x + 1, DUDE2_POS.y, dwidth, dheight, false);
         avatar2.setDrawScale(scale);
         avatar2.setTexture(avatarTexture);
+        avatar2.setGlow(activeTexture);
         addObject(avatar2);
 
         planets.addPlanets(PLANETS, world, vectorWorld);
@@ -579,7 +589,6 @@ public class GameController extends WorldController implements ContactListener {
 //                avatar2.setLinearVelocity(reset);
 //            }
 
-            System.out.println(avatar2.isAwake());
             avatar2.setGravity(vectorWorld.getForce(avatar2.getPosition()));
             avatar2.applyForce();
         }
@@ -789,7 +798,6 @@ public class GameController extends WorldController implements ContactListener {
         for(Obstacle obj : objects) {
                 obj.draw(canvas);
         }
-
         canvas.end();
 
         if (isDebug()) {
