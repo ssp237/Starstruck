@@ -173,7 +173,7 @@ public class GameController extends WorldController implements ContactListener {
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-            {-7f, -7f, 14.1f, 57000f, 1f, 1},
+            {7f, 7f, 3f, 5000f, 1f, 1},
             //{13f, 15f, 4f, 6000f, 0.43f, 1},
             //{30f, 5f, 4f, 6000f, 0.81f, 1},
             //{25f, 15f, 3f, 2500f, 0.43f, 1},
@@ -271,7 +271,11 @@ public class GameController extends WorldController implements ContactListener {
         for(Obstacle obj : objects) {
             obj.deactivatePhysics(world);
         }
+        for(Planet p : planets.getPlanets()){
+            p.deactivatePhysics(world);
+        }
         objects.clear();
+        planets.clear();
         addQueue.clear();
         world.dispose();
 

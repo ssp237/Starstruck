@@ -231,5 +231,12 @@ public class PlanetList {
         }
     }
 
+    /**
+     * Remove all planets
+     */
+    public void clear() {
+        planets = new ArrayList<Planet>();
+    }
+
 
 }

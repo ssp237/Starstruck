@@ -13,9 +13,6 @@ import edu.cornell.gdiac.starstruck.GameCanvas;
  */
 public class Planet extends WheelObstacle {
 
-    /** The possible sprites for a planet*/
-
-
     /** The mass of a planet in [slightly arbitrary] units. */
     protected float mass;
 
@@ -57,12 +54,12 @@ public class Planet extends WheelObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        System.out.println(origin);
+        System.out.println(texture.getRegionWidth());
         //System.out.println(getY());
         //System.out.println(getPosition());
         //System.out.println(scaleDraw);
         canvas.draw(getTexture(), Color.WHITE, origin.x, origin.y,getX() * drawScale.x,
-                getY() * drawScale.x, getAngle(), 1,1);
+                getY() * drawScale.x, getAngle(), scaleDraw,scaleDraw);
     }
 
 
