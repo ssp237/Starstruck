@@ -77,6 +77,14 @@ public abstract class WorldController implements Screen {
     private static String PLANET2_FILE = "planets/planet2.png";
     private static String PLANET3_FILE = "planets/planet3.png";
     private static String PLANET4_FILE = "planets/planet4.png";
+    private static String WHIRL_P1 = "planets/whirlpool planet1.png";
+    private static String WHIRL_P2 = "planets/whirlpool planet2.png";
+    private static String WHIRL_P3 = "planets/whirlpool planet3.png";
+    private static String WHIRL_P4 = "planets/whirlpool planet4.png";
+    private static String WHIRL_P5 = "planets/whirlpool planet5.png";
+    private static String WHIRL_P6 = "planets/whirlpool planet6.png";
+    /** File for gravity ring */
+    private static String GRING_FILE = "planets/gravity ring.png";
 
     /** The texture for walls and platforms */
     protected TextureRegion earthTile;
@@ -120,6 +128,21 @@ public abstract class WorldController implements Screen {
         assets.add(PLANET3_FILE);
         manager.load(PLANET4_FILE, Texture.class);
         assets.add(PLANET4_FILE);
+        manager.load(WHIRL_P1, Texture.class);
+        assets.add(WHIRL_P2);
+        manager.load(WHIRL_P2, Texture.class);
+        assets.add(WHIRL_P3);
+        manager.load(WHIRL_P3, Texture.class);
+        assets.add(WHIRL_P4);
+        manager.load(WHIRL_P4, Texture.class);
+        assets.add(WHIRL_P5);
+        manager.load(WHIRL_P5, Texture.class);
+        assets.add(WHIRL_P6);
+        manager.load(WHIRL_P6, Texture.class);
+        assets.add(WHIRL_P1);
+        manager.load(GRING_FILE, Texture.class);
+        assets.add(GRING_FILE);
+
 
         // Load the font
         FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
@@ -422,8 +445,8 @@ public abstract class WorldController implements Screen {
      */
     protected WorldController(Rectangle bounds, Vector2 gravity) {
         assets = new Array<String>();
-        vectorWorld = new VectorWorld(bounds);
-        world = vectorWorld.getWorld();
+        vectorWorld = new VectorWorld();
+        world = new World(new Vector2(0,0), false);
         this.bounds = new Rectangle(bounds);
         this.scale = new Vector2(1,1);
         complete = false;
