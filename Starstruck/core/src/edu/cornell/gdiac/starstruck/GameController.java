@@ -174,7 +174,7 @@ public class GameController extends WorldController implements ContactListener {
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
     /** The distance from an anchor at which an astronaut will be able to anchor */
-    private static float ANCHOR_DIST = 2f;
+    private static float ANCHOR_DIST = 1f;
     /** 0 vector 2 */
     private static final Vector2 reset = new Vector2(0, 0);
 
@@ -375,6 +375,84 @@ public class GameController extends WorldController implements ContactListener {
 
     }
 
+    private boolean spaced() {
+        return InputController.getInstance().didSpace();
+    }
+
+    private boolean shifted() {
+        return InputController.getInstance().didShift();
+    }
+
+    private void anchorHelp(AstronautModel avatar1, AstronautModel avatar2) {  //Anchor astronaut 1 & set inactive unanchor astronaut 2 & set active
+        avatar1.setAnchored(true);
+        avatar1.setActive(false);
+        avatar1.setPosition(SPIN_POS.x, SPIN_POS.y);
+        avatar1.setLinearVelocity(reset);
+        avatar1.setAngularVelocity(0);
+        avatar2.setAnchored(false);
+        avatar2.setActive(true);
+    }
+
+    private void anchor2(AstronautModel avatar1, AstronautModel avatar2) {
+        //If both are unanchored and space is hit
+        if (!avatar1.isAnchored() && !avatar2.isAnchored() && spaced()) {
+            if (avatar1.isActive() && !avatar1.getOnPlanet()) {
+                for (Anchor a : anchors) {
+                    SPIN_POS.set(a.getPosition());
+                    if (avatar1.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                        anchorHelp(avatar1, avatar2);
+                        return;
+                    }
+                }
+            }
+            else if (avatar2.isActive() && !avatar2.getOnPlanet()) {
+                for (Anchor a : anchors) {
+                    SPIN_POS.set(a.getPosition());
+                    if (avatar2.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                        anchorHelp(avatar2, avatar1);
+                        return;
+                    }
+                }
+            }
+        }
+
+        //If avatar1 is already anchored, check if space or shift was hit
+        else if (avatar1.isAnchored()) {
+            if (spaced() && !avatar2.getOnPlanet()) { //If space was hit and avatar2 is not on planet -- couldb e anchored
+                for (Anchor a : anchors) {
+                    SPIN_POS.set(a.getPosition());
+                    if (avatar2.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                        anchorHelp(avatar2, avatar1);
+                        return;
+                    }
+                }
+            }
+            else if (shifted()) { //If shift was hit unanchor avatar1 and make active
+                avatar1.setAnchored(false);
+                avatar1.setActive(true);
+                return;
+            }
+        }
+
+        //If avatar2 is already anchored, check if space or shift was hit
+        else if (avatar2.isAnchored()) {
+            if (spaced() && !avatar1.getOnPlanet()) { //If space was hit and avatar1 is not on planet -- could be anchored
+                for (Anchor a : anchors) {
+                    SPIN_POS.set(a.getPosition());
+                    if (avatar1.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
+                        anchorHelp(avatar1, avatar2);
+                        return;
+                    }
+                }
+            }
+            else if (shifted()) { //If shift was hit unanchor avatar2 and make active
+                avatar2.setAnchored(false);
+                avatar2.setActive(true);
+                return;
+            }
+        }
+    }
+
     /**
      * Helper method for update for anchoring
      *
@@ -499,13 +577,13 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         if (!isFailure() && (avatar.getY() < -1 || avatar.getY() > bounds.height + 1)) {
-        //|| avatar.getX() < -1 || avatar.getX() > bounds.getWidth() + 1)) {
+            //|| avatar.getX() < -1 || avatar.getX() > bounds.getWidth() + 1)) {
             setFailure(true);
             return false;
         }
 
         if (!isFailure() && (avatar2.getY() < -1|| avatar2.getY() > bounds.height + 1)) {
-                //|| avatar2.getX() < -1 || avatar2.getX() > bounds.getWidth() + 1)) {
+            //|| avatar2.getX() < -1 || avatar2.getX() > bounds.getWidth() + 1)) {
             setFailure(true);
             return false;
         }
@@ -534,7 +612,7 @@ public class GameController extends WorldController implements ContactListener {
         avatar.setFixedRotation(false);
         avatar2.setFixedRotation(false);
 
-        anchor(avatar, avatar2);
+        anchor2(avatar, avatar2);
 
         if (!avatar.isAnchored()) {
             // Process actions in object model
@@ -798,7 +876,7 @@ public class GameController extends WorldController implements ContactListener {
             s.draw(canvas);
         }
         for(Obstacle obj : objects) {
-                obj.draw(canvas);
+            obj.draw(canvas);
         }
         canvas.end();
 
