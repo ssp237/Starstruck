@@ -98,6 +98,11 @@ public class AstronautModel extends CapsuleObstacle {
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
 
+    /**
+     * Set the glow texture
+     *
+     * @param value set the glow texture to value
+     */
     public void setGlow(TextureRegion value) {
         glowTexture = value;
         glowOrigin = new Vector2(glowTexture.getRegionWidth()/2.0f, glowTexture.getRegionHeight()/2.0f);
@@ -428,10 +433,7 @@ public class AstronautModel extends CapsuleObstacle {
         //System.out.println(gravity);
         if (!getOnPlanet()) {
             body.applyForce(gravity, getPosition(), true);
-            //System.out.println(body.getLinearVelocity() + ", " + gravity);
         }
-        //System.out.println(body.getLinearVelocity());
-
     }
 
     /**
