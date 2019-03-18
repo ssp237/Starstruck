@@ -82,6 +82,9 @@ public class InputController {
     /** Whether space was pressed */
     private boolean spacePressed;
     private boolean spacePrevious;
+    /** Whether shift was pressed */
+    private boolean shiftPressed;
+    private boolean shiftPrevious;
 
     /** How much did we move horizontally? */
     private float horizontal;
@@ -198,6 +201,8 @@ public class InputController {
         return spacePressed && !spacePrevious;
     }
 
+    public boolean didShift() { return shiftPressed && !shiftPrevious; }
+
     /**
      * Returns true if the tertiary action button was pressed.
      *
@@ -309,6 +314,7 @@ public class InputController {
         aPrevious = aPressed;
         dPrevious = dPressed;
         spacePrevious = spacePressed;
+        shiftPrevious = shiftPressed;
 
         // Check to see if a GamePad is connected
 //        if (xbox.isConnected()) {
@@ -375,6 +381,7 @@ public class InputController {
         nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
         exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
         spacePressed = (secondary && spacePressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
+        shiftPressed = (secondary && shiftPressed) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT));
         // TODO no controller support
         rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT);
         leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT);

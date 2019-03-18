@@ -168,6 +168,8 @@ public class GameController extends WorldController implements ContactListener {
     private static final float EFFECT_VOLUME = 0.8f;
     /** The distance from an anchor at which an astronaut will be able to anchor */
     private static float ANCHOR_DIST = 2f;
+    /** 0 vector 2 */
+    private static final Vector2 reset = new Vector2(0, 0);
 
 
     // Location, radius, and drawscale of all the planets.
@@ -209,13 +211,16 @@ public class GameController extends WorldController implements ContactListener {
     private static Vector2 DUDE2_POS = new Vector2(3.5f, 6.5f);
     /** The position of the rope bridge */
     private static Vector2 BRIDGE_POS  = new Vector2(9.0f, 3.8f);
-    /** Temporary vatrables used for setting position on planet */
+    /** Variable caches used for setting position on planet for avatar 1*/
     private Obstacle curPlanet;
     private Vector2 contactPoint = new Vector2();
 
-    /** Temprary obstacle used for setting position on planet for avatar 2*/
+    /** Variable caches for setting position on planet for avatar 2 */
     private Obstacle curPlanet2;
     private Vector2 contactPoint2 = new Vector2();
+
+    /** Cache for the direction of jump */
+    private Vector2 contactDir = new Vector2();
 
     // Physics objects for the game
     /** Reference to the character avatar */
@@ -244,13 +249,13 @@ public class GameController extends WorldController implements ContactListener {
      * Return a reference to the primary avatar
      * @return Return a reference to the primary avatar.
      */
-    public AstronautModel getAvatar() {return avatar;}
+    public AstronautModel getAvatar() { return avatar; }
 
     /**
      * Return a reference to the secondary avatar.
      * @return Return a reference to the secondary avatar.
      */
-    public AstronautModel getAvatar2() {return avatar2;}
+    public AstronautModel getAvatar2() { return avatar2; }
 
     /**
      * Creates and initialize a new instance of the platformer game
@@ -304,13 +309,13 @@ public class GameController extends WorldController implements ContactListener {
         // Create dude
         dwidth  = avatarTexture.getRegionWidth()/scale.x;
         dheight = avatarTexture.getRegionHeight()/scale.y;
-        avatar = new AstronautModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight);
+        avatar = new AstronautModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight, true);
         avatar.setDrawScale(scale);
         avatar.setTexture(avatarTexture);
         //avatar.setAngle((float)Math.PI/2);
         addObject(avatar);
 
-        avatar2 = new AstronautModel(DUDE2_POS.x + 1, DUDE2_POS.y, dwidth, dheight);
+        avatar2 = new AstronautModel(DUDE2_POS.x + 1, DUDE2_POS.y, dwidth, dheight, false);
         avatar2.setDrawScale(scale);
         avatar2.setTexture(avatarTexture);
         addObject(avatar2);
@@ -375,7 +380,7 @@ public class GameController extends WorldController implements ContactListener {
                     if (!avatar2.getOnPlanet() && avatar2.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
                         avatar2.setAnchored(true);
                         avatar2.setPosition(SPIN_POS.x, SPIN_POS.y);
-                        avatar2.setLinearVelocity(new Vector2(0, 0));
+                        avatar2.setLinearVelocity(reset);
                         avatar2.setAngularVelocity(0);
                         avatar.setAnchored(false);
 //                        avatar.isAnchored = false;
@@ -396,7 +401,7 @@ public class GameController extends WorldController implements ContactListener {
                     if (!avatar.getOnPlanet() && avatar.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
                         avatar.setAnchored(true);
                         avatar.setPosition(SPIN_POS.x, SPIN_POS.y);
-                        avatar.setLinearVelocity(new Vector2(0, 0));
+                        avatar.setLinearVelocity(reset);
                         avatar.setAngularVelocity(0);
                         avatar2.setAnchored(false);
 //                        avatar2.isAnchored = false;
@@ -416,7 +421,7 @@ public class GameController extends WorldController implements ContactListener {
                     if (!avatar.getOnPlanet() && avatar.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
                         avatar.setAnchored(true);
                         avatar.setPosition(SPIN_POS.x, SPIN_POS.y);
-                        avatar.setLinearVelocity(new Vector2(0, 0));
+                        avatar.setLinearVelocity(reset);
                         avatar.setAngularVelocity(0);
                         break;
                     }
@@ -424,12 +429,46 @@ public class GameController extends WorldController implements ContactListener {
                     else if (!avatar2.getOnPlanet() && avatar2.getPosition().dst(SPIN_POS.x - 1.0f, SPIN_POS.y - 1.0f) < ANCHOR_DIST) {
                         avatar2.setAnchored(true);
                         avatar2.setPosition(SPIN_POS.x, SPIN_POS.y);
-                        avatar2.setLinearVelocity(new Vector2(0, 0));
+                        avatar2.setLinearVelocity(reset);
                         avatar2.setAngularVelocity(0);
                         break;
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Helper method to move the camera with the astronauts
+     */
+    private void updateCam() {
+        float a1x = avatar.getPosition().x * avatar.drawScale.x;
+        float a2x = avatar2.getPosition().x * avatar2.drawScale.x;
+        float xCam = (a1x + a2x) / 2;
+        if (xCam < canvas.getWidth()/2) xCam = canvas.getWidth()/2;
+        canvas.getCamera().position.set(new Vector3(xCam, canvas.getCamera().position.y, 0));
+        canvas.getCamera().update();
+//        System.out.println(canvas.getCamera().position);
+//        System.out.println(canvas.getHeight());
+    }
+
+    private void updateMovement(AstronautModel avatar, Vector2 contactPoint, Obstacle curPlanet) {
+        if (InputController.getInstance().didRight()) {
+            contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
+            contactDir.rotateRad(-(float) Math.PI / 2);
+            avatar.setPosition(contactPoint.add(contactDir.setLength(0.03f)));
+        }
+        if (InputController.getInstance().didLeft()) {
+            //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
+            contactDir.rotateRad(-(float) Math.PI / 2);
+            avatar.setPosition(contactPoint.sub(contactDir.setLength(0.03f)));
+        }
+        //System.out.println(avatar.getPosition() + ", " + curPlanet.getPosition());
+        if (avatar.isJumping()) {
+            contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
+            //System.out.println(contactDir);
+            avatar.setOnPlanet(false);
+            avatar.setPlanetJump(contactDir);
         }
     }
 
@@ -475,14 +514,13 @@ public class GameController extends WorldController implements ContactListener {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
-        float a1x = avatar.getPosition().x * avatar.drawScale.x;
-        float a2x = avatar2.getPosition().x * avatar2.drawScale.x;
-        float xCam = (a1x + a2x) / 2;
-        if (xCam < canvas.getWidth()/2) xCam = canvas.getWidth()/2;
-        canvas.getCamera().position.set(new Vector3(xCam, canvas.getCamera().position.y, 0));
-        canvas.getCamera().update();
-//        System.out.println(canvas.getCamera().position);
-//        System.out.println(canvas.getHeight());
+        updateCam();
+
+        if (InputController.getInstance().didShift()) {
+            avatar.setActive(!avatar.isActive());
+            avatar2.setActive(!avatar2.isActive());
+        }
+
         avatar.setFixedRotation(false);
         avatar2.setFixedRotation(false);
 
@@ -491,37 +529,25 @@ public class GameController extends WorldController implements ContactListener {
         if (!avatar.isAnchored()) {
             // Process actions in object model
             //avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
-            avatar.setJumping(InputController.getInstance().didPrimary());
+            if (avatar.isActive()) {
+                avatar.setJumping(InputController.getInstance().didPrimary());
 //        avatar.setShooting(InputController.getInstance().didSecondary());
-            avatar.setRotation(InputController.getInstance().getHorizontal());
-            //System.out.println(avatar.isGrounded());
+                avatar.setRotation(InputController.getInstance().getHorizontal());
+                //System.out.println(avatar.isGrounded());
+            }
             if (avatar.getOnPlanet()) {
 //            Vector2 dir = new Vector2(0, 1);
 //            dir.rotateRad(avatar.getAngle());
                 avatar.setLinearVelocity(new Vector2(0,0));
                 avatar.setFixedRotation(true);
-                Vector2 contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
+                contactDir.set(contactPoint.cpy().sub(curPlanet.getPosition()));
                 //System.out.println(contactDir);
                 float angle = -contactDir.angleRad(new Vector2 (0, 1));
                 //System.out.println(angle*(float)(180/Math.PI));
                 avatar.setAngle(angle);
                 avatar.setPosition(contactPoint);
-                if (InputController.getInstance().didRight()) {
-                    contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
-                    contactDir.rotateRad(-(float) Math.PI / 2);
-                    avatar.setPosition(contactPoint.add(contactDir.setLength(0.03f)));
-                }
-                if (InputController.getInstance().didLeft()) {
-                    //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
-                    contactDir.rotateRad(-(float) Math.PI / 2);
-                    avatar.setPosition(contactPoint.sub(contactDir.setLength(0.03f)));
-                }
-                //System.out.println(avatar.getPosition() + ", " + curPlanet.getPosition());
-                if (avatar.isJumping()) {
-                    contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
-                    //System.out.println(contactDir);
-                    avatar.setOnPlanet(false);
-                    avatar.setPlanetJump(contactDir);
+                if (avatar.isActive()) {
+                    updateMovement(avatar, contactPoint, curPlanet);
                 }
             }
             //if (!avatar.getOnPlanet() && vectorWorld.getForce(avatar.getPosition()) != null)
@@ -530,30 +556,30 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         if (!avatar2.isAnchored()) {
-            avatar2.setRotation(InputController.getInstance().getHorizontal2());
-            avatar2.setJumping(InputController.getInstance().didSecondary());
+            if (avatar2.isActive()) {
+                avatar2.setRotation(InputController.getInstance().getHorizontal());
+                avatar2.setJumping(InputController.getInstance().didPrimary());
+            }
             if (avatar2.getOnPlanet()) {
                 avatar2.setLinearVelocity(new Vector2(0,0));
                 avatar2.setFixedRotation(true);
-                Vector2 contactDir = contactPoint2.cpy().sub(curPlanet2.getPosition());
+                contactDir.set(contactPoint2.cpy().sub(curPlanet2.getPosition()));
                 float angle = -contactDir.angleRad(new Vector2 (0, 1));
                 avatar2.setAngle(angle);
                 avatar2.setPosition(contactPoint2);
-                if (InputController.getInstance().didD()) {
-                    contactDir = contactPoint2.cpy().sub(curPlanet2.getPosition());
-                    contactDir.rotateRad(-(float) Math.PI / 2);
-                    avatar2.setPosition(contactPoint2.add(contactDir.setLength(0.03f)));
-                }
-                if (InputController.getInstance().didA()) {
-                    contactDir.rotateRad(-(float) Math.PI / 2);
-                    avatar2.setPosition(contactPoint2.sub(contactDir.setLength(0.03f)));
-                }
-                if (avatar2.isJumping()) {
-                    contactDir.set(avatar2.getPosition().cpy().sub(curPlanet2.getPosition()));
-                    avatar2.setOnPlanet(false);
-                    avatar2.setPlanetJump(contactDir);
+                if (avatar2.isActive()) {
+                    updateMovement(avatar2, contactPoint2, curPlanet2);
                 }
             }
+//            System.out.println("yeet");
+//            System.out.println(avatar2.isActive());
+//            System.out.println("__________________________________________________");
+
+//            if (!avatar2.isActive()) {
+//                avatar2.setLinearVelocity(reset);
+//            }
+
+            System.out.println(avatar2.isAwake());
             avatar2.setGravity(vectorWorld.getForce(avatar2.getPosition()));
             avatar2.applyForce();
         }
@@ -604,6 +630,10 @@ public class GameController extends WorldController implements ContactListener {
         bullet.markRemoved(true);
 //        SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
     }
+
+//    private void contactSetup (Obstacle bd1, Obstacle bd2, AstronautModel avatar, Obstacle planet, Vector2 contact) {
+//
+//    }
 
 
     /**

@@ -73,12 +73,15 @@ public class AstronautModel extends CapsuleObstacle {
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
-    private Vector2 gravity = new Vector2();
+    private Vector2 gravity;
     /** Indicates whether astronaut is on planet */
-    private boolean onPlanet = false;
+    private boolean onPlanet;
     /** Direction the character should go when jumping off a planet */
-    private Vector2 planetJump = new Vector2();
-    private boolean isAnchored = false;
+    private Vector2 planetJump;
+    /** Is this astronaut anchored */
+    private boolean isAnchored;
+    /** Is this astronaut the active character*/
+    private boolean isActive;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -254,6 +257,20 @@ public class AstronautModel extends CapsuleObstacle {
     public void setAnchored(boolean anchored) { isAnchored = anchored; }
 
     /**
+     * Whether astronaut is acitive
+     *
+     * @return true if the astronaut is active, false otherwise
+     */
+    public boolean isActive() { return isActive; }
+
+    /**
+     * Sets whether the astronaut is active
+     *
+     * @param active whether the astronaut is active
+     */
+    public void setActive(boolean active) { isActive = active; }
+
+    /**
      * Creates a new dude at the origin.
      *
      * The size is expressed in physics units NOT pixels.  In order for
@@ -263,8 +280,8 @@ public class AstronautModel extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public AstronautModel(float width, float height) {
-        this(0,0,width,height);
+    public AstronautModel(float width, float height, boolean active) {
+        this(0,0,width,height, active);
     }
 
     /**
@@ -280,7 +297,7 @@ public class AstronautModel extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public AstronautModel(float x, float y, float width, float height) {
+    public AstronautModel(float x, float y, float width, float height, boolean active) {
         super(x,y,width*DUDE_HSHRINK,height*DUDE_VSHRINK);
         setDensity(DUDE_DENSITY);
         setFriction(DUDE_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
@@ -291,6 +308,13 @@ public class AstronautModel extends CapsuleObstacle {
         isShooting = false;
         isJumping = false;
         faceRight = true;
+        gravity = new Vector2();
+        onPlanet = false;
+        planetJump = new Vector2();
+        /** Is this astronaut anchored */
+        isAnchored = false;
+        /** Is this astronaut the active character*/
+        isActive = active;
 
         shootCooldown = 0;
         jumpCooldown = 0;
