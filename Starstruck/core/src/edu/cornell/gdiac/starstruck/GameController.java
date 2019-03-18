@@ -37,7 +37,8 @@ public class GameController extends WorldController implements ContactListener {
     /** The texture file for the background*/
     private static final String BACKGROUND_FILE = "platform/background.png";
     /** The texture file for the character avatar (no animation) */
-    private static final String DUDE_FILE  = "platform/bloop.png";
+    private static final String DUDE1_FILE  = "platform/astronaut1.png";
+    private static final String DUDE2_FILE  = "platform/astronaut2.png";
     /** The texture file for the spinning barrier */
     private static final String BARRIER_FILE = "platform/barrier.png";
     /** The texture file for the bullet */
@@ -61,7 +62,9 @@ public class GameController extends WorldController implements ContactListener {
     /** Background texture region for tiling */
     private TextureRegion backgroundTR;
     /** Texture asset for character avatar */
-    private TextureRegion avatarTexture;
+    private TextureRegion avatar1Texture;
+    /** Texture asset for second character avatar */
+    private TextureRegion avatar2Texture;
     /** Texture asset for the spinning barrier */
     private TextureRegion barrierTexture;
     /** Texture asset for the bullet */
@@ -98,8 +101,10 @@ public class GameController extends WorldController implements ContactListener {
 
         background = new Texture(BACKGROUND_FILE);
 
-        manager.load(DUDE_FILE, Texture.class);
-        assets.add(DUDE_FILE);
+        manager.load(DUDE1_FILE, Texture.class);
+        assets.add(DUDE1_FILE);
+        manager.load(DUDE2_FILE, Texture.class);
+        assets.add(DUDE2_FILE);
         manager.load(BARRIER_FILE, Texture.class);
         assets.add(BARRIER_FILE);
         manager.load(BULLET_FILE, Texture.class);
@@ -136,7 +141,8 @@ public class GameController extends WorldController implements ContactListener {
             return;
         }
 
-        avatarTexture = createTexture(manager,DUDE_FILE,false);
+        avatar1Texture = createTexture(manager,DUDE1_FILE,false);
+        avatar2Texture = createTexture(manager,DUDE2_FILE,false);
         barrierTexture = createTexture(manager,BARRIER_FILE,false);
         bulletTexture = createTexture(manager,BULLET_FILE,false);
         bridgeTexture = createTexture(manager,ROPE_FILE,false);
@@ -314,11 +320,11 @@ public class GameController extends WorldController implements ContactListener {
         float dheight;
 
         // Create dude
-        dwidth  = avatarTexture.getRegionWidth()/scale.x;
-        dheight = avatarTexture.getRegionHeight()/scale.y;
+        dwidth  = avatar1Texture.getRegionWidth()/scale.x;
+        dheight = avatar1Texture.getRegionHeight()/scale.y;
         avatar = new AstronautModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight, true, true);
         avatar.setDrawScale(scale);
-        avatar.setTexture(avatarTexture);
+        avatar.setTexture(avatar1Texture);
         avatar.setGlow(activeTexture);
 
         //avatar.setAngle((float)Math.PI/2);
@@ -326,7 +332,7 @@ public class GameController extends WorldController implements ContactListener {
 
         avatar2 = new AstronautModel(DUDE2_POS.x + 1, DUDE2_POS.y, dwidth, dheight, false, false);
         avatar2.setDrawScale(scale);
-        avatar2.setTexture(avatarTexture);
+        avatar2.setTexture(avatar2Texture);
         avatar2.setGlow(activeTexture);
         addObject(avatar2);
 
