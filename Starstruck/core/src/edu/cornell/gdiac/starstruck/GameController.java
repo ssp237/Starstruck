@@ -49,8 +49,12 @@ public class GameController extends WorldController implements ContactListener {
     private static final String STAR_FILE = "platform/star.png";
     /** The texture file for indicating active astronaut */
     private static final String ACTIVE_FILE = "platform/static_glow_v1.png";
-    /** The texture file for the edu.cornell.gdiac.starstruck.Enemy*/
+    /** The texture file for the Enemy*/
     private static final String ENEMY_FILE = "platform/enemy.png";
+    /** The texture file for the Enemy*/
+    private static final String PINKWORM_FILE = "platform/pink_worm.png";
+    /** The texture file for the Enemy*/
+    private static final String GREENWORM_FILE = "platform/green_worm.png";
 
     /** The sound file for a jump */
     private static final String JUMP_FILE = "platform/jump.mp3";
@@ -79,6 +83,11 @@ public class GameController extends WorldController implements ContactListener {
     private TextureRegion activeTexture;
     /** Texture asset for the enemy */
     private TextureRegion enemyTexture;
+    /** Texture asset for the enemy */
+    private TextureRegion pinkwormTexture;
+    /** Texture asset for the enemy */
+    private TextureRegion greenwormTexture;
+
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -89,6 +98,10 @@ public class GameController extends WorldController implements ContactListener {
 
     /** Location and animation information for enemy */
     private Enemy enemy;
+
+    private Enemy pinkworm;
+
+    private Enemy greenworm;
     /**
      * Preloads the assets for this controller.
      *
@@ -124,6 +137,10 @@ public class GameController extends WorldController implements ContactListener {
         assets.add(ACTIVE_FILE);
         manager.load(ENEMY_FILE, Texture.class);
         assets.add(ENEMY_FILE);
+        manager.load(PINKWORM_FILE, Texture.class);
+        assets.add(PINKWORM_FILE);
+        manager.load(GREENWORM_FILE, Texture.class);
+        assets.add(GREENWORM_FILE);
 
 
         manager.load(JUMP_FILE, Sound.class);
@@ -159,6 +176,8 @@ public class GameController extends WorldController implements ContactListener {
         starTexture = createTexture(manager, STAR_FILE, false);
         activeTexture = createTexture(manager, ACTIVE_FILE, false);
         enemyTexture = createTexture(manager, ENEMY_FILE, false);
+        pinkwormTexture = createTexture(manager, PINKWORM_FILE, false);
+        greenwormTexture = createTexture(manager, GREENWORM_FILE, false);
 
 
         //TODO Sound stuffs
@@ -342,6 +361,7 @@ public class GameController extends WorldController implements ContactListener {
         avatar.setDrawScale(scale);
         avatar.setTexture(avatar1Texture);
         avatar.setGlow(activeTexture);
+        avatar.setName("avatar");
 
         //avatar.setAngle((float)Math.PI/2);
         addObject(avatar);
@@ -350,6 +370,7 @@ public class GameController extends WorldController implements ContactListener {
         avatar2.setDrawScale(scale);
         avatar2.setTexture(avatar2Texture);
         avatar2.setGlow(activeTexture);
+        avatar.setName("avatar2");
         addObject(avatar2);
 
         planets.addPlanets(PLANETS, world, vectorWorld);
@@ -403,6 +424,26 @@ public class GameController extends WorldController implements ContactListener {
         enemy.setTexture(enemyTexture);
         enemy.setName("enemy");
         addObject(enemy);
+
+        // Create pink worm enemy
+        dwidth  = pinkwormTexture.getRegionWidth()/scale.x;
+        dheight = pinkwormTexture.getRegionHeight()/scale.y;
+        pinkworm = new Enemy(DUDE_POS.x + 20, DUDE_POS.y + 4, dwidth, dheight);
+        pinkworm.setDrawScale(scale);
+        pinkworm.setTexture(pinkwormTexture);
+        pinkworm.setName("pinkworm");
+        addObject(pinkworm);
+        pinkworm.setVX(2f);
+
+        // Create green worm enemy
+        dwidth  = greenwormTexture.getRegionWidth()/scale.x;
+        dheight = greenwormTexture.getRegionHeight()/scale.y;
+        greenworm = new Enemy(DUDE_POS.x + 20, DUDE_POS.y + 2, dwidth, dheight);
+        greenworm.setDrawScale(scale);
+        greenworm.setTexture(greenwormTexture);
+        greenworm.setName("greenworm");
+        addObject(greenworm);
+        greenworm.setVX(1.4f);
 
     }
 
@@ -608,6 +649,15 @@ public class GameController extends WorldController implements ContactListener {
             avatar2.setActive(!avatar2.isActive());
         }
 
+
+        if (pinkworm.getPosition().x > 23 || pinkworm.getPosition().x < 10) {
+            pinkworm.setVX(-pinkworm.getVX());
+        }
+
+        if (greenworm.getPosition().x > 23 || greenworm.getPosition().x < 10) {
+            greenworm.setVX(-greenworm.getVX());
+        }
+
         avatar.setFixedRotation(false);
         avatar2.setFixedRotation(false);
 
@@ -674,6 +724,7 @@ public class GameController extends WorldController implements ContactListener {
             enemy.setGravity(vectorWorld.getForce(enemy.getPosition()));
             enemy.applyForce();
         }
+
 
         // Add a bullet if we fire
         if (avatar.isShooting()) {
@@ -750,6 +801,12 @@ public class GameController extends WorldController implements ContactListener {
                 return;
             }
 
+            if ((bd1.getName().contains("enemy") || bd2.getName().contains("enemy"))
+                    && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))) {
+                System.out.println("in here contains");
+                setFailure(true);
+            }
+
             /** Force astronaut's position on planet */
             if ((bd1 == avatar || bd2 == avatar) && bd1 != avatar2 && bd2 !=avatar2) {
                 curPlanet = (bd1 == avatar) ? bd2 : bd1;
@@ -797,6 +854,7 @@ public class GameController extends WorldController implements ContactListener {
                     //contactPoint.set(contact.getWorldManifold().getPoints()[0].cpy());
                     contactPointEN.set(contact.getWorldManifold().getPoints()[0].cpy());
                     enemy.setOnPlanet(true);
+
                 }
                 // See if we have landed on the ground.
                 if ((enemy.getSensorName().equals(fd2) && avatar != bd1 && avatar2 != bd1) ||
@@ -808,9 +866,8 @@ public class GameController extends WorldController implements ContactListener {
                 }
             }
 
-            if ((bd1 == enemy || bd2 == enemy) && ((bd1 == avatar || bd2 == avatar || bd1 == avatar2 || bd2 == avatar2))) {
-                setFailure(true);
-            }
+
+
 
             // Test bullet collision with world
             if (bd1.getName().equals("bullet") && bd2 != avatar) {
@@ -821,6 +878,11 @@ public class GameController extends WorldController implements ContactListener {
                 removeBullet(bd2);
             }
 
+            if ((bd1 == enemy || bd2 == enemy) && (bd1 == avatar || bd2 == avatar || bd1 == avatar2 || bd2 == avatar2)) {
+                System.out.println("in here");
+                setFailure(true);
+
+            }
             // Check for win condition
             //TODO Removed win
 //            if ((bd1 == avatar   && bd2 == goalDoor) ||
