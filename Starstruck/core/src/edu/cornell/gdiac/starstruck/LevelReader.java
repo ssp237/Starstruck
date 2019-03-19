@@ -2,8 +2,6 @@ package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonReader;
-import com.oracle.javafx.jmx.json.JSONDocument;
-
 import java.util.Iterator;
 
 /**

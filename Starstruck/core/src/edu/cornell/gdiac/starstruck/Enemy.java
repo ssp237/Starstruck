@@ -261,7 +261,7 @@ public class Enemy extends CapsuleObstacle {
 
         shootCooldown = 0;
         jumpCooldown = 0;
-        setName("dude");
+        //setName("dude");
     }
 
     /**
