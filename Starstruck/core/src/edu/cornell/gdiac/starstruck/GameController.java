@@ -883,6 +883,12 @@ public class GameController extends WorldController implements ContactListener {
                 setFailure(true);
 
             }
+
+            if ((bd1 == enemy || bd2 == enemy) && (bd1 == pinkworm || bd2 == pinkworm || bd1 == pinkworm || bd2 == pinkworm)) {
+                System.out.println("in here worm");
+                setFailure(true);
+
+            }
             // Check for win condition
             //TODO Removed win
 //            if ((bd1 == avatar   && bd2 == goalDoor) ||
