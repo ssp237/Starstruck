@@ -49,6 +49,8 @@ public class GameController extends WorldController implements ContactListener {
     private static final String STAR_FILE = "platform/star.png";
     /** The texture file for indicating active astronaut */
     private static final String ACTIVE_FILE = "platform/static_glow_v1.png";
+    /** The texture file for the edu.cornell.gdiac.starstruck.Enemy*/
+    private static final String ENEMY_FILE = "platform/enemy.png";
 
     /** The sound file for a jump */
     private static final String JUMP_FILE = "platform/jump.mp3";
@@ -75,6 +77,8 @@ public class GameController extends WorldController implements ContactListener {
     private TextureRegion starTexture;
     /** Texture asset for the active glow */
     private TextureRegion activeTexture;
+    /** Texture asset for the enemy */
+    private TextureRegion enemyTexture;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -82,6 +86,9 @@ public class GameController extends WorldController implements ContactListener {
     /** Cache variable to store current planet being drawn*/
     private WheelObstacle planetCache;
 
+
+    /** Location and animation information for enemy */
+    private Enemy enemy;
     /**
      * Preloads the assets for this controller.
      *
@@ -115,6 +122,9 @@ public class GameController extends WorldController implements ContactListener {
         assets.add(STAR_FILE);
         manager.load(ACTIVE_FILE, Texture.class);
         assets.add(ACTIVE_FILE);
+        manager.load(ENEMY_FILE, Texture.class);
+        assets.add(ENEMY_FILE);
+
 
         manager.load(JUMP_FILE, Sound.class);
         assets.add(JUMP_FILE);
@@ -148,6 +158,8 @@ public class GameController extends WorldController implements ContactListener {
         bridgeTexture = createTexture(manager,ROPE_FILE,false);
         starTexture = createTexture(manager, STAR_FILE, false);
         activeTexture = createTexture(manager, ACTIVE_FILE, false);
+        enemyTexture = createTexture(manager, ENEMY_FILE, false);
+
 
         //TODO Sound stuffs
 //        SoundController sounds = SoundController.getInstance();
@@ -231,6 +243,10 @@ public class GameController extends WorldController implements ContactListener {
     /** Variable caches for setting position on planet for avatar 2 */
     private Obstacle curPlanet2;
     private Vector2 contactPoint2 = new Vector2();
+
+    /** Temprary obstacle used for setting position on planet for enemy*/
+    private Obstacle curPlanetEN;
+    private Vector2 contactPointEN = new Vector2();
 
     /** Cache for the direction of jump */
     private Vector2 contactDir = new Vector2();
@@ -378,6 +394,15 @@ public class GameController extends WorldController implements ContactListener {
             anchors.add(anchor);
             //addObject(anchor);
         }
+
+        // Create enemy
+        dwidth  = enemyTexture.getRegionWidth()/scale.x;
+        dheight = enemyTexture.getRegionHeight()/scale.y;
+        enemy = new Enemy(DUDE_POS.x + 10, DUDE_POS.y + 10, dwidth, dheight);
+        enemy.setDrawScale(scale);
+        enemy.setTexture(enemyTexture);
+        enemy.setName("enemy");
+        addObject(enemy);
 
     }
 
@@ -637,6 +662,19 @@ public class GameController extends WorldController implements ContactListener {
             avatar2.applyForce();
         }
 
+        if (enemy.getOnPlanet()) {
+            enemy.setFixedRotation(true);
+            enemy.setRotation(enemy.getRotation() +1);
+            Vector2 contactDir = contactPointEN.cpy().sub(curPlanetEN.getPosition());
+            float angle = -contactDir.angleRad(new Vector2(0, 1));
+            enemy.setAngle(angle);
+            enemy.setPosition(contactPointEN);
+            contactDir.rotateRad(-(float) Math.PI / 2);
+            enemy.setPosition(contactPointEN.add(contactDir.setLength(0.03f)));
+            enemy.setGravity(vectorWorld.getForce(enemy.getPosition()));
+            enemy.applyForce();
+        }
+
         // Add a bullet if we fire
         if (avatar.isShooting()) {
             createBullet();
@@ -749,6 +787,29 @@ public class GameController extends WorldController implements ContactListener {
                     contactPoint2.set(avatar2.getPosition());
                     sensorFixtures.add(avatar2 == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
+            }
+
+            if ((bd1 == enemy || bd2 == enemy) && bd1 != avatar2 && bd2 !=avatar2 && bd1 != avatar && bd2 !=avatar) {
+                curPlanetEN = (bd1 == enemy) ? bd2 : bd1;
+                if (curPlanetEN.getName().contains("planet")) {
+                    //Vector2 angle = contact.getWorldManifold().getPoints()[0].cpy().sub(objCache.getCenter());
+                    //contactDir.set(contact.getWorldManifold().getPoints()[0].cpy().sub(curPlanet.getCenter()));
+                    //contactPoint.set(contact.getWorldManifold().getPoints()[0].cpy());
+                    contactPointEN.set(contact.getWorldManifold().getPoints()[0].cpy());
+                    enemy.setOnPlanet(true);
+                }
+                // See if we have landed on the ground.
+                if ((enemy.getSensorName().equals(fd2) && avatar != bd1 && avatar2 != bd1) ||
+                        (enemy.getSensorName().equals(fd1) && avatar != bd2 && avatar2 != bd2)) {
+                    enemy.setGrounded(true);
+                    enemy.setOnPlanet(true);
+                    contactPointEN.set(enemy.getPosition());
+                    sensorFixtures.add(enemy == bd1 ? fix2 : fix1); // Could have more than one ground
+                }
+            }
+
+            if ((bd1 == enemy || bd2 == enemy) && ((bd1 == avatar || bd2 == avatar || bd1 == avatar2 || bd2 == avatar2))) {
+                setFailure(true);
             }
 
             // Test bullet collision with world
