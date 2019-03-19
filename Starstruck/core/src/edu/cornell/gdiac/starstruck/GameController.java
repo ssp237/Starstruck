@@ -227,6 +227,8 @@ public class GameController extends WorldController implements ContactListener {
             {30f, 5f, 4f, 6000f, 2, 2},
             {25f, 15f, 3f, 2500f, 3, 3},
             {18f, 0f, 3f, 2500f, 2, 4},
+            {38f, 13f, 4f, 3500f, 2, 5},
+            {48f, 1f, 5f, 6000f, 4, 3},
     };
 
     // Location of each star (can add more fields later, SHOULD MAKE INTO A CLASS)
@@ -335,6 +337,8 @@ public class GameController extends WorldController implements ContactListener {
         }
         objects.clear();
         planets.clear();
+        stars.clear();
+        anchors.clear();
         addQueue.clear();
         world.dispose();
 
