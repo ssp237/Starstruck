@@ -224,13 +224,13 @@ public class GameController extends WorldController implements ContactListener {
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-            {-3f, -3f, 9f, 5000f, 4, 0},
-            {13f, 15f, 4f, 6000f, 2, 1},
-            {30f, 5f, 4f, 6000f, 2, 2},
-            {25f, 15f, 3f, 2500f, 3, 3},
-            {18f, 0f, 3f, 2500f, 2, 4},
-            {38f, 13f, 4f, 3500f, 2, 5},
-            {48f, 1f, 5f, 6000f, 4, 3},
+            {-3f, -3f, 9f, 3000f, 4, 0},
+            {13f, 15f, 4f, 4000f, 2, 1},
+            {30f, 5f, 4f, 4000f, 2, 2},
+            {25f, 15f, 3f, 200f, 3, 3},
+            {18f, 0f, 3f, 2000f, 2, 4},
+            {38f, 13f, 4f, 2500f, 2, 5},
+            {48f, 1f, 5f, 4000f, 4, 3},
     };
 
     // Location of each star (can add more fields later, SHOULD MAKE INTO A CLASS)
@@ -480,13 +480,13 @@ public class GameController extends WorldController implements ContactListener {
      * @param avatar1 the avatar to be anchored
      * @param avatar2 the other avatar
      */
-    private void anchorHelp(AstronautModel avatar1, AstronautModel avatar2) {  //Anchor astronaut 1 & set inactive unanchor astronaut 2 & set active
-        avatar1.setAnchored(true);
+    private void anchorHelp(AstronautModel avatar1, AstronautModel avatar2, Anchor anchor) {  //Anchor astronaut 1 & set inactive unanchor astronaut 2 & set active
+        avatar1.setAnchored(anchor);
         avatar1.setActive(false);
         avatar1.setPosition(SPIN_POS.x, SPIN_POS.y);
         avatar1.setLinearVelocity(reset);
         avatar1.setAngularVelocity(0);
-        avatar2.setAnchored(false);
+        avatar2.setUnAnchored();
         avatar2.setActive(true);
     }
 
@@ -514,7 +514,7 @@ public class GameController extends WorldController implements ContactListener {
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar1, avatar2);
+                        anchorHelp(avatar1, avatar2, a);
                         return;
                     }
                 }
@@ -523,7 +523,7 @@ public class GameController extends WorldController implements ContactListener {
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar2, avatar1);
+                        anchorHelp(avatar2, avatar1, a);
                         return;
                     }
                 }
@@ -536,13 +536,13 @@ public class GameController extends WorldController implements ContactListener {
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar2, avatar1);
+                        anchorHelp(avatar2, avatar1, a);
                         return;
                     }
                 }
             }
             else if (shifted()) { //If shift was hit unanchor avatar1 and make active
-                avatar1.setAnchored(false);
+                avatar1.setUnAnchored();
                 avatar1.setActive(true);
                 return;
             }
@@ -554,13 +554,13 @@ public class GameController extends WorldController implements ContactListener {
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar1, avatar2);
+                        anchorHelp(avatar1, avatar2, a);
                         return;
                     }
                 }
             }
             else if (shifted()) { //If shift was hit unanchor avatar2 and make active
-                avatar2.setAnchored(false);
+                avatar2.setUnAnchored();
                 avatar2.setActive(true);
                 return;
             }
