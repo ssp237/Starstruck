@@ -625,14 +625,16 @@ public class GameController extends WorldController implements ContactListener {
             return false;
         }
 
-        if (!isFailure() && (avatar.getY() < -1 || avatar.getY() > bounds.height + 1)) {
-            //|| avatar.getX() < -1 || avatar.getX() > bounds.getWidth() + 1)) {
+        if (!isFailure() && (avatar.getY() < - 2 || avatar.getY() > bounds.height + 2
+                || avatar.getX() < -2)) {
+            // || avatar.getX() > bounds.getWidth() + 1)) {
             setFailure(true);
             return false;
         }
 
-        if (!isFailure() && (avatar2.getY() < -1|| avatar2.getY() > bounds.height + 1)) {
-            //|| avatar2.getX() < -1 || avatar2.getX() > bounds.getWidth() + 1)) {
+        if (!isFailure() && (avatar2.getY() < - 2 || avatar2.getY() > bounds.height + 2
+                || avatar2.getX() < -2)) {
+            // || avatar2.getX() > bounds.getWidth() + 1)) {
             setFailure(true);
             return false;
         }
