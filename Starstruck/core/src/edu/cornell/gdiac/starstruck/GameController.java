@@ -379,13 +379,14 @@ public class GameController extends WorldController implements ContactListener {
         planets.addPlanets(PLANETS, world, vectorWorld);
 
 
-//        // Create rope bridge
-//        dwidth  = bridgeTexture.getRegionWidth()/scale.x;
-//        dheight = bridgeTexture.getRegionHeight()/scale.y;
-//        Rope bridge = new Rope(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
-//        bridge.setTexture(bridgeTexture);
-//        bridge.setDrawScale(scale);
-//        addObject(bridge);
+        // Create rope bridge
+        dwidth  = bridgeTexture.getRegionWidth()/scale.x;
+        dheight = bridgeTexture.getRegionHeight()/scale.y;
+        Rope bridge = new Rope(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
+        bridge.setTexture(bridgeTexture);
+        bridge.setDrawScale(scale);
+        bridge.setName("rope");
+        addObject(bridge);
 
         // Create star
 
@@ -730,6 +731,10 @@ public class GameController extends WorldController implements ContactListener {
             enemy.applyForce();
         }
 
+        System.out.println(avatar.getOnPlanet());
+        System.out.println(avatar2.getOnPlanet());
+        System.out.println("__________________________________________");
+
 
         // Add a bullet if we fire
         if (avatar.isShooting()) {
@@ -815,16 +820,10 @@ public class GameController extends WorldController implements ContactListener {
                 setFailure(true);
             }
 
+
             /** Force astronaut's position on planet */
             if ((bd1 == avatar || bd2 == avatar) && bd1 != avatar2 && bd2 != avatar2) {
                 curPlanet = (bd1 == avatar) ? bd2 : bd1;
-                if (curPlanet.getName().contains("planet")) {
-                    //Vector2 angle = contact.getWorldManifold().getPoints()[0].cpy().sub(objCache.getCenter());
-                    //contactDir.set(contact.getWorldManifold().getPoints()[0].cpy().sub(curPlanet.getCenter()));
-                    //contactPoint.set(contact.getWorldManifold().getPoints()[0].cpy());
-                    contactPoint.set(contact.getWorldManifold().getPoints()[0].cpy());
-                    avatar.setOnPlanet(true);
-                }
                 // See if we have landed on the ground.
                 if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
                         (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
@@ -833,17 +832,24 @@ public class GameController extends WorldController implements ContactListener {
                     contactPoint.set(avatar.getPosition());
                     sensorFixtures.add(avatar == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
+
+                if ((bd1.getName().equals("avatar") || bd2.getName().equals("avatar"))
+                        && (bd1.getName().contains("barrier") || bd2.getName().contains("barrier"))) {
+                    contact.setEnabled(false);
+                    avatar.setOnPlanet(false);
+                }
+                if (curPlanet.getName().contains("planet")) {
+                    //Vector2 angle = contact.getWorldManifold().getPoints()[0].cpy().sub(objCache.getCenter());
+                    //contactDir.set(contact.getWorldManifold().getPoints()[0].cpy().sub(curPlanet.getCenter()));
+                    //contactPoint.set(contact.getWorldManifold().getPoints()[0].cpy());
+                    contactPoint.set(contact.getWorldManifold().getPoints()[0].cpy());
+                    avatar.setOnPlanet(true);
+                }
             }
 
             if ((bd1 == avatar2 || bd2 == avatar2) && bd1 != avatar && bd2 !=avatar) {
                 curPlanet2 = (bd1 == avatar2) ? bd2 : bd1;
-                if (curPlanet2.getName().contains("planet")) {
-                    //Vector2 angle = contact.getWorldManifold().getPoints()[0].cpy().sub(objCache.getCenter());
-                    //contactDir.set(contact.getWorldManifold().getPoints()[0].cpy().sub(curPlanet.getCenter()));
-                    //contactPoint.set(contact.getWorldManifold().getPoints()[0].cpy());
-                    contactPoint2.set(contact.getWorldManifold().getPoints()[0].cpy());
-                    avatar2.setOnPlanet(true);
-                }
+
                 // See if we have landed on the ground.
                 if ((avatar2.getSensorName().equals(fd2) && avatar2 != bd1) ||
                         (avatar2.getSensorName().equals(fd1) && avatar2 != bd2)) {
@@ -851,6 +857,20 @@ public class GameController extends WorldController implements ContactListener {
                     avatar2.setOnPlanet(true);
                     contactPoint2.set(avatar2.getPosition());
                     sensorFixtures.add(avatar2 == bd1 ? fix2 : fix1); // Could have more than one ground
+                }
+
+                if ((bd1.getName().equals("avatar2") || bd2.getName().equals("avatar2"))
+                        && (bd1.getName().contains("barrier") || bd2.getName().contains("barrier"))) {
+                    contact.setEnabled(false);
+                    avatar2.setOnPlanet(false);
+                }
+
+                if (curPlanet2.getName().contains("planet")) {
+                    //Vector2 angle = contact.getWorldManifold().getPoints()[0].cpy().sub(objCache.getCenter());
+                    //contactDir.set(contact.getWorldManifold().getPoints()[0].cpy().sub(curPlanet.getCenter()));
+                    //contactPoint.set(contact.getWorldManifold().getPoints()[0].cpy());
+                    contactPoint2.set(contact.getWorldManifold().getPoints()[0].cpy());
+                    avatar2.setOnPlanet(true);
                 }
             }
 
@@ -868,6 +888,7 @@ public class GameController extends WorldController implements ContactListener {
                     contactPointEN.set(enemy.getPosition());
                     sensorFixtures.add(enemy == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
+
             }
 
             // Test bullet collision with world
@@ -878,6 +899,8 @@ public class GameController extends WorldController implements ContactListener {
             if (bd2.getName().equals("bullet") && bd1 != avatar) {
                 removeBullet(bd2);
             }
+
+
 
 //            if ((bd1 == enemy || bd2 == enemy) && (bd1 == avatar || bd2 == avatar || bd1 == avatar2 || bd2 == avatar2)) {
 //                System.out.println("in here");
@@ -935,7 +958,48 @@ public class GameController extends WorldController implements ContactListener {
     /** Unused ContactListener method */
     public void postSolve(Contact contact, ContactImpulse impulse) {}
     /** Unused ContactListener method */
-    public void preSolve(Contact contact, Manifold oldManifold) {}
+    public void preSolve(Contact contact, Manifold oldManifold) {
+        Fixture fix1 = contact.getFixtureA();
+        Fixture fix2 = contact.getFixtureB();
+
+        Body body1 = fix1.getBody();
+        Body body2 = fix2.getBody();
+
+        Object fd1 = fix1.getUserData();
+        Object fd2 = fix2.getUserData();
+
+        try {
+            Obstacle bd1 = (Obstacle)body1.getUserData();
+            Obstacle bd2 = (Obstacle)body2.getUserData();
+
+//            System.out.println(bd1.getName() + bd2.getName());
+
+
+
+            if ((bd1.getName().equals("avatar") || bd2.getName().equals("avatar"))
+                    && (bd1.getName().contains("barrier") || bd2.getName().contains("barrier"))) {
+                contact.setEnabled(false);
+            }
+
+            if ((bd1.getName().equals("avatar2") || bd2.getName().equals("avatar2"))
+                    && (bd1.getName().contains("barrier") || bd2.getName().contains("barrier"))) {
+                contact.setEnabled(false);
+            }
+
+
+            if (bd1.getName().contains("barrier") && bd2.getName().contains("barrier")) {
+                contact.setEnabled(false);
+            }
+
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+
+
+    }
 
     /**
      * Draw the physics objects to the canvas and the background
