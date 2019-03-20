@@ -203,7 +203,7 @@ public class GameController extends WorldController implements ContactListener {
     /** The restitution for all physics objects */
     private static final float  BASIC_RESTITUTION = 0.1f;
     /** The width of the rope bridge */
-    private static final float  BRIDGE_WIDTH = 14.0f;
+    private static final float  BRIDGE_WIDTH = 6.0f;
     /** Offset for bullet when firing */
     private static final float  BULLET_OFFSET = 0.2f;
     /** The speed of the bullet after firing */
@@ -224,7 +224,7 @@ public class GameController extends WorldController implements ContactListener {
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-            {-7f, -7f, 14f, 5000f, 4, 0},
+            {-3f, -3f, 9f, 5000f, 4, 0},
             {13f, 15f, 4f, 6000f, 2, 1},
             {30f, 5f, 4f, 6000f, 2, 2},
             {25f, 15f, 3f, 2500f, 3, 3},
