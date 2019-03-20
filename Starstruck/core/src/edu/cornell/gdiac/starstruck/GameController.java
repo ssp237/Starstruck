@@ -736,10 +736,6 @@ public class GameController extends WorldController implements ContactListener {
             enemy.applyForce();
         }
 
-        System.out.println(avatar.getOnPlanet());
-        System.out.println(avatar2.getOnPlanet());
-        System.out.println("__________________________________________");
-
 
         // Add a bullet if we fire
         if (avatar.isShooting()) {
