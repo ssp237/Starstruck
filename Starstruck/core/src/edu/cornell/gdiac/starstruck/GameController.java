@@ -378,8 +378,7 @@ public class GameController extends WorldController implements ContactListener {
         avatar2.setName("avatar2");
         addObject(avatar2);
 
-        planets.addPlanets(PLANETS, world, vectorWorld);
-
+        objects.remove(avatar); objects.remove(avatar2);
 
         // Create rope bridge
         dwidth  = bridgeTexture.getRegionWidth()/scale.x;
@@ -389,6 +388,10 @@ public class GameController extends WorldController implements ContactListener {
         bridge.setDrawScale(scale);
         bridge.setName("rope");
         addObject(bridge);
+
+        objects.add(avatar); objects.add(avatar2);
+
+        planets.addPlanets(PLANETS, world, vectorWorld);
 
         // Create star
 
