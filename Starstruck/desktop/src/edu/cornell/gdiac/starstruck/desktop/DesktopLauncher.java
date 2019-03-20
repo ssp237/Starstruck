@@ -7,8 +7,8 @@ import edu.cornell.gdiac.starstruck.GDXRoot;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.width  = 1024;
-		config.height = 576;
+		config.width  = (int) (1024*1.5);
+		config.height = (int) (576*1.5);
 		config.resizable = false;
 		new LwjglApplication(new GDXRoot(), config);
 	}
