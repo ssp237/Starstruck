@@ -86,6 +86,9 @@ public abstract class WorldController implements Screen {
     /** File for gravity ring */
     private static String GRING_FILE = "planets/gravity ring.png";
 
+    /** Sounds **/
+    private static final String[] SOUNDS = {"sounds/sound1.mp3"};
+
     /** The texture for walls and platforms */
     protected TextureRegion earthTile;
     /** The texture for the exit condition */
