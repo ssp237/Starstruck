@@ -81,6 +81,10 @@ public class Enemy extends CapsuleObstacle {
     private FilmStrip animator;
     /** Current animation frame */
     private int animeframe;
+    /** Delay between animation frames */
+    private int animDelay;
+    /** Frames since last animation */
+    private int animFrames;
 
     /**
      * Returns left/right movement of this character.
@@ -276,6 +280,8 @@ public class Enemy extends CapsuleObstacle {
         animationFrames = 1;
         animator = null;
         animeframe = 0;
+        animDelay = 0;
+        animFrames = 0;
         //setName("dude");
     }
 
@@ -404,11 +410,18 @@ public class Enemy extends CapsuleObstacle {
         origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
     }
 
-    public void setTexture(FilmStrip texture, int size) {
+    /**
+     * Sets the texture to the given filmstrip with size size and delay animDelay between frames.
+     * @param texture The filmstrip to set
+     * @param size The size of the filmstrip
+     * @param animDelay The delay between animation frames
+     */
+    public void setTexture(FilmStrip texture, int size, int animDelay) {
         animator = texture;
         animationFrames = size;
         this.texture = animator;
         isFilm = true;
+        this.animDelay = animDelay;
         origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
     }
 
@@ -424,9 +437,14 @@ public class Enemy extends CapsuleObstacle {
 
         // Increase animation frame, but only if trying to move
         if (isFilm) {
-            animeframe++;
-            if (animeframe >= animationFrames) {
-                animeframe -= animationFrames;
+            animFrames--;
+            if(animFrames <= 0) {
+                animFrames = animDelay;
+
+                animeframe++;
+                if (animeframe >= animationFrames) {
+                    animeframe -= animationFrames;
+                }
             }
         }
 
