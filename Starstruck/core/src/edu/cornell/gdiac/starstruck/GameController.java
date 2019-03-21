@@ -445,7 +445,7 @@ public class GameController extends WorldController implements ContactListener {
         // Create enemy
         dwidth  = enemyTexture.getRegionWidth()/scale.x;
         dheight = enemyTexture.getRegionHeight()/scale.y;
-        enemy = new Enemy(DUDE_POS.x + 10, DUDE_POS.y + 10, dwidth, dheight);
+        enemy = new Enemy(DUDE_POS.x + 22, DUDE_POS.y + 10, dwidth, dheight);
         enemy.setDrawScale(scale);
         enemy.setTexture(enemyTexture);
         enemy.setName("bug");
