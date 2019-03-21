@@ -1026,10 +1026,9 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(false);
             }
             //Disable the collision between anchors and rope on avatar
-            int n = (int) BRIDGE_WIDTH-1;
             if ((bd1N.contains("anchor") || bd2N.contains("anchor")) && (
                     bd1N.equals("rope_plank0") || bd2N.equals("rope_plank0") ||
-                    bd1N.equals("rope_plank"+n) || bd2N.equals("rope_plank"+n))) {
+                    bd1N.equals("rope_plank1") || bd2N.equals("rope_plank1"))) {
                 contact.setEnabled(false);
             }
 
