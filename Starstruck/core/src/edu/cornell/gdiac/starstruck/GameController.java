@@ -219,7 +219,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Turns off enemy collisions for testing */
     public static final boolean test = false;
     /** Allows manual control of astronaut in space for testing */
-    public static final boolean testC = false;
+    public static final boolean testC = true;
 
 
     // Location, radius, and drawscale of all the planets.
@@ -1027,9 +1027,10 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(false);
             }
             //Disable the collision between anchors and rope on avatar
+            int n = (int) BRIDGE_WIDTH*2-1;
             if ((bd1N.contains("anchor") || bd2N.contains("anchor")) && (
                     bd1N.equals("rope_plank0") || bd2N.equals("rope_plank0") ||
-                    bd1N.equals("rope_plank1") || bd2N.equals("rope_plank1"))) {
+                    bd1N.contains("rope_plank") || bd2N.contains("rope_plank"))) {
                 contact.setEnabled(false);
             }
 
