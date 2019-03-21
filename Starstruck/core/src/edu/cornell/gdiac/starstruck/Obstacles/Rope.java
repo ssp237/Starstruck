@@ -46,7 +46,7 @@ public class Rope extends ComplexObstacle {
     private WheelObstacle finish = null;
 
     // Dimension information
-    /** The size of the entire bridge */
+    /** The size of the entire bridge -- PRETTY SURE THIS IS USELESS FOR OUR PURPOSES*/
     protected Vector2 dimension;
     /** The size of a single plank */
     protected Vector2 planksize;
@@ -54,6 +54,8 @@ public class Rope extends ComplexObstacle {
     protected float linksize = 1.0f;
     /** The spacing between each link */
     protected float spacing = 0.0f;
+    /** Lengh of the rope */
+    protected float length;
 
     private AstronautModel avatar;
     private AstronautModel avatar2;
@@ -125,6 +127,8 @@ public class Rope extends ComplexObstacle {
             plank.setDensity(BASIC_DENSITY);
             bodies.add(plank);
         }
+
+        this.length = nLinks * linksize + nLinks * spacing;
     }
 
     /**
@@ -205,6 +209,8 @@ public class Rope extends ComplexObstacle {
 
         return true;
     }
+
+    public float getLength() { return length; }
 
     /**
      * Destroys the physics Body(s) of this object if applicable,
