@@ -494,6 +494,7 @@ public class GameController extends WorldController implements ContactListener {
         return InputController.getInstance().didShift();
     }
 
+
     /**
      * Helper method to anchor an astronaut
      *
@@ -1095,6 +1096,13 @@ public class GameController extends WorldController implements ContactListener {
                 p.drawDebug(canvas);
             }
             canvas.endDebug();
+        }
+
+        if (isFailure()) {
+            displayFont.setColor(Color.RED);
+            canvas.begin(); // DO NOT SCALE
+            canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
+            canvas.end();
         }
     }
 }
