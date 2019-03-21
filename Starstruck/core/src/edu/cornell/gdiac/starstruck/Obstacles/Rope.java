@@ -29,11 +29,11 @@ import edu.cornell.gdiac.starstruck.*;
  */
 public class Rope extends ComplexObstacle {
     /** The debug name for the entire obstacle */
-    private static final String BRIDGE_NAME = "bridge";
+    private static final String BRIDGE_NAME = "rope_bridge";
     /** The debug name for each plank */
-    private static final String PLANK_NAME = "barrier";
+    private static final String PLANK_NAME = "rope_plank";
     /** The debug name for each anchor pin */
-    private static final String BRIDGE_PIN_NAME = "pin";
+    private static final String BRIDGE_PIN_NAME = "rope_pin";
     /** The radius of each anchor pin */
     private static final float BRIDGE_PIN_RADIUS = 0.1f;
     /** The density of each plank in the bridge */

@@ -58,6 +58,9 @@ public class AstronautModel extends CapsuleObstacle {
 
     /** The current horizontal movement of the character */
     private float   movement;
+    /** The current vertical movement of the character */
+    private float movementV;
+    /** The rotation of this character */
     private float rotation;
     /** Which direction is the character facing */
     private boolean faceRight;
@@ -138,6 +141,12 @@ public class AstronautModel extends CapsuleObstacle {
         } else if (movement > 0) {
             faceRight = true;
         }
+    }
+
+    public float getMovementV () { return movementV; }
+
+    public void setMovementV(float value) {
+        movementV = value;
     }
 
     public float getRotation() { return rotation; }
@@ -405,26 +414,7 @@ public class AstronautModel extends CapsuleObstacle {
 //            body.applyForce(forceCache,getPosition(),true);
 //        }
 
-//        if (getOnPlanet()) {
-//            if (movement > 0) {
-//
-//            }
-//        }
-
         if (!getOnPlanet()) {
-            // Velocity too high, clamp it
-//            if (Math.abs(getVX()) >= getMaxSpeed()) {
-//                if (getVX() * movement > 0) {
-//                    setVX(Math.signum(getVX()) * getMaxSpeed());
-//                } else {
-//                    forceCache.set(getMovement(), 0);
-//                    body.applyForce(forceCache, getPosition(), true);
-//                }
-//
-//            } else {
-//                forceCache.set(getMovement(), 0);
-//                body.applyForce(forceCache, getPosition(), true);
-//            }
 
             if (Math.abs(getAngularVelocity()) >= DUDE_MAXSPEED) {
                 setAngularVelocity(Math.signum(getVX()) * getMaxSpeed());
@@ -442,9 +432,29 @@ public class AstronautModel extends CapsuleObstacle {
 
         // Gravity from planets
         //System.out.println(gravity);
-        if (!getOnPlanet()) {
+        if (!getOnPlanet() && !GameController.testC) {
             body.applyForce(gravity, getPosition(), true);
         }
+
+
+        if (GameController.testC) {
+            // Velocity too high, clamp it
+            // Movement for testing control
+//        if (Math.abs(getVX()) >= getMaxSpeed()) {
+//            if (getVX() * movement > 0) {
+//                setVX(Math.signum(getVX()) * getMaxSpeed());
+//            } else {
+//                forceCache.set(getMovement(), 0);
+//                body.applyForce(forceCache, getPosition(), true);
+//            }
+//
+//        } else {
+            forceCache.set(getMovement(), getMovementV());
+            //body.applyForce(forceCache, getPosition(), true);
+            body.setLinearVelocity(forceCache.scl(4));
+//        }
+        }
+
     }
 
     /**
