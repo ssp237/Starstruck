@@ -21,6 +21,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import java.util.*;
 
 //import edu.cornell.gdiac.physics.*;
+import com.sun.org.apache.bcel.internal.generic.LAND;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.starstruck.Gravity.*;
@@ -58,13 +59,17 @@ public class GameController extends WorldController implements ContactListener {
     private static final String GREENWORM_FILE = "platform/green_worm.png";
 
     /** The sound file for a jump */
-    private static final String JUMP_FILE = "audio/jump sounds/jump8.mp3";
+    private static final String JUMP_FILE = "audio/jump/jump8.mp3";
     /** The sound file for a landing */
-    private static final String LAND_FILE = "audio/jump sounds/quick_land.mp3";
+    private static final String LAND_FILE = "audio/jump/quick_land.mp3";
     /** The sound file for a collision */
-    private static final String COLLISION_FILE = "audio/collision/collision.mp3";
-    /** The sound file for a jump */
-//    private static final String JUMP_FILE = "audio/jump sounds/jump8.wav";
+    private static final String COLLISION_FILE = "audio/anchor.mp3";
+    /** The sound file for a character switch */
+    private static final String SWITCH_FILE = "audio/collecting stars/star_collect.mp3";
+    /** The sound file to anchor */
+    private static final String ANCHOR_FILE = "audio/anchor.mp3";
+    /** Space sounds */
+    private static final String SPACE_SOUNDS = "audio/sounds from space/VanB-2017-04-05-2229.mp3";
 
 
     /** Background texture for start-up */
@@ -153,6 +158,12 @@ public class GameController extends WorldController implements ContactListener {
         assets.add(LAND_FILE);
         manager.load(COLLISION_FILE, Sound.class);
         assets.add(COLLISION_FILE);
+        manager.load(SWITCH_FILE, Sound.class);
+        assets.add(SWITCH_FILE);
+        manager.load(ANCHOR_FILE, Sound.class);
+        assets.add(ANCHOR_FILE);
+        manager.load(SPACE_SOUNDS, Sound.class);
+        assets.add(SPACE_SOUNDS);
 
         super.preLoadContent(manager);
     }
@@ -188,6 +199,11 @@ public class GameController extends WorldController implements ContactListener {
         sounds.allocate(manager, JUMP_FILE);
         sounds.allocate(manager, LAND_FILE);
         sounds.allocate(manager, COLLISION_FILE);
+        sounds.allocate(manager, SWITCH_FILE);
+        sounds.allocate(manager, ANCHOR_FILE);
+        sounds.allocate(manager, SPACE_SOUNDS);
+
+
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
 
@@ -224,7 +240,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Turns off enemy collisions for testing */
     public static final boolean test = false;
     /** Allows manual control of astronaut in space for testing */
-    public static final boolean testC = true;
+    public static final boolean testC = false;
 
 
     // Location, radius, and drawscale of all the planets.
@@ -511,6 +527,8 @@ public class GameController extends WorldController implements ContactListener {
         avatar1.setAngularVelocity(0);
         avatar2.setUnAnchored();
         avatar2.setActive(true);
+        SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
+
     }
 
     /**
@@ -565,6 +583,7 @@ public class GameController extends WorldController implements ContactListener {
                 }
             }
             else if (shifted()) { //If shift was hit unanchor avatar1 and make active
+                SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
                 avatar1.setUnAnchored();
                 avatar1.setActive(true);
                 return;
@@ -583,6 +602,7 @@ public class GameController extends WorldController implements ContactListener {
                 }
             }
             else if (shifted()) { //If shift was hit unanchor avatar2 and make active
+                SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
                 avatar2.setUnAnchored();
                 avatar2.setActive(true);
                 return;
@@ -683,6 +703,7 @@ public class GameController extends WorldController implements ContactListener {
         if (shifted()) {
             avatar.setActive(!avatar.isActive());
             avatar2.setActive(!avatar2.isActive());
+            SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
         }
 
         if ((dist(avatar.getPosition(), enemy.getPosition()) < 1f || dist(avatar2.getPosition(), enemy.getPosition()) < 1f) && !test)
@@ -772,18 +793,14 @@ public class GameController extends WorldController implements ContactListener {
             enemy.applyForce();
         }
 
-//        // Add a bullet if we fire
-//        if (avatar.isShooting()) {
-//            createBullet();
-//        }
 
         //TODO Removed sound stuffs
-//        if (avatar.isJumping()) {
-//            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
-//        }
+        if (avatar.isJumping() || avatar2.isJumping()) {
+            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
+        }
 
-        // If we use sound, we must remember this.
-//        SoundController.getInstance().update();
+//         If we use sound, we must remember this.
+        SoundController.getInstance().update();
     }
 
     /**

@@ -23,6 +23,7 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.graphics.*;
@@ -52,12 +53,16 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     private static final String PLAY_BTN_FILE = "shared/play.png";
     private static final String LOADING_AUDIO_FILE = "audio/loading_screen.mp3";
 
+    private static final float VOLUME = 0.3f;
+
     /** Background texture for start-up */
     private Texture background;
     /** Play button to display when done */
     private Texture playButton;
     /** Texture atlas to support a progress bar */
     private Texture statusBar;
+    /** Loading audio */
+    private Sound sound;
 
     // statusBar is a "texture atlas." Break it up into parts.
     /** Left cap to the status background (grey region) */
@@ -80,13 +85,13 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     /** Standard window height (for scaling) */
     private static int STANDARD_HEIGHT = 700;
     /** Ratio of the bar width to the screen */
-    private static float BAR_WIDTH_RATIO  = 0.66f;
+    private static float BAR_WIDTH_RATIO  = 0.33f;
     /** Ration of the bar height to the screen */
-    private static float BAR_HEIGHT_RATIO = 0.25f;
+    private static float BAR_HEIGHT_RATIO = 0.15f;
     /** Height of the progress bar */
     private static int PROGRESS_HEIGHT = 30;
     /** Width of the rounded cap on left or right */
-    private static int PROGRESS_CAP    = 15;
+    private static int PROGRESS_CAP    = 30;
     /** Width of the middle portion in texture atlas */
     private static int PROGRESS_MIDDLE = 200;
     /** Amount to scale the play button */
@@ -195,6 +200,9 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
         playButton = null;
         background = new Texture(BACKGROUND_FILE);
         statusBar  = new Texture(PROGRESS_FILE);
+        manager.load(LOADING_AUDIO_FILE, Sound.class);
+
+
 
         // No progress so far.
         progress   = 0;
@@ -252,6 +260,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * @param delta Number of seconds since last animation frame
      */
     private void update(float delta) {
+
         if (playButton == null) {
             manager.update(budget);
             this.progress = manager.getProgress();
@@ -261,6 +270,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
                 playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
             }
         }
+        SoundController.getInstance().play(LOADING_AUDIO_FILE,LOADING_AUDIO_FILE,true,VOLUME);
+        SoundController.getInstance().update();
+
+
     }
 
     /**
