@@ -317,6 +317,9 @@ public class GameController extends WorldController implements ContactListener {
     /** Cache for the direction of jump */
     private Vector2 contactDir = new Vector2();
 
+    /** Astronaut cache */
+    //private AstronautModel avatarCache = new AstronautModel();
+
     // Physics objects for the game
     /** Reference to the character avatar */
     private AstronautModel avatar;
@@ -519,6 +522,18 @@ public class GameController extends WorldController implements ContactListener {
         return InputController.getInstance().didShift();
     }
 
+    /**
+     * print method
+     *
+     * @param s The string to print
+     */
+    protected void print(String s) { System.out.println(s); }
+
+    protected void print(float n) { System.out.println(n); }
+
+    protected void print(int n) { System.out.println(n); }
+
+    protected void print(double n) { System.out.println(n); }
 
     /**
      * Helper method to anchor an astronaut
@@ -638,13 +653,20 @@ public class GameController extends WorldController implements ContactListener {
      * @param contactPoint contact point with the planet
      * @param curPlanet planet the avatar is currently on
      */
-    private void updateMovement(AstronautModel avatar, Vector2 contactPoint, Obstacle curPlanet) {
+    private void updateMovement(AstronautModel avatar, AstronautModel avatar2, Vector2 contactPoint, Obstacle curPlanet) {
         if (InputController.getInstance().didRight()) {
-            if (updateRope(this.avatar, this.avatar2, rope)) {
+            if (!updateRope(this.avatar, this.avatar2, rope)) {
+                contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
+                contactDir.rotateRad(-(float) Math.PI / 2);
+                avatar.setPosition(contactPoint.add(contactDir.setLength(PLANET_SPEED)));
+
+            }
+            else {
                 contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
                 contactDir.rotateRad(-(float) Math.PI / 2);
                 avatar.setPosition(contactPoint.add(contactDir.setLength(PLANET_SPEED)));
             }
+
         }
         if (InputController.getInstance().didLeft()) {
             if (updateRope(this.avatar, this.avatar2, rope)) {
@@ -662,21 +684,31 @@ public class GameController extends WorldController implements ContactListener {
         }
     }
 
+    /**
+     * Helper method to determine whether the rope is ok
+     *
+     * @param avatar1 avatar1
+     * @param avatar2 avatar2
+     * @param rope rope
+     * @return True if there is rope left, false if the rope is at its end
+     */
     private boolean updateRope(AstronautModel avatar1, AstronautModel avatar2, Rope rope) {
         float dist = dist(avatar1.getPosition(), avatar2.getPosition());
 
         // If both avatars are on the same planet
         if (avatar1.getOnPlanet() && avatar2.getOnPlanet() && curPlanet == curPlanet2) {
-            float theta = (float) (2*(Math.asin(dist/2 * ((Planet) curPlanet).getRadius())));
-            float arc = (float) (2 * Math.PI * ((Planet) curPlanet).getRadius() * (theta/(Math.PI*2)));
-            //System.out.println(arc);
-            //System.out.println(rope.getLength());
-            if (arc >= rope.getLength()) {
-                return true;
+            dist = dist(contactPoint, contactPoint2);
+            float theta = (float) (2*(Math.asin(dist/2 / ((Planet) curPlanet).getRadius())));
+            Float arc = new Float(2 * Math.PI * ((Planet) curPlanet).getRadius() * (theta/(Math.PI*2)));
+            print(arc);
+            print(rope.getLength());
+            print("_________________________________");
+            if (arc >= rope.getLength() || arc.isNaN()) {
+                return false;
             }
         }
 
-        // If avatar1 is anchored or on a planet
+        // If avatar1 is anchored
         else if ((avatar1.isAnchored()) && !avatar2.getOnPlanet()) { //avatar1.getOnPlanet() ||
             if (dist >= rope.getLength()) {
                 avatar2.setGravity(reset);
@@ -686,7 +718,7 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
-        // If avatar2 is anchored or on a planet
+        // If avatar2 is anchored
         else if ((avatar2.isAnchored()) && !avatar1.getOnPlanet()) { //avatar2.getOnPlanet() ||
             if (dist >= rope.getLength()) {
                 avatar1.setGravity(reset);
@@ -794,7 +826,7 @@ public class GameController extends WorldController implements ContactListener {
                 avatar.setAngle(angle);
                 avatar.setPosition(contactPoint);
                 if (avatar.isActive()) {
-                    updateMovement(avatar, contactPoint, curPlanet);
+                    updateMovement(avatar, avatar2, contactPoint, curPlanet);
                 }
             }
             //if (!avatar.getOnPlanet() && vectorWorld.getForce(avatar.getPosition()) != null)
@@ -821,7 +853,7 @@ public class GameController extends WorldController implements ContactListener {
                 avatar2.setAngle(angle);
                 avatar2.setPosition(contactPoint2);
                 if (avatar2.isActive()) {
-                    updateMovement(avatar2, contactPoint2, curPlanet2);
+                    updateMovement(avatar2, avatar, contactPoint2, curPlanet2);
                 }
             }
             avatar2.setGravity(vectorWorld.getForce(avatar2.getPosition()));
@@ -925,9 +957,9 @@ public class GameController extends WorldController implements ContactListener {
             //Checks for collisions between astronauts and rope
             if ((bd1N.contains("avatar") || bd2N.contains("avatar")) && (
                     bd1N.contains("rope") || bd2N.contains("rope") ||
-                            bd1N.contains("worm") || bd2N.contains("worm") ||
-                            bd1N.contains("anchor") || bd2N.contains("anchor") ||
-                            bd1N.contains("star") || bd2N.contains("star")
+                    bd1N.contains("worm") || bd2N.contains("worm") ||
+                    bd1N.contains("anchor") || bd2N.contains("anchor") ||
+                    bd1N.contains("star") || bd2N.contains("star")
             ))
                 barrier = true;
             else
@@ -1070,7 +1102,7 @@ public class GameController extends WorldController implements ContactListener {
             String bd1N = bd1.getName();
             String bd2N = bd2.getName();
 
-            //System.out.println(bd1.getName() + bd2.getName());
+            System.out.println(bd1.getName() + bd2.getName());
 
             //Disables all collisions w rope
             if (bd1.getName().contains("rope") || bd2.getName().contains("rope")) {

@@ -432,7 +432,7 @@ public class AstronautModel extends CapsuleObstacle {
 
         // Gravity from planets
         //System.out.println(gravity);
-        if (!getOnPlanet() && !GameController.testC) {
+        if (!GameController.testC) {
             body.applyForce(gravity, getPosition(), true);
         }
 
