@@ -841,6 +841,8 @@ public class GameController extends WorldController implements ContactListener {
             String bd1N = bd1.getName();
             String bd2N = bd2.getName();
 
+            //System.out.println(bd1N + bd2N);
+
             //Checks for collisions between astronauts and rope
             if ((bd1N.contains("avatar") || bd2N.contains("avatar")) && (
                     bd1N.contains("rope") || bd2N.contains("rope") ||
@@ -1021,6 +1023,13 @@ public class GameController extends WorldController implements ContactListener {
             //Disables collisions between astronauts and stars
             if (bd1.getName().contains("avatar") && bd2.getName().contains("star")
                     || bd1.getName().contains("star") && bd2.getName().contains("avatar")) {
+                contact.setEnabled(false);
+            }
+            //Disable the collision between anchors and rope on avatar
+            int n = (int) BRIDGE_WIDTH-1;
+            if ((bd1N.contains("anchor") || bd2N.contains("anchor")) && (
+                    bd1N.equals("rope_plank0") || bd2N.equals("rope_plank0") ||
+                    bd1N.equals("rope_plank"+n) || bd2N.equals("rope_plank"+n))) {
                 contact.setEnabled(false);
             }
 
