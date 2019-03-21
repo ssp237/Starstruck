@@ -25,6 +25,7 @@ import com.sun.org.apache.bcel.internal.generic.LAND;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.starstruck.Gravity.*;
+import edu.cornell.gdiac.util.FilmStrip;
 
 /**
  * Gameplay specific controller for the platformer game.  
@@ -91,11 +92,11 @@ public class GameController extends WorldController implements ContactListener {
     /** Texture asset for the active glow */
     private TextureRegion activeTexture;
     /** Texture asset for the enemy */
-    private TextureRegion enemyTexture;
+    private FilmStrip enemyTexture;
     /** Texture asset for the enemy */
-    private TextureRegion pinkwormTexture;
+    private FilmStrip pinkwormTexture;
     /** Texture asset for the enemy */
-    private TextureRegion greenwormTexture;
+    private FilmStrip greenwormTexture;
 
 
     /** Track asset loading from all instances and subclasses */
@@ -190,9 +191,9 @@ public class GameController extends WorldController implements ContactListener {
         bridgeTexture = createTexture(manager,ROPE_FILE,false);
         starTexture = createTexture(manager, STAR_FILE, false);
         activeTexture = createTexture(manager, ACTIVE_FILE, false);
-        enemyTexture = createTexture(manager, ENEMY_FILE, false);
-        pinkwormTexture = createTexture(manager, PINKWORM_FILE, false);
-        greenwormTexture = createTexture(manager, GREENWORM_FILE, false);
+        enemyTexture = createFilmStrip(manager, ENEMY_FILE, 1,3,3);
+        pinkwormTexture = createFilmStrip(manager, PINKWORM_FILE, 1,14,14);
+        greenwormTexture = createFilmStrip(manager, GREENWORM_FILE, 1,14,14);
 
         // TODO sound
         SoundController sounds = SoundController.getInstance();
@@ -468,7 +469,7 @@ public class GameController extends WorldController implements ContactListener {
         dheight = enemyTexture.getRegionHeight()/scale.y;
         enemy = new Enemy(26 + 2, 8 + 2, dwidth, dheight);
         enemy.setDrawScale(scale);
-        enemy.setTexture(enemyTexture);
+        enemy.setTexture(enemyTexture, 3, 10);
         enemy.setName("bug");
         addObject(enemy);
 
@@ -477,7 +478,7 @@ public class GameController extends WorldController implements ContactListener {
         dheight = pinkwormTexture.getRegionHeight()/scale.y;
         pinkworm = new Enemy(DUDE_POS.x + 10, DUDE_POS.y + 4, dwidth, dheight);
         pinkworm.setDrawScale(scale);
-        pinkworm.setTexture(pinkwormTexture);
+        pinkworm.setTexture(pinkwormTexture,14,7);
         pinkworm.setName("pinkworm");
         addObject(pinkworm);
         pinkworm.setVX(2f);
@@ -487,7 +488,7 @@ public class GameController extends WorldController implements ContactListener {
         dheight = greenwormTexture.getRegionHeight()/scale.y;
         greenworm = new Enemy(DUDE_POS.x + 10, DUDE_POS.y + 2, dwidth, dheight);
         greenworm.setDrawScale(scale);
-        greenworm.setTexture(greenwormTexture);
+        greenworm.setTexture(greenwormTexture,14,6);
         greenworm.setName("greenworm");
         addObject(greenworm);
         greenworm.setVX(1.4f);
@@ -780,6 +781,7 @@ public class GameController extends WorldController implements ContactListener {
             avatar2.applyForce();
         }
 
+        enemy.update(dt);
         if (enemy.getOnPlanet()) {
             enemy.setFixedRotation(true);
             //enemy.setRotation(1);

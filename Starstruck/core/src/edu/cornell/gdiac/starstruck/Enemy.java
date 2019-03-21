@@ -1,6 +1,8 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -8,7 +10,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.starstruck.Obstacles.CapsuleObstacle;
-
+import edu.cornell.gdiac.util.FilmStrip;
 
 
 public class Enemy extends CapsuleObstacle {
@@ -70,6 +72,19 @@ public class Enemy extends CapsuleObstacle {
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
+
+    /** Is the texture a filmstrip? */
+    private boolean isFilm;
+    /** Filmstrip size (if you are a filmstrip, otherwise arbitrary) */
+    private int animationFrames;
+    /** Filmstrip to use if relevant */
+    private FilmStrip animator;
+    /** Current animation frame */
+    private int animeframe;
+    /** Delay between animation frames */
+    private int animDelay;
+    /** Frames since last animation */
+    private int animFrames;
 
     /**
      * Returns left/right movement of this character.
@@ -261,6 +276,12 @@ public class Enemy extends CapsuleObstacle {
 
         shootCooldown = 0;
         jumpCooldown = 0;
+        isFilm = false;
+        animationFrames = 1;
+        animator = null;
+        animeframe = 0;
+        animDelay = 0;
+        animFrames = 0;
         //setName("dude");
     }
 
@@ -364,6 +385,47 @@ public class Enemy extends CapsuleObstacle {
     }
 
     /**
+     * Set the texture region to a non-filmstrip value.
+     * @param texture the texture to set
+     */
+    public void setTexture(TextureRegion texture){
+        super.setTexture(texture);
+        isFilm = false;
+        animator = null;
+        animationFrames = 1;
+    }
+
+    /**
+     *  Sets the texture to a filmstrip specified by texture with rows rows, cols cols, and size size.
+     * @param texture Filmstrip to be set as the texture.
+     * @param rows Rows in the filmstrip
+     * @param cols Cols in the filmstrip
+     * @param size Size of the filmstrip
+     */
+    public void setTexture(Texture texture, int rows, int cols, int size) {
+        animator = new FilmStrip(texture,rows, cols, size);
+        animationFrames = size;
+        this.texture = animator;
+        isFilm = true;
+        origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
+    }
+
+    /**
+     * Sets the texture to the given filmstrip with size size and delay animDelay between frames.
+     * @param texture The filmstrip to set
+     * @param size The size of the filmstrip
+     * @param animDelay The delay between animation frames
+     */
+    public void setTexture(FilmStrip texture, int size, int animDelay) {
+        animator = texture;
+        animationFrames = size;
+        this.texture = animator;
+        isFilm = true;
+        this.animDelay = animDelay;
+        origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
+    }
+
+    /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *
      * We use this method to reset cooldowns.
@@ -372,6 +434,22 @@ public class Enemy extends CapsuleObstacle {
      */
     public void update(float dt) {
         // Apply cooldowns
+
+        // Increase animation frame, but only if trying to move
+        if (isFilm) {
+            animFrames--;
+            if(animFrames <= 0) {
+                animFrames = animDelay;
+
+                animeframe++;
+                if (animeframe >= animationFrames) {
+                    animeframe -= animationFrames;
+                }
+            }
+        }
+
+        faceRight = getVX() > 0;
+
         if (isJumping()) {
             jumpCooldown = JUMP_COOLDOWN;
         } else {
@@ -394,6 +472,12 @@ public class Enemy extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? -1.0f : 1.0f;
+        if (isFilm) {
+
+            animator.setFrame(animeframe);
+            canvas.draw(animator, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
+        }
+
         canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 
