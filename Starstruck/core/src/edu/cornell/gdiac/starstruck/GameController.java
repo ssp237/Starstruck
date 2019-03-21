@@ -23,6 +23,7 @@ import java.util.*;
 //import edu.cornell.gdiac.physics.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.starstruck.Gravity.*;
+import edu.cornell.gdiac.util.FilmStrip;
 
 /**
  * Gameplay specific controller for the platformer game.  
@@ -82,7 +83,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Texture asset for the active glow */
     private TextureRegion activeTexture;
     /** Texture asset for the enemy */
-    private TextureRegion enemyTexture;
+    private FilmStrip enemyTexture;
     /** Texture asset for the enemy */
     private TextureRegion pinkwormTexture;
     /** Texture asset for the enemy */
@@ -175,7 +176,7 @@ public class GameController extends WorldController implements ContactListener {
         bridgeTexture = createTexture(manager,ROPE_FILE,false);
         starTexture = createTexture(manager, STAR_FILE, false);
         activeTexture = createTexture(manager, ACTIVE_FILE, false);
-        enemyTexture = createTexture(manager, ENEMY_FILE, false);
+        enemyTexture = createFilmStrip(manager, ENEMY_FILE, 1,3,3);
         pinkwormTexture = createTexture(manager, PINKWORM_FILE, false);
         greenwormTexture = createTexture(manager, GREENWORM_FILE, false);
 
@@ -449,7 +450,7 @@ public class GameController extends WorldController implements ContactListener {
         dheight = enemyTexture.getRegionHeight()/scale.y;
         enemy = new Enemy(DUDE_POS.x + 22, DUDE_POS.y + 10, dwidth, dheight);
         enemy.setDrawScale(scale);
-        enemy.setTexture(enemyTexture);
+        enemy.setTexture(enemyTexture, 3);
         enemy.setName("bug");
         addObject(enemy);
 
@@ -755,6 +756,7 @@ public class GameController extends WorldController implements ContactListener {
             avatar2.applyForce();
         }
 
+        enemy.update(dt);
         if (enemy.getOnPlanet()) {
             enemy.setFixedRotation(true);
             //enemy.setRotation(1);
