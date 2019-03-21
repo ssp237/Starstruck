@@ -265,9 +265,9 @@ public abstract class WorldController implements Screen {
     public static final int WORLD_POSIT = 2;
 
     /** Width of the game world in Box2d units */
-    protected static final float DEFAULT_WIDTH  = 32.0f;
+    protected static final float DEFAULT_WIDTH  = 32.0f * 1.5f;
     /** Height of the game world in Box2d units */
-    protected static final float DEFAULT_HEIGHT = 18.0f;
+    protected static final float DEFAULT_HEIGHT = 18.0f * 1.5f;
     /** The default value of gravity (going down) */
     protected static final float DEFAULT_GRAVITY = -4.9f;
 

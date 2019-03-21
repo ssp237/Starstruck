@@ -203,7 +203,7 @@ public class GameController extends WorldController implements ContactListener {
     /** The restitution for all physics objects */
     private static final float  BASIC_RESTITUTION = 0.1f;
     /** The width of the rope bridge */
-    private static final float  BRIDGE_WIDTH = 14.0f;
+    private static final float  BRIDGE_WIDTH = 6.0f;
     /** Offset for bullet when firing */
     private static final float  BULLET_OFFSET = 0.2f;
     /** The speed of the bullet after firing */
@@ -226,27 +226,42 @@ public class GameController extends WorldController implements ContactListener {
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-            {-7f, -7f, 14f, 5000f, 4, 0},
-            {13f, 15f, 4f, 6000f, 2, 1},
-            {30f, 5f, 4f, 6000f, 2, 2},
-            {25f, 15f, 3f, 2500f, 3, 3},
-            {18f, 0f, 3f, 2500f, 2, 4},
-            {38f, 13f, 4f, 3500f, 2, 5},
-            {48f, 1f, 5f, 6000f, 4, 3},
+            {1f, 1f, 5f, 3000f, 4, 0},
+            {7f, 14f, 3f, 4000f, 2, 1},
+            {16f, 20f, 4f, 4000f, 2.5f, 2},
+            {26f, 13f, 3f, 2000f, 3, 3},
+            {30f, 24f, 2.5f, 4000f, 2, 3},
+            {35f, 5f, 3f, 2000f, 2, 4},
+            {42f, 17f, 3.5f, 2500f, 3, 5},
+            {45f, 25f, 1f, 4000f, 1, 3},
+            {47f, 6f, 2.5f, 4000f, 2, 3},
     };
 
     // Location of each star (can add more fields later, SHOULD MAKE INTO A CLASS)
     private static final float[][] STARS = {
-            {5f, 14f},
-            {6f, 14f},
-            {5.5f, 13f},
+            {33f, 15.75f},
+            {33.5f, 16.5f},
+            {33.25f, 15f},
+            {16f, 4f},
+            {17f, 3f},
+            {16.5f, 2.5f},
+//            {5f, 14f},
+//            {6f, 14f},
+//            {5.5f, 13f},
     };
 
     // Location of anchor points (can add more fields later, SHOULD MAKE INTO A CLASS)
     private static final float[][] ANCHORS = {
-            {7f, 15f},
-            {3f, 16f},
-            {4f, 11f},
+            {31.5f, 17f},
+            {35f, 18f},
+            {33.5f, 13.5f},
+            {14f, 2.75f},
+            {18.5f, 3f},
+            {16f, 5f},
+            {17f, 1f},
+//            {7f, 15f},
+//            {3f, 16f},
+//            {4f, 11f},
     };
 
 
@@ -380,8 +395,7 @@ public class GameController extends WorldController implements ContactListener {
         avatar2.setName("avatar2");
         addObject(avatar2);
 
-        planets.addPlanets(PLANETS, world, vectorWorld);
-
+        objects.remove(avatar); objects.remove(avatar2);
 
         // Create rope bridge
         dwidth  = bridgeTexture.getRegionWidth()/scale.x;
@@ -391,6 +405,10 @@ public class GameController extends WorldController implements ContactListener {
         bridge.setDrawScale(scale);
         bridge.setName("rope");
         addObject(bridge);
+
+        objects.add(avatar); objects.add(avatar2);
+
+        planets.addPlanets(PLANETS, world, vectorWorld);
 
         // Create star
 
@@ -479,15 +497,13 @@ public class GameController extends WorldController implements ContactListener {
      * @param avatar1 the avatar to be anchored
      * @param avatar2 the other avatar
      */
-    private void anchorHelp(AstronautModel avatar1, AstronautModel avatar2) {  //Anchor astronaut 1 & set inactive unanchor astronaut 2 & set active
-        avatar1.setAnchored(true);
-        avatar.setBodyType(BodyDef.BodyType.StaticBody);
+    private void anchorHelp(AstronautModel avatar1, AstronautModel avatar2, Anchor anchor) {  //Anchor astronaut 1 & set inactive unanchor astronaut 2 & set active
+        avatar1.setAnchored(anchor);
         avatar1.setActive(false);
         avatar1.setPosition(SPIN_POS.x, SPIN_POS.y);
         avatar1.setLinearVelocity(reset);
         avatar1.setAngularVelocity(0);
-        avatar2.setAnchored(false);
-        avatar.setBodyType(BodyDef.BodyType.DynamicBody);
+        avatar2.setUnAnchored();
         avatar2.setActive(true);
     }
 
@@ -515,7 +531,7 @@ public class GameController extends WorldController implements ContactListener {
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar1, avatar2);
+                        anchorHelp(avatar1, avatar2, a);
                         return;
                     }
                 }
@@ -524,7 +540,7 @@ public class GameController extends WorldController implements ContactListener {
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar2, avatar1);
+                        anchorHelp(avatar2, avatar1, a);
                         return;
                     }
                 }
@@ -537,14 +553,13 @@ public class GameController extends WorldController implements ContactListener {
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar2, avatar1);
+                        anchorHelp(avatar2, avatar1, a);
                         return;
                     }
                 }
             }
             else if (shifted()) { //If shift was hit unanchor avatar1 and make active
-                avatar1.setAnchored(false);
-                avatar1.setBodyType(BodyDef.BodyType.DynamicBody);
+                avatar1.setUnAnchored();
                 avatar1.setActive(true);
                 return;
             }
@@ -556,14 +571,13 @@ public class GameController extends WorldController implements ContactListener {
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar1, avatar2);
+                        anchorHelp(avatar1, avatar2, a);
                         return;
                     }
                 }
             }
             else if (shifted()) { //If shift was hit unanchor avatar2 and make active
-                avatar2.setAnchored(false);
-                avatar2.setBodyType(BodyDef.BodyType.DynamicBody);
+                avatar2.setUnAnchored();
                 avatar2.setActive(true);
                 return;
             }
@@ -628,14 +642,16 @@ public class GameController extends WorldController implements ContactListener {
             return false;
         }
 
-        if (!isFailure() && (avatar.getY() < -1 || avatar.getY() > bounds.height + 1)) {
-            //|| avatar.getX() < -1 || avatar.getX() > bounds.getWidth() + 1)) {
+        if (!isFailure() && (avatar.getY() < - 2 || avatar.getY() > bounds.height + 2
+                || avatar.getX() < -2)) {
+            // || avatar.getX() > bounds.getWidth() + 1)) {
             setFailure(true);
             return false;
         }
 
-        if (!isFailure() && (avatar2.getY() < -1|| avatar2.getY() > bounds.height + 1)) {
-            //|| avatar2.getX() < -1 || avatar2.getX() > bounds.getWidth() + 1)) {
+        if (!isFailure() && (avatar2.getY() < - 2 || avatar2.getY() > bounds.height + 2
+                || avatar2.getX() < -2)) {
+            // || avatar2.getX() > bounds.getWidth() + 1)) {
             setFailure(true);
             return false;
         }
@@ -671,8 +687,7 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         if (greenworm.getPosition().x > 23 || greenworm.getPosition().x < 10) {
-            greenworm.setVX(-greenworm.getVX())
-            ;
+            greenworm.setVX(-greenworm.getVX());
         }
 
         avatar.setFixedRotation(false);
@@ -741,11 +756,6 @@ public class GameController extends WorldController implements ContactListener {
             enemy.setGravity(vectorWorld.getForce(enemy.getPosition()));
             enemy.applyForce();
         }
-
-//        System.out.println(avatar.getOnPlanet());
-//        System.out.println(avatar2.getOnPlanet());
-//        System.out.println("__________________________________________");
-
 
         // Add a bullet if we fire
         if (avatar.isShooting()) {
