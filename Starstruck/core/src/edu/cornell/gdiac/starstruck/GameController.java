@@ -203,7 +203,7 @@ public class GameController extends WorldController implements ContactListener {
     /** The restitution for all physics objects */
     private static final float  BASIC_RESTITUTION = 0.1f;
     /** The width of the rope bridge */
-    private static final float  BRIDGE_WIDTH = 14.0f;
+    private static final float  BRIDGE_WIDTH = 6.0f;
     /** Offset for bullet when firing */
     private static final float  BULLET_OFFSET = 0.2f;
     /** The speed of the bullet after firing */
@@ -216,6 +216,8 @@ public class GameController extends WorldController implements ContactListener {
     private static final float ENEMY_SPEED = 0.01f;
     /** 0 vector 2 */
     private static final Vector2 reset = new Vector2(0, 0);
+    /** Turns off enemy collisions for testing */
+    private static final boolean test = false;
 
 
     // Location, radius, and drawscale of all the planets.
@@ -224,27 +226,42 @@ public class GameController extends WorldController implements ContactListener {
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-            {-7f, -7f, 14f, 5000f, 4, 0},
-            {13f, 15f, 4f, 6000f, 2, 1},
-            {30f, 5f, 4f, 6000f, 2, 2},
-            {25f, 15f, 3f, 2500f, 3, 3},
-            {18f, 0f, 3f, 2500f, 2, 4},
-            {38f, 13f, 4f, 3500f, 2, 5},
-            {48f, 1f, 5f, 6000f, 4, 3},
+            {1f, 1f, 5f, 3000f, 4, 0},
+            {7f, 14f, 3f, 4000f, 2, 1},
+            {16f, 20f, 4f, 4000f, 2.5f, 2},
+            {26f, 13f, 3f, 2000f, 3, 3},
+            {30f, 24f, 2.5f, 4000f, 2, 3},
+            {35f, 5f, 3f, 2000f, 2, 4},
+            {42f, 17f, 3.5f, 2500f, 3, 5},
+            {45f, 25f, 1f, 4000f, 1, 3},
+            {47f, 6f, 2.5f, 4000f, 2, 3},
     };
 
     // Location of each star (can add more fields later, SHOULD MAKE INTO A CLASS)
     private static final float[][] STARS = {
-            {5f, 14f},
-            {6f, 14f},
-            {5.5f, 13f},
+            {33f, 15.75f},
+            {33.5f, 16.5f},
+            {33.25f, 15f},
+            {16f, 4f},
+            {17f, 3f},
+            {16.5f, 2.5f},
+//            {5f, 14f},
+//            {6f, 14f},
+//            {5.5f, 13f},
     };
 
     // Location of anchor points (can add more fields later, SHOULD MAKE INTO A CLASS)
     private static final float[][] ANCHORS = {
-            {7f, 15f},
-            {3f, 16f},
-            {4f, 11f},
+            {31.5f, 17f},
+            {35f, 18f},
+            {33.5f, 13.5f},
+            {14f, 2.75f},
+            {18.5f, 3f},
+            {16f, 5f},
+            {17f, 1f},
+//            {7f, 15f},
+//            {3f, 16f},
+//            {4f, 11f},
     };
 
 
@@ -287,6 +304,8 @@ public class GameController extends WorldController implements ContactListener {
     private PlanetList planets;
     /** Planets */
     private Galaxy galaxy = Galaxy.WHIRLPOOL;
+    /** Check not barrier */
+    private boolean barrier;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -376,16 +395,20 @@ public class GameController extends WorldController implements ContactListener {
         avatar2.setName("avatar2");
         addObject(avatar2);
 
+        objects.remove(avatar); objects.remove(avatar2);
+
+        // Create rope bridge
+        dwidth  = bridgeTexture.getRegionWidth()/scale.x;
+        dheight = bridgeTexture.getRegionHeight()/scale.y;
+        Rope bridge = new Rope(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
+        bridge.setTexture(bridgeTexture);
+        bridge.setDrawScale(scale);
+        bridge.setName("rope");
+        addObject(bridge);
+
+        objects.add(avatar); objects.add(avatar2);
+
         planets.addPlanets(PLANETS, world, vectorWorld);
-
-
-//        // Create rope bridge
-//        dwidth  = bridgeTexture.getRegionWidth()/scale.x;
-//        dheight = bridgeTexture.getRegionHeight()/scale.y;
-//        Rope bridge = new Rope(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
-//        bridge.setTexture(bridgeTexture);
-//        bridge.setDrawScale(scale);
-//        addObject(bridge);
 
         // Create star
 
@@ -422,10 +445,10 @@ public class GameController extends WorldController implements ContactListener {
         // Create enemy
         dwidth  = enemyTexture.getRegionWidth()/scale.x;
         dheight = enemyTexture.getRegionHeight()/scale.y;
-        enemy = new Enemy(DUDE_POS.x + 10, DUDE_POS.y + 10, dwidth, dheight);
+        enemy = new Enemy(DUDE_POS.x + 22, DUDE_POS.y + 10, dwidth, dheight);
         enemy.setDrawScale(scale);
         enemy.setTexture(enemyTexture);
-        enemy.setName("enemy");
+        enemy.setName("bug");
         addObject(enemy);
 
         // Create pink worm enemy
@@ -474,13 +497,13 @@ public class GameController extends WorldController implements ContactListener {
      * @param avatar1 the avatar to be anchored
      * @param avatar2 the other avatar
      */
-    private void anchorHelp(AstronautModel avatar1, AstronautModel avatar2) {  //Anchor astronaut 1 & set inactive unanchor astronaut 2 & set active
-        avatar1.setAnchored(true);
+    private void anchorHelp(AstronautModel avatar1, AstronautModel avatar2, Anchor anchor) {  //Anchor astronaut 1 & set inactive unanchor astronaut 2 & set active
+        avatar1.setAnchored(anchor);
         avatar1.setActive(false);
         avatar1.setPosition(SPIN_POS.x, SPIN_POS.y);
         avatar1.setLinearVelocity(reset);
         avatar1.setAngularVelocity(0);
-        avatar2.setAnchored(false);
+        avatar2.setUnAnchored();
         avatar2.setActive(true);
     }
 
@@ -508,7 +531,7 @@ public class GameController extends WorldController implements ContactListener {
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar1, avatar2);
+                        anchorHelp(avatar1, avatar2, a);
                         return;
                     }
                 }
@@ -517,7 +540,7 @@ public class GameController extends WorldController implements ContactListener {
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar2, avatar1);
+                        anchorHelp(avatar2, avatar1, a);
                         return;
                     }
                 }
@@ -530,13 +553,13 @@ public class GameController extends WorldController implements ContactListener {
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar2, avatar1);
+                        anchorHelp(avatar2, avatar1, a);
                         return;
                     }
                 }
             }
             else if (shifted()) { //If shift was hit unanchor avatar1 and make active
-                avatar1.setAnchored(false);
+                avatar1.setUnAnchored();
                 avatar1.setActive(true);
                 return;
             }
@@ -548,13 +571,13 @@ public class GameController extends WorldController implements ContactListener {
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar1, avatar2);
+                        anchorHelp(avatar1, avatar2, a);
                         return;
                     }
                 }
             }
             else if (shifted()) { //If shift was hit unanchor avatar2 and make active
-                avatar2.setAnchored(false);
+                avatar2.setUnAnchored();
                 avatar2.setActive(true);
                 return;
             }
@@ -619,14 +642,16 @@ public class GameController extends WorldController implements ContactListener {
             return false;
         }
 
-        if (!isFailure() && (avatar.getY() < -1 || avatar.getY() > bounds.height + 1)) {
-            //|| avatar.getX() < -1 || avatar.getX() > bounds.getWidth() + 1)) {
+        if (!isFailure() && (avatar.getY() < - 2 || avatar.getY() > bounds.height + 2
+                || avatar.getX() < -2)) {
+            // || avatar.getX() > bounds.getWidth() + 1)) {
             setFailure(true);
             return false;
         }
 
-        if (!isFailure() && (avatar2.getY() < -1|| avatar2.getY() > bounds.height + 1)) {
-            //|| avatar2.getX() < -1 || avatar2.getX() > bounds.getWidth() + 1)) {
+        if (!isFailure() && (avatar2.getY() < - 2 || avatar2.getY() > bounds.height + 2
+                || avatar2.getX() < -2)) {
+            // || avatar2.getX() > bounds.getWidth() + 1)) {
             setFailure(true);
             return false;
         }
@@ -647,12 +672,14 @@ public class GameController extends WorldController implements ContactListener {
     public void update(float dt) {
         updateCam();
 
+        if (isFailure()) return;
+
         if (shifted()) {
             avatar.setActive(!avatar.isActive());
             avatar2.setActive(!avatar2.isActive());
         }
 
-        if (dist(avatar.getPosition(), enemy.getPosition()) < 1f || dist(avatar2.getPosition(), enemy.getPosition()) < 1f)
+        if ((dist(avatar.getPosition(), enemy.getPosition()) < 1f || dist(avatar2.getPosition(), enemy.getPosition()) < 1f) && !test)
             setFailure(true);
 
         if (pinkworm.getPosition().x > 23 || pinkworm.getPosition().x < 10) {
@@ -730,7 +757,6 @@ public class GameController extends WorldController implements ContactListener {
             enemy.applyForce();
         }
 
-
         // Add a bullet if we fire
         if (avatar.isShooting()) {
             createBullet();
@@ -805,19 +831,33 @@ public class GameController extends WorldController implements ContactListener {
             String bd1N = bd1.getName();
             String bd2N = bd2.getName();
 
-            if (bd1.getName().contains("star") || bd1.getName().contains("anchor") || bd2.getName().contains("star") || bd2.getName().contains("anchor")){
-                return;
-            }
+//            if (bd1.getName().contains("star") || bd1.getName().contains("anchor") || bd2.getName().contains("star") || bd2.getName().contains("anchor")){
+//                return;
+//            }
+
+            //Checks for collisions between astronauts and rope
+            if (bd1.getName().contains("avatar") && (bd2.getName().contains("barrier") || bd2.getName().contains("rope") || bd2.getName().contains("worm"))
+                    || (bd1.getName().contains("barrier") || bd1.getName().contains("rope") || bd1.getName().contains("worm")) && bd2.getName().contains("avatar"))
+                barrier = true;
+            else
+                barrier = false;
 
             if ((bd1.getName().contains("worm") || bd2.getName().contains("worm"))
-                    && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))) {
+                    && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar")) && !test) {
                 //System.out.println("in here contains");
                 setFailure(true);
             }
 
             /** Force astronaut's position on planet */
-            if ((bd1 == avatar || bd2 == avatar) && bd1 != avatar2 && bd2 != avatar2) {
+            if ((bd1 == avatar || bd2 == avatar) && bd1 != avatar2 && bd2 != avatar2 && !barrier) {
                 curPlanet = (bd1 == avatar) ? bd2 : bd1;
+
+//                if ((bd1.getName().equals("avatar") || bd2.getName().equals("avatar"))
+//                        && (bd1.getName().contains("barrier") || bd2.getName().contains("barrier"))) {
+//                    //contact.setEnabled(false);
+//                    avatar.setOnPlanet(false);
+//                }
+
                 if (curPlanet.getName().contains("planet")) {
                     //Vector2 angle = contact.getWorldManifold().getPoints()[0].cpy().sub(objCache.getCenter());
                     //contactDir.set(contact.getWorldManifold().getPoints()[0].cpy().sub(curPlanet.getCenter()));
@@ -825,9 +865,10 @@ public class GameController extends WorldController implements ContactListener {
                     contactPoint.set(contact.getWorldManifold().getPoints()[0].cpy());
                     avatar.setOnPlanet(true);
                 }
+
                 // See if we have landed on the ground.
-                if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-                        (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
+                if (((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
+                        (avatar.getSensorName().equals(fd1) && avatar != bd2))) {
                     avatar.setGrounded(true);
                     avatar.setOnPlanet(true);
                     contactPoint.set(avatar.getPosition());
@@ -835,8 +876,14 @@ public class GameController extends WorldController implements ContactListener {
                 }
             }
 
-            if ((bd1 == avatar2 || bd2 == avatar2) && bd1 != avatar && bd2 !=avatar) {
+            if ((bd1 == avatar2 || bd2 == avatar2) && bd1 != avatar && bd2 != avatar && !barrier) {
                 curPlanet2 = (bd1 == avatar2) ? bd2 : bd1;
+
+//                if ((bd1.getName().equals("avatar2") || bd2.getName().equals("avatar2"))
+//                        && (bd1.getName().contains("barrier") || bd2.getName().contains("barrier"))) {
+//                    //contact.setEnabled(false);
+//                    avatar2.setOnPlanet(false);
+//                }
                 if (curPlanet2.getName().contains("planet")) {
                     //Vector2 angle = contact.getWorldManifold().getPoints()[0].cpy().sub(objCache.getCenter());
                     //contactDir.set(contact.getWorldManifold().getPoints()[0].cpy().sub(curPlanet.getCenter()));
@@ -845,13 +892,14 @@ public class GameController extends WorldController implements ContactListener {
                     avatar2.setOnPlanet(true);
                 }
                 // See if we have landed on the ground.
-                if ((avatar2.getSensorName().equals(fd2) && avatar2 != bd1) ||
-                        (avatar2.getSensorName().equals(fd1) && avatar2 != bd2)) {
+                if (((avatar2.getSensorName().equals(fd2) && avatar2 != bd1) ||
+                        (avatar2.getSensorName().equals(fd1) && avatar2 != bd2))) {
                     avatar2.setGrounded(true);
                     avatar2.setOnPlanet(true);
                     contactPoint2.set(avatar2.getPosition());
                     sensorFixtures.add(avatar2 == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
+
             }
 
             if ((bd1 == enemy || bd2 == enemy) && bd1 != avatar2 && bd2 !=avatar2 && bd1 != avatar && bd2 !=avatar) {
@@ -868,6 +916,7 @@ public class GameController extends WorldController implements ContactListener {
                     contactPointEN.set(enemy.getPosition());
                     sensorFixtures.add(enemy == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
+
             }
 
             // Test bullet collision with world
@@ -878,6 +927,8 @@ public class GameController extends WorldController implements ContactListener {
             if (bd2.getName().equals("bullet") && bd1 != avatar) {
                 removeBullet(bd2);
             }
+
+
 
 //            if ((bd1 == enemy || bd2 == enemy) && (bd1 == avatar || bd2 == avatar || bd1 == avatar2 || bd2 == avatar2)) {
 //                System.out.println("in here");
@@ -910,7 +961,8 @@ public class GameController extends WorldController implements ContactListener {
      * double jumping.
      */
     public void endContact(Contact contact) {
-        avatar.setOnPlanet(false);
+        //avatar.setOnPlanet(false);
+
         Fixture fix1 = contact.getFixtureA();
         Fixture fix2 = contact.getFixtureB();
 
@@ -935,7 +987,64 @@ public class GameController extends WorldController implements ContactListener {
     /** Unused ContactListener method */
     public void postSolve(Contact contact, ContactImpulse impulse) {}
     /** Unused ContactListener method */
-    public void preSolve(Contact contact, Manifold oldManifold) {}
+    public void preSolve(Contact contact, Manifold oldManifold) {
+        Fixture fix1 = contact.getFixtureA();
+        Fixture fix2 = contact.getFixtureB();
+
+        Body body1 = fix1.getBody();
+        Body body2 = fix2.getBody();
+
+        Object fd1 = fix1.getUserData();
+        Object fd2 = fix2.getUserData();
+
+        try {
+            Obstacle bd1 = (Obstacle)body1.getUserData();
+            Obstacle bd2 = (Obstacle)body2.getUserData();
+
+            //System.out.println(bd1.getName() + bd2.getName());
+
+            //Disables all collisions w rope
+            if (bd1.getName().contains("barrier") || bd2.getName().contains("barrier")) {
+                contact.setEnabled(false);
+            }
+            //Enables collisions between rope and anchor
+            if (bd1.getName().contains("barrier") && bd2.getName().contains("anchor")
+                    || bd1.getName().contains("anchor") && bd2.getName().contains("barrier")) {
+                contact.setEnabled(true);
+            }
+            //Enables collisions between rope and planet
+            if (bd1.getName().contains("barrier") && bd2.getName().contains("planet")
+                    || bd1.getName().contains("planet") && bd2.getName().contains("barrier")) {
+                contact.setEnabled(true);
+            }
+
+            //Disable collisions between astronauts
+            if (bd1.getName().contains("avatar") && bd2.getName().contains("avatar")) {
+                contact.setEnabled(false);
+            }
+            //Disables collisions between astronauts and anchors
+            if (bd1.getName().contains("avatar") && bd2.getName().contains("anchor")
+                    || bd1.getName().contains("anchor") && bd2.getName().contains("avatar")) {
+                contact.setEnabled(false);
+            }
+            //Disables collisions between astronauts and stars
+            if (bd1.getName().contains("avatar") && bd2.getName().contains("star")
+                    || bd1.getName().contains("star") && bd2.getName().contains("avatar")) {
+                contact.setEnabled(false);
+            }
+
+            //Turns off enemy avatar collisions entirely for testing
+            if (test) {
+                if ((bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))
+                && ((bd1.getName().contains("bug") || bd2.getName().contains("bug"))
+                || (bd1.getName().contains("worm") || bd2.getName().contains("worm"))))
+                    contact.setEnabled(false);
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Draw the physics objects to the canvas and the background

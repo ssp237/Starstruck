@@ -81,6 +81,8 @@ public class AstronautModel extends CapsuleObstacle {
     private Vector2 planetJump;
     /** Is this astronaut anchored */
     private boolean isAnchored;
+    /** What is the position of the current anchor? (May be null) */
+    private Vector2 anchorPos;
     /** Is this astronaut the active character*/
     private boolean isActive;
     /** Texture region for the flow */
@@ -91,9 +93,11 @@ public class AstronautModel extends CapsuleObstacle {
     /** Is this player one?*/
     private boolean isPlayerOne;
     /** Player 1 glow color*/
-    private static final Color p1glow = new Color(1, 0, (float) 210/255, 0.5f);
+    private static final Color p1glow = new Color(1, 1,1, 0.75f);
     /** Player 2 glow color*/
-    private static final Color p2glow = new Color(1, 0, (float) 210/255, 0.5f);
+    private static final Color p2glow = p1glow;
+    /** Scale for glow */
+    private static final float GLOW_SCALE = 1.5f;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -272,11 +276,16 @@ public class AstronautModel extends CapsuleObstacle {
     public boolean isAnchored() { return isAnchored; }
 
     /**
-     * Sets whether the astronaut is anchored
+     * Sets astronaut to be anchored
      *
-     * @param anchored true if the astronaut is anchored, false otherwise
+     * @param anchor the anchor the astronaut is glued to
      */
-    public void setAnchored(boolean anchored) { isAnchored = anchored; }
+    public void setAnchored(Anchor anchor) { anchorPos = anchor.getPosition(); isAnchored = true;}
+
+    /**
+     * Sets astronaut to be unanchored
+     */
+    public void setUnAnchored() { isAnchored = false; }
 
     /**
      * Whether astronaut is acitive
@@ -342,6 +351,8 @@ public class AstronautModel extends CapsuleObstacle {
         shootCooldown = 0;
         jumpCooldown = 0;
         setName("dude");
+
+        anchorPos = null;
     }
 
     /**
@@ -445,6 +456,9 @@ public class AstronautModel extends CapsuleObstacle {
      */
     public void update(float dt) {
         // Apply cooldowns
+
+        if (isAnchored) setPosition(anchorPos);
+
         if (isJumping()) {
             jumpCooldown = JUMP_COOLDOWN;
         } else {
@@ -470,7 +484,7 @@ public class AstronautModel extends CapsuleObstacle {
         if (isActive()) {
             Color color = isPlayerOne ? p1glow : p2glow;
             canvas.draw(glowTexture, color, glowOrigin.x, glowOrigin.y, (getX()) * drawScale.x,
-                    (getY()) * drawScale.y, getAngle(), effect, 1.0f);
+                    (getY()) * drawScale.y, getAngle(), effect * GLOW_SCALE, GLOW_SCALE);
         }
         canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,
                 getY()*drawScale.y,getAngle(),effect,1.0f);
