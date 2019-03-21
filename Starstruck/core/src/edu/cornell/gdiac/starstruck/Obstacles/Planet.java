@@ -66,7 +66,6 @@ public class Planet extends WheelObstacle {
      */
     public float getMass() { return mass;}
 
-
     /**
      *
      * @param canvas Drawing context
