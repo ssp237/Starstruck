@@ -462,7 +462,7 @@ public class GameController extends WorldController implements ContactListener {
         dheight = pinkwormTexture.getRegionHeight()/scale.y;
         pinkworm = new Enemy(DUDE_POS.x + 10, DUDE_POS.y + 4, dwidth, dheight);
         pinkworm.setDrawScale(scale);
-        pinkworm.setTexture(pinkwormTexture,14,3);
+        pinkworm.setTexture(pinkwormTexture,14,7);
         pinkworm.setName("pinkworm");
         addObject(pinkworm);
         pinkworm.setVX(2f);
@@ -472,7 +472,7 @@ public class GameController extends WorldController implements ContactListener {
         dheight = greenwormTexture.getRegionHeight()/scale.y;
         greenworm = new Enemy(DUDE_POS.x + 10, DUDE_POS.y + 2, dwidth, dheight);
         greenworm.setDrawScale(scale);
-        greenworm.setTexture(greenwormTexture,14,3);
+        greenworm.setTexture(greenwormTexture,14,6);
         greenworm.setName("greenworm");
         addObject(greenworm);
         greenworm.setVX(1.4f);
