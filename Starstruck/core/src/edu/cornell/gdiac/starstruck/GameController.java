@@ -219,7 +219,7 @@ public class GameController extends WorldController implements ContactListener {
     /** 0 vector 2 */
     private static final Vector2 reset = new Vector2(0, 0);
     /** Turns off enemy collisions for testing */
-    public static final boolean test = true;
+    public static final boolean test = false;
     /** Allows manual control of astronaut in space for testing */
     public static final boolean testC = false;
 
