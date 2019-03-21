@@ -224,27 +224,42 @@ public class GameController extends WorldController implements ContactListener {
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-            {-3f, -3f, 9f, 3000f, 4, 0},
-            {13f, 15f, 4f, 4000f, 2, 1},
-            {30f, 5f, 4f, 4000f, 2, 2},
-            {25f, 15f, 3f, 200f, 3, 3},
-            {18f, 0f, 3f, 2000f, 2, 4},
-            {38f, 13f, 4f, 2500f, 2, 5},
-            {48f, 1f, 5f, 4000f, 4, 3},
+            {1f, 1f, 5f, 3000f, 4, 0},
+            {7f, 14f, 3f, 4000f, 2, 1},
+            {16f, 20f, 4f, 4000f, 2.5f, 2},
+            {26f, 13f, 3f, 2000f, 3, 3},
+            {30f, 24f, 2.5f, 4000f, 2, 3},
+            {35f, 5f, 3f, 2000f, 2, 4},
+            {42f, 17f, 3.5f, 2500f, 3, 5},
+            {45f, 25f, 1f, 4000f, 1, 3},
+            {47f, 6f, 2.5f, 4000f, 2, 3},
     };
 
     // Location of each star (can add more fields later, SHOULD MAKE INTO A CLASS)
     private static final float[][] STARS = {
-            {5f, 14f},
-            {6f, 14f},
-            {5.5f, 13f},
+            {33f, 15.75f},
+            {33.5f, 16.5f},
+            {33.25f, 15f},
+            {16f, 4f},
+            {17f, 3f},
+            {16.5f, 2.5f},
+//            {5f, 14f},
+//            {6f, 14f},
+//            {5.5f, 13f},
     };
 
     // Location of anchor points (can add more fields later, SHOULD MAKE INTO A CLASS)
     private static final float[][] ANCHORS = {
-            {7f, 15f},
-            {3f, 16f},
-            {4f, 11f},
+            {31.5f, 17f},
+            {35f, 18f},
+            {33.5f, 13.5f},
+            {14f, 2.75f},
+            {18.5f, 3f},
+            {16f, 5f},
+            {17f, 1f},
+//            {7f, 15f},
+//            {3f, 16f},
+//            {4f, 11f},
     };
 
 
