@@ -217,9 +217,9 @@ public class GameController extends WorldController implements ContactListener {
     /** 0 vector 2 */
     private static final Vector2 reset = new Vector2(0, 0);
     /** Turns off enemy collisions for testing */
-    public static final boolean test = false;
+    public static final boolean test = true;
     /** Allows manual control of astronaut in space for testing */
-    public static final boolean testC = true;
+    public static final boolean testC = false;
 
 
     // Location, radius, and drawscale of all the planets.
@@ -281,10 +281,12 @@ public class GameController extends WorldController implements ContactListener {
     /** Variable caches used for setting position on planet for avatar 1*/
     private Obstacle curPlanet;
     private Vector2 contactPoint = new Vector2();
+//    private Vector2 lastPos = new Vector2();
 
     /** Variable caches for setting position on planet for avatar 2 */
     private Obstacle curPlanet2;
     private Vector2 contactPoint2 = new Vector2();
+//    private Vector2 lastPos2 = new Vector2();
 
     /** Variable caches used for setting position on planet for enemy*/
     private Obstacle curPlanetEN;
@@ -308,6 +310,8 @@ public class GameController extends WorldController implements ContactListener {
     private Galaxy galaxy = Galaxy.WHIRLPOOL;
     /** Check not barrier */
     private boolean barrier;
+    /** Rope */
+    private Rope rope;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -399,14 +403,14 @@ public class GameController extends WorldController implements ContactListener {
 
         objects.remove(avatar); objects.remove(avatar2);
 
-        // Create rope bridge
+        // Create rope
         dwidth  = bridgeTexture.getRegionWidth()/scale.x;
         dheight = bridgeTexture.getRegionHeight()/scale.y;
-        Rope bridge = new Rope(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
-        bridge.setTexture(bridgeTexture);
-        bridge.setDrawScale(scale);
-        bridge.setName("rope");
-        addObject(bridge);
+        rope = new Rope(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
+        rope.setTexture(bridgeTexture);
+        rope.setDrawScale(scale);
+        rope.setName("rope");
+        addObject(rope);
 
         objects.add(avatar); objects.add(avatar2);
 
@@ -622,10 +626,40 @@ public class GameController extends WorldController implements ContactListener {
         if (InputController.getInstance().didPrimary()) {
             avatar.setJumping(true);
             contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
-            //System.out.println(contactDir);
             avatar.setOnPlanet(false);
             avatar.setPlanetJump(contactDir);
         }
+    }
+
+    private boolean updateRope(AstronautModel avatar1, AstronautModel avatar2, Rope rope) {
+        float dist = dist(avatar1.getPosition(), avatar2.getPosition());
+
+        // If both avatars are on the same planets
+        if (avatar1.getOnPlanet() && avatar2.getOnPlanet() && curPlanet == curPlanet2) {
+
+        }
+
+        // If avatar1 is anchored or on a planet
+        else if (avatar1.getOnPlanet() || avatar1.isAnchored()) {
+            if (dist >= rope.getLength()) {
+                avatar2.setGravity(reset);
+                avatar2.setLinearVelocity(reset);
+                avatar1.setLinearVelocity(reset);
+                return true;
+            }
+        }
+
+        // If avatar2 is anchored or on a planet
+        else if (avatar2.getOnPlanet() || avatar2.isAnchored()) {
+            if (dist >= rope.getLength()) {
+                avatar1.setGravity(reset);
+                avatar1.setLinearVelocity(reset);
+                avatar2.setLinearVelocity(reset);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -727,6 +761,7 @@ public class GameController extends WorldController implements ContactListener {
             }
             //if (!avatar.getOnPlanet() && vectorWorld.getForce(avatar.getPosition()) != null)
             avatar.setGravity(vectorWorld.getForce(avatar.getPosition()));
+            updateRope(avatar, avatar2, rope);
             avatar.applyForce();
         }
 
@@ -752,6 +787,7 @@ public class GameController extends WorldController implements ContactListener {
                 }
             }
             avatar2.setGravity(vectorWorld.getForce(avatar2.getPosition()));
+            updateRope(avatar, avatar2, rope);
             avatar2.applyForce();
         }
 
@@ -767,6 +803,10 @@ public class GameController extends WorldController implements ContactListener {
             enemy.setGravity(vectorWorld.getForce(enemy.getPosition()));
             enemy.applyForce();
         }
+
+//          updateRope(avatar, avatar2, rope);
+//        lastPos.set(avatar.getPosition());
+//        lastPos2.set(avatar2.getPosition());
 
         // Add a bullet if we fire
         if (avatar.isShooting()) {
