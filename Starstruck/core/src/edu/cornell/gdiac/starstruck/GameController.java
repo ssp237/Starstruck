@@ -216,6 +216,8 @@ public class GameController extends WorldController implements ContactListener {
     private static final float ENEMY_SPEED = 0.01f;
     /** 0 vector 2 */
     private static final Vector2 reset = new Vector2(0, 0);
+    /** Turns off enemy collisions for testing */
+    private static final boolean test = false;
 
 
     // Location, radius, and drawscale of all the planets.
@@ -428,7 +430,7 @@ public class GameController extends WorldController implements ContactListener {
         enemy = new Enemy(DUDE_POS.x + 10, DUDE_POS.y + 10, dwidth, dheight);
         enemy.setDrawScale(scale);
         enemy.setTexture(enemyTexture);
-        enemy.setName("enemy");
+        enemy.setName("bug");
         addObject(enemy);
 
         // Create pink worm enemy
@@ -479,11 +481,13 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void anchorHelp(AstronautModel avatar1, AstronautModel avatar2) {  //Anchor astronaut 1 & set inactive unanchor astronaut 2 & set active
         avatar1.setAnchored(true);
+        avatar.setBodyType(BodyDef.BodyType.StaticBody);
         avatar1.setActive(false);
         avatar1.setPosition(SPIN_POS.x, SPIN_POS.y);
         avatar1.setLinearVelocity(reset);
         avatar1.setAngularVelocity(0);
         avatar2.setAnchored(false);
+        avatar.setBodyType(BodyDef.BodyType.DynamicBody);
         avatar2.setActive(true);
     }
 
@@ -540,6 +544,7 @@ public class GameController extends WorldController implements ContactListener {
             }
             else if (shifted()) { //If shift was hit unanchor avatar1 and make active
                 avatar1.setAnchored(false);
+                avatar1.setBodyType(BodyDef.BodyType.DynamicBody);
                 avatar1.setActive(true);
                 return;
             }
@@ -558,6 +563,7 @@ public class GameController extends WorldController implements ContactListener {
             }
             else if (shifted()) { //If shift was hit unanchor avatar2 and make active
                 avatar2.setAnchored(false);
+                avatar2.setBodyType(BodyDef.BodyType.DynamicBody);
                 avatar2.setActive(true);
                 return;
             }
@@ -650,12 +656,14 @@ public class GameController extends WorldController implements ContactListener {
     public void update(float dt) {
         updateCam();
 
+        if (isFailure()) return;
+
         if (shifted()) {
             avatar.setActive(!avatar.isActive());
             avatar2.setActive(!avatar2.isActive());
         }
 
-        if (dist(avatar.getPosition(), enemy.getPosition()) < 1f || dist(avatar2.getPosition(), enemy.getPosition()) < 1f)
+        if ((dist(avatar.getPosition(), enemy.getPosition()) < 1f || dist(avatar2.getPosition(), enemy.getPosition()) < 1f) && !test)
             setFailure(true);
 
         if (pinkworm.getPosition().x > 23 || pinkworm.getPosition().x < 10) {
@@ -663,7 +671,8 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         if (greenworm.getPosition().x > 23 || greenworm.getPosition().x < 10) {
-            greenworm.setVX(-greenworm.getVX());
+            greenworm.setVX(-greenworm.getVX())
+            ;
         }
 
         avatar.setFixedRotation(false);
@@ -733,9 +742,9 @@ public class GameController extends WorldController implements ContactListener {
             enemy.applyForce();
         }
 
-        System.out.println(avatar.getOnPlanet());
-        System.out.println(avatar2.getOnPlanet());
-        System.out.println("__________________________________________");
+//        System.out.println(avatar.getOnPlanet());
+//        System.out.println(avatar2.getOnPlanet());
+//        System.out.println("__________________________________________");
 
 
         // Add a bullet if we fire
@@ -817,14 +826,14 @@ public class GameController extends WorldController implements ContactListener {
 //            }
 
             //Checks for collisions between astronauts and rope
-            if (bd1.getName().contains("avatar") && (bd2.getName().contains("barrier") || bd2.getName().contains("rope"))
-                    || (bd1.getName().contains("barrier") || bd1.getName().contains("rope")) && bd2.getName().contains("avatar"))
+            if (bd1.getName().contains("avatar") && (bd2.getName().contains("barrier") || bd2.getName().contains("rope") || bd2.getName().contains("worm"))
+                    || (bd1.getName().contains("barrier") || bd1.getName().contains("rope") || bd1.getName().contains("worm")) && bd2.getName().contains("avatar"))
                 barrier = true;
             else
                 barrier = false;
 
             if ((bd1.getName().contains("worm") || bd2.getName().contains("worm"))
-                    && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))) {
+                    && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar")) && !test) {
                 //System.out.println("in here contains");
                 setFailure(true);
             }
@@ -982,7 +991,7 @@ public class GameController extends WorldController implements ContactListener {
             Obstacle bd1 = (Obstacle)body1.getUserData();
             Obstacle bd2 = (Obstacle)body2.getUserData();
 
-//            System.out.println(bd1.getName() + bd2.getName());
+            //System.out.println(bd1.getName() + bd2.getName());
 
             //Disables all collisions w rope
             if (bd1.getName().contains("barrier") || bd2.getName().contains("barrier")) {
@@ -999,21 +1008,6 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(true);
             }
 
-//            if ((bd1.getName().equals("avatar") || bd2.getName().equals("avatar"))
-//                    && (bd1.getName().contains("barrier") || bd2.getName().contains("barrier"))) {
-//                contact.setEnabled(false);
-//            }
-//
-//            if ((bd1.getName().equals("avatar2") || bd2.getName().equals("avatar2"))
-//                    && (bd1.getName().contains("barrier") || bd2.getName().contains("barrier"))) {
-//                contact.setEnabled(false);
-//            }
-//
-//
-//            if (bd1.getName().contains("barrier") && bd2.getName().contains("barrier")) {
-//                contact.setEnabled(false);
-//            }
-
             //Disable collisions between astronauts
             if (bd1.getName().contains("avatar") && bd2.getName().contains("avatar")) {
                 contact.setEnabled(false);
@@ -1029,13 +1023,17 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(false);
             }
 
+            //Turns off enemy avatar collisions entirely for testing
+            if (test) {
+                if ((bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))
+                && ((bd1.getName().contains("bug") || bd2.getName().contains("bug"))
+                || (bd1.getName().contains("worm") || bd2.getName().contains("worm"))))
+                    contact.setEnabled(false);
+            }
+
         } catch (Exception e){
             e.printStackTrace();
         }
-
-
-
-
     }
 
     /**
