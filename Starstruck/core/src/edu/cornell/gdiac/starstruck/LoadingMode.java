@@ -50,6 +50,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     private static final String BACKGROUND_FILE = "shared/loading.png";
     private static final String PROGRESS_FILE = "shared/progressbar.png";
     private static final String PLAY_BTN_FILE = "shared/play.png";
+    private static final String LOADING_AUDIO_FILE = "audio/loading_screen.mp3";
 
     /** Background texture for start-up */
     private Texture background;

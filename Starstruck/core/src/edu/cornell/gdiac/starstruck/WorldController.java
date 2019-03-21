@@ -86,6 +86,9 @@ public abstract class WorldController implements Screen {
     /** File for gravity ring */
     private static String GRING_FILE = "planets/gravity ring.png";
 
+    /** Sounds **/
+    private static final String[] SOUNDS = {"sounds/sound1.mp3"};
+
     /** The texture for walls and platforms */
     protected TextureRegion earthTile;
     /** The texture for the exit condition */
@@ -265,9 +268,9 @@ public abstract class WorldController implements Screen {
     public static final int WORLD_POSIT = 2;
 
     /** Width of the game world in Box2d units */
-    protected static final float DEFAULT_WIDTH  = 32.0f * 1.5f;
+    protected static final float DEFAULT_WIDTH  = 32.0f * 1.2f;
     /** Height of the game world in Box2d units */
-    protected static final float DEFAULT_HEIGHT = 18.0f * 1.5f;
+    protected static final float DEFAULT_HEIGHT = 18.0f * 1.2f;
     /** The default value of gravity (going down) */
     protected static final float DEFAULT_GRAVITY = -4.9f;
 

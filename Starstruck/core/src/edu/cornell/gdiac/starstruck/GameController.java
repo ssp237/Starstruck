@@ -21,6 +21,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import java.util.*;
 
 //import edu.cornell.gdiac.physics.*;
+import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.starstruck.Gravity.*;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -58,11 +59,14 @@ public class GameController extends WorldController implements ContactListener {
     private static final String GREENWORM_FILE = "platform/green_worm.png";
 
     /** The sound file for a jump */
-    private static final String JUMP_FILE = "platform/jump.mp3";
-    /** The sound file for a bullet fire */
-    private static final String PEW_FILE = "platform/pew.mp3";
-    /** The sound file for a bullet collision */
-    private static final String POP_FILE = "platform/plop.mp3";
+    private static final String JUMP_FILE = "audio/jump sounds/jump8.mp3";
+    /** The sound file for a landing */
+    private static final String LAND_FILE = "audio/jump sounds/quick_land.mp3";
+    /** The sound file for a collision */
+    private static final String COLLISION_FILE = "audio/collision/collision.mp3";
+    /** The sound file for a jump */
+//    private static final String JUMP_FILE = "audio/jump sounds/jump8.wav";
+
 
     /** Background texture for start-up */
     private Texture background;
@@ -146,10 +150,10 @@ public class GameController extends WorldController implements ContactListener {
 
         manager.load(JUMP_FILE, Sound.class);
         assets.add(JUMP_FILE);
-        manager.load(PEW_FILE, Sound.class);
-        assets.add(PEW_FILE);
-        manager.load(POP_FILE, Sound.class);
-        assets.add(POP_FILE);
+        manager.load(LAND_FILE, Sound.class);
+        assets.add(LAND_FILE);
+        manager.load(COLLISION_FILE, Sound.class);
+        assets.add(COLLISION_FILE);
 
         super.preLoadContent(manager);
     }
@@ -180,12 +184,11 @@ public class GameController extends WorldController implements ContactListener {
         pinkwormTexture = createFilmStrip(manager, PINKWORM_FILE, 1,14,14);
         greenwormTexture = createFilmStrip(manager, GREENWORM_FILE, 1,14,14);
 
-
-        //TODO Sound stuffs
-//        SoundController sounds = SoundController.getInstance();
-//        sounds.allocate(manager, JUMP_FILE);
-//        sounds.allocate(manager, PEW_FILE);
-//        sounds.allocate(manager, POP_FILE);
+        // TODO sound
+        SoundController sounds = SoundController.getInstance();
+        sounds.allocate(manager, JUMP_FILE);
+        sounds.allocate(manager, LAND_FILE);
+        sounds.allocate(manager, COLLISION_FILE);
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
 
@@ -211,6 +214,8 @@ public class GameController extends WorldController implements ContactListener {
     private static final float  BULLET_SPEED = 20.0f;
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
+    /** The volume for music */
+    private static final float MUSIC_VOLUME = 0.3f;
     /** The distance from an anchor at which an astronaut will be able to anchor */
     private static float ANCHOR_DIST = 1f;
     /** Speed of orange enemy */
@@ -229,22 +234,22 @@ public class GameController extends WorldController implements ContactListener {
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
     private static final float[][] PLANETS = {
-            {1f, 1f, 5f, 3000f, 4, 0},
-            {7f, 14f, 3f, 4000f, 2, 1},
-            {16f, 20f, 4f, 4000f, 2.5f, 2},
-            {26f, 13f, 3f, 2000f, 3, 3},
-            {30f, 24f, 2.5f, 4000f, 2, 3},
-            {35f, 5f, 3f, 2000f, 2, 4},
-            {42f, 17f, 3.5f, 2500f, 3, 5},
-            {45f, 25f, 1f, 4000f, 1, 3},
-            {47f, 6f, 2.5f, 4000f, 2, 3},
+            {1f, 1f, 4f, 2500f, 4, 0},
+            {6f, 12f, 2.5f, 3700f, 2, 0.8f},
+            {15f, 17f, 3f, 4000f, 2.5f, 1.7f},
+            {26f, 8f, 3f, 2000f, 3, 2f},
+            {30f, 15f, 1.5f, 3000f, 2, 2.7f},
+            {37f, 5f, 3f, 2000f, 2, 3.5f},
+            {48f, 17f, 3.5f, 2500f, 3, 5},
+            {50f, 25f, 1f, 4000f, 1, 3},
+            {52f, 6f, 2.5f, 4000f, 2, 3},
     };
 
-    // Location of each star (can add more fields later, SHOULD MAKE INTO A CLASS)
+    // Location of each star (TODO add more fields later, SHOULD MAKE INTO A CLASS)
     private static final float[][] STARS = {
-            {33f, 15.75f},
-            {33.5f, 16.5f},
-            {33.25f, 15f},
+            {35f, 15.75f},
+            {35.5f, 16.5f},
+            {35.25f, 15f},
             {16f, 4f},
             {17f, 3f},
             {16.5f, 2.5f},
@@ -253,11 +258,11 @@ public class GameController extends WorldController implements ContactListener {
 //            {5.5f, 13f},
     };
 
-    // Location of anchor points (can add more fields later, SHOULD MAKE INTO A CLASS)
+    // Location of anchor points (TODO add more fields later, SHOULD MAKE INTO A CLASS)
     private static final float[][] ANCHORS = {
-            {31.5f, 17f},
-            {35f, 18f},
-            {33.5f, 13.5f},
+            {33.5f, 17f},
+            {37f, 18f},
+            {35.5f, 13.5f},
             {14f, 2.75f},
             {18.5f, 3f},
             {16f, 5f},
@@ -277,8 +282,6 @@ public class GameController extends WorldController implements ContactListener {
     private static Vector2 DUDE_POS = new Vector2(2.5f, 5.0f);
     /** The initial position of the second dude */
     private static Vector2 DUDE2_POS = new Vector2(3.5f, 6.5f);
-    /** The position of the rope bridge */
-    private static Vector2 BRIDGE_POS  = new Vector2(9.0f, 3.8f);
     /** Variable caches used for setting position on planet for avatar 1*/
     private Obstacle curPlanet;
     private Vector2 contactPoint = new Vector2();
@@ -448,7 +451,7 @@ public class GameController extends WorldController implements ContactListener {
         // Create enemy
         dwidth  = enemyTexture.getRegionWidth()/scale.x;
         dheight = enemyTexture.getRegionHeight()/scale.y;
-        enemy = new Enemy(DUDE_POS.x + 22, DUDE_POS.y + 10, dwidth, dheight);
+        enemy = new Enemy(26 + 2, 8 + 2, dwidth, dheight);
         enemy.setDrawScale(scale);
         enemy.setTexture(enemyTexture, 3, 10);
         enemy.setName("bug");
@@ -457,7 +460,7 @@ public class GameController extends WorldController implements ContactListener {
         // Create pink worm enemy
         dwidth  = pinkwormTexture.getRegionWidth()/scale.x;
         dheight = pinkwormTexture.getRegionHeight()/scale.y;
-        pinkworm = new Enemy(DUDE_POS.x + 20, DUDE_POS.y + 4, dwidth, dheight);
+        pinkworm = new Enemy(DUDE_POS.x + 10, DUDE_POS.y + 4, dwidth, dheight);
         pinkworm.setDrawScale(scale);
         pinkworm.setTexture(pinkwormTexture,14,3);
         pinkworm.setName("pinkworm");
@@ -467,7 +470,7 @@ public class GameController extends WorldController implements ContactListener {
         // Create green worm enemy
         dwidth  = greenwormTexture.getRegionWidth()/scale.x;
         dheight = greenwormTexture.getRegionHeight()/scale.y;
-        greenworm = new Enemy(DUDE_POS.x + 20, DUDE_POS.y + 2, dwidth, dheight);
+        greenworm = new Enemy(DUDE_POS.x + 10, DUDE_POS.y + 2, dwidth, dheight);
         greenworm.setDrawScale(scale);
         greenworm.setTexture(greenwormTexture,14,3);
         greenworm.setName("greenworm");
@@ -686,11 +689,11 @@ public class GameController extends WorldController implements ContactListener {
         if ((dist(avatar.getPosition(), enemy.getPosition()) < 1f || dist(avatar2.getPosition(), enemy.getPosition()) < 1f) && !test)
             setFailure(true);
 
-        if (pinkworm.getPosition().x > 23 || pinkworm.getPosition().x < 10) {
+        if (pinkworm.getPosition().x > 19 || pinkworm.getPosition().x < 12) {
             pinkworm.setVX(-pinkworm.getVX());
         }
 
-        if (greenworm.getPosition().x > 23 || greenworm.getPosition().x < 10) {
+        if (greenworm.getPosition().x > 19 || greenworm.getPosition().x < 10) {
             greenworm.setVX(-greenworm.getVX());
         }
 
@@ -771,10 +774,10 @@ public class GameController extends WorldController implements ContactListener {
             enemy.applyForce();
         }
 
-        // Add a bullet if we fire
-        if (avatar.isShooting()) {
-            createBullet();
-        }
+//        // Add a bullet if we fire
+//        if (avatar.isShooting()) {
+//            createBullet();
+//        }
 
         //TODO Removed sound stuffs
 //        if (avatar.isJumping()) {
