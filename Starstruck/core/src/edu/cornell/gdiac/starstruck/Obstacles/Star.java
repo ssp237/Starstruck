@@ -20,11 +20,11 @@ import com.badlogic.gdx.physics.box2d.joints.*;
 
 public class Star extends ComplexObstacle {
     /** The debug name for the entire obstacle */
-    private static final String SPINNER_NAME = "spinner";
+    private static final String SPINNER_NAME = "star_spinner";
     /** The debug name for the spinning barrier */
-    private static final String BARRIER_NAME = "barrier";
+    private static final String BARRIER_NAME = "star_barrier";
     /** The debug name for the central pin */
-    private static final String SPIN_PIN_NAME = "pin";
+    private static final String SPIN_PIN_NAME = "star_pin";
     /** The density for most physics objects */
     private static final float LIGHT_DENSITY = 0.0f;
     /** The density for a bullet */
