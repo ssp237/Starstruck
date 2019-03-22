@@ -77,7 +77,10 @@ public class AstronautModel extends CapsuleObstacle {
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
+    /** Force of gravity */
     private Vector2 gravity;
+    /** Direction to apply force on planet */
+    private Vector2 planetMove;
     /** Indicates whether astronaut is on planet */
     private boolean onPlanet;
     /** Direction the character should go when jumping off a planet */
@@ -92,6 +95,8 @@ public class AstronautModel extends CapsuleObstacle {
     private TextureRegion glowTexture;
     /** Origin of the glow texture */
     private Vector2 glowOrigin;
+    /** Whether the astronaut is being moved, i.e. movement keys pressed */
+    protected boolean moving;
 
     /** Is this player one?*/
     private boolean isPlayerOne;
@@ -209,8 +214,17 @@ public class AstronautModel extends CapsuleObstacle {
         isGrounded = value;
     }
 
+    /**
+     * Set gravity to vec
+     *
+     * @param vec The value to set gravity to
+     */
     public void setGravity(Vector2 vec) {
         gravity.set(-vec.x, -vec.y);
+    }
+
+    public void setPlanetMove(Vector2 value) {
+        planetMove.set(value);
     }
 
     /**
@@ -349,6 +363,7 @@ public class AstronautModel extends CapsuleObstacle {
         isJumping = false;
         faceRight = true;
         gravity = new Vector2();
+        planetMove = new Vector2();
         onPlanet = false;
         planetJump = new Vector2();
         /** Is this astronaut anchored */
@@ -408,14 +423,8 @@ public class AstronautModel extends CapsuleObstacle {
      * This method should be called after the force attribute is set.
      */
     public void applyForce() {
-        // Don't want to be moving. Damp out player motion
-//        if (getMovement() == 0f) {
-//            forceCache.set(-getDamping()*getVX(),0);
-//            body.applyForce(forceCache,getPosition(),true);
-//        }
 
         if (!getOnPlanet()) {
-
             if (Math.abs(getAngularVelocity()) >= DUDE_MAXSPEED) {
                 setAngularVelocity(Math.signum(getVX()) * getMaxSpeed());
             } else {
@@ -423,34 +432,47 @@ public class AstronautModel extends CapsuleObstacle {
             }
         }
 
+        if (getOnPlanet()) {
+            // Don't want to be moving. Damp out player motion
+            if (!moving) {
+//                forceCache.set(-getDamping() * getVX(), -getDamping() * getVY());
+//                body.applyForce(forceCache, getPosition(), true);
+                body.setLinearVelocity(0, 0);
+            }
+            else if (Math.abs(getLinearVelocity().len()) >= getMaxSpeed()) {
+//                if (getVX() * movement > 0) {
+//                    setVX(Math.signum(getVX()) * getMaxSpeed());
+//                } else {
+//                    forceCache.set(getMovement(), 0);
+//                    body.applyForce(forceCache, getPosition(), true);
+//                }
+                forceCache.set(planetMove.nor().scl(getMaxSpeed()));
+                body.applyForce(planetMove, getPosition(), true);
+
+            }
+            else {
+                body.applyForce(planetMove, getPosition(), true);
+            }
+        }
+        moving = false;
+
+        // Gravity from planets
+        //System.out.println(gravity);
+        if (!GameController.testC && !isJumping()) {
+            body.applyForce(gravity, getPosition(), true);
+        }
+
         // Jump!
         if (isJumping()) {
             forceCache.set(planetJump.setLength(DUDE_JUMP));
+            body.setLinearVelocity(0, 0);
             body.setLinearVelocity(forceCache);//,getPosition(),true);
             body.setAwake(true);
         }
 
-        // Gravity from planets
-        //System.out.println(gravity);
-        if (!GameController.testC) {
-            body.applyForce(gravity, getPosition(), true);
-        }
-
 
         if (GameController.testC) {
-            // Velocity too high, clamp it
-            // Movement for testing control
-//        if (Math.abs(getVX()) >= getMaxSpeed()) {
-//            if (getVX() * movement > 0) {
-//                setVX(Math.signum(getVX()) * getMaxSpeed());
-//            } else {
-//                forceCache.set(getMovement(), 0);
-//                body.applyForce(forceCache, getPosition(), true);
-//            }
-//
-//        } else {
             forceCache.set(getMovement(), getMovementV());
-            //body.applyForce(forceCache, getPosition(), true);
             body.setLinearVelocity(forceCache.scl(4));
 //        }
         }
@@ -471,8 +493,10 @@ public class AstronautModel extends CapsuleObstacle {
 
         if (isJumping()) {
             jumpCooldown = JUMP_COOLDOWN;
+            setJumping(false);
         } else {
             jumpCooldown = Math.max(0, jumpCooldown - 1);
+            setJumping(false);
         }
 
         if (isShooting()) {
