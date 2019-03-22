@@ -445,6 +445,7 @@ public class AstronautModel extends CapsuleObstacle {
 //                forceCache.set(-getDamping() * getVX(), -getDamping() * getVY());
 //                body.applyForce(forceCache, getPosition(), true);
                 body.setLinearVelocity(0, 0);
+                body.applyLinearImpulse(gravity, getPosition(), true);
             }
             else if (Math.abs(getLinearVelocity().len()) >= getMaxSpeed()) {
 //                if (getVX() * movement > 0) {
@@ -455,6 +456,7 @@ public class AstronautModel extends CapsuleObstacle {
 //                }
                 forceCache.set(planetMove.nor().scl(getMaxSpeed()));
                 body.applyForce(planetMove, getPosition(), true);
+                body.applyLinearImpulse(gravity, getPosition(), true);
 
             }
             else {
