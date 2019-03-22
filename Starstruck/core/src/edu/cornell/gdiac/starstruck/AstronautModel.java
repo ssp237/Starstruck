@@ -78,7 +78,7 @@ public class AstronautModel extends CapsuleObstacle {
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
     /** Force of gravity */
-    private Vector2 gravity;
+    protected Vector2 gravity;
     /** Direction to apply force on planet */
     private Vector2 planetMove;
     /** Indicates whether astronaut is on planet */
@@ -184,8 +184,8 @@ public class AstronautModel extends CapsuleObstacle {
      * @return true if the dude is actively jumping.
      */
     public boolean isJumping() {
-        return isJumping && isGrounded && jumpCooldown <= 0;
-    }
+        return isJumping;
+    } //&& isGrounded && jumpCooldown <= 0
 
     /**
      * Sets whether the dude is actively jumping.
@@ -423,7 +423,6 @@ public class AstronautModel extends CapsuleObstacle {
      * This method should be called after the force attribute is set.
      */
     public void applyForce() {
-
         if (!getOnPlanet()) {
             if (Math.abs(getAngularVelocity()) >= DUDE_MAXSPEED) {
                 setAngularVelocity(Math.signum(getVX()) * getMaxSpeed());
@@ -432,7 +431,15 @@ public class AstronautModel extends CapsuleObstacle {
             }
         }
 
-        if (getOnPlanet()) {
+        // Jump!
+        if (isJumping()) {
+            forceCache.set(planetJump.setLength(DUDE_JUMP));
+            //body.setLinearVelocity(0, 0);
+            body.setLinearVelocity(forceCache);//,getPosition(),true);
+            body.setAwake(true);
+        }
+
+        else if (getOnPlanet()) {
             // Don't want to be moving. Damp out player motion
             if (!moving) {
 //                forceCache.set(-getDamping() * getVX(), -getDamping() * getVY());
@@ -461,15 +468,6 @@ public class AstronautModel extends CapsuleObstacle {
         if (!GameController.testC && !isJumping()) {
             body.applyForce(gravity, getPosition(), true);
         }
-
-        // Jump!
-        if (isJumping()) {
-            forceCache.set(planetJump.setLength(DUDE_JUMP));
-            body.setLinearVelocity(0, 0);
-            body.setLinearVelocity(forceCache);//,getPosition(),true);
-            body.setAwake(true);
-        }
-
 
         if (GameController.testC) {
             forceCache.set(getMovement(), getMovementV());

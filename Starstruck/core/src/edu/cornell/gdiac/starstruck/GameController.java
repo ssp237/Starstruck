@@ -535,7 +535,7 @@ public class GameController extends WorldController implements ContactListener {
      * @param avatar1 the avatar to be anchored
      * @param avatar2 the other avatar
      */
-    private void anchorHelp(AstronautModel avatar1, AstronautModel avatar2, Anchor anchor) {  //Anchor astronaut 1 & set inactive unanchor astronaut 2 & set active
+    private void anchorHelp(AstronautModel avatar1, AstronautModel avatar2, Anchor anchor) {  //Anchor astronaut 1 & set inactive, unanchor astronaut 2 & set active
         avatar1.setAnchored(anchor);
         avatar1.setActive(false);
         avatar1.setPosition(SPIN_POS.x, SPIN_POS.y);
@@ -648,36 +648,13 @@ public class GameController extends WorldController implements ContactListener {
      * @param curPlanet planet the avatar is currently on
      */
     private void updateMovement(AstronautModel avatar, Vector2 contactPoint, Obstacle curPlanet) {
-//        if (InputController.getInstance().didRight()) {
-//            if (!updateRope(this.avatar, this.avatar2, rope)) {
-//                contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
-//                contactDir.rotateRad(-(float) Math.PI / 2);
-//                avatar.setPosition(contactPoint.add(contactDir.setLength(PLANET_SPEED)));
-//
-//            }
-//            else {
-//                contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
-//                contactDir.rotateRad(-(float) Math.PI / 2);
-//                avatar.setPosition(contactPoint.add(contactDir.setLength(PLANET_SPEED)));
-//            }
-//        }
-//        if (InputController.getInstance().didLeft()) {
-//            if (updateRope(this.avatar, this.avatar2, rope)) {
-//                contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
-//                contactDir.rotateRad(-(float) Math.PI / 2);
-//                avatar.setPosition(contactPoint.sub(contactDir.setLength(PLANET_SPEED)));
-//            }
-//        }
-
-        contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
+        //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
         contactDir.rotateRad(-(float) Math.PI / 2);
         float move = InputController.getInstance().getHorizontal();
         if (InputController.getInstance().didRight() || InputController.getInstance().didLeft()) {
-            avatar.setPlanetMove(contactDir.scl(move * avatar.getForce()));
+            avatar.setPlanetMove(contactDir.scl(move * avatar.gravity.len()*5));
             avatar.moving = true;
         }
-
-//        avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
 
         //System.out.println(avatar.getPosition() + ", " + curPlanet.getPosition());
         if (InputController.getInstance().didPrimary()) {
@@ -686,6 +663,14 @@ public class GameController extends WorldController implements ContactListener {
             contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
             avatar.setOnPlanet(false);
             avatar.setPlanetJump(contactDir);
+//            if (avatar.isJumping()) {
+//                print(avatar.getOnPlanet());
+//                print(avatar.isJumping());
+//                print(avatar.isGrounded());
+////        if (curPlanet != null)
+////        print(curPlanet.getMass());
+//                print("__________________________");
+//            }
         }
     }
 
@@ -700,21 +685,8 @@ public class GameController extends WorldController implements ContactListener {
     private boolean updateRope(AstronautModel avatar1, AstronautModel avatar2, Rope rope) {
         float dist = dist(avatar1.getPosition(), avatar2.getPosition());
 
-        // If both avatars are on the same planet
-        if (avatar1.getOnPlanet() && avatar2.getOnPlanet() && curPlanet == curPlanet2) {
-            dist = dist(contactPoint, contactPoint2);
-            float theta = (float) (2*(Math.asin(dist/2 / ((Planet) curPlanet).getRadius())));
-            Float arc = new Float(2 * Math.PI * ((Planet) curPlanet).getRadius() * (theta/(Math.PI*2)));
-//            print(arc);
-//            print(rope.getLength());
-//            print("_________________________________");
-            if (arc >= rope.getLength() || arc.isNaN()) {
-                return true;
-            }
-        }
-
         // If avatar1 is anchored
-        else if ((avatar1.isAnchored()) && !avatar2.getOnPlanet()) { //avatar1.getOnPlanet() ||
+        if ((avatar1.isAnchored()) && !avatar2.getOnPlanet()) { //avatar1.getOnPlanet() ||
             if (dist >= rope.getLength()) {
                 avatar2.setGravity(reset);
                 avatar2.setLinearVelocity(reset);
@@ -782,16 +754,6 @@ public class GameController extends WorldController implements ContactListener {
     public void update(float dt) {
         updateCam();
 
-//        print(avatar.isJumping());
-//        print(avatar.isGrounded());
-//        print(avatar.getOnPlanet());
-//        print(avatar2.isJumping());
-//        print(avatar2.isGrounded());
-//        print(avatar2.getOnPlanet());
-        //print(avatar.getLinearVelocity());
-        //print("__________________________");
-
-
         if (isFailure()) return;
 
         if (shifted()) {
@@ -815,19 +777,18 @@ public class GameController extends WorldController implements ContactListener {
         avatar2.setFixedRotation(false);
 
         updateAnchor(avatar, avatar2);
+        if (avatar.isAnchored()) avatar.setFixedRotation(true);
+        if (avatar2.isAnchored()) avatar2.setFixedRotation(true);
 
         if (!avatar.isAnchored()) {
             // Process actions in object model
-            //avatar.setMovement(InputController.getInstance().getHorizontal() *avatar.getForce());
             if (avatar.getOnPlanet()) {
 //            Vector2 dir = new Vector2(0, 1);
 //            dir.rotateRad(avatar.getAngle());
                 avatar.setLinearVelocity(reset);
                 avatar.setFixedRotation(true);
                 contactDir.set(contactPoint.cpy().sub(curPlanet.getPosition()));
-                //System.out.println(contactDir);
                 float angle = -contactDir.angleRad(new Vector2 (0, 1));
-                //System.out.println(angle*(float)(180/Math.PI));
                 avatar.setAngle(angle);
 //                avatar.setPosition(contactPoint);
                 if (avatar.isActive()) {
@@ -837,7 +798,7 @@ public class GameController extends WorldController implements ContactListener {
             avatar.setGravity(vectorWorld.getForce(avatar.getPosition()));
             if (avatar.isActive()) {
                 //avatar.setJumping(false);
-//        avatar.setShooting(InputController.getInstance().didSecondary());
+                //avatar.setShooting(InputController.getInstance().didSecondary());
                 if (testC) {
                     avatar.setMovement(InputController.getInstance().getHorizontal());
                     avatar.setMovementV(InputController.getInstance().getVertical());
@@ -863,13 +824,13 @@ public class GameController extends WorldController implements ContactListener {
             }
             avatar2.setGravity(vectorWorld.getForce(avatar2.getPosition()));
             if (avatar2.isActive()) {
+                //avatar2.setJumping(false);
                 if (testC) {
                     avatar2.setMovement(InputController.getInstance().getHorizontal());
                     avatar2.setMovementV(InputController.getInstance().getVertical());
                 }
                 else if (!avatar2.getOnPlanet())
                     avatar2.setRotation(InputController.getInstance().getHorizontal());
-                //avatar2.setJumping(false);
             }
             if (updateRope(avatar, avatar2, rope))
                 avatar2.applyForce();
@@ -888,10 +849,6 @@ public class GameController extends WorldController implements ContactListener {
             enemy.setGravity(vectorWorld.getForce(enemy.getPosition()));
             enemy.applyForce();
         }
-
-//          updateRope(avatar, avatar2, rope);
-//        lastPos.set(avatar.getPosition());
-//        lastPos2.set(avatar2.getPosition());
 
         // Add a bullet if we fire
         if (avatar.isShooting()) {
