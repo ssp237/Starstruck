@@ -224,6 +224,8 @@ public class AstronautModel extends CapsuleObstacle {
         gravity.set(-vec.x, -vec.y);
     }
 
+    public Vector2 getPlanetMove() { return planetMove; }
+
     public void setPlanetMove(Vector2 value) {
         planetMove.set(value);
     }
@@ -446,8 +448,8 @@ public class AstronautModel extends CapsuleObstacle {
 
             else
                 forceCache.set(planetMove.setLength(DUDE_MAXSPEED));
-            body.setLinearVelocity(forceCache);
             body.applyLinearImpulse(gravity, getPosition(), true);
+            body.setLinearVelocity(forceCache);
         }
         moving = false;
 
