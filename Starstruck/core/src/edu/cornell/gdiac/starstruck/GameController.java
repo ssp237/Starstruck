@@ -657,7 +657,7 @@ public class GameController extends WorldController implements ContactListener {
             avatar.moving = true;
         }
 
-        if (InputController.getInstance().didPrimary() && !auto) {
+        if (InputController.getInstance().didPrimary() && !auto && !testC) {
             //print(contactPoint);
             avatar.setJumping(true);
             contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
@@ -746,6 +746,7 @@ public class GameController extends WorldController implements ContactListener {
             angle = -contactDir.angleRad(new Vector2 (0, 1));
             avatar.setAngle(angle);
             updateMovement(avatar, contactDir, curPlanet, false);
+
             if (avatar2.getOnPlanet()) { //Inactive astronaut
                 avatar2.setFixedRotation(true);
                 contactDir2.set(avatar2.getPosition().cpy().sub(curPlanet2.getPosition()));
@@ -847,20 +848,30 @@ public class GameController extends WorldController implements ContactListener {
         if (avatar.isAnchored()) avatar.setFixedRotation(true);
         if (avatar2.isAnchored()) avatar2.setFixedRotation(true);
 
-        if (avatar.isActive())
-            updateHelp(avatar, avatar2, contactDir, contactDir2, (Planet)curPlanet, (Planet)curPlanet2, lastPoint, lastPoint2);
-        else //if avatar2 is active
-            updateHelp(avatar2, avatar, contactDir2, contactDir, (Planet)curPlanet2, (Planet)curPlanet, lastPoint2, lastPoint);
+        if (avatar.isActive()) {
+            updateHelp(avatar, avatar2, contactDir, contactDir2, (Planet) curPlanet, (Planet) curPlanet2, lastPoint, lastPoint2);
+            if (testC) {
+                avatar.setFixedRotation(true);
+                avatar.setMovement(InputController.getInstance().getHorizontal());
+                avatar.setMovementV(InputController.getInstance().getVertical());
+            }
+        }
+        else { //if avatar2 is active
+            updateHelp(avatar2, avatar, contactDir2, contactDir, (Planet) curPlanet2, (Planet) curPlanet, lastPoint2, lastPoint);
+            if (testC) {
+                avatar2.setFixedRotation(true);
+                avatar2.setMovement(InputController.getInstance().getHorizontal());
+                avatar2.setMovementV(InputController.getInstance().getVertical());
+            }
+        }
 
-        if (avatar.isJumping() || avatar2.isJumping()) {
+        if ((avatar.isJumping() || avatar2.isJumping()) && !testC) {
             avatar.setActive(!avatar.isActive());
             avatar2.setActive(!avatar2.isActive());
         }
 
         avatar.applyForce();
         avatar2.applyForce();
-
-
 
         enemy.update(dt);
         if (enemy.getOnPlanet()) {
