@@ -689,18 +689,20 @@ public class GameController extends WorldController implements ContactListener {
             // If avatar1 is anchored
             if ((avatar1.isAnchored()) && !avatar2.getOnPlanet()) { //avatar1.getOnPlanet() ||
                 if (dist >= length) {
-                    avatar2.setGravity(reset);
-                    avatar2.setLinearVelocity(reset);
-                    avatar1.setLinearVelocity(reset);
+//                    avatar2.setGravity(reset);
+//                    avatar2.setLinearVelocity(reset);
+//                    avatar1.setLinearVelocity(reset);
+                    avatar2.setPosition(lastPoint2);
                     return true;
                 }
             }
             // If avatar2 is anchored
             else if ((avatar2.isAnchored()) && !avatar1.getOnPlanet()) { //avatar2.getOnPlanet() ||
                 if (dist >= length) {
-                    avatar1.setGravity(reset);
-                    avatar1.setLinearVelocity(reset);
-                    avatar2.setLinearVelocity(reset);
+//                    avatar1.setGravity(reset);
+//                    avatar1.setLinearVelocity(reset);
+//                    avatar2.setLinearVelocity(reset);
+                    avatar1.setPosition(lastPoint);
                     return true;
                 }
             }

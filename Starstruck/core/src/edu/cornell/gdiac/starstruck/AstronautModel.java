@@ -37,7 +37,7 @@ public class AstronautModel extends CapsuleObstacle {
     /** The maximum character speed */
     private static final float DUDE_MAXSPEED = 2.8f;
     /** The maximum character rotation in space */
-    private static final float DUDE_MAXROT = 7.5f;
+    private static final float DUDE_MAXROT = 6.5f;
     /** The impulse for the character jump */
     private static final float DUDE_JUMP = 6f;
     /** Cooldown (in animation frames) for jumping */
