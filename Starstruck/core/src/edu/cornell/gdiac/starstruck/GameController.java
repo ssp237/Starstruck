@@ -660,6 +660,7 @@ public class GameController extends WorldController implements ContactListener {
         if (InputController.getInstance().didPrimary() && !auto && !testC) {
             //print(contactPoint);
             avatar.setJumping(true);
+            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
             contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
             avatar.setPlanetJump(contactDir);
             avatar.setOnPlanet(false);
@@ -896,9 +897,9 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         //TODO Removed sound stuffs
-        if (avatar.isJumping() || avatar2.isJumping()) {
-            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
-        }
+//        if (avatar.isJumping() || avatar2.isJumping()) {
+//            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
+//        }
 
 //        avatar.setJumping(false);
 //        avatar2.setJumping(false);
