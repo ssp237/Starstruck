@@ -675,7 +675,6 @@ public class GameController extends WorldController implements ContactListener {
      * 'c' - compare rope length and circumference when both astronauts are on the same planet
      * 'p' - compare rope length when astronauts are on different planets
      *
-     *
      * @param avatar1 avatar1
      * @param avatar2 avatar2
      * @param rope rope
@@ -763,6 +762,12 @@ public class GameController extends WorldController implements ContactListener {
                     if (updateRope(avatar, avatar2, rope, 'p')) {
                         avatar.setPosition(lastPos);
                     }
+                }
+            }
+
+            else if (avatar2.isAnchored()) { //If inactive avatar is anchored restrict rope length
+                if (updateRope(avatar, avatar2, rope, 'p')) {
+                    avatar.setPosition(lastPos);
                 }
             }
         }
