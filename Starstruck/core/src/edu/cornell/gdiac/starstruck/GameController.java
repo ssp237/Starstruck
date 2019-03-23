@@ -871,7 +871,7 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
-        if ((avatar.isJumping() || avatar2.isJumping()) && !testC) {
+        if ((avatar.isJumping() || avatar2.isJumping()) && !avatar.isAnchored() && !avatar2.isAnchored() && !testC) {
             avatar.setActive(!avatar.isActive());
             avatar2.setActive(!avatar2.isActive());
         }
@@ -883,7 +883,7 @@ public class GameController extends WorldController implements ContactListener {
         if (enemy.getOnPlanet()) {
             enemy.setFixedRotation(true);
             //enemy.setRotation(1);
-            Vector2 contactDirEn = contactPointEN.cpy().sub(curPlanetEN.getPosition());
+            contactDirEn = contactPointEN.cpy().sub(curPlanetEN.getPosition());
             float angle = -contactDirEn.angleRad(new Vector2(0, 1));
             enemy.setAngle(angle);
             enemy.setPosition(contactPointEN);
