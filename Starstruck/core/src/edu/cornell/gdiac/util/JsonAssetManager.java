@@ -43,13 +43,13 @@ public class JsonAssetManager extends AssetManager {
 	/** The asset directory of this asset manager */
 	private JsonValue directory;
 	/** The allocated texture regions (for easy clean-up) */
-	ObjectMap<String,TextureRegion> regions;
+	private ObjectMap<String,TextureRegion> regions;
 	/** The allocated textures (for easy clean-up) */
-	ObjectMap<String,Texture> textures;
+	private ObjectMap<String,Texture> textures;
 	/** The allocated fonts (for easy clean-up) */
-	ObjectMap<String,BitmapFont> fonts;
+	private ObjectMap<String,BitmapFont> fonts;
 	/** The allocated sounds (for easy clean-up) */
-	ObjectMap<String,Sound> sounds;
+	private ObjectMap<String,Sound> sounds;
 	
 	/** The singleton asset manager (for easy access) */
 	private static JsonAssetManager manager;
