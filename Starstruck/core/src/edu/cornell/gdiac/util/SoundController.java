@@ -97,6 +97,8 @@ public class SoundController {
 	
 	/** Keeps track of all of the allocated sound resources */
 	private IdentityMap<String,Sound> soundbank;
+	/** Reverse look up of source files */
+	private IdentityMap<Sound,String> soundsrc;
 	/** Keeps track of all of the "active" sounds */
 	private IdentityMap<String,ActiveSound> actives;
 	/** Support class for garbage collection */
@@ -117,6 +119,7 @@ public class SoundController {
 	 */
 	private SoundController() {
 		soundbank = new IdentityMap<String,Sound>();
+		soundsrc = new IdentityMap<Sound,String>();
 		actives = new IdentityMap<String,ActiveSound>();
 		collection = new Array<String>();
 		cooldown = DEFAULT_COOL;
@@ -243,6 +246,17 @@ public class SoundController {
 	public void allocate(AssetManager manager, String filename) {
 		Sound sound = manager.get(filename,Sound.class);
 		soundbank.put(filename,sound);
+		soundsrc.put(sound,filename);
+	}
+
+	public void deallocate(AssetManager manager, String filename) {
+		Sound sound = manager.get(filename,Sound.class);
+		soundbank.remove(filename);
+		soundsrc.remove(sound);
+	}
+
+	public String getSource(Sound sound) {
+		return soundsrc.get(sound);
 	}
 
 	/**
