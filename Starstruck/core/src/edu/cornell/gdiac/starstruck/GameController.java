@@ -244,6 +244,9 @@ public class GameController extends WorldController implements ContactListener {
     public static final boolean testE = false;
     /** Allows manual control of astronaut in space for testing */
     public static final boolean testC = false;
+    /** True when the rope can be extended (astronaut is anchored and other astronaut is far enough away) */
+    public static boolean ropeExtend = false;
+
 
 
     // Location, radius, and drawscale of all the planets.
@@ -704,6 +707,11 @@ public class GameController extends WorldController implements ContactListener {
 //                    avatar2.setLinearVelocity(reset);
                     avatar1.setPosition(lastPoint);
                     return true;
+                }
+            }
+            if ((avatar1.isAnchored()) || (avatar2.isAnchored())) {
+                if (dist >= length) {
+                    ropeExtend = true;
                 }
             }
         }
