@@ -247,7 +247,7 @@ public class GameController extends WorldController implements ContactListener {
 
 
     // Location, radius, and drawscale of all the planets.
-    // Each row is a planet. 1st col is x, 2nd is y, 3rd is radius, 4th is mass, 6th is sprite to use and
+    // Each row is a planet. 1st col is x, 2nd is y, 3rd is radius, 4th is m\ss, 6th is sprite to use and
     // 5th is gravitational pull range.
     // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
     // Better solution for drawing?
@@ -378,8 +378,6 @@ public class GameController extends WorldController implements ContactListener {
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
-        Vector2 gravity = new Vector2(world.getGravity() );
-
         for(Obstacle obj : objects) {
             obj.deactivatePhysics(world);
         }

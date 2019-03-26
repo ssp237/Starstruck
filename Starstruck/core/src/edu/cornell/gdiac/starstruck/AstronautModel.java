@@ -16,7 +16,11 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
 //import edu.cornell.gdiac.starstruck.*;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
+import edu.cornell.gdiac.util.JsonAssetManager;
+
+import java.lang.reflect.Field;
 
 /**
  * Avatar avatar for the plaform game.
@@ -29,25 +33,27 @@ public class AstronautModel extends CapsuleObstacle {
     /** The density of the character */
     private static final float DUDE_DENSITY = 1.0f;
     /** The factor to multiply by the input */
-    private static final float DUDE_FORCE = 20.0f;
+    private float DUDE_FORCE = 20.0f;
     /** The amount to slow the character down */
-    private static final float DUDE_DAMPING = 10.0f;
+    private float DUDE_DAMPING = 10.0f;
     /** The dude is a slippery one */
     private static final float DUDE_FRICTION = 0.0f;
     /** The maximum character speed */
-    private static final float DUDE_MAXSPEED = 2.8f;
+    private float DUDE_MAXSPEED = 2.8f;
     /** The maximum character rotation in space */
     private static final float DUDE_MAXROT = 6.5f;
     /** The impulse for the character jump */
-    private static final float DUDE_JUMP = 6f;
+    private float DUDE_JUMP = 6f;
     /** Cooldown (in animation frames) for jumping */
-    private static final int JUMP_COOLDOWN = 30;
+    private int JUMP_COOLDOWN = 30;
     /** Cooldown (in animation frames) for shooting */
     private static final int SHOOT_COOLDOWN = 40;
     /** Height of the sensor attached to the player's feet */
     private static final float SENSOR_HEIGHT = 0.05f;
     /** Identifier to allow us to track the sensor in ContactListener */
-    private static final String SENSOR_NAME = "DudeGroundSensor";
+    private String SENSOR_NAME = "DudeGroundSensor";
+    /** The color to paint the sensor in debug mode */
+    private Color sensorColor;
 
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
@@ -69,6 +75,8 @@ public class AstronautModel extends CapsuleObstacle {
     private int jumpCooldown;
     /** Whether we are actively jumping */
     private boolean isJumping;
+    /** The sound to make when jumping (the asset key) */
+    private String jumpSound;
     /** How long until we can shoot again */
     private int shootCooldown;
     /** Whether our feet are on the ground */
@@ -242,12 +250,32 @@ public class AstronautModel extends CapsuleObstacle {
     }
 
     /**
+     * Sets how much force to apply to get the dude moving
+     *
+     * Multiply this by the input to get the movement value.
+     *
+     * @param value	how much force to apply to get the dude moving
+     */
+    public void setForce(float value) {
+        DUDE_FORCE = value;
+    }
+
+    /**
      * Returns ow hard the brakes are applied to get a dude to stop moving
      *
      * @return ow hard the brakes are applied to get a dude to stop moving
      */
     public float getDamping() {
         return DUDE_DAMPING;
+    }
+
+    /**
+     * Sets how hard the brakes are applied to get a dude to stop moving
+     *
+     * @param value	how hard the brakes are applied to get a dude to stop moving
+     */
+    public void setDamping(float value) {
+        DUDE_DAMPING = value;
     }
 
     /**
@@ -259,6 +287,17 @@ public class AstronautModel extends CapsuleObstacle {
      */
     public float getMaxSpeed() {
         return DUDE_MAXSPEED;
+    }
+
+    /**
+     * Sets the upper limit on dude left-right movement.
+     *
+     * This does NOT apply to vertical movement.
+     *
+     * @param value	the upper limit on dude left-right movement.
+     */
+    public void setMaxSpeed(float value) {
+        DUDE_MAXSPEED = value;
     }
 
     /**
@@ -328,6 +367,68 @@ public class AstronautModel extends CapsuleObstacle {
     public void setActive(boolean active) { isActive = active; }
 
     /**
+     * Returns the upward impulse for a jump.
+     *
+     * @return the upward impulse for a jump.
+     */
+    public float getJumpPulse() {
+        return DUDE_JUMP;
+    }
+
+    /**
+     * Sets the upward impulse for a jump.
+     *
+     * @param value	the upward impulse for a jump.
+     */
+    public void setJumpPulse(float value) {
+        DUDE_JUMP = value;
+    }
+
+    /**
+     * Returns the cooldown limit between jumps
+     *
+     * @return the cooldown limit between jumps
+     */
+    public int getJumpLimit() {
+        return JUMP_COOLDOWN;
+    }
+
+    /**
+     * Sets the cooldown limit between jumps
+     *
+     * @param value	the cooldown limit between jumps
+     */
+    public void setJumpLimit(int value) {
+        JUMP_COOLDOWN = value;
+    }
+
+    /**
+     * Returns the sound to play when the character jumps
+     *
+     * This is not the sound asset, but the key.  We do it this way
+     * because Sound classes are complicated and it is not really
+     * safe to access them outside of SoundController.
+     *
+     * @return the sound to play when the character jumps
+     */
+    public String getJumpSound() {
+        return jumpSound;
+    }
+
+    /**
+     * Sets the sound to play when the character jumps
+     *
+     * This is not the sound asset, but the key.  We do it this way
+     * because Sound classes are complicated and it is not really
+     * safe to access them outside of SoundController.
+     *
+     * @param sound	the sound to play when the character jumps
+     */
+    public void setJumpSound(String sound) {
+        jumpSound = sound;
+    }
+
+    /**
      * Creates a new dude at the origin.
      *
      * The size is expressed in physics units NOT pixels.  In order for
@@ -339,6 +440,15 @@ public class AstronautModel extends CapsuleObstacle {
      */
     public AstronautModel(float width, float height, boolean active, boolean playerOne) {
         this(0,0,width,height, active, playerOne);
+    }
+
+    /**
+     * Creates a new dude with degenerate settings
+     *
+     * The main purpose of this constructor is to set the initial capsule orientation.
+     */
+    public AstronautModel(boolean playerOne) {
+        this(0,0,0.5f, 1.0f, playerOne, playerOne);
     }
 
     /**
@@ -380,6 +490,75 @@ public class AstronautModel extends CapsuleObstacle {
         setName("dude");
 
         anchorPos = null;
+
+        sensorColor = Color.RED;
+    }
+
+    /**
+     * Initializes the dude via the given JSON value
+     *
+     * The JSON value has been parsed and is part of a bigger level file.  However,
+     * this JSON value is limited to the dude subtree
+     *
+     * @param json	the JSON subtree defining the dude
+     */
+    public void initialize(JsonValue json) {
+        setName(json.name());
+        float[] pos  = json.get("pos").asFloatArray();
+        float[] size = json.get("size").asFloatArray();
+        setPosition(pos[0],pos[1]);
+        setDimension(size[0],size[1]);
+
+        // Technically, we should do error checking here.
+        // A JSON field might accidentally be missing
+        setBodyType(json.get("bodytype").asString().equals("static") ? BodyDef.BodyType.StaticBody : BodyDef.BodyType.DynamicBody);
+        setDensity(json.get("density").asFloat());
+        setFriction(json.get("friction").asFloat());
+        setRestitution(json.get("restitution").asFloat());
+        setForce(json.get("force").asFloat());
+        setDamping(json.get("damping").asFloat());
+        setMaxSpeed(json.get("maxspeed").asFloat());
+        setJumpPulse(json.get("jumppulse").asFloat());
+        setJumpLimit(json.get("jumplimit").asInt());
+
+        // Reflection is best way to convert name to color
+        Color debugColor;
+        try {
+            String cname = json.get("debugcolor").asString().toUpperCase();
+            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
+            debugColor = new Color((Color)field.get(null));
+        } catch (Exception e) {
+            debugColor = null; // Not defined
+        }
+        int opacity = json.get("debugopacity").asInt();
+        debugColor.mul(opacity/255.0f);
+        setDebugColor(debugColor);
+
+        // Now get the texture from the AssetManager singleton
+        String key = json.get("texture").asString();
+        TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        setTexture(texture);
+
+        // Get the sensor information
+        Vector2 sensorCenter = new Vector2(0, -getHeight()/2);
+        float[] sSize = json.get("sensorsize").asFloatArray();
+        sensorShape = new PolygonShape();
+        sensorShape.setAsBox(sSize[0], sSize[1], sensorCenter, 0.0f);
+
+        // Reflection is best way to convert name to color
+        try {
+            String cname = json.get("sensorcolor").asString().toUpperCase();
+            Field field = Class.forName("com.badlogic.gdx.graphics.Color").getField(cname);
+            sensorColor = new Color((Color)field.get(null));
+        } catch (Exception e) {
+            sensorColor = null; // Not defined
+        }
+        opacity = json.get("sensoropacity").asInt();
+        sensorColor.mul(opacity/255.0f);
+        SENSOR_NAME = json.get("sensorname").asString();
+
+        // Store the key to the jump sound
+        setJumpSound(json.get("jumpsound").asString());
     }
 
     /**
@@ -527,6 +706,6 @@ public class AstronautModel extends CapsuleObstacle {
      */
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
-        canvas.drawPhysics(sensorShape,Color.RED,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
+        if (sensorColor != null) canvas.drawPhysics(sensorShape,sensorColor,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
     }
 }

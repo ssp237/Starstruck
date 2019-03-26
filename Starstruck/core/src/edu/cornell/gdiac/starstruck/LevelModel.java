@@ -11,13 +11,17 @@
  * Author: Walker M. White
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * JSON version, 3/2/2016
+ *
+ * Edited by Starstruck
  */
 package edu.cornell.gdiac.starstruck;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.physics.box2d.*;
 
+import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 
@@ -36,14 +40,22 @@ public class LevelModel {
 
     /** The Box2D world */
     protected World world;
+    /** The vector world */
+    protected VectorWorld vectorWorld;
     /** The boundary of the world */
     protected Rectangle bounds;
     /** The world scale */
     protected Vector2 scale;
 
     // Physics objects for the game
-    /** Reference to the character avatar */
-    private AstronautModel avatar;
+    /** Reference to the first character avatar */
+    private AstronautModel player1;
+    /** Reference to the second character avatar */
+    private AstronautModel player2;
+    /** Reference to the list of planets */
+    private PlanetList planets;
+    /** Rope */
+    private Rope rope;
 
     /** Whether or not the level is in debug more (showing off physics) */
     private boolean debug;
@@ -81,12 +93,21 @@ public class LevelModel {
     }
 
     /**
-     * Returns a reference to the player avatar
+     * Returns a reference to the first player avatar
      *
-     * @return a reference to the player avatar
+     * @return a reference to the first player avatar
      */
-    public AstronautModel getAvatar() {
-        return avatar;
+    public AstronautModel getPlayer1() {
+        return player1;
+    }
+
+    /**
+     * Returns a reference to the second player avatar
+     *
+     * @return a reference to the second player avatar
+     */
+    public AstronautModel getPlayer2() {
+        return player2;
     }
 
     /**
@@ -120,56 +141,121 @@ public class LevelModel {
      * the JSON file to initialize the level
      */
     public LevelModel() {
-        world  = null;
+        world  = new World(new Vector2(0,0), false);
         bounds = new Rectangle(0,0,1,1);
         scale = new Vector2(1,1);
         debug  = false;
+        planets = null;
     }
 
     /**
-     * Lays out the game geography from the given JSON file
+     * Set the local planetList
+     * @param planets The planetList to set.
+     */
+    public void SetPlanetList(PlanetList planets){
+        this.planets = planets;
+    }
+
+    /**
+     * Lays out the game geography from the given JSON file. Requires planets is not null.
      *
      * @param levelFormat	the JSON file defining the level
      */
     public void populate(JsonValue levelFormat) {
-        float gravity = levelFormat.getFloat("gravity");
+        if (planets == null) return;
         float[] pSize = levelFormat.get("physicsSize").asFloatArray();
         int[] gSize = levelFormat.get("graphicSize").asIntArray();
 
-        world = new World(new Vector2(0,gravity),false);
         bounds = new Rectangle(0,0,pSize[0],pSize[1]);
         scale.x = gSize[0]/pSize[0];
         scale.y = gSize[1]/pSize[1];
 
-//        // Add level goal
-//        goalDoor = new ExitModel();
-//        goalDoor.initialize(levelFormat.get("exit"));
-//        goalDoor.setDrawScale(scale);
-//        activate(goalDoor);
-//
-//        JsonValue wall = levelFormat.get("walls").child();
-//        while (wall != null) {
-//            WallModel obj = new WallModel();
-//            obj.initialize(wall);
-//            obj.setDrawScale(scale);
-//            activate(obj);
-//            wall = wall.next();
-//        }
-//
-//        JsonValue floor = levelFormat.get("platforms").child();
-//        while (floor != null) {
-//            PlatformModel obj = new PlatformModel();
-//            obj.initialize(floor);
-//            obj.setDrawScale(scale);
-//            activate(obj);
-//            floor = floor.next();
-//        }
-//
-//        // Create dude
-//        avatar = new DudeModel();
-//        avatar.initialize(levelFormat.get("avatar"));
-//        avatar.setDrawScale(scale);
-//        activate(avatar);
+        // Create dude
+        player1 = new AstronautModel(true);
+        player1.initialize(levelFormat.get("astronaut 1"));
+        player1.setDrawScale(scale);
+        player1.setName("avatar1");
+        activate(player1);
+
+        player2 = new AstronautModel(true);
+        player2.initialize(levelFormat.get("astronaut 2"));
+        player2.setDrawScale(scale);
+        player1.setName("avatar2");
+        activate(player2);
+
+        objects.remove(player1); objects.remove(player2);
+
+        JsonValue ropeVal = levelFormat.get("rope");
+
+        String key = ropeVal.get("texture").asString();
+        TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        float dwidth  = texture.getRegionWidth()/scale.x;
+        float dheight = texture.getRegionHeight()/scale.y;
+        rope = new Rope(player1.getX() + 0.5f, player1.getY() + 0.5f,
+                levelFormat.get("rope width").asFloat(), dwidth, dheight, player1, player2);
+        rope.setTexture(texture);
+        rope.setDrawScale(scale);
+        rope.setName("rope");
+        activate(rope);
+
+        objects.add(player1); objects.add(player2);
+
+        //Create planets
+        float[][] planetSpecs = null;
+        JsonValue planet = levelFormat.get("planets").child();
+        while(planet != null) {
+            planetSpecs = addRow(planetSpecs, planetSpec(planet));
+            planet = planet.next;
+        }
+
+        planets.addPlanets(planetSpecs, world, vectorWorld);
+
+        JsonValue starVals = levelFormat.get("stars").child();
+        while(starVals != null) {
+
+        }
+    }
+
+    /**
+     * Return a new array that is the result of adding newRow as the last row of old.
+     * @param old The 2D array to be added to
+     * @param newRow The new row to add to old
+     * @return The result of adding newRow to old.
+     */
+    private float[][] addRow(float[][] old, float[] newRow) {
+        if (old == null) {
+            float[][] out = new float[newRow.length][1];
+            out[0] = newRow;
+            return out;
+        }
+        int m = old[0].length; int n = old.length;
+        float[][] out = new float[m+1][n];
+
+        for (int i = 0; i < m; i++) {
+            out[i] = old[i];
+        }
+
+        out[m] = newRow;
+        return out;
+    }
+
+    /**
+     * Parse a JSON pertaining to 1 planet into the relevant data entries.
+     * @param json A JsonValue containing data relating to one planet.
+     * @return A vector describing a planet where 1st col is x, 2nd is y, 3rd is radius, 4th is mass, 6th is sprite to
+     *          use and 5th is gravitational pull range.
+     */
+    private float[] planetSpec(JsonValue json) {
+        float[] out = new float[6];
+
+        out[0] = json.get("x").asFloat();
+        out[1] = json.get("y").asFloat();
+        out[2] = json.get("radius").asFloat();
+        out[3] = json.get("mass").asFloat();
+        out[4] = json.get("grange").asFloat();
+        out[5] = json.get("sprite").asFloat();
+
+        return out;
     }
 
 
@@ -180,8 +266,9 @@ public class LevelModel {
         objects.clear();
         if (world != null) {
             world.dispose();
-            world = null;
+            world = new World(new Vector2(0,0), false);
         }
+        vectorWorld = new VectorWorld();
     }
 
     /**

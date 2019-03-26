@@ -1,19 +1,59 @@
 {
+  "physicsSize":    [38.4,21.6],
+  "graphicSize":    [ 1228, 691],
+  "gravity":  	  0,
   "level" : 1,
-  "dude 1":
-    {
-      "x": 2.5,
-      "y": 5
-    },
-  "dude 2":
-    {
-      "x": 3.5,
-      "y": 6.5
-    },
+  "avatar": {
+    "pos":           [ 2.5,  5.0],
+    "size":          [ 0.45, 0.61],
+    "bodytype":      "dynamic",
+    "density":        1.0,
+    "friction":       0.0,
+    "restitution":    0.0,
+    "force": 		 20.0,
+    "damping": 		 10.0,
+    "maxspeed": 	  2.8,
+    "jumppulse": 	  6,
+    "jumplimit": 	 30,
+    "jumpsound":	 "jump",
+    "texture":       "dude",
+    "debugcolor":    "orange",
+    "debugopacity":  192,
+    "sensorsize": 	 [ 0.183, 0.05 ],
+    "sensorname": 	 "dudeGroundSensor",
+    "sensorcolor":   "red",
+    "sensoropacity": 192,
+  },
+  "astronaut 2": {
+    "pos":           [ 3.5,  6.5],
+    "size":          [ 0.45, 0.61],
+    "bodytype":      "dynamic",
+    "density":        1.0,
+    "friction":       0.0,
+    "restitution":    0.0,
+    "force": 		 10.0,
+    "damping": 		 10.0,
+    "maxspeed": 	  5.0,
+    "jumppulse": 	  1.25,
+    "jumplimit": 	 30,
+    "jumpsound":	 "jump",
+    "texture":       "dude",
+    "debugcolor":    "white",
+    "debugopacity":  192,
+    "sensorsize": 	 [ 0.183, 0.05 ],
+    "sensorname": 	 "dudeGroundSensor",
+    "sensorcolor":   "red",
+    "sensoropacity": 192,
+  },
+  "rope": {
+    "texture": "rope",
+    "rope width": 6.0
+  },
   "planets": [
     {
       "x": 7,
       "y": 7,
+      "radius": 3,
       "mass": 5000,
       "grange": 2,
       "sprite": 0
