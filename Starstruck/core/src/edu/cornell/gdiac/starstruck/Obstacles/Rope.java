@@ -217,6 +217,8 @@ public class Rope extends ComplexObstacle {
 
     public int nLinks(){ return nlinks; }
 
+    public void setNLinks(int link) {nlinks = link;}
+
     /**
      * Destroys the physics Body(s) of this object if applicable,
      * removing them from the world.

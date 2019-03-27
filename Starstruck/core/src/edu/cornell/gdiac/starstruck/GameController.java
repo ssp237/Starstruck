@@ -911,6 +911,23 @@ public class GameController extends WorldController implements ContactListener {
             createBullet();
         }
 
+        if (ropeExtend) {
+
+
+            rope.setNLinks(rope.nLinks()+1);
+         }
+//            float ropeX = rope.getPosition().x;
+//            float ropeY = rope.getPosition().y;
+
+//            dwidth  = bridgeTexture.getRegionWidth()/scale.x;
+//            dheight = bridgeTexture.getRegionHeight()/scale.y;
+//            rope = new Rope(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
+//            rope.setTexture(bridgeTexture);
+//            rope.setDrawScale(scale);
+//            rope.setName("rope");
+//            addObject(rope);
+
+
         //TODO Removed sound stuffs
 //        if (avatar.isJumping() || avatar2.isJumping()) {
 //            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
