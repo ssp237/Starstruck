@@ -170,7 +170,7 @@ public class LevelModel {
         scale.x = gSize[0]/pSize[0];
         scale.y = gSize[1]/pSize[1];
 
-        // Create dude
+        // Create players
         player1 = new AstronautModel(true);
         player1.initialize(levelFormat.get("astronaut 1"));
         player1.setDrawScale(scale);
@@ -210,9 +210,25 @@ public class LevelModel {
 
         planets.addPlanets(planetSpecs, world, vectorWorld);
 
+
+        //add stars
+        int i = 0;
         JsonValue starVals = levelFormat.get("stars").child();
         while(starVals != null) {
+            Star star = Star.fromJSON(starVals, scale);
+            star.setName("star" + i);
+            activate(star);
+            starVals = starVals.next;
+        }
 
+        //add anchors
+        i = 0;
+        JsonValue anchorVals = levelFormat.get("stars").child();
+        while(anchorVals != null) {
+            Anchor anchor = Anchor.fromJSON(anchorVals, scale);
+            anchor.setName("anchor" + i);
+            activate(anchor);
+            anchorVals = anchorVals.next;
         }
     }
 

@@ -100,8 +100,11 @@ public class Star extends ComplexObstacle {
     public static Star fromJSON(JsonValue json, Vector2 scale) {
         String key = json.get("texture").asString();
         TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        return new Star(json.get("x").asFloat(), json.get("y").asFloat(),
+        Star out =  new Star(json.get("x").asFloat(), json.get("y").asFloat(),
                 texture.getRegionWidth()/scale.x, texture.getRegionHeight()/scale.y);
+        out.setDrawScale(scale);
+        out.setTexture(texture);
+        return out;
     }
 
 
