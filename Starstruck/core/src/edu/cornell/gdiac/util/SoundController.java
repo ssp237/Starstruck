@@ -249,6 +249,20 @@ public class SoundController {
 		soundsrc.put(sound,filename);
 	}
 
+	/**
+	 * Uses the asset manager to allocate a sound
+	 *
+	 * All sound assets are managed internally by the controller.  Do not try
+	 * to access the sound directly.  Use the play and stop methods instead.
+	 *
+	 * @param filename The filename for the sound asset
+	 */
+	public void allocate(String filename) {
+		Sound sound = JsonAssetManager.getInstance().getEntry(filename,Sound.class);
+		soundbank.put(filename,sound);
+		soundsrc.put(sound,filename);
+	}
+
 	public void deallocate(AssetManager manager, String filename) {
 		Sound sound = manager.get(filename,Sound.class);
 		soundbank.remove(filename);

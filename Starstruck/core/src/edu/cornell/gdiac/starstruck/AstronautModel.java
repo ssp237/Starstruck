@@ -539,6 +539,10 @@ public class AstronautModel extends CapsuleObstacle {
         TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
         setTexture(texture);
 
+        key = json.get("glow texture").asString();
+        texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        setGlow(texture);
+
         // Get the sensor information
         Vector2 sensorCenter = new Vector2(0, -getHeight()/2);
         float[] sSize = json.get("sensorsize").asFloatArray();

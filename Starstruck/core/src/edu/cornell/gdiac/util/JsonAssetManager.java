@@ -258,6 +258,7 @@ public class JsonAssetManager extends AssetManager {
 		JsonValue json = directory.getChild(getClassIdentifier(TextureRegion.class));
 		while (json != null) {
 			allocateTextureRegion(json);
+			allocateTexture(json); //TODO: NEED TO CHANGE
 			json = json.next;
 		}
 		json = directory.getChild(getClassIdentifier(BitmapFont.class));

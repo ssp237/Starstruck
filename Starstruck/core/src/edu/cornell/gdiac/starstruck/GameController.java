@@ -70,17 +70,17 @@ public class GameController extends WorldController implements ContactListener {
     private static final String GREENWORM_FILE = "platform/green_worm.png";
 
     /** The sound file for a jump */
-    private static final String JUMP_FILE = "audio/jump/jump8.mp3";
+    private static final String JUMP_FILE = "jump";
     /** The sound file for a landing */
-    private static final String LAND_FILE = "audio/jump/quick_land.mp3";
+    private static final String LAND_FILE = "land";
     /** The sound file for a collision */
-    private static final String COLLISION_FILE = "audio/anchor.mp3";
+    private static final String COLLISION_FILE = "anchor";
     /** The sound file for a character switch */
-    private static final String SWITCH_FILE = "audio/collecting stars/star_collect.mp3";
+    private static final String SWITCH_FILE = "switch";
     /** The sound file to anchor */
-    private static final String ANCHOR_FILE = "audio/anchor.mp3";
+    private static final String ANCHOR_FILE = "anchor";
     /** Space sounds */
-    private static final String SPACE_SOUNDS = "audio/sounds from space/VanB-2017-04-05-2229.mp3";
+    private static final String SPACE_SOUNDS = "space sounds";
 
 
     /** Background texture for start-up */
@@ -139,43 +139,6 @@ public class GameController extends WorldController implements ContactListener {
 
         platformAssetState = AssetState.LOADING;
 
-        background = new Texture(BACKGROUND_FILE);
-
-        manager.load(DUDE1_FILE, Texture.class);
-        assets.add(DUDE1_FILE);
-        manager.load(DUDE2_FILE, Texture.class);
-        assets.add(DUDE2_FILE);
-        manager.load(BARRIER_FILE, Texture.class);
-        assets.add(BARRIER_FILE);
-        manager.load(BULLET_FILE, Texture.class);
-        assets.add(BULLET_FILE);
-        manager.load(ROPE_FILE, Texture.class);
-        assets.add(ROPE_FILE);
-        manager.load(STAR_FILE, Texture.class);
-        assets.add(STAR_FILE);
-        manager.load(ACTIVE_FILE, Texture.class);
-        assets.add(ACTIVE_FILE);
-        manager.load(ENEMY_FILE, Texture.class);
-        assets.add(ENEMY_FILE);
-        manager.load(PINKWORM_FILE, Texture.class);
-        assets.add(PINKWORM_FILE);
-        manager.load(GREENWORM_FILE, Texture.class);
-        assets.add(GREENWORM_FILE);
-
-
-        manager.load(JUMP_FILE, Sound.class);
-        assets.add(JUMP_FILE);
-        manager.load(LAND_FILE, Sound.class);
-        assets.add(LAND_FILE);
-        manager.load(COLLISION_FILE, Sound.class);
-        assets.add(COLLISION_FILE);
-        manager.load(SWITCH_FILE, Sound.class);
-        assets.add(SWITCH_FILE);
-        manager.load(ANCHOR_FILE, Sound.class);
-        assets.add(ANCHOR_FILE);
-        manager.load(SPACE_SOUNDS, Sound.class);
-        assets.add(SPACE_SOUNDS);
-
         super.preLoadContent(manager);
 
         jsonReader = new JsonReader();
@@ -202,25 +165,24 @@ public class GameController extends WorldController implements ContactListener {
         System.out.println(JsonAssetManager.getInstance().getProgress());
         JsonAssetManager.getInstance().allocateDirectory();
 
-        avatar1Texture = createTexture(manager,DUDE1_FILE,false);
-        avatar2Texture = createTexture(manager,DUDE2_FILE,false);
-        barrierTexture = createTexture(manager,BARRIER_FILE,false);
-        bulletTexture = createTexture(manager,BULLET_FILE,false);
-        bridgeTexture = createTexture(manager,ROPE_FILE,false);
-        starTexture = createTexture(manager, STAR_FILE, false);
-        activeTexture = createTexture(manager, ACTIVE_FILE, false);
-        enemyTexture = createFilmStrip(manager, ENEMY_FILE, 1,3,3);
-        pinkwormTexture = createFilmStrip(manager, PINKWORM_FILE, 1,14,14);
-        greenwormTexture = createFilmStrip(manager, GREENWORM_FILE, 1,14,14);
+        background = JsonAssetManager.getInstance().getEntry("background", Texture.class);
+        avatar1Texture = JsonAssetManager.getInstance().getEntry("astronaut 1", TextureRegion.class);
+        avatar2Texture = JsonAssetManager.getInstance().getEntry("astronaut 2", TextureRegion.class);
+        bulletTexture = JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class);
+        bridgeTexture = JsonAssetManager.getInstance().getEntry("rope", TextureRegion.class);
+        starTexture = JsonAssetManager.getInstance().getEntry("star", TextureRegion.class);
+        activeTexture = JsonAssetManager.getInstance().getEntry("glow", TextureRegion.class);
+        enemyTexture = createFilmStrip("orange bug", 1,3,3);
+        pinkwormTexture = createFilmStrip("pink worm", 1,14,14);
+        greenwormTexture = createFilmStrip("green worm", 1,14,14);
 
         // TODO sound
         SoundController sounds = SoundController.getInstance();
-        sounds.allocate(manager, JUMP_FILE);
-        sounds.allocate(manager, LAND_FILE);
-        sounds.allocate(manager, COLLISION_FILE);
-        sounds.allocate(manager, SWITCH_FILE);
-        sounds.allocate(manager, ANCHOR_FILE);
-        sounds.allocate(manager, SPACE_SOUNDS);
+        sounds.allocate("jump");
+        sounds.allocate("land");
+        sounds.allocate("anchor");
+        sounds.allocate("switch");
+        sounds.allocate("space sounds");
 
 
         super.loadContent(manager);

@@ -65,34 +65,9 @@ public abstract class WorldController implements Screen {
     /** Track all loaded assets (for unloading purposes) */
     protected Array<String> assets;
 
-    // Pathnames to shared assets
-    /** File to texture for walls and platforms */
-    private static String EARTH_FILE = "shared/earthtile.png";
-    /** File to texture for the win door */
-    private static String GOAL_FILE = "shared/goaldoor.png";
-    /** Retro font for displaying messages */
-    private static String FONT_FILE = "shared/RetroGame.ttf";
-    private static int FONT_SIZE = 64;
-    private static String PLANET1_FILE = "planets/planet1.png";
-    private static String PLANET2_FILE = "planets/planet2.png";
-    private static String PLANET3_FILE = "planets/planet3.png";
-    private static String PLANET4_FILE = "planets/planet4.png";
-    private static String WHIRL_P1 = "planets/whirlpool planet1.png";
-    private static String WHIRL_P2 = "planets/whirlpool planet2.png";
-    private static String WHIRL_P3 = "planets/whirlpool planet3.png";
-    private static String WHIRL_P4 = "planets/whirlpool planet4.png";
-    private static String WHIRL_P5 = "planets/whirlpool planet5.png";
-    private static String WHIRL_P6 = "planets/whirlpool planet6.png";
-    /** File for gravity ring */
-    private static String GRING_FILE = "planets/gravity ring.png";
-
     /** Sounds **/
     private static final String[] SOUNDS = {"sounds/sound1.mp3"};
 
-    /** The texture for walls and platforms */
-    protected TextureRegion earthTile;
-    /** The texture for the exit condition */
-    protected TextureRegion goalTile;
     /** The font for giving messages to the player */
     protected BitmapFont displayFont;
     protected TextureRegion planet1;
@@ -119,40 +94,9 @@ public abstract class WorldController implements Screen {
 
         worldAssetState = AssetState.LOADING;
         // Load the shared tiles.
-        manager.load(EARTH_FILE,Texture.class);
-        assets.add(EARTH_FILE);
-        manager.load(GOAL_FILE,Texture.class);
-        assets.add(GOAL_FILE);
-        manager.load(PLANET1_FILE, Texture.class);
-        assets.add(PLANET1_FILE);
-        manager.load(PLANET2_FILE, Texture.class);
-        assets.add(PLANET2_FILE);
-        manager.load(PLANET3_FILE, Texture.class);
-        assets.add(PLANET3_FILE);
-        manager.load(PLANET4_FILE, Texture.class);
-        assets.add(PLANET4_FILE);
-        manager.load(WHIRL_P1, Texture.class);
-        assets.add(WHIRL_P2);
-        manager.load(WHIRL_P2, Texture.class);
-        assets.add(WHIRL_P3);
-        manager.load(WHIRL_P3, Texture.class);
-        assets.add(WHIRL_P4);
-        manager.load(WHIRL_P4, Texture.class);
-        assets.add(WHIRL_P5);
-        manager.load(WHIRL_P5, Texture.class);
-        assets.add(WHIRL_P6);
-        manager.load(WHIRL_P6, Texture.class);
-        assets.add(WHIRL_P1);
-        manager.load(GRING_FILE, Texture.class);
-        assets.add(GRING_FILE);
-
 
         // Load the font
-        FreetypeFontLoader.FreeTypeFontLoaderParameter size2Params = new FreetypeFontLoader.FreeTypeFontLoaderParameter();
-        size2Params.fontFileName = FONT_FILE;
-        size2Params.fontParameters.size = FONT_SIZE;
-        manager.load(FONT_FILE, BitmapFont.class, size2Params);
-        assets.add(FONT_FILE);
+
     }
 
     /**
@@ -171,19 +115,12 @@ public abstract class WorldController implements Screen {
         }
 
         // Allocate the tiles
-        earthTile = createTexture(manager,EARTH_FILE,true);
-        goalTile  = createTexture(manager,GOAL_FILE,true);
-        planet1 = createTexture(manager, PLANET1_FILE, true);
-        planet2 = createTexture(manager, PLANET2_FILE, true);
-        planet3 = createTexture(manager, PLANET3_FILE, true);
-        planet4 = createTexture(manager, PLANET4_FILE, true);
+        planet1 = JsonAssetManager.getInstance().getEntry("whirlpool planet 1", TextureRegion.class);
+        planet2 = JsonAssetManager.getInstance().getEntry("whirlpool planet 2", TextureRegion.class);
+        planet3 = JsonAssetManager.getInstance().getEntry("whirlpool planet 3", TextureRegion.class);
+        planet4 = JsonAssetManager.getInstance().getEntry("whirlpool planet 4", TextureRegion.class);
 
-        // Allocate the font
-        if (manager.isLoaded(FONT_FILE)) {
-            displayFont = manager.get(FONT_FILE,BitmapFont.class);
-        } else {
-            displayFont = null;
-        }
+        displayFont = JsonAssetManager.getInstance().getEntry("retro game", BitmapFont.class);
 
         worldAssetState = AssetState.COMPLETE;
     }
@@ -233,6 +170,30 @@ public abstract class WorldController implements Screen {
             return strip;
         }
         return null;
+    }
+
+    /**
+     * Returns a newly loaded filmstrip for the given file.
+     *
+     * This helper methods is used to set texture settings (such as scaling, and
+     * the number of animation frames) after loading.
+     *
+     * @param file		The texture (region) file
+     * @param rows 		The number of rows in the filmstrip
+     * @param cols 		The number of columns in the filmstrip
+     * @param size 		The number of frames in the filmstrip
+     *
+     * @return a newly loaded texture region for the given file.
+     */
+    protected FilmStrip createFilmStrip(String file, int rows, int cols, int size) {
+        try {
+            System.out.println(JsonAssetManager.getInstance().getEntry(file, TextureRegion.class));
+            FilmStrip strip = new FilmStrip(JsonAssetManager.getInstance().getEntry(file, Texture.class),rows,cols,size);
+            strip.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+            return strip;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
