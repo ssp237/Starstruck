@@ -279,6 +279,7 @@ public class JsonAssetManager extends AssetManager {
 	 */	
 	private TextureRegion allocateTextureRegion(JsonValue json) {
 		String filename = json.getString("file");
+		System.out.println(filename);
 		TextureRegion region = new TextureRegion(get(filename, Texture.class));
 		region.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		if (json.getBoolean("wrap")) {

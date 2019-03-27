@@ -88,14 +88,30 @@
       "size": 	64
     },
     "light pixel": {
-      "file": 	"shared/LightPixel.ttf",
+      "file": 	"shared/LightPixel7.ttf",
       "size": 	64
     }
   },
   "sounds": {
     "jump":	{
-      "file":		"sounds/jump.mp3",
-      "volume":	0.8
+      "file": "audio/jump/jump8.mp3",
+      "volume":	1
+    },
+    "land":	{
+      "file": "audio/jump/quick_land.mp3",
+      "volume":	1
+    },
+    "collision":	{
+      "file": "audio/anchor.mp3",
+      "volume":	1
+    },
+    "switch":	{
+      "file": "audio/collecting stars/star_collect.mp3",
+      "volume":	1
+    },
+    "anchor":	{
+      "file": "audio/anchor.mp3",
+      "volume":	1
     }
   }
 }

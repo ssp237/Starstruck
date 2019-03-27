@@ -10,6 +10,7 @@
  */
 package edu.cornell.gdiac.starstruck;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.audio.*;
@@ -37,6 +38,15 @@ import edu.cornell.gdiac.util.FilmStrip;
  * place nicely with the static assets.
  */
 public class GameController extends WorldController implements ContactListener {
+
+    /** The reader to process JSON files */
+    private JsonReader jsonReader;
+    /** The JSON asset directory */
+    private JsonValue  assetDirectory;
+    /** The JSON defining the level model */
+    private JsonValue  levelFormat;
+
+
     /** The texture file for the background*/
     private static final String BACKGROUND_FILE = "platform/background.png";
     /** The texture file for the character avatar (no animation) */
@@ -167,6 +177,11 @@ public class GameController extends WorldController implements ContactListener {
         assets.add(SPACE_SOUNDS);
 
         super.preLoadContent(manager);
+
+        jsonReader = new JsonReader();
+        assetDirectory = jsonReader.parse(Gdx.files.internal("levels/assets.json"));
+
+        JsonAssetManager.getInstance().loadDirectory(assetDirectory);
     }
 
     /**
@@ -183,6 +198,9 @@ public class GameController extends WorldController implements ContactListener {
         if (platformAssetState != AssetState.LOADING) {
             return;
         }
+
+        System.out.println(JsonAssetManager.getInstance().getProgress());
+        JsonAssetManager.getInstance().allocateDirectory();
 
         avatar1Texture = createTexture(manager,DUDE1_FILE,false);
         avatar2Texture = createTexture(manager,DUDE2_FILE,false);
