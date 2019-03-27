@@ -16,6 +16,8 @@
  */
 package edu.cornell.gdiac.starstruck;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
@@ -46,6 +48,8 @@ public class LevelModel {
     protected Rectangle bounds;
     /** The world scale */
     protected Vector2 scale;
+    /** The background texture*/
+    protected Texture background;
 
     // Physics objects for the game
     /** Reference to the first character avatar */
@@ -162,9 +166,11 @@ public class LevelModel {
      * @param levelFormat	the JSON file defining the level
      */
     public void populate(JsonValue levelFormat) {
-        if (planets == null) return;
         float[] pSize = levelFormat.get("physicsSize").asFloatArray();
         int[] gSize = levelFormat.get("graphicSize").asIntArray();
+
+        String key = levelFormat.get("background").get("texture").asString();
+        background = JsonAssetManager.getInstance().getEntry(key, Texture.class);
 
         bounds = new Rectangle(0,0,pSize[0],pSize[1]);
         scale.x = gSize[0]/pSize[0];
@@ -187,7 +193,7 @@ public class LevelModel {
 
         JsonValue ropeVal = levelFormat.get("rope");
 
-        String key = ropeVal.get("texture").asString();
+        key = ropeVal.get("texture").asString();
         TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
         float dwidth  = texture.getRegionWidth()/scale.x;
         float dheight = texture.getRegionHeight()/scale.y;
@@ -210,7 +216,6 @@ public class LevelModel {
 
         planets.addPlanets(planetSpecs, world, vectorWorld);
 
-
         //add stars
         int i = 0;
         JsonValue starVals = levelFormat.get("stars").child();
@@ -223,7 +228,7 @@ public class LevelModel {
 
         //add anchors
         i = 0;
-        JsonValue anchorVals = levelFormat.get("stars").child();
+        JsonValue anchorVals = levelFormat.get("anchors").child();
         while(anchorVals != null) {
             Anchor anchor = Anchor.fromJSON(anchorVals, scale);
             anchor.setName("anchor" + i);
@@ -284,6 +289,7 @@ public class LevelModel {
             world.dispose();
             world = new World(new Vector2(0,0), false);
         }
+        planets.clear();
         vectorWorld = new VectorWorld();
     }
 
@@ -325,8 +331,17 @@ public class LevelModel {
         canvas.clear();
 
         canvas.begin();
+
+        float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
+
+        canvas.draw(background, Color.WHITE, x, 0,canvas.getWidth(),canvas.getHeight());
+        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), 0,canvas.getWidth(),canvas.getHeight());
+
         for(Obstacle obj : objects) {
             obj.draw(canvas);
+        }
+        for(Planet p : planets.getPlanets()){
+            p.draw(canvas);
         }
         canvas.end();
 
@@ -334,6 +349,9 @@ public class LevelModel {
             canvas.beginDebug();
             for(Obstacle obj : objects) {
                 obj.drawDebug(canvas);
+            }
+            for(Planet p : planets.getPlanets()){
+                p.drawDebug(canvas);
             }
             canvas.endDebug();
         }
