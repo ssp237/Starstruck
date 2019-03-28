@@ -505,7 +505,7 @@ public abstract class WorldController implements Screen {
 
         // Toggle debug
         if (input.didDebug()) {
-            debug = !debug;
+            setDebug(!debug);
         }
 
         // Handle resets

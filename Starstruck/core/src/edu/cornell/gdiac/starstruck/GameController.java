@@ -204,61 +204,11 @@ public class GameController extends WorldController implements ContactListener {
     /** Allows manual control of astronaut in space for testing */
     public static final boolean testC = false;
 
-
-    // Location, radius, and drawscale of all the planets.
-    // Each row is a planet. 1st col is x, 2nd is y, 3rd is radius, 4th is m\ss, 6th is sprite to use and
-    // 5th is gravitational pull range.
-    // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
-    // Better solution for drawing?
-    private static final float[][] PLANETS = {
-            {1f, 1f, 4f, 2500f, 4, 0},
-            {6f, 12f, 2.5f, 3700f, 2, 0.8f},
-            {15f, 17f, 3f, 4000f, 2.5f, 1.7f},
-            {26f, 8f, 3f, 2000f, 3, 2f},
-            {30f, 15f, 1.5f, 3000f, 2, 2.7f},
-            {37f, 5f, 3f, 2000f, 2, 3.5f},
-            {48f, 17f, 3.5f, 2500f, 3, 5},
-            {50f, 25f, 1f, 4000f, 1, 3},
-            {52f, 6f, 2.5f, 4000f, 2, 3},
-    };
-
-    // Location of each star (TODO add more fields later, SHOULD MAKE INTO A CLASS)
-    private static final float[][] STARS = {
-            {35f, 15.75f},
-            {35.5f, 16.5f},
-            {35.25f, 15f},
-            {16f, 4f},
-            {17f, 3f},
-            {16.5f, 2.5f},
-//            {5f, 14f},
-//            {6f, 14f},
-//            {5.5f, 13f},
-    };
-
-    // Location of anchor points (TODO add more fields later, SHOULD MAKE INTO A CLASS)
-    private static final float[][] ANCHORS = {
-            {33.5f, 17f},
-            {37f, 18f},
-            {35.5f, 13.5f},
-            {14f, 2.75f},
-            {18.5f, 3f},
-            {16f, 5f},
-            {17f, 1f},
-//            {7f, 15f},
-//            {3f, 16f},
-//            {4f, 11f},
-    };
-
-
     // Other game objects
-    /** The goal door position */
-    private static Vector2 GOAL_POS = new Vector2(4.0f,14.0f);
     /** The position of the spinning barrier */
     private static Vector2 SPIN_POS = new Vector2(13.0f,12.5f);
     /** The initial position of the dude */
     private static Vector2 DUDE_POS = new Vector2(2.5f, 5.0f);
-    /** The initial position of the second dude */
-    private static Vector2 DUDE2_POS = new Vector2(3.5f, 6.5f);
     /** Variable caches used for setting position on planet for avatar 1*/
     private Obstacle curPlanet;
     //private Vector2 contactPoint = new Vector2(); //Does not appear to be necessary anymore?
@@ -355,6 +305,12 @@ public class GameController extends WorldController implements ContactListener {
         avatar = level.getPlayer1(); avatar2 = level.getPlayer2();
         rope = level.getRope();
         objects = level.objects; planets = level.getPlanets();
+        world = level.getWorld(); vectorWorld = level.getVectorWorld();
+    }
+
+    public void setDebug(boolean d) {
+        super.setDebug(d);
+        level.setDebug(d);
     }
 
     /**
@@ -1119,45 +1075,6 @@ public class GameController extends WorldController implements ContactListener {
 
         level.draw(canvas);
 
-        // Draw background unscaled.
-//        canvas.begin();
-//
-//        float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
-//
-//        canvas.draw(background, Color.WHITE, x, 0,canvas.getWidth(),canvas.getHeight());
-//        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), 0,canvas.getWidth(),canvas.getHeight());
-//
-//        for(Planet p : planets.getPlanets()){
-//            p.draw(canvas);
-//        }
-////        for (Anchor a : anchors) {
-////            a.draw(canvas);
-////        }
-////        for (Star s : stars) {
-////            s.draw(canvas);
-////        }
-//        for(Obstacle obj : objects) {
-//            obj.draw(canvas);
-//        }
-//        canvas.end();
-//
-//        if (isDebug()) {
-//            canvas.beginDebug();
-//            for(Obstacle obj : objects) {
-//                obj.drawDebug(canvas);
-//            }
-////            for(Anchor a : anchors) {
-////                a.drawDebug(canvas);
-////            }
-////            for(Star s: stars) {
-////                s.drawDebug(canvas);
-////            }
-//            for(Planet p : planets.getPlanets()) {
-//                p.drawDebug(canvas);
-//            }
-//            canvas.endDebug();
-//        }
-//
 //        if (isFailure()) {
 //            displayFont.setColor(Color.RED);
 //            canvas.begin(); // DO NOT SCALE

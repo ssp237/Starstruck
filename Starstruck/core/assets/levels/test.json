@@ -8,7 +8,7 @@
   "level" : 1,
   "astronaut 1": {
     "pos":           [ 2.5,  5.0],
-    "size":          [ 0.45, 0.61],
+    "size":          [ 0.7, 0.95],
     "bodytype":      "dynamic",
     "density":        1.0,
     "friction":       0.0,
@@ -58,6 +58,14 @@
     {
       "x": 1,
       "y": 1,
+      "radius": 3,
+      "mass": 5000,
+      "grange": 2,
+      "sprite": 0
+    },
+    {
+      "x": 20,
+      "y": 20,
       "radius": 3,
       "mass": 5000,
       "grange": 2,

@@ -99,6 +99,15 @@ public class LevelModel {
     }
 
     /**
+     * Returns a reference to the vector World
+     *
+     * @return a reference to the vector World
+     */
+    public VectorWorld getVectorWorld() {
+        return vectorWorld;
+    }
+
+    /**
      * Returns a reference to the planet list
      *
      * @return a reference to the planet list
