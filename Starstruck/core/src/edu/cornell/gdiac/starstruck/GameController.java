@@ -301,6 +301,9 @@ public class GameController extends WorldController implements ContactListener {
         populateLevel(); //Just to add enemies
     }
 
+    /**
+     * Assign the fields of the game controller state to reference the fields of the level
+     */
     private void assignLevelFields() {
         avatar = level.getPlayer1(); avatar2 = level.getPlayer2();
         rope = level.getRope();
@@ -308,6 +311,10 @@ public class GameController extends WorldController implements ContactListener {
         world = level.getWorld(); vectorWorld = level.getVectorWorld();
     }
 
+    /**
+     * Override superclass's setDebug to also edit the level's current state
+     * @param d The new value for debug
+     */
     public void setDebug(boolean d) {
         super.setDebug(d);
         level.setDebug(d);
