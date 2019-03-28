@@ -45,29 +45,8 @@ public class GameController extends WorldController implements ContactListener {
     private JsonValue  assetDirectory;
     /** The JSON defining the level model */
     private JsonValue  levelFormat;
-
-
-    /** The texture file for the background*/
-    private static final String BACKGROUND_FILE = "platform/background.png";
-    /** The texture file for the character avatar (no animation) */
-    private static final String DUDE1_FILE  = "platform/astronaut1.png";
-    private static final String DUDE2_FILE  = "platform/astronaut2.png";
-    /** The texture file for the spinning barrier */
-    private static final String BARRIER_FILE = "platform/barrier.png";
-    /** The texture file for the bullet */
-    private static final String BULLET_FILE  = "platform/bullet.png";
-    /** The texture file for the bridge plank */
-    private static final String ROPE_FILE  = "platform/ropebridge.png";
-    /** The texture file for the Star*/
-    private static final String STAR_FILE = "platform/star.png";
-    /** The texture file for indicating active astronaut */
-    private static final String ACTIVE_FILE = "platform/static_glow_v1.png";
-    /** The texture file for the Enemy*/
-    private static final String ENEMY_FILE = "platform/enemy.png";
-    /** The texture file for the Enemy*/
-    private static final String PINKWORM_FILE = "platform/pink_worm.png";
-    /** The texture file for the Enemy*/
-    private static final String GREENWORM_FILE = "platform/green_worm.png";
+    /** Reference to the game level */
+    protected LevelModel level;
 
     /** The sound file for a jump */
     private static final String JUMP_FILE = "jump";
@@ -345,6 +324,8 @@ public class GameController extends WorldController implements ContactListener {
      */
     public GameController() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
+        jsonReader = new JsonReader();
+        level = new LevelModel();
         setDebug(false);
         setComplete(false);
         setFailure(false);
@@ -358,25 +339,22 @@ public class GameController extends WorldController implements ContactListener {
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
-        for(Obstacle obj : objects) {
-            obj.deactivatePhysics(world);
-        }
-        for(Planet p : planets.getPlanets()){
-            p.deactivatePhysics(world);
-        }
-        objects.clear();
-        planets.clear();
-        stars.clear();
-        anchors.clear();
-        addQueue.clear();
-        world.dispose();
+        level.dispose();
 
-        vectorWorld = new VectorWorld();
-        world = new World(new Vector2(0,0), false);
-        world.setContactListener(this);
+        levelFormat = jsonReader.parse(Gdx.files.internal("levels/test.json"));
+        level.populate(levelFormat);
+        level.getWorld().setContactListener(this);
+
         setComplete(false);
         setFailure(false);
-        populateLevel();
+        assignLevelFields();
+        populateLevel(); //Just to add enemies
+    }
+
+    private void assignLevelFields() {
+        avatar = level.getPlayer1(); avatar2 = level.getPlayer2();
+        rope = level.getRope();
+        objects = level.objects; planets = level.getPlanets();
     }
 
     /**
@@ -386,70 +364,6 @@ public class GameController extends WorldController implements ContactListener {
         // Add level goal
         float dwidth;
         float dheight;
-
-        // Create dude
-        dwidth  = avatar1Texture.getRegionWidth()/scale.x;
-        dheight = avatar1Texture.getRegionHeight()/scale.y;
-        avatar = new AstronautModel(DUDE_POS.x, DUDE_POS.y, dwidth, dheight, true, true);
-        avatar.setDrawScale(scale);
-        avatar.setTexture(avatar1Texture);
-        avatar.setGlow(activeTexture);
-        avatar.setName("avatar");
-
-        //avatar.setAngle((float)Math.PI/2);
-        addObject(avatar);
-
-        avatar2 = new AstronautModel(DUDE2_POS.x + 1, DUDE2_POS.y, dwidth, dheight, false, false);
-        avatar2.setDrawScale(scale);
-        avatar2.setTexture(avatar2Texture);
-        avatar2.setGlow(activeTexture);
-        avatar2.setName("avatar2");
-        addObject(avatar2);
-
-        objects.remove(avatar); objects.remove(avatar2);
-
-        // Create rope
-        dwidth  = bridgeTexture.getRegionWidth()/scale.x;
-        dheight = bridgeTexture.getRegionHeight()/scale.y;
-        rope = new Rope(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
-        rope.setTexture(bridgeTexture);
-        rope.setDrawScale(scale);
-        rope.setName("rope");
-        addObject(rope);
-
-        objects.add(avatar); objects.add(avatar2);
-
-        planets.addPlanets(PLANETS, world, vectorWorld);
-
-        // Create star
-        dwidth  = starTexture.getRegionWidth()/scale.x;
-        dheight = starTexture.getRegionHeight()/scale.y;
-        String sname = "star";
-        for (int ii = 0; ii < STARS.length; ii++) {
-            Star star = new Star(STARS[ii][0],STARS[ii][1],dwidth,dheight);
-            star.setName(sname + ii);
-            star.setDensity(0f);
-            star.setBodyType(BodyDef.BodyType.StaticBody);
-            star.setDrawScale(scale);
-            star.setTexture(starTexture);
-            stars.add(star);
-            addObject(star);
-        }
-
-        //add anchor
-        dwidth = bulletTexture.getRegionWidth()/scale.x;
-        dheight = bulletTexture.getRegionHeight()/scale.y;
-        String aname = "anchor";
-        for (int ii = 0; ii < ANCHORS.length; ii++){
-            Anchor anchor = new Anchor(ANCHORS[ii][0],ANCHORS[ii][1],dwidth,dheight);
-            anchor.setName(aname + ii);
-            anchor.setBodyType(BodyDef.BodyType.StaticBody);
-            anchor.setDensity(0f);
-            anchor.setDrawScale(scale);
-            anchor.setTexture(bulletTexture);
-            anchors.add(anchor);
-            addObject(anchor);
-        }
 
         // Create enemy
         dwidth  = enemyTexture.getRegionWidth()/scale.x;
@@ -778,6 +692,7 @@ public class GameController extends WorldController implements ContactListener {
             return false;
         }
 
+        System.out.println(avatar);
         if (!isFailure() && (avatar.getY() < - 2 || avatar.getY() > bounds.height + 2
                 || avatar.getX() < -2)) {
             // || avatar.getX() > bounds.getWidth() + 1)) {
@@ -1202,50 +1117,52 @@ public class GameController extends WorldController implements ContactListener {
     public void draw(float delta) {
         canvas.clear();
 
+        level.draw(canvas);
+
         // Draw background unscaled.
-        canvas.begin();
-
-        float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
-
-        canvas.draw(background, Color.WHITE, x, 0,canvas.getWidth(),canvas.getHeight());
-        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), 0,canvas.getWidth(),canvas.getHeight());
-
-        for(Planet p : planets.getPlanets()){
-            p.draw(canvas);
-        }
-//        for (Anchor a : anchors) {
-//            a.draw(canvas);
+//        canvas.begin();
+//
+//        float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
+//
+//        canvas.draw(background, Color.WHITE, x, 0,canvas.getWidth(),canvas.getHeight());
+//        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), 0,canvas.getWidth(),canvas.getHeight());
+//
+//        for(Planet p : planets.getPlanets()){
+//            p.draw(canvas);
 //        }
-//        for (Star s : stars) {
-//            s.draw(canvas);
+////        for (Anchor a : anchors) {
+////            a.draw(canvas);
+////        }
+////        for (Star s : stars) {
+////            s.draw(canvas);
+////        }
+//        for(Obstacle obj : objects) {
+//            obj.draw(canvas);
 //        }
-        for(Obstacle obj : objects) {
-            obj.draw(canvas);
-        }
-        canvas.end();
-
-        if (isDebug()) {
-            canvas.beginDebug();
-            for(Obstacle obj : objects) {
-                obj.drawDebug(canvas);
-            }
-//            for(Anchor a : anchors) {
-//                a.drawDebug(canvas);
+//        canvas.end();
+//
+//        if (isDebug()) {
+//            canvas.beginDebug();
+//            for(Obstacle obj : objects) {
+//                obj.drawDebug(canvas);
 //            }
-//            for(Star s: stars) {
-//                s.drawDebug(canvas);
+////            for(Anchor a : anchors) {
+////                a.drawDebug(canvas);
+////            }
+////            for(Star s: stars) {
+////                s.drawDebug(canvas);
+////            }
+//            for(Planet p : planets.getPlanets()) {
+//                p.drawDebug(canvas);
 //            }
-            for(Planet p : planets.getPlanets()) {
-                p.drawDebug(canvas);
-            }
-            canvas.endDebug();
-        }
-
-        if (isFailure()) {
-            displayFont.setColor(Color.RED);
-            canvas.begin(); // DO NOT SCALE
-            canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
-            canvas.end();
-        }
+//            canvas.endDebug();
+//        }
+//
+//        if (isFailure()) {
+//            displayFont.setColor(Color.RED);
+//            canvas.begin(); // DO NOT SCALE
+//            canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
+//            canvas.end();
+//        }
     }
 }

@@ -1,9 +1,12 @@
 {
   "physicsSize":    [38.4,21.6],
   "graphicSize":    [ 1228, 691],
+  "background": {
+    "texture": "background"
+  },
   "gravity":  	  0,
   "level" : 1,
-  "avatar": {
+  "astronaut 1": {
     "pos":           [ 2.5,  5.0],
     "size":          [ 0.45, 0.61],
     "bodytype":      "dynamic",
@@ -53,8 +56,8 @@
   },
   "planets": [
     {
-      "x": 7,
-      "y": 7,
+      "x": 1,
+      "y": 1,
       "radius": 3,
       "mass": 5000,
       "grange": 2,
@@ -64,7 +67,8 @@
   "anchors": [
     {
       "x": 7,
-      "y": 15
+      "y": 15,
+      "texture": "anchor"
     }
   ],
   "stars": [

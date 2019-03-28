@@ -27,6 +27,8 @@ import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 
+import java.util.Arrays;
+
 /**
  * Represents a single level in our game
  *
@@ -97,6 +99,15 @@ public class LevelModel {
     }
 
     /**
+     * Returns a reference to the planet list
+     *
+     * @return a reference to the planet list
+     */
+    public PlanetList getPlanets() {
+        return planets;
+    }
+
+    /**
      * Returns a reference to the first player avatar
      *
      * @return a reference to the first player avatar
@@ -112,6 +123,15 @@ public class LevelModel {
      */
     public AstronautModel getPlayer2() {
         return player2;
+    }
+
+    /**
+     * Returns a reference to the rope
+     *
+     * @return a reference to the rope
+     */
+    public Rope getRope() {
+        return rope;
     }
 
     /**
@@ -149,15 +169,7 @@ public class LevelModel {
         bounds = new Rectangle(0,0,1,1);
         scale = new Vector2(1,1);
         debug  = false;
-        planets = null;
-    }
-
-    /**
-     * Set the local planetList
-     * @param planets The planetList to set.
-     */
-    public void SetPlanetList(PlanetList planets){
-        this.planets = planets;
+        planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
     }
 
     /**
@@ -183,7 +195,7 @@ public class LevelModel {
         player1.setName("avatar1");
         activate(player1);
 
-        player2 = new AstronautModel(true);
+        player2 = new AstronautModel(false);
         player2.initialize(levelFormat.get("astronaut 2"));
         player2.setDrawScale(scale);
         player1.setName("avatar2");
@@ -198,7 +210,7 @@ public class LevelModel {
         float dwidth  = texture.getRegionWidth()/scale.x;
         float dheight = texture.getRegionHeight()/scale.y;
         rope = new Rope(player1.getX() + 0.5f, player1.getY() + 0.5f,
-                levelFormat.get("rope width").asFloat(), dwidth, dheight, player1, player2);
+                ropeVal.get("rope width").asFloat(), dwidth, dheight, player1, player2);
         rope.setTexture(texture);
         rope.setDrawScale(scale);
         rope.setName("rope");
@@ -211,9 +223,11 @@ public class LevelModel {
         JsonValue planet = levelFormat.get("planets").child();
         while(planet != null) {
             planetSpecs = addRow(planetSpecs, planetSpec(planet));
+            for (float[] i : planetSpecs) System.out.println(Arrays.toString(i));
             planet = planet.next;
         }
 
+        planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
         planets.addPlanets(planetSpecs, world, vectorWorld);
 
         //add stars
@@ -244,12 +258,13 @@ public class LevelModel {
      * @return The result of adding newRow to old.
      */
     private float[][] addRow(float[][] old, float[] newRow) {
+        System.out.println("hi");
         if (old == null) {
-            float[][] out = new float[newRow.length][1];
+            float[][] out = new float[1][newRow.length];
             out[0] = newRow;
             return out;
         }
-        int m = old[0].length; int n = old.length;
+        int n = old[0].length; int m = old.length;
         float[][] out = new float[m+1][n];
 
         for (int i = 0; i < m; i++) {
@@ -284,11 +299,15 @@ public class LevelModel {
         for(Obstacle obj : objects) {
             obj.deactivatePhysics(world);
         }
+        for(Planet p : planets.getPlanets()){
+            p.deactivatePhysics(world);
+        }
         objects.clear();
         if (world != null) {
             world.dispose();
             world = new World(new Vector2(0,0), false);
         }
+        objects.clear();
         planets.clear();
         vectorWorld = new VectorWorld();
     }
