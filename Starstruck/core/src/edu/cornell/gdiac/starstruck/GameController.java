@@ -188,7 +188,7 @@ public class GameController extends WorldController implements ContactListener {
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
 
-        planets = new PlanetList(manager, galaxy, scale);
+        planets = new PlanetList(galaxy, scale);
     }
 
     // Physics constants for initialization

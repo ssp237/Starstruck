@@ -57,12 +57,11 @@ public class PlanetList {
     private Vector2 scale;
 
     /**
-     *  Constructs a new PlanetList by loading the appropriate sprites.
-     * @param manager The asset manager idk
+     *  Constructs a new PlanetList by loading the appropriate sprites
      * @param galaxy The galaxy for the planets in this level.
      * @param scale The drawing scale
      */
-    public PlanetList(AssetManager manager, Galaxy galaxy, Vector2 scale) {
+    public PlanetList(Galaxy galaxy, Vector2 scale) {
         setPlanetFiles(galaxy);
 
         planet1_texture = JsonAssetManager.getInstance().getEntry("whirlpool planet 1", TextureRegion.class);
@@ -76,30 +75,6 @@ public class PlanetList {
         planets = new ArrayList<Planet>();
 
         this.scale = scale;
-    }
-
-    /**
-     * Returns a newly loaded texture region for the given file.
-     *
-     * This helper methods is used to set texture settings (such as scaling, and
-     * whether or not the texture should repeat) after loading.
-     *
-     * @param manager 	Reference to global asset manager.
-     * @param file		The texture (region) file
-     * @param repeat	Whether the texture should be repeated
-     *
-     * @return a newly loaded texture region for the given file.
-     */
-    private TextureRegion createTexture(AssetManager manager, String file, boolean repeat) {
-        if (manager.isLoaded(file)) {
-            TextureRegion region = new TextureRegion(manager.get(file, Texture.class));
-            region.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-            if (repeat) {
-                region.getTexture().setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
-            }
-            return region;
-        }
-        return null;
     }
 
     /**

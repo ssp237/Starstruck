@@ -187,7 +187,6 @@ public abstract class WorldController implements Screen {
      */
     protected FilmStrip createFilmStrip(String file, int rows, int cols, int size) {
         try {
-            System.out.println(JsonAssetManager.getInstance().getEntry(file, TextureRegion.class));
             FilmStrip strip = new FilmStrip(JsonAssetManager.getInstance().getEntry(file, Texture.class),rows,cols,size);
             strip.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
             return strip;
@@ -599,15 +598,7 @@ public abstract class WorldController implements Screen {
 
         canvas.begin();
         for(Obstacle obj : objects) {
-            if (obj.getName().contains("planet")) {
-                planetCache = (WheelObstacle) obj;
-
-                canvas.draw(planetCache.getTexture(),Color.WHITE,planetCache.origin.x,planetCache.origin.y,planetCache.getX()*planetCache.drawScale.x,
-                        planetCache.getY()*planetCache.drawScale.x,planetCache.getAngle(),planetCache.scaleDraw,planetCache.scaleDraw);
-
-            }
-            else
-                obj.draw(canvas);
+            obj.draw(canvas);
         }
         canvas.end();
 

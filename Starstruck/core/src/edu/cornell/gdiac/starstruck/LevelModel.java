@@ -337,21 +337,21 @@ public class LevelModel {
         canvas.draw(background, Color.WHITE, x, 0,canvas.getWidth(),canvas.getHeight());
         canvas.draw(background, Color.WHITE, x + canvas.getWidth(), 0,canvas.getWidth(),canvas.getHeight());
 
-        for(Obstacle obj : objects) {
-            obj.draw(canvas);
-        }
         for(Planet p : planets.getPlanets()){
             p.draw(canvas);
+        }
+        for(Obstacle obj : objects) {
+            obj.draw(canvas);
         }
         canvas.end();
 
         if (debug) {
             canvas.beginDebug();
-            for(Obstacle obj : objects) {
-                obj.drawDebug(canvas);
-            }
             for(Planet p : planets.getPlanets()){
                 p.drawDebug(canvas);
+            }
+            for(Obstacle obj : objects) {
+                obj.drawDebug(canvas);
             }
             canvas.endDebug();
         }
