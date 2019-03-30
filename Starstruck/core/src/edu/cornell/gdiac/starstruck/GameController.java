@@ -141,7 +141,6 @@ public class GameController extends WorldController implements ContactListener {
             return;
         }
 
-        System.out.println(JsonAssetManager.getInstance().getProgress());
         JsonAssetManager.getInstance().allocateDirectory();
 
         background = JsonAssetManager.getInstance().getEntry("background", Texture.class);
@@ -655,7 +654,6 @@ public class GameController extends WorldController implements ContactListener {
             return false;
         }
 
-        System.out.println(avatar);
         if (!isFailure() && (avatar.getY() < - 2 || avatar.getY() > bounds.height + 2
                 || avatar.getX() < -2)) {
             // || avatar.getX() > bounds.getWidth() + 1)) {
@@ -1082,11 +1080,11 @@ public class GameController extends WorldController implements ContactListener {
 
         level.draw(canvas);
 
-//        if (isFailure()) {
-//            displayFont.setColor(Color.RED);
-//            canvas.begin(); // DO NOT SCALE
-//            canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
-//            canvas.end();
-//        }
+        if (isFailure()) {
+            displayFont.setColor(Color.RED);
+            canvas.begin(); // DO NOT SCALE
+            canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
+            canvas.end();
+        }
     }
 }

@@ -232,7 +232,6 @@ public class LevelModel {
         JsonValue planet = levelFormat.get("planets").child();
         while(planet != null) {
             planetSpecs = addRow(planetSpecs, planetSpec(planet));
-            for (float[] i : planetSpecs) System.out.println(Arrays.toString(i));
             planet = planet.next;
         }
 
@@ -267,7 +266,6 @@ public class LevelModel {
      * @return The result of adding newRow to old.
      */
     private float[][] addRow(float[][] old, float[] newRow) {
-        System.out.println("hi");
         if (old == null) {
             float[][] out = new float[1][newRow.length];
             out[0] = newRow;
