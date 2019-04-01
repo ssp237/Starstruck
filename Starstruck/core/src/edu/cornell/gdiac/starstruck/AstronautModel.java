@@ -62,6 +62,12 @@ public class AstronautModel extends CapsuleObstacle {
     private static final float DUDE_HSHRINK = 0.7f;
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
     private static final float DUDE_SSHRINK = 0.6f;
+    /** Player 1 glow color*/
+    private static final Color p1glow = new Color(1, 1,1, 0.75f);
+    /** Player 2 glow color*/
+    private static final Color p2glow = p1glow;
+    /** Scale for glow */
+    private static final float GLOW_SCALE = 1.5f;
 
     /** The current horizontal movement of the character */
     private float   movement;
@@ -106,15 +112,15 @@ public class AstronautModel extends CapsuleObstacle {
     private Vector2 glowOrigin;
     /** Whether the astronaut is being moved, i.e. movement keys pressed */
     protected boolean moving;
-
     /** Is this player one?*/
     private boolean isPlayerOne;
-    /** Player 1 glow color*/
-    private static final Color p1glow = new Color(1, 1,1, 0.75f);
-    /** Player 2 glow color*/
-    private static final Color p2glow = p1glow;
-    /** Scale for glow */
-    private static final float GLOW_SCALE = 1.5f;
+    /** This astronaut's current planet */
+    protected Obstacle curPlanet;
+    /** The previous position of this astronaut */
+    protected Vector2 lastPoint;
+    /** The direction this astronaut is facing */
+    protected Vector2 contactDir;
+
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -484,6 +490,8 @@ public class AstronautModel extends CapsuleObstacle {
         /** Is this astronaut the active character*/
         isActive = active;
         isPlayerOne = playerOne;
+        lastPoint = new Vector2();
+        contactDir = new Vector2();
 
         shootCooldown = 0;
         jumpCooldown = 0;
@@ -509,7 +517,7 @@ public class AstronautModel extends CapsuleObstacle {
         setPosition(pos[0],pos[1]);
         setDimension(size[0],size[1]);
 
-        // Technically, we should do error checking here.
+        // Technically, we should do error checking here. TODO
         // A JSON field might accidentally be missing
         setBodyType(json.get("bodytype").asString().equals("static") ? BodyDef.BodyType.StaticBody : BodyDef.BodyType.DynamicBody);
         setDensity(json.get("density").asFloat());

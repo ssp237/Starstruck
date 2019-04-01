@@ -66,6 +66,9 @@ public class LevelModel {
     /** Whether or not the level is in debug more (showing off physics) */
     private boolean debug;
 
+    /** AstronautModel cache */
+    AstronautModel astroCache;
+
     /** All the objects in the world. */
     protected PooledList<Obstacle> objects  = new PooledList<Obstacle>();
 
@@ -181,6 +184,25 @@ public class LevelModel {
         planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
     }
 
+    public AstronautModel createAstro(JsonValue json, boolean active) {
+        float[] pos  = json.get("pos").asFloatArray();
+        float posX = pos[0], posY = pos[1];
+        float[] size = json.get("size").asFloatArray();
+        float sizeX = size[0], sizeY = size[1];
+        AstronautModel astro = new AstronautModel(posX, posY, sizeX, sizeY, active, active);
+        astro.setDrawScale(scale);
+
+        String key = json.get("texture").asString();
+        TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        astro.setTexture(texture);
+
+        key = json.get("glow texture").asString();
+        texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        astro.setGlow(texture);
+
+        return astro;
+    }
+
     /**
      * Lays out the game geography from the given JSON file. Requires planets is not null.
      *
@@ -198,19 +220,28 @@ public class LevelModel {
         scale.y = gSize[1]/pSize[1];
 
         // Create players
-        player1 = new AstronautModel(true);
-        player1.initialize(levelFormat.get("astronaut 1"));
-        player1.setDrawScale(scale);
-        player1.setName("avatar1");
-        activate(player1);
+//        player1 = new AstronautModel(true);
+//        player1.initialize(levelFormat.get("astronaut 1"));
+//        player1.setDrawScale(scale);
+//        player1.setName("avatar1");
+//        activate(player1);
+//
+//        player2 = new AstronautModel(false);
+//        player2.initialize(levelFormat.get("astronaut 2"));
+//        player2.setDrawScale(scale);
+//        player1.setName("avatar2");
+//        activate(player2);
 
-        player2 = new AstronautModel(false);
-        player2.initialize(levelFormat.get("astronaut 2"));
-        player2.setDrawScale(scale);
-        player1.setName("avatar2");
-        activate(player2);
+        player1 = createAstro(levelFormat.get("astronaut 1"), true);
+        player1.setName("avatar");
+        player1.activatePhysics(world);
+        //addObject(player1);
 
-        objects.remove(player1); objects.remove(player2);
+        player2 = createAstro(levelFormat.get("astronaut 2"), false);
+        player2.setName("avatar2");
+        player2.activatePhysics(world);
+
+        //objects.remove(player1); objects.remove(player2);
 
         JsonValue ropeVal = levelFormat.get("rope");
 
