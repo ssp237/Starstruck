@@ -59,7 +59,7 @@
       "x": 1,
       "y": 1,
       "radius": 4,
-      "mass": 2500,
+      "mass": 1500,
       "grange": 4,
       "sprite": 0
     },
@@ -67,7 +67,7 @@
       "x": 6,
       "y": 12,
       "radius": 2.5,
-      "mass": 3700,
+      "mass": 1700,
       "grange": 2,
       "sprite": 0
     },
@@ -75,7 +75,7 @@
       "x": 15,
       "y": 17,
       "radius": 3,
-      "mass": 4000,
+      "mass": 1700,
       "grange": 2.5,
       "sprite": 1
     },
@@ -83,7 +83,7 @@
       "x": 26,
       "y": 8,
       "radius": 3,
-      "mass": 2000,
+      "mass": 1700,
       "grange": 3,
       "sprite": 2
     },
@@ -91,7 +91,7 @@
       "x": 30,
       "y": 15,
       "radius": 1.5,
-      "mass": 2000,
+      "mass": 1000,
       "grange": 2,
       "sprite": 4
     },
@@ -99,7 +99,7 @@
       "x": 37,
       "y": 5,
       "radius": 3,
-      "mass": 2000,
+      "mass": 1400,
       "grange": 2,
       "sprite": 5
     },
@@ -107,7 +107,7 @@
       "x": 48,
       "y": 17,
       "radius": 3.5,
-      "mass": 2500,
+      "mass": 1700,
       "grange": 3,
       "sprite": 0
     },
@@ -115,22 +115,77 @@
       "x": 52,
       "y": 6,
       "radius": 2.5,
-      "mass": 4000,
+      "mass": 1700,
       "grange": 2,
       "sprite": 3
     }
   ],
   "anchors": [
     {
-      "x": 7,
-      "y": 15,
+      "x": 32.5,
+      "y": 17,
+      "texture": "anchor"
+    },
+    {
+      "x": 37,
+      "y": 18,
+      "texture": "anchor"
+    },
+    {
+      "x": 35.5,
+      "y": 13.5,
+      "texture": "anchor"
+    },
+    {
+      "x": 14,
+      "y": 2.75,
+      "texture": "anchor"
+    },
+    {
+      "x": 18.5,
+      "y": 3,
+      "texture": "anchor"
+    },
+    {
+      "x": 16,
+      "y": 5,
+      "texture": "anchor"
+    },
+    {
+      "x": 17,
+      "y": 1,
       "texture": "anchor"
     }
   ],
   "stars": [
     {
-      "x": 5,
-      "y": 14,
+      "x": 35,
+      "y": 15.75,
+      "texture": "star"
+    },
+    {
+      "x": 35.5,
+      "y": 16.5,
+      "texture": "star"
+    },
+    {
+      "x": 35.25,
+      "y": 15,
+      "texture": "star"
+    },
+    {
+      "x": 16,
+      "y": 4,
+      "texture": "star"
+    },
+    {
+      "x": 17,
+      "y": 3,
+      "texture": "star"
+    },
+    {
+      "x": 16.5,
+      "y": 2.5,
       "texture": "star"
     }
   ]
