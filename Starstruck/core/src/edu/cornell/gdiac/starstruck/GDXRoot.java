@@ -14,11 +14,6 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.assets.*;
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.graphics.g2d.freetype.*;
-import com.badlogic.gdx.assets.loaders.*;
-import com.badlogic.gdx.assets.loaders.resolvers.*;
 import edu.cornell.gdiac.util.JsonAssetManager;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -68,10 +63,10 @@ public class GDXRoot extends Game implements ScreenListener {
 		loading = new LoadingMode(canvas,1);
 
 		// Initialize the three game worlds
-		controllers = new WorldController[1];
+		controllers = new WorldController[2];
 //		controllers[0] = new RocketController();
 		controllers[0] = new GameController();
-//		controllers[2] = new RagdollController();
+		controllers[1] = new EditController();
 		for(int ii = 0; ii < controllers.length; ii++) {
 			controllers[ii].preLoadContent(JsonAssetManager.getInstance());
 		}

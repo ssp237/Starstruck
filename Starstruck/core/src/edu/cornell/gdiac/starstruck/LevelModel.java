@@ -24,10 +24,9 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
+import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
-
-import java.util.Arrays;
 
 /**
  * Represents a single level in our game

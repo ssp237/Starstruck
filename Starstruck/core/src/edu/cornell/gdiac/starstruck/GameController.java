@@ -13,7 +13,6 @@ package edu.cornell.gdiac.starstruck;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
-import com.badlogic.gdx.audio.*;
 import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
@@ -22,10 +21,10 @@ import com.badlogic.gdx.physics.box2d.*;
 import java.util.*;
 
 //import edu.cornell.gdiac.physics.*;
-import com.sun.org.apache.bcel.internal.generic.LAND;
+import edu.cornell.gdiac.starstruck.Models.AstronautModel;
+import edu.cornell.gdiac.starstruck.Models.Enemy;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
-import edu.cornell.gdiac.starstruck.Gravity.*;
 import edu.cornell.gdiac.util.FilmStrip;
 //import edu.cornell.gdiac.starstruck.PlayerModel;
 
@@ -583,8 +582,8 @@ public class GameController extends WorldController implements ContactListener {
     private void updateHelp(AstronautModel avatar, AstronautModel avatar2) {
         avatar.setGravity(vectorWorld.getForce(avatar.getPosition())); //gravity will be applied no matter what
         avatar2.setGravity(vectorWorld.getForce(avatar2.getPosition()));
-        print(avatar.gravity);
-        print(avatar2.gravity);
+//        print(avatar.gravity);
+//        print(avatar2.gravity);
         float angle;
         if (avatar.getOnPlanet()) { //If avatar is on the planet update control movement
             avatar.setFixedRotation(true);

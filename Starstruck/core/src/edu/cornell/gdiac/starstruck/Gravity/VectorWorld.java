@@ -75,6 +75,7 @@ public class VectorWorld {
      */
     public Vector2 getForce(Vector2 pos){
         Vector2 totalForce = new Vector2(0,0);
+        //System.out.println(planets);
         for (Planet p : planets) {
             if (dist(pos, p.getPosition()) < p.grange + p.getRadius()) {
                 totalForce.add(forceToPlanet(pos, p));

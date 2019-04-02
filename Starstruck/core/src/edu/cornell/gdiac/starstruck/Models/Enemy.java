@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.starstruck;
+package edu.cornell.gdiac.starstruck.Models;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;

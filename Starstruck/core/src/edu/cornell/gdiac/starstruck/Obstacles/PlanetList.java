@@ -190,5 +190,7 @@ public class PlanetList {
         planets = new ArrayList<Planet>();
     }
 
-
+    public String toString() {
+        return planets.toString();
+    }
 }

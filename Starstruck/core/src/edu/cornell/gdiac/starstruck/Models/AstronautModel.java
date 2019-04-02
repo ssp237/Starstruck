@@ -8,7 +8,7 @@
  * Based on original PhysicsDemo Lab by Don Holden, 2007
  * LibGDX version, 2/6/2015
  */
-package edu.cornell.gdiac.starstruck;
+package edu.cornell.gdiac.starstruck.Models;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
@@ -17,6 +17,8 @@ import com.badlogic.gdx.physics.box2d.*;
 
 //import edu.cornell.gdiac.starstruck.*;
 import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.starstruck.GameCanvas;
+import edu.cornell.gdiac.starstruck.GameController;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
@@ -111,15 +113,15 @@ public class AstronautModel extends CapsuleObstacle {
     /** Origin of the glow texture */
     private Vector2 glowOrigin;
     /** Whether the astronaut is being moved, i.e. movement keys pressed */
-    protected boolean moving;
+    public boolean moving;
     /** Is this player one?*/
     private boolean isPlayerOne;
     /** This astronaut's current planet */
-    protected Obstacle curPlanet;
+    public Obstacle curPlanet;
     /** The previous position of this astronaut */
-    protected Vector2 lastPoint;
+    public Vector2 lastPoint;
     /** The direction this astronaut is facing */
-    protected Vector2 contactDir;
+    public Vector2 contactDir;
 
 
     /** Cache for internal force calculations */
