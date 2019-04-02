@@ -35,10 +35,10 @@
     "density":        1.0,
     "friction":       0.0,
     "restitution":    0.0,
-    "force": 		 10.0,
+    "force": 		 20.0,
     "damping": 		 10.0,
-    "maxspeed": 	  5.0,
-    "jumppulse": 	  1.25,
+    "maxspeed": 	  2.8,
+    "jumppulse": 	  6,
     "jumplimit": 	 30,
     "jumpsound":	 "jump",
     "texture":       "astronaut 2",
@@ -58,18 +58,66 @@
     {
       "x": 1,
       "y": 1,
-      "radius": 3,
-      "mass": 2000,
+      "radius": 4,
+      "mass": 2500,
+      "grange": 4,
+      "sprite": 0
+    },
+    {
+      "x": 6,
+      "y": 12,
+      "radius": 2.5,
+      "mass": 3700,
       "grange": 2,
       "sprite": 0
     },
     {
-      "x": 20,
-      "y": 20,
+      "x": 15,
+      "y": 17,
+      "radius": 3,
+      "mass": 4000,
+      "grange": 2.5,
+      "sprite": 1
+    },
+    {
+      "x": 26,
+      "y": 8,
+      "radius": 3,
+      "mass": 2000,
+      "grange": 3,
+      "sprite": 2
+    },
+    {
+      "x": 30,
+      "y": 15,
+      "radius": 1.5,
+      "mass": 2000,
+      "grange": 2,
+      "sprite": 4
+    },
+    {
+      "x": 37,
+      "y": 5,
       "radius": 3,
       "mass": 2000,
       "grange": 2,
+      "sprite": 5
+    },
+    {
+      "x": 48,
+      "y": 17,
+      "radius": 3.5,
+      "mass": 2500,
+      "grange": 3,
       "sprite": 0
+    },
+    {
+      "x": 52,
+      "y": 6,
+      "radius": 2.5,
+      "mass": 4000,
+      "grange": 2,
+      "sprite": 3
     }
   ],
   "anchors": [
