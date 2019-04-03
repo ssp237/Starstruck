@@ -42,15 +42,7 @@ public class Bug extends Enemy {
     }
 
     public void update(float dt) {
-        delay--;
-        if(delay <= 0) {
-            delay = texture.getDelay();
-
-            animeframe++;
-            if (animeframe >= texture.getSize()) {
-                animeframe -= texture.getSize();
-            }
-        }
+        texture.tick(); //Animation
 
         super.update(dt);
     }
@@ -58,7 +50,6 @@ public class Bug extends Enemy {
 
     public void draw(GameCanvas canvas) {
         float effect = isFacingRight() ? -1.0f : 1.0f;
-        texture.setFrame(animeframe);
         canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 

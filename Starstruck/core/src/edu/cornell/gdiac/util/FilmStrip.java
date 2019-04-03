@@ -53,6 +53,9 @@ public class FilmStrip extends TextureRegion {
     /** The delay in animation */
     private int delay;
 
+    /** Counter for delay; used for filmstrip to manually switch frames */
+    private int count;
+
     /**
      * Creates a new filmstrip from the given texture.
      *
@@ -61,7 +64,7 @@ public class FilmStrip extends TextureRegion {
      * @param cols The number of columns in the filmstrip
      */
     public FilmStrip(Texture texture, int rows, int cols) {
-        this(texture,rows,cols,rows*cols);
+        this(texture,rows,cols,rows*cols, 0);
     }
 
     /**
@@ -77,17 +80,7 @@ public class FilmStrip extends TextureRegion {
      * @param size The number of frames in the filmstrip
      */
     public FilmStrip(Texture texture, int rows, int cols, int size) {
-        super(texture);
-        if (size > rows*cols) {
-            Gdx.app.error("FilmStrip", "Invalid strip size", new IllegalArgumentException());
-            return;
-        }
-        this.cols = cols;
-        this.size = size;
-        rwidth  = texture.getWidth()/cols;
-        rheight = texture.getHeight()/rows;
-        delay = 0;
-        setFrame(0);
+        this(texture,rows,cols,rows*cols, 0);
     }
 
     /**
@@ -114,6 +107,7 @@ public class FilmStrip extends TextureRegion {
         rwidth  = texture.getWidth()/cols;
         rheight = texture.getHeight()/rows;
         this.delay = delay;
+        count = delay;
         setFrame(0);
     }
 
@@ -160,6 +154,25 @@ public class FilmStrip extends TextureRegion {
         int x = (frame % cols)*rwidth;
         int y = (frame / cols)*rheight;
         setRegion(x,y,rwidth,rheight);
+    }
+
+    /**
+     * Simulate 1 time step: Decrement the delay counter; if the delay is up, increment
+     * the current frame and set the current frame. If the current frame exceeds the
+     * number of frames, reset it to 0.
+     */
+    public void tick() {
+        count--;
+        if(count <= 0) {
+            count = delay;
+
+            frame++;
+            if (frame >= size) {
+                frame -= size;
+            }
+
+            setFrame(frame);
+        }
     }
 
 }
