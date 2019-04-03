@@ -61,25 +61,6 @@ public class GameController extends WorldController implements ContactListener {
     /** Space sounds */
     private static final String SPACE_SOUNDS = "space sounds";
 
-
-    /** Background texture for start-up */
-    private Texture background;
-    /** Background texture region for tiling */
-    private TextureRegion backgroundTR;
-    /** Texture asset for character avatar */
-    private TextureRegion avatar1Texture;
-    /** Texture asset for second character avatar */
-    private TextureRegion avatar2Texture;
-    /** Texture asset for the spinning barrier */
-    private TextureRegion barrierTexture;
-    /** Texture asset for the bullet */
-    private TextureRegion bulletTexture;
-    /** Texture asset for the bridge plank */
-    private TextureRegion bridgeTexture;
-    /** Texture asset for the star */
-    private TextureRegion starTexture;
-    /** Texture asset for the active glow */
-    private TextureRegion activeTexture;
     /** Texture asset for the enemy */
     private FilmStrip enemyTexture;
     /** Texture asset for the enemy */
@@ -143,13 +124,7 @@ public class GameController extends WorldController implements ContactListener {
 
         JsonAssetManager.getInstance().allocateDirectory();
 
-        background = JsonAssetManager.getInstance().getEntry("background", Texture.class);
-        avatar1Texture = JsonAssetManager.getInstance().getEntry("astronaut 1", TextureRegion.class);
-        avatar2Texture = JsonAssetManager.getInstance().getEntry("astronaut 2", TextureRegion.class);
-        bulletTexture = JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class);
-        bridgeTexture = JsonAssetManager.getInstance().getEntry("rope", TextureRegion.class);
-        starTexture = JsonAssetManager.getInstance().getEntry("star", TextureRegion.class);
-        activeTexture = JsonAssetManager.getInstance().getEntry("glow", TextureRegion.class);
+
         enemyTexture = createFilmStrip("orange bug", 1,3,3);
         pinkwormTexture = createFilmStrip("pink worm", 1,14,14);
         greenwormTexture = createFilmStrip("green worm", 1,14,14);
@@ -741,11 +716,6 @@ public class GameController extends WorldController implements ContactListener {
         avatar.lastPoint.set(avatar.getPosition());
         avatar2.lastPoint.set(avatar2.getPosition());
 
-        // Add a bullet if we fire
-        if (avatar.isShooting()) {
-            createBullet();
-        }
-
         //TODO Removed sound stuffs
 //        if (avatar.isJumping() || avatar2.isJumping()) {
 //            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
@@ -756,39 +726,6 @@ public class GameController extends WorldController implements ContactListener {
 
 //         If we use sound, we must remember this.
         SoundController.getInstance().update();
-    }
-
-    /**
-     * Add a new bullet to the world and send it in the right direction.
-     */
-    private void createBullet() {
-        float offset = (avatar.isFacingRight() ? BULLET_OFFSET : -BULLET_OFFSET);
-        float radius = bulletTexture.getRegionWidth()/(2.0f*scale.x);
-        WheelObstacle bullet = new WheelObstacle(avatar.getX()+offset, avatar.getY(), radius);
-
-        bullet.setName("bullet");
-        bullet.setDensity(HEAVY_DENSITY);
-        bullet.setDrawScale(scale);
-        bullet.setTexture(bulletTexture);
-        bullet.setBullet(true);
-        bullet.setGravityScale(0);
-
-        // Compute position and velocity
-        float speed  = (avatar.isFacingRight() ? BULLET_SPEED : -BULLET_SPEED);
-        bullet.setVX(speed);
-        addQueuedObject(bullet);
-
-//        SoundController.getInstance().play(PEW_FILE, PEW_FILE, false, EFFECT_VOLUME);
-    }
-
-    /**
-     * Remove a new bullet from the world.
-     *
-     * @param  bullet   the bullet to remove
-     */
-    public void removeBullet(Obstacle bullet) {
-        bullet.markRemoved(true);
-//        SoundController.getInstance().play(POP_FILE,POP_FILE,false,EFFECT_VOLUME);
     }
 
     /**
@@ -920,15 +857,6 @@ public class GameController extends WorldController implements ContactListener {
                     sensorFixtures.add(enemy == bd1 ? fix2 : fix1); // Could have more than one ground
                 }
 
-            }
-
-            // Test bullet collision with world
-            if (bd1.getName().equals("bullet") && bd2 != avatar) {
-                removeBullet(bd1);
-            }
-
-            if (bd2.getName().equals("bullet") && bd1 != avatar) {
-                removeBullet(bd2);
             }
 
             // Check for win condition
