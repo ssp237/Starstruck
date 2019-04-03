@@ -121,24 +121,6 @@ public class Enemy extends CapsuleObstacle {
     }
 
     /**
-     * Returns true if the dude is actively firing.
-     *
-     * @return true if the dude is actively firing.
-     */
-    public boolean isShooting() {
-        return isShooting && shootCooldown <= 0;
-    }
-
-    /**
-     * Sets whether the dude is actively firing.
-     *
-     * @param value whether the dude is actively firing.
-     */
-    public void setShooting(boolean value) {
-        isShooting = value;
-    }
-
-    /**
      * Returns true if the dude is actively jumping.
      *
      * @return true if the dude is actively jumping.
@@ -396,21 +378,6 @@ public class Enemy extends CapsuleObstacle {
     }
 
     /**
-     *  Sets the texture to a filmstrip specified by texture with rows rows, cols cols, and size size.
-     * @param texture Filmstrip to be set as the texture.
-     * @param rows Rows in the filmstrip
-     * @param cols Cols in the filmstrip
-     * @param size Size of the filmstrip
-     */
-    public void setTexture(Texture texture, int rows, int cols, int size) {
-        animator = new FilmStrip(texture,rows, cols, size);
-        animationFrames = size;
-        this.texture = animator;
-        isFilm = true;
-        origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
-    }
-
-    /**
      * Sets the texture to the given filmstrip with size size and delay animDelay between frames.
      * @param texture The filmstrip to set
      * @param size The size of the filmstrip
@@ -454,12 +421,6 @@ public class Enemy extends CapsuleObstacle {
             jumpCooldown = JUMP_COOLDOWN;
         } else {
             jumpCooldown = Math.max(0, jumpCooldown - 1);
-        }
-
-        if (isShooting()) {
-            shootCooldown = SHOOT_COOLDOWN;
-        } else {
-            shootCooldown = Math.max(0, shootCooldown - 1);
         }
 
         super.update(dt);
