@@ -70,18 +70,6 @@
     "background": {
       "file": "platform/background.png",
       "wrap": false
-    },
-    "green worm": {
-      "file": "platform/green_worm.png",
-      "wrap": false
-    },
-    "pink worm": {
-      "file": "platform/pink_worm.png",
-      "wrap": false
-    },
-    "orange bug": {
-      "file": "platform/enemy.png",
-      "wrap": false
     }
   },
   "filmstrips" : {
