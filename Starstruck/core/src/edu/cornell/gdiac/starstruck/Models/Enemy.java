@@ -404,15 +404,7 @@ public class Enemy extends CapsuleObstacle {
 
         // Increase animation frame, but only if trying to move
         if (isFilm) {
-            animFrames--;
-            if(animFrames <= 0) {
-                animFrames = animDelay;
-
-                animeframe++;
-                if (animeframe >= animationFrames) {
-                    animeframe -= animationFrames;
-                }
-            }
+            animator.tick();
         }
 
         faceRight = getVX() > 0;
@@ -434,8 +426,6 @@ public class Enemy extends CapsuleObstacle {
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? -1.0f : 1.0f;
         if (isFilm) {
-
-            animator.setFrame(animeframe);
             canvas.draw(animator, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
 

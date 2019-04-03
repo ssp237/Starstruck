@@ -125,9 +125,9 @@ public class GameController extends WorldController implements ContactListener {
         JsonAssetManager.getInstance().allocateDirectory();
 
 
-        enemyTexture = createFilmStrip("orange bug", 1,3,3);
-        pinkwormTexture = createFilmStrip("pink worm", 1,14,14);
-        greenwormTexture = createFilmStrip("green worm", 1,14,14);
+        enemyTexture = JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class);
+        pinkwormTexture = JsonAssetManager.getInstance().getEntry("pink worm", FilmStrip.class);
+        greenwormTexture = JsonAssetManager.getInstance().getEntry("green worm", FilmStrip.class);
 
         // TODO sound
         SoundController sounds = SoundController.getInstance();

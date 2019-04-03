@@ -44,6 +44,8 @@ public class JsonAssetManager extends AssetManager {
 	private JsonValue directory;
 	/** The allocated texture regions (for easy clean-up) */
 	private ObjectMap<String,TextureRegion> regions;
+	/** The allocated filmstrips (for easy clean-up) */
+	private ObjectMap<String,FilmStrip> filmstrips;
 	/** The allocated textures (for easy clean-up) */
 	private ObjectMap<String,Texture> textures;
 	/** The allocated fonts (for easy clean-up) */
@@ -100,6 +102,7 @@ public class JsonAssetManager extends AssetManager {
 		// To keep track of the directory
 		directory = null;
 		regions = new ObjectMap<String,TextureRegion>();
+		filmstrips = new ObjectMap<String,FilmStrip>();
 		textures = new ObjectMap<String,Texture>();
 		fonts = new ObjectMap<String,BitmapFont>();
 		sounds = new ObjectMap<String,Sound>();
@@ -117,6 +120,8 @@ public class JsonAssetManager extends AssetManager {
 		assert directory == null : "Directory has already been loaded; must unload first";
 		directory = json;
 		loadTextures();
+		loadTextureRegions();
+		loadFilmStrips();
 		loadSounds();
 		loadFonts();
 	}
@@ -129,8 +134,12 @@ public class JsonAssetManager extends AssetManager {
 	 * @return the JSON key for a given asset type
 	 */
 	private <T> String getClassIdentifier(Class<T> type) {
-		if (type.equals(Texture.class) || type.equals(TextureRegion.class)) {
+		if (type.equals(Texture.class)) {
 			return "textures";
+		} else if (type.equals(TextureRegion.class)) {
+			return "texture regions";
+		} else if (type.equals(FilmStrip.class)) {
+			return "filmstrips";
 		} else if (type.equals(BitmapFont.class)) {
 			return "fonts";
 		} else if (type.equals(Sound.class)) {
@@ -146,6 +155,30 @@ public class JsonAssetManager extends AssetManager {
 	 */
 	private void loadTextures() {
 		JsonValue json = directory.getChild(getClassIdentifier(Texture.class));
+		while (json != null) {
+			String file= json.getString("file");
+			load(file,Texture.class);
+			json = json.next;
+		}
+	}
+
+	/**
+	 * Loads all texture regions in the asset directory
+	 */
+	private void loadTextureRegions() {
+		JsonValue json = directory.getChild(getClassIdentifier(TextureRegion.class));
+		while (json != null) {
+			String file= json.getString("file");
+			load(file,Texture.class);
+			json = json.next;
+		}
+	}
+
+	/**
+	 * Loads all filmstrips in the asset directory
+	 */
+	private void loadFilmStrips() {
+		JsonValue json = directory.getChild(getClassIdentifier(FilmStrip.class));
 		while (json != null) {
 			String file= json.getString("file");
 			load(file,Texture.class);
@@ -188,6 +221,8 @@ public class JsonAssetManager extends AssetManager {
 	 */
 	public void unloadDirectory() {
 		unloadTextures();
+		unloadTextureRegions();
+		unloadFilmStrips();
 		unloadSounds();
 		unloadFonts();
 		directory = null;
@@ -205,8 +240,39 @@ public class JsonAssetManager extends AssetManager {
 				if (textures.containsKey(file)) {
 					textures.remove(file);
 				}
+			}
+			json = json.next;
+		}
+	}
+
+	/**
+	 * Unloads all textures regions in the asset directory
+	 */
+	private void unloadTextureRegions() {
+		JsonValue json = directory.getChild(getClassIdentifier(TextureRegion.class));
+		while (json != null) {
+			String file = json.getString("file");
+			if (isLoaded(file)) {
+				unload(file);
 				if (regions.containsKey(file)) {
 					regions.remove(file);
+				}
+			}
+			json = json.next;
+		}
+	}
+
+	/**
+	 * Unloads all filmstrips in the asset directory
+	 */
+	private void unloadFilmStrips() {
+		JsonValue json = directory.getChild(getClassIdentifier(FilmStrip.class));
+		while (json != null) {
+			String file = json.getString("file");
+			if (isLoaded(file)) {
+				unload(file);
+				if (filmstrips.containsKey(file)) {
+					filmstrips.remove(file);
 				}
 			}
 			json = json.next;
@@ -258,7 +324,16 @@ public class JsonAssetManager extends AssetManager {
 		JsonValue json = directory.getChild(getClassIdentifier(TextureRegion.class));
 		while (json != null) {
 			allocateTextureRegion(json);
-			allocateTexture(json); //TODO: NEED TO CHANGE
+			json = json.next;
+		}
+		json = directory.getChild(getClassIdentifier(Texture.class));
+		while (json != null) {
+			allocateTexture(json);
+			json = json.next;
+		}
+		json = directory.getChild(getClassIdentifier(FilmStrip.class));
+		while (json != null) {
+			allocateFilmStrip(json);
 			json = json.next;
 		}
 		json = directory.getChild(getClassIdentifier(BitmapFont.class));
@@ -280,7 +355,6 @@ public class JsonAssetManager extends AssetManager {
 	 */	
 	private TextureRegion allocateTextureRegion(JsonValue json) {
 		String filename = json.getString("file");
-		System.out.println(filename);
 		TextureRegion region = new TextureRegion(get(filename, Texture.class));
 		region.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		if (json.getBoolean("wrap")) {
@@ -304,6 +378,26 @@ public class JsonAssetManager extends AssetManager {
 		}
 		textures.put(json.name(),texture);
 		return texture;
+	}
+
+	/**
+	 * Allocates a filmstrip and binds it to the directory key
+	 *
+	 * @param json 	the directory entry for the asset
+	 */
+	private FilmStrip allocateFilmStrip(JsonValue json) {
+		String filename = json.getString("file");
+		int rows = json.getInt("rows");
+		int cols = json.getInt("cols");
+		int size = json.getInt("size");
+		int delay = json.getInt("delay");
+		FilmStrip strip = new FilmStrip(get(filename, Texture.class), rows, cols, size, delay);
+		strip.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+		if (json.getBoolean("wrap")) {
+			strip.getTexture().setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+		}
+		filmstrips.put(json.name(),strip);
+		return strip;
 	}
 	
 	/**
@@ -346,6 +440,8 @@ public class JsonAssetManager extends AssetManager {
 				return (T)regions.get(key);
 			} else if (type.equals(Texture.class)) {
 				return (T)textures.get(key);
+			} else if (type.equals(FilmStrip.class)) {
+				return (T)filmstrips.get(key);
 			} else if (type.equals(BitmapFont.class)) {
 				return (T)fonts.get(key);
 			} else if (type.equals(Sound.class)) {

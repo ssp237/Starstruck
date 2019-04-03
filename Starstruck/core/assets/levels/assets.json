@@ -1,5 +1,5 @@
 {
-  "textures": {
+  "texture regions": {
     "astronaut 1": {
       "file": "platform/astronaut1.png",
       "wrap": false
@@ -11,10 +11,6 @@
     "star":
     {
       "file": "platform/star.png",
-      "wrap": false
-    },
-    "background": {
-      "file": "platform/background.png",
       "wrap": false
     },
     "whirlpool planet 1": {
@@ -45,18 +41,6 @@
       "file": "planets/gravity ring.png",
       "wrap": false
     },
-    "green worm": {
-      "file": "platform/green_worm.png",
-      "wrap": false
-    },
-    "pink worm": {
-      "file": "platform/pink_worm.png",
-      "wrap": false
-    },
-    "orange bug": {
-      "file": "platform/enemy.png",
-      "wrap": false
-    },
     "rope": {
       "file": "platform/ropebridge.png",
       "wrap": false
@@ -80,6 +64,50 @@
     "loading": {
       "file": "shared/loading.png",
       "wrap": false
+    }
+  },
+  "textures": {
+    "background": {
+      "file": "platform/background.png",
+      "wrap": false
+    },
+    "green worm": {
+      "file": "platform/green_worm.png",
+      "wrap": false
+    },
+    "pink worm": {
+      "file": "platform/pink_worm.png",
+      "wrap": false
+    },
+    "orange bug": {
+      "file": "platform/enemy.png",
+      "wrap": false
+    }
+  },
+  "filmstrips" : {
+    "green worm": {
+      "file": "platform/green_worm.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 14,
+      "size": 14,
+      "delay": 7
+    },
+    "pink worm": {
+      "file": "platform/pink_worm.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 14,
+      "size": 14,
+      "delay": 7
+    },
+    "orange bug": {
+      "file": "platform/enemy.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 3,
+      "size": 3,
+      "delay": 10
     }
   },
   "fonts": {
