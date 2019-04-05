@@ -17,6 +17,8 @@ package edu.cornell.gdiac.starstruck.Obstacles;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.*;
+import com.badlogic.gdx.math.collision.*;
+import com.badlogic.gdx.math.*;
 
 public class Star extends ComplexObstacle {
     /** The debug name for the entire obstacle */
@@ -34,8 +36,13 @@ public class Star extends ComplexObstacle {
 
     /** The primary spinner obstacle */
     private BoxObstacle barrier;
-
     private WheelObstacle pivot;
+
+    /** To be removed */
+    protected boolean remove = false;
+
+    /** Ray cache for calculating intersection */
+    private Ray rayCache;
 
     /**
      * Creates a new spinner at the origin.
@@ -122,5 +129,57 @@ public class Star extends ComplexObstacle {
 
     public TextureRegion getTexture() {
         return barrier.getTexture();
+    }
+
+    public boolean getRemove() { return remove; }
+
+    public void setRemove(boolean value) { remove = value; }
+
+    /**
+     * Copyright 2000 softSurfer, 2012 Dan Sunday
+     *
+     * Determines whether p is the left, right, or on the vector from v0 to v1
+     * >0 for on the left,  =0 for on the line, <0 for on the right
+     *
+     * @param v0 The start of the vector
+     * @param v1 The end of the vector
+     * @param p The point
+     * @return A number less than, greater than, or equal to 0
+     */
+    private float isLeft(Vector2 v0, Vector2 v1, Vector2 p) {
+        return (v1.x-v0.x)*(p.y-v0.y) - (p.x-v0.x)*(v1.y-v0.y);
+    }
+
+    /**
+     * Collects this star
+     *
+     * @param vertices A list of positions of vertices of the polygon -- aka rope joints
+     * @return True if this star is collected and needs to be destroyed, false otherwise
+     */
+    public boolean collect(Vector2[] vertices) {
+        Vector2 pos = this.getPosition();
+        int wn = 0;
+        for (int i = 0; i < vertices.length - 1; i++) {
+            Vector2 vertex0 = vertices[i];
+            Vector2 vertex1 = vertices[i+1];
+
+            //If edge goes upwards and star is to the left, increase wn
+            if (pos.y >= vertex0.y && pos.y < vertex1.y) {
+                if (isLeft(vertex0, vertex1, pos) > 0) {
+                    wn++;
+                }
+            }
+            //If edge goes downwards and star is to the right, decrease wn
+            else if (pos.y < vertex0.y && pos.y >= vertex1.y) {
+                if (isLeft(vertex0, vertex1, pos) < 0) {
+                    wn--;
+                }
+            }
+        }
+
+        if (wn != 0) { //Inside the polygon
+            return true;
+        }
+        return false;
     }
 }

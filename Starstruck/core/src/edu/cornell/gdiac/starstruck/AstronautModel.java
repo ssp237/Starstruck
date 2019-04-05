@@ -98,6 +98,8 @@ public class AstronautModel extends CapsuleObstacle {
     private Vector2 glowOrigin;
     /** Whether the astronaut is being moved, i.e. movement keys pressed */
     protected boolean moving;
+    /** Anchor astronaut is currently or last anchored on */
+    protected Anchor curAnchor;
 
     /** Is this player one?*/
     private boolean isPlayerOne;
@@ -326,6 +328,13 @@ public class AstronautModel extends CapsuleObstacle {
      * @param active whether the astronaut is active
      */
     public void setActive(boolean active) { isActive = active; }
+
+    /**
+     * Gets curAnchor for thsi astronaut
+     *
+     * @return Anchor curAnchor
+     */
+    public Anchor getCurAnchor() { return curAnchor; }
 
     /**
      * Creates a new dude at the origin.

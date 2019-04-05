@@ -19,6 +19,8 @@ import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.*;
 
+import java.util.*;
+
 import edu.cornell.gdiac.starstruck.*;
 
 /**
@@ -58,6 +60,8 @@ public class Rope extends ComplexObstacle {
     protected float length;
     /** Number of links in the rope */
     protected int nlinks;
+    /** List of planks that make up this rope */
+    private ArrayList<BoxObstacle> planks = new ArrayList<BoxObstacle>();
 
     private AstronautModel avatar;
     private AstronautModel avatar2;
@@ -128,6 +132,7 @@ public class Rope extends ComplexObstacle {
             plank.setName(PLANK_NAME+ii);
             plank.setDensity(BASIC_DENSITY);
             bodies.add(plank);
+            planks.add(plank);
         }
 
         nlinks = nLinks;
@@ -254,5 +259,21 @@ public class Rope extends ComplexObstacle {
             return null;
         }
         return ((SimpleObstacle)bodies.get(0)).getTexture();
+    }
+
+    public Vector2[] getVertices() {
+        Vector2[] vertices = new Vector2[planks.size()+1]; //Number of planks - 1 to only get in between the planks, + 2 get each end
+        vertices[0] = avatar.getCurAnchor().getPosition();
+        vertices[planks.size()] = avatar2.getCurAnchor().getPosition();
+        for (int i = 0; i < planks.size()-1; i++) {
+            int j = i+1; // position in vertices array
+            BoxObstacle plank0 = planks.get(i);
+            BoxObstacle plank1 = planks.get(i+1);
+            Vector2 dir = plank1.getPosition().cpy().sub(plank0.getPosition());
+            dir.scl(0.5f);
+            vertices[j] = plank0.getPosition().cpy().add(dir);
+
+        }
+        return vertices;
     }
 }
