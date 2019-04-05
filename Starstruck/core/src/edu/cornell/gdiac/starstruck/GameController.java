@@ -243,6 +243,8 @@ public class GameController extends WorldController implements ContactListener {
     public static final boolean testE = true;
     /** Allows manual control of astronaut in space for testing */
     public static final boolean testC = false;
+    /** Camera zoom */
+    private static final float ZOOM = 0.8f;
 
 
     // Location, radius, and drawscale of all the planets.
@@ -349,6 +351,9 @@ public class GameController extends WorldController implements ContactListener {
     private int starCount;
     /** List of stars to be removed */
     private ArrayList<Star> removeStar = new ArrayList<Star>();
+    /** Viewport width and height */
+    private float camWidth;
+    private float camHeight;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -415,6 +420,13 @@ public class GameController extends WorldController implements ContactListener {
      * Lays out the game geography.
      */
     private void populateLevel() {
+        //Set zoom of camera
+        Camera camera = canvas.getCamera();
+        camWidth = 1024*1.2f*ZOOM;
+        camHeight = 576*1.2f*ZOOM;
+        camera.viewportWidth = camWidth;
+        camera.viewportHeight = camHeight;
+
         // Add level goal
         float dwidth;
         float dheight;
@@ -649,11 +661,22 @@ public class GameController extends WorldController implements ContactListener {
         float a1x = avatar.getPosition().x * avatar.drawScale.x;
         float a2x = avatar2.getPosition().x * avatar2.drawScale.x;
         float xCam = (a1x + a2x) / 2;
-        if (xCam < canvas.getWidth()/2) xCam = canvas.getWidth()/2;
-        canvas.getCamera().position.set(new Vector3(xCam, canvas.getCamera().position.y, 0));
+        float a1y = avatar.getPosition().y * avatar.drawScale.y;
+        float a2y = avatar2.getPosition().y * avatar2.drawScale.y;
+        float yCam = (a1y + a2y) / 2;
+
+        if (xCam < camWidth/2)
+            xCam = camWidth/2;
+//        else if (xCam > canvas.getWidth() - camWidth/2)
+//            xCam = canvas.getWidth() - camWidth/2;
+        if (yCam < camHeight/2)
+            yCam = camHeight/2;
+        else if (yCam > canvas.getHeight() - camHeight/2)
+            yCam = canvas.getHeight()-camHeight/2;
+
+//        canvas.getCamera().position.set(new Vector3(xCam, canvas.getCamera().position.y, 0));
+        canvas.getCamera().position.set(new Vector3(xCam, yCam, 0));
         canvas.getCamera().update();
-//        System.out.println(canvas.getCamera().position);
-//        System.out.println(canvas.getHeight());
     }
 
     /**
