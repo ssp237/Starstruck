@@ -265,12 +265,12 @@ public class GameController extends WorldController implements ContactListener {
 
     // Location of each star (TODO add more fields later, SHOULD MAKE INTO A CLASS)
     private static final float[][] STARS = {
-            {35f, 15.75f},
-            {35.5f, 16.5f},
-            {35.25f, 15f},
-            {16f, 4f},
-            {17f, 3f},
-            {16.5f, 2.5f},
+//            {35f, 15.75f},
+//            {35.5f, 16.5f},
+//            {35.25f, 15f},
+//            {16f, 4f},
+//            {17f, 3f},
+//            {16.5f, 2.5f},
             {9f, 15f},
 //            {5f, 14f},
 //            {6f, 14f},
@@ -888,6 +888,10 @@ public class GameController extends WorldController implements ContactListener {
             print(starCount);
             touching = false;
         }
+        if (stars.isEmpty()) {
+            print("win");
+            setComplete(true);
+        }
 
         if (avatar.isActive()) {
             updateHelp(avatar, avatar2, contactDir, contactDir2, (Planet) curPlanet, (Planet) curPlanet2, lastPoint, lastPoint2);
@@ -1301,6 +1305,14 @@ public class GameController extends WorldController implements ContactListener {
             canvas.begin(); // DO NOT SCALE
             canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
             canvas.end();
+        }
+
+        if (isComplete()){
+            displayFont.setColor(Color.GREEN);
+            canvas.begin();
+            canvas.drawTextCentered("Yay! :):)", displayFont, 0.0f);
+            canvas.end();
+
         }
     }
 }
