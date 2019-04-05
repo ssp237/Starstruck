@@ -97,6 +97,8 @@ public class GameController extends WorldController implements ContactListener {
     private FilmStrip pinkwormTexture;
     /** Texture asset for the enemy */
     private FilmStrip greenwormTexture;
+    /** Amount rope is extended */
+    private int extendInt = 0;
 
 
     /** Track asset loading from all instances and subclasses */
@@ -334,6 +336,8 @@ public class GameController extends WorldController implements ContactListener {
     private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
     /** WHY GRAVITY */
     private ArrayList<Star> stars = new ArrayList<Star>();
+    /** List of Rope */
+    private ArrayList<Rope> ropes = new ArrayList<Rope>();
     /** Planets */
     private PlanetList planets;
     /** Planets */
@@ -440,6 +444,7 @@ public class GameController extends WorldController implements ContactListener {
         rope.setTexture(bridgeTexture);
         rope.setDrawScale(scale);
         rope.setName("rope");
+        //ropes.add(rope);
         addObject(rope);
 
         objects.add(avatar); objects.add(avatar2);
@@ -912,15 +917,34 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         if (ropeExtend) {
+//            if (progress > 0) {
+//                float span = progress*(width-2*scale*PROGRESS_CAP)/2.0f;
+//                canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP+span, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+//                canvas.draw(statusFrgMiddle, Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, span, scale*PROGRESS_HEIGHT);
+//            } else {
+//                canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+//            }
 
 
-            rope.setNLinks(rope.nLinks()+1);
+
+
+
+
+
+
+
+//            extendInt++;
+//            objects.remove(2);//this is wrong index (it's the pink avatar)
+//            float dwidth  = bridgeTexture.getRegionWidth()/scale.x;
+//            float dheight = bridgeTexture.getRegionHeight()/scale.y;
+//            rope = new Rope (avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH + extendInt, dwidth, dheight, avatar, avatar2);
+//            objects.add(2, rope); //this is also wrong then (match index above)
+            //addObject(rope);
          }
 //            float ropeX = rope.getPosition().x;
 //            float ropeY = rope.getPosition().y;
 
-//            dwidth  = bridgeTexture.getRegionWidth()/scale.x;
-//            dheight = bridgeTexture.getRegionHeight()/scale.y;
+//
 //            rope = new Rope(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
 //            rope.setTexture(bridgeTexture);
 //            rope.setDrawScale(scale);

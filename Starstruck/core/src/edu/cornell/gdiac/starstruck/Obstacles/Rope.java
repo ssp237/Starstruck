@@ -217,7 +217,20 @@ public class Rope extends ComplexObstacle {
 
     public int nLinks(){ return nlinks; }
 
-    public void setNLinks(int link) {nlinks = link;}
+    public void setLength(int newLength) {length = newLength;}
+
+
+    public Body getLastPlankBody() {
+        return bodies.get(bodies.size - 1).getBody();
+    }
+
+    public void removeLastJoint (Rope rope) {
+        joints.removeIndex(joints.size - 1);
+    }
+
+    public void newPairPlank() {
+        
+    }
 
     /**
      * Destroys the physics Body(s) of this object if applicable,
