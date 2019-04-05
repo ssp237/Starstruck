@@ -244,7 +244,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Allows manual control of astronaut in space for testing */
     public static final boolean testC = false;
     /** Camera zoom */
-    private static final float ZOOM = 0.8f;
+    private static final float ZOOM_FACTOR = 0.8f;
 
 
     // Location, radius, and drawscale of all the planets.
@@ -422,8 +422,8 @@ public class GameController extends WorldController implements ContactListener {
     private void populateLevel() {
         //Set zoom of camera
         Camera camera = canvas.getCamera();
-        camWidth = 1024*1.2f*ZOOM;
-        camHeight = 576*1.2f*ZOOM;
+        camWidth = 1024*1.2f*ZOOM_FACTOR;
+        camHeight = 576*1.2f*ZOOM_FACTOR;
         camera.viewportWidth = camWidth;
         camera.viewportHeight = camHeight;
 
