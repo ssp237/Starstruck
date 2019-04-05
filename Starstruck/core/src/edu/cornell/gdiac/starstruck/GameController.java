@@ -60,15 +60,15 @@ public class GameController extends WorldController implements ContactListener {
     private static final String GREENWORM_FILE = "platform/green_worm.png";
 
     /** The sound file for a jump */
-    private static final String JUMP_FILE = "audio/jump/jump8.mp3";
+    private static final String JUMP_FILE = "audio/jump/jump8.wav";
     /** The sound file for a landing */
-    private static final String LAND_FILE = "audio/jump/quick_land.mp3";
+    private static final String LAND_FILE = "audio/jump/quick_land.wav";
     /** The sound file for a collision */
-    private static final String COLLISION_FILE = "audio/anchor.mp3";
+    private static final String COLLISION_FILE = "audio/anchor.wav";
     /** The sound file for a character switch */
-    private static final String SWITCH_FILE = "audio/collecting stars/star_collect.mp3";
+    private static final String SWITCH_FILE = "audio/collecting stars/star_collect.wav";
     /** The sound file to anchor */
-    private static final String ANCHOR_FILE = "audio/anchor.mp3";
+    private static final String ANCHOR_FILE = "audio/anchor.wav";
     /** Space sounds */
     private static final String SPACE_SOUNDS = "audio/sounds from space/VanB-2017-04-05-2229.mp3";
 
