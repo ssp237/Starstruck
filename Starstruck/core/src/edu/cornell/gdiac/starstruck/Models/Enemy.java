@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.starstruck;
+package edu.cornell.gdiac.starstruck.Models;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -118,24 +118,6 @@ public class Enemy extends CapsuleObstacle {
 
     public void setRotation(float value) {
         rotation = value;
-    }
-
-    /**
-     * Returns true if the dude is actively firing.
-     *
-     * @return true if the dude is actively firing.
-     */
-    public boolean isShooting() {
-        return isShooting && shootCooldown <= 0;
-    }
-
-    /**
-     * Sets whether the dude is actively firing.
-     *
-     * @param value whether the dude is actively firing.
-     */
-    public void setShooting(boolean value) {
-        isShooting = value;
     }
 
     /**
@@ -396,21 +378,6 @@ public class Enemy extends CapsuleObstacle {
     }
 
     /**
-     *  Sets the texture to a filmstrip specified by texture with rows rows, cols cols, and size size.
-     * @param texture Filmstrip to be set as the texture.
-     * @param rows Rows in the filmstrip
-     * @param cols Cols in the filmstrip
-     * @param size Size of the filmstrip
-     */
-    public void setTexture(Texture texture, int rows, int cols, int size) {
-        animator = new FilmStrip(texture,rows, cols, size);
-        animationFrames = size;
-        this.texture = animator;
-        isFilm = true;
-        origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
-    }
-
-    /**
      * Sets the texture to the given filmstrip with size size and delay animDelay between frames.
      * @param texture The filmstrip to set
      * @param size The size of the filmstrip
@@ -437,15 +404,7 @@ public class Enemy extends CapsuleObstacle {
 
         // Increase animation frame, but only if trying to move
         if (isFilm) {
-            animFrames--;
-            if(animFrames <= 0) {
-                animFrames = animDelay;
-
-                animeframe++;
-                if (animeframe >= animationFrames) {
-                    animeframe -= animationFrames;
-                }
-            }
+            animator.tick();
         }
 
         faceRight = getVX() > 0;
@@ -454,12 +413,6 @@ public class Enemy extends CapsuleObstacle {
             jumpCooldown = JUMP_COOLDOWN;
         } else {
             jumpCooldown = Math.max(0, jumpCooldown - 1);
-        }
-
-        if (isShooting()) {
-            shootCooldown = SHOOT_COOLDOWN;
-        } else {
-            shootCooldown = Math.max(0, shootCooldown - 1);
         }
 
         super.update(dt);
@@ -473,8 +426,6 @@ public class Enemy extends CapsuleObstacle {
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? -1.0f : 1.0f;
         if (isFilm) {
-
-            animator.setFrame(animeframe);
             canvas.draw(animator, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
 

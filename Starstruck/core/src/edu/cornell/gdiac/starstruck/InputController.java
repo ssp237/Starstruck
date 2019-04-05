@@ -74,6 +74,9 @@ public class InputController {
     private boolean rightPrevious;
     private boolean leftPressed;
     private boolean leftPrevious;
+    /** Whether down key was pressed */
+    private boolean downPressed;
+    private boolean downPrevious;
     /** Whether a and d keys are pressed */
     private boolean dPressed;
     private boolean dPrevious;
@@ -268,6 +271,8 @@ public class InputController {
         return leftPressed;
     }
 
+    public boolean didDown() { return downPressed && !downPrevious; }
+
     public boolean didA() {
         return aPressed;
     }
@@ -310,6 +315,7 @@ public class InputController {
         nextPrevious = nextPressed;
         prevPrevious = prevPressed;
         rightPrevious = rightPressed;
+        downPrevious = downPressed;
         leftPrevious = leftPressed;
         aPrevious = aPressed;
         dPrevious = dPressed;
@@ -376,7 +382,7 @@ public class InputController {
         // Give priority to gamepad results
         debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.Y));
         primePressed = (secondary && primePressed) || (Gdx.input.isKeyPressed(Input.Keys.UP));
-        secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.W));
+        secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.X));
         prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
         nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
         exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
@@ -385,6 +391,7 @@ public class InputController {
         // TODO no controller support
         rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT);
         leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT);
+        downPressed = Gdx.input.isKeyPressed (Input.Keys.DOWN);
         aPressed = Gdx.input.isKeyPressed (Input.Keys.A);
         dPressed = Gdx.input.isKeyPressed (Input.Keys.D);
         resetPressed = Gdx.input.isKeyPressed(Input.Keys.R);

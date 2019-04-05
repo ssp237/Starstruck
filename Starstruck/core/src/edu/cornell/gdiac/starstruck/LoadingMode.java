@@ -33,6 +33,8 @@ import com.badlogic.gdx.controllers.*;
 import edu.cornell.gdiac.util.ScreenListener;
 import edu.cornell.gdiac.util.*;
 
+import java.util.LinkedList;
+
 /**
  * Class that provides a loading screen for the state of the game.
  *
@@ -54,6 +56,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     private static final String LOADING_AUDIO_FILE = "audio/loading_screen.mp3";
 
     private static final float VOLUME = 0.3f;
+
+    LinkedList<String> loaded;
 
     /** Background texture for start-up */
     private Texture background;
@@ -171,10 +175,9 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     /**
      * Creates a LoadingMode with the default budget, size and position.
      *
-     * @param manager The AssetManager to load in the background
      */
-    public LoadingMode(GameCanvas canvas, AssetManager manager) {
-        this(canvas, manager,DEFAULT_BUDGET);
+    public LoadingMode(GameCanvas canvas) {
+        this(canvas,DEFAULT_BUDGET);
     }
 
     /**
@@ -184,12 +187,10 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * frame.  This allows you to do something other than load assets.  An animation
      * frame is ~16 milliseconds. So if the budget is 10, you have 6 milliseconds to
      * do something else.  This is how game companies animate their loading screens.
-     *
-     * @param manager The AssetManager to load in the background
      * @param millis The loading budget in milliseconds
      */
-    public LoadingMode(GameCanvas canvas, AssetManager manager, int millis) {
-        this.manager = manager;
+    public LoadingMode(GameCanvas canvas, int millis) {
+        this.manager = JsonAssetManager.getInstance();
         this.canvas  = canvas;
         budget = millis;
 
@@ -226,6 +227,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
             controller.addListener(this);
         }
         active = true;
+        loaded = new LinkedList<String>();
     }
 
     /**
@@ -262,6 +264,12 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     private void update(float delta) {
 
         if (playButton == null) {
+            for(String s : manager.getAssetNames()) {
+                if (manager.isLoaded(s) && !loaded.contains(s)){
+                    System.out.println(s);
+                    loaded.add(s);
+                }
+            }
             manager.update(budget);
             this.progress = manager.getProgress();
             if (progress >= 1.0f) {
@@ -511,7 +519,6 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     /**
      * Called when a key is typed (UNSUPPORTED)
      *
-     * @param keycode the key typed
      * @return whether to hand the event to other listeners.
      */
     public boolean keyTyped(char character) {

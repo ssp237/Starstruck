@@ -66,7 +66,6 @@ public class Planet extends WheelObstacle {
      */
     public float getMass() { return mass;}
 
-
     /**
      *
      * @param canvas Drawing context
@@ -85,6 +84,17 @@ public class Planet extends WheelObstacle {
         canvas.draw(ringTexture, color, origin.x, origin.y,getX() * drawScale.x - ringTexture.getRegionWidth()/(2/rScale),
                 getY() * drawScale.x - ringTexture.getRegionHeight()/(2/rScale), getAngle(), rScale, rScale);
 
+    }
+
+    public String toString() {
+        String out = "Planet with {";
+
+        out += "pos: " + getPosition() + ", ";
+        out += "radius: " + getRadius() + ", ";
+        out += "mass: " + mass;
+        out += "}";
+
+        return out;
     }
 
 

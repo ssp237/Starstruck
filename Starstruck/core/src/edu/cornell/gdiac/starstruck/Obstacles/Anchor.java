@@ -15,8 +15,11 @@
 package edu.cornell.gdiac.starstruck.Obstacles;
 
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.*;
+import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.util.JsonAssetManager;
 
 public class Anchor extends ComplexObstacle {
     /** The debug name for the entire obstacle */
@@ -86,6 +89,22 @@ public class Anchor extends ComplexObstacle {
         // Density: LIGHT_DENSITY
 
         //#endregion
+    }
+
+    /**
+     * Return a new anchor with parameters specified by the JSON
+     * @param json A JSON containing data for one anchor
+     * @param scale The scale to convert physics units to drawing units
+     * @return A star created according to the specifications in the JSON
+     */
+    public static Anchor fromJSON(JsonValue json, Vector2 scale) {
+        String key = json.get("texture").asString();
+        TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        Anchor out =  new Anchor(json.get("x").asFloat(), json.get("y").asFloat(),
+                texture.getRegionWidth()/scale.x, texture.getRegionHeight()/scale.y);
+        out.setDrawScale(scale);
+        out.setTexture(texture);
+        return out;
     }
 
     /**
