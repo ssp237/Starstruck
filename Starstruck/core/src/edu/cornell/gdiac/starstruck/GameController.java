@@ -49,17 +49,6 @@ public class GameController extends WorldController implements ContactListener {
     protected LevelModel level;
 
     /** The sound file for a jump */
-<<<<<<< HEAD
-    private static final String JUMP_FILE = "audio/jump/jump8.wav";
-    /** The sound file for a landing */
-    private static final String LAND_FILE = "audio/jump/quick_land.wav";
-    /** The sound file for a collision */
-    private static final String COLLISION_FILE = "audio/anchor.wav";
-    /** The sound file for a character switch */
-    private static final String SWITCH_FILE = "audio/collecting stars/star_collect.wav";
-    /** The sound file to anchor */
-    private static final String ANCHOR_FILE = "audio/anchor.wav";
-=======
     private static final String JUMP_FILE = "jump";
     /** The sound file for a landing */
     private static final String LAND_FILE = "land";
@@ -69,7 +58,6 @@ public class GameController extends WorldController implements ContactListener {
     private static final String SWITCH_FILE = "switch";
     /** The sound file to anchor */
     private static final String ANCHOR_FILE = "anchor";
->>>>>>> 5377d7125238f6273c35aaae862e6f367e6ae130
     /** Space sounds */
     private static final String SPACE_SOUNDS = "space sounds";
 
