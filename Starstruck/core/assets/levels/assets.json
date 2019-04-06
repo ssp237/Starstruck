@@ -8,8 +8,7 @@
       "file": "platform/astronaut2.png",
       "wrap": false
     },
-    "star":
-    {
+    "star": {
       "file": "platform/star.png",
       "wrap": false
     },
@@ -39,6 +38,38 @@
     },
     "gravity ring": {
       "file": "planets/gravity ring.png",
+      "wrap": false
+    },
+    "wp p1": {
+      "file": "whirlpool/planets/static_planet1_v1.png",
+      "wrap": false
+    },
+    "wp g1": {
+      "file": "whirlpool/planets/static_gravity.ring1_v1.png",
+      "wrap": false
+    },
+    "wp p2": {
+      "file": "whirlpool/planets/static_planet2_v1.png",
+      "wrap": false
+    },
+    "wp g2": {
+      "file": "whirlpool/planets/static_gravity.ring2_v1.png",
+      "wrap": false
+    },
+    "wp p3": {
+      "file": "whirlpool/planets/static_planet3_v1.png",
+      "wrap": false
+    },
+    "wp g3": {
+      "file": "whirlpool/planets/static_gravity.ring3_v1.png",
+      "wrap": false
+    },
+    "wp p4": {
+      "file": "whirlpool/planets/static_planet4_v1.png",
+      "wrap": false
+    },
+    "wp g4": {
+      "file": "whirlpool/planets/static_gravity.ring4_v0.png",
       "wrap": false
     },
     "rope": {

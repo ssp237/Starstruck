@@ -5,7 +5,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.GameCanvas;
+import edu.cornell.gdiac.util.JsonAssetManager;
 
 /** Representation of a planet in the game. Has its own mass, size, and range of effect for gravity.
  *  Also stores the galaxy the planet is from, to be used when determining sprite, and
@@ -13,12 +15,20 @@ import edu.cornell.gdiac.starstruck.GameCanvas;
  */
 public class Planet extends WheelObstacle {
 
+    /** Number of possible planets */
+    private final int NUM_PLANETS = 4;
     /** The mass of a planet in [slightly arbitrary] units. */
     protected float mass;
     /** The range from which gravity is effective for this planet (physics units)*/
     public float grange;
     /** Texture for gravity ring */
     protected TextureRegion ringTexture;
+
+    /** Pre-set masses */
+    private static float mass1;
+    private static float mass2;
+    private static float mass3;
+    private static float mass4;
 
     private float grscale;
 
@@ -58,6 +68,66 @@ public class Planet extends WheelObstacle {
         // Not needed?
         //setFriction(BASIC_FRICTION);
         //setRestitution(BASIC_RESTITUTION);
+    }
+
+    /**
+     *  Create a copy of the i'th planet centered at (x,y) existing in World world with draw scale scale.
+     * @param x X coord of center of planet.
+     * @param y Y coord of center of planet.
+     * @param i Index of planet to be created.
+     * @param world World the planet exists in.
+     * @param scale Draw scale for this planet.
+     */
+    public Planet(float x, float y, int i, World world, Vector2 scale) {
+        super(x,y, 0);
+
+        i = ((i - 1) % NUM_PLANETS) + 1;
+
+        texture = JsonAssetManager.getInstance().getEntry(("wp p" + i), TextureRegion.class);
+        ringTexture = JsonAssetManager.getInstance().getEntry(("wp g" + i), TextureRegion.class);
+
+        float radius = texture.getRegionWidth() / (scale.x * 2);
+        setRadius(radius);
+        grange = (ringTexture.getRegionWidth()/(scale.x * 2)) - radius;
+
+        setBodyType(BodyDef.BodyType.StaticBody);
+        setDensity(500f);
+
+        activatePhysics(world);
+        setDrawScale(scale);
+
+        mass = massOfInd(i);
+
+        //Set drawing scale
+        float newScale = (2 * radius * drawScale.x)/texture.getRegionWidth();
+        this.scaleDraw = newScale;
+
+        grscale = (float) texture.getRegionWidth() / (float) ringTexture.getRegionWidth();
+
+        setName("planet" + counter);
+        counter++;
+    }
+
+    private float massOfInd(int i) {
+        switch (i) {
+            case 1: return mass1;
+            case 2: return mass2;
+            case 3: return mass3;
+            case 4: return mass4;
+            default: return mass1;
+        }
+    }
+
+    /**
+     * Set the preset values for planet construction according to the JSON we
+     * read in.
+     * @param json The json containing data to set preset values.
+     */
+    public static void setPresets(JsonValue json) {
+        mass1 = json.getFloat("p1 mass");
+        mass2 = json.getFloat("p2 mass");
+        mass3 = json.getFloat("p3 mass");
+        mass4 = json.getFloat("p4 mass");
     }
 
     /**

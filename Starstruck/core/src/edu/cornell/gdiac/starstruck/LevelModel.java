@@ -257,16 +257,25 @@ public class LevelModel {
 
         objects.add(player1); objects.add(player2);
 
-        //Create planets
-        float[][] planetSpecs = null;
+        Planet.setPresets(levelFormat.get("planet specs"));
+        planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
+
         JsonValue planet = levelFormat.get("planets").child();
         while(planet != null) {
-            planetSpecs = addRow(planetSpecs, planetSpec(planet));
-            planet = planet.next;
+            planets.addPlanet(planet, world, vectorWorld);
+            planet = planet.next();
         }
 
-        planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
-        planets.addPlanets(planetSpecs, world, vectorWorld);
+        //Create planets
+//        float[][] planetSpecs = null;
+//        JsonValue planet = levelFormat.get("planets").child();
+//        while(planet != null) {
+//            planetSpecs = addRow(planetSpecs, planetSpec(planet));
+//            planet = planet.next;
+//        }
+//
+//        planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
+//        planets.addPlanets(planetSpecs, world, vectorWorld);
 
         //add stars
         int i = 0;

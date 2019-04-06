@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.Galaxy;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.util.JsonAssetManager;
@@ -140,8 +141,36 @@ public class PlanetList {
      * Add the specified planet to the planet list
      * @param p The planet to be added
      */
-    public void addPlanet(Planet p) {
+    public void addPlanet(Planet p, VectorWorld vectorWorld) {
+        vectorWorld.addPlanet(p);
         planets.add(p);
+    }
+
+    /**
+     * Add planet i centered at (x,y) to the planet list using World world and VectorWorld vectorWorld.
+     * @param x X coord of center of planet.
+     * @param y Y coord of center of planet.
+     * @param i Index of planet to create.
+     * @param world World this planet exists in.
+     * @param vectorWorld VectorWorld controlling gravity for this planet.
+     */
+    public void addPlanet(float x, float y, int i, World world, VectorWorld vectorWorld) {
+        Planet p = new Planet(x, y, i, world, scale);
+        vectorWorld.addPlanet(p);
+        planets.add(p);
+    }
+
+    /**
+     * Add the planet specified by JsonValue json to the PlanetList using World world and VectorWorld vectorWorld.
+     * @param json JsonValue containing data for the planet to be added.
+     * @param world World this planet exists in.
+     * @param vectorWorld VectorWorld controlling gravity for this planet.
+     */
+    public void addPlanet(JsonValue json, World world, VectorWorld vectorWorld) {
+        float x = json.getFloat("x");
+        float y = json.getFloat("y");
+        int i = json.getInt("i");
+        addPlanet(x,y,i,world,vectorWorld);
     }
 
     /**
