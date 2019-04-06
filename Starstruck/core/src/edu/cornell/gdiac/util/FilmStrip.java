@@ -50,6 +50,12 @@ public class FilmStrip extends TextureRegion {
     /** The active animation frame */
     private int frame;
 
+    /** The delay in animation */
+    private int delay;
+
+    /** Counter for delay; used for filmstrip to manually switch frames */
+    private int count;
+
     /**
      * Creates a new filmstrip from the given texture.
      *
@@ -58,7 +64,7 @@ public class FilmStrip extends TextureRegion {
      * @param cols The number of columns in the filmstrip
      */
     public FilmStrip(Texture texture, int rows, int cols) {
-        this(texture,rows,cols,rows*cols);
+        this(texture,rows,cols,rows*cols, 0);
     }
 
     /**
@@ -74,6 +80,23 @@ public class FilmStrip extends TextureRegion {
      * @param size The number of frames in the filmstrip
      */
     public FilmStrip(Texture texture, int rows, int cols, int size) {
+        this(texture,rows,cols,rows*cols, 0);
+    }
+
+    /**
+     * Creates a new filmstrip from the given texture.
+     *
+     * The parameter size is to indicate that there are unused frames in
+     * the filmstrip.  The value size must be less than or equal to
+     * rows*cols, or this constructor will raise an error.
+     *
+     * @param texture The texture image to use
+     * @param rows The number of rows in the filmstrip
+     * @param cols The number of columns in the filmstrip
+     * @param size The number of frames in the filmstrip
+     * @param delay The number of frames to delay between switching frames
+     */
+    public FilmStrip(Texture texture, int rows, int cols, int size, int delay) {
         super(texture);
         if (size > rows*cols) {
             Gdx.app.error("FilmStrip", "Invalid strip size", new IllegalArgumentException());
@@ -83,6 +106,8 @@ public class FilmStrip extends TextureRegion {
         this.size = size;
         rwidth  = texture.getWidth()/cols;
         rheight = texture.getHeight()/rows;
+        this.delay = delay;
+        count = delay;
         setFrame(0);
     }
 
@@ -93,6 +118,15 @@ public class FilmStrip extends TextureRegion {
      */
     public int getSize() {
         return size;
+    }
+
+    /**
+     * Returns the delay of this filmstrip.
+     *
+     * @return the delay of this filmstrip.
+     */
+    public int getDelay() {
+        return delay;
     }
 
     /**
@@ -120,6 +154,25 @@ public class FilmStrip extends TextureRegion {
         int x = (frame % cols)*rwidth;
         int y = (frame / cols)*rheight;
         setRegion(x,y,rwidth,rheight);
+    }
+
+    /**
+     * Simulate 1 time step: Decrement the delay counter; if the delay is up, increment
+     * the current frame and set the current frame. If the current frame exceeds the
+     * number of frames, reset it to 0.
+     */
+    public void tick() {
+        count--;
+        if(count <= 0) {
+            count = delay;
+
+            frame++;
+            if (frame >= size) {
+                frame -= size;
+            }
+
+            setFrame(frame);
+        }
     }
 
 }

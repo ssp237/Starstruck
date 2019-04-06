@@ -1,30 +1,19 @@
-/*
- * AstronautModel.java
- *
- * You SHOULD NOT need to modify this file.  However, you may learn valuable lessons
- * for the rest of the lab by looking at it.
- *
- * Author: Walker M. White
- * Based on original PhysicsDemo Lab by Don Holden, 2007
- * LibGDX version, 2/6/2015
- */
-package edu.cornell.gdiac.starstruck;
+package edu.cornell.gdiac.starstruck.Models;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
+import edu.cornell.gdiac.starstruck.GameCanvas;
+import edu.cornell.gdiac.starstruck.Obstacles.CapsuleObstacle;
+import edu.cornell.gdiac.util.FilmStrip;
 
-//import edu.cornell.gdiac.starstruck.*;
-import edu.cornell.gdiac.starstruck.Obstacles.*;
 
-/**
- * Avatar avatar for the plaform game.
- *
- * Note that this class returns to static loading.  That is because there are
- * no other subclasses that we might loop through.
- */
-public class AstronautModel extends CapsuleObstacle {
+public class Enemy extends CapsuleObstacle {
     // Physics constants
     /** The density of the character */
     private static final float DUDE_DENSITY = 1.0f;
@@ -35,11 +24,10 @@ public class AstronautModel extends CapsuleObstacle {
     /** The dude is a slippery one */
     private static final float DUDE_FRICTION = 0.0f;
     /** The maximum character speed */
-    private static final float DUDE_MAXSPEED = 2.8f;
-    /** The maximum character rotation in space */
-    private static final float DUDE_MAXROT = 6.5f;
+    private static final float DUDE_MAXSPEED = 5.0f;
+    private static final float DUDE_MAXROT = (float) Math.PI/16;
     /** The impulse for the character jump */
-    private static final float DUDE_JUMP = 6f;
+    private static final float DUDE_JUMP = 5.5f;
     /** Cooldown (in animation frames) for jumping */
     private static final int JUMP_COOLDOWN = 30;
     /** Cooldown (in animation frames) for shooting */
@@ -59,9 +47,6 @@ public class AstronautModel extends CapsuleObstacle {
 
     /** The current horizontal movement of the character */
     private float   movement;
-    /** The current vertical movement of the character */
-    private float movementV;
-    /** The rotation of this character */
     private float rotation;
     /** Which direction is the character facing */
     private boolean faceRight;
@@ -78,50 +63,28 @@ public class AstronautModel extends CapsuleObstacle {
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
-    /** Force of gravity */
-    protected Vector2 gravity;
-    /** Direction to apply force on planet */
-    private Vector2 planetMove;
+    private Vector2 gravity = new Vector2();
     /** Indicates whether astronaut is on planet */
-    private boolean onPlanet;
-    /** Direction the character should go when jumping off a planet */
-    private Vector2 planetJump;
-    /** Is this astronaut anchored */
-    private boolean isAnchored;
-    /** What is the position of the current anchor? (May be null) */
-    private Vector2 anchorPos;
-    /** Is this astronaut the active character*/
-    private boolean isActive;
-    /** Texture region for the flow */
-    private TextureRegion glowTexture;
-    /** Origin of the glow texture */
-    private Vector2 glowOrigin;
-    /** Whether the astronaut is being moved, i.e. movement keys pressed */
-    protected boolean moving;
-    /** Anchor astronaut is currently or last anchored on */
-    protected Anchor curAnchor;
-
-    /** Is this player one?*/
-    private boolean isPlayerOne;
-    /** Player 1 glow color*/
-    private static final Color p1glow = new Color(1, 1,1, 0.75f);
-    /** Player 2 glow color*/
-    private static final Color p2glow = p1glow;
-    /** Scale for glow */
-    private static final float GLOW_SCALE = 1.5f;
+    private boolean onPlanet = false;
+    /** Direction the dude should go when jumping off a planet */
+    public Vector2 dudeJump = new Vector2();
+    public boolean isAnchored = false;
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
 
-    /**
-     * Set the glow texture
-     *
-     * @param value set the glow texture to value
-     */
-    public void setGlow(TextureRegion value) {
-        glowTexture = value;
-        glowOrigin = new Vector2(glowTexture.getRegionWidth()/2.0f, glowTexture.getRegionHeight()/2.0f);
-    }
+    /** Is the texture a filmstrip? */
+    private boolean isFilm;
+    /** Filmstrip size (if you are a filmstrip, otherwise arbitrary) */
+    private int animationFrames;
+    /** Filmstrip to use if relevant */
+    private FilmStrip animator;
+    /** Current animation frame */
+    private int animeframe;
+    /** Delay between animation frames */
+    private int animDelay;
+    /** Frames since last animation */
+    private int animFrames;
 
     /**
      * Returns left/right movement of this character.
@@ -151,34 +114,10 @@ public class AstronautModel extends CapsuleObstacle {
         }
     }
 
-    public float getMovementV () { return movementV; }
-
-    public void setMovementV(float value) {
-        movementV = value;
-    }
-
     public float getRotation() { return rotation; }
 
     public void setRotation(float value) {
         rotation = value;
-    }
-
-    /**
-     * Returns true if the dude is actively firing.
-     *
-     * @return true if the dude is actively firing.
-     */
-    public boolean isShooting() {
-        return isShooting && shootCooldown <= 0;
-    }
-
-    /**
-     * Sets whether the dude is actively firing.
-     *
-     * @param value whether the dude is actively firing.
-     */
-    public void setShooting(boolean value) {
-        isShooting = value;
     }
 
     /**
@@ -187,8 +126,8 @@ public class AstronautModel extends CapsuleObstacle {
      * @return true if the dude is actively jumping.
      */
     public boolean isJumping() {
-        return isJumping;
-    } //&& isGrounded && jumpCooldown <= 0
+        return isJumping && isGrounded && jumpCooldown <= 0;
+    }
 
     /**
      * Sets whether the dude is actively jumping.
@@ -217,19 +156,8 @@ public class AstronautModel extends CapsuleObstacle {
         isGrounded = value;
     }
 
-    /**
-     * Set gravity to vec
-     *
-     * @param vec The value to set gravity to
-     */
     public void setGravity(Vector2 vec) {
         gravity.set(-vec.x, -vec.y);
-    }
-
-    public Vector2 getPlanetMove() { return planetMove; }
-
-    public void setPlanetMove(Vector2 value) {
-        planetMove.set(value);
     }
 
     /**
@@ -286,55 +214,8 @@ public class AstronautModel extends CapsuleObstacle {
     public boolean getOnPlanet() { return onPlanet; }
 
     public void setOnPlanet(boolean value) {
-        onPlanet = value;
+        onPlanet = true;
     }
-
-    /**
-     * Sets the direction to launch off planet.
-     *
-     * @param dir the direction the astronaut should jump
-     */
-    public void setPlanetJump(Vector2 dir) { planetJump.set(dir); }
-
-    /**
-     * Returns whether the astronoaut is anchored
-     *
-     * @return true if the astronaut is anchored, false otherwise
-     */
-    public boolean isAnchored() { return isAnchored; }
-
-    /**
-     * Sets astronaut to be anchored
-     *
-     * @param anchor the anchor the astronaut is glued to
-     */
-    public void setAnchored(Anchor anchor) { anchorPos = anchor.getPosition(); isAnchored = true;}
-
-    /**
-     * Sets astronaut to be unanchored
-     */
-    public void setUnAnchored() { isAnchored = false; }
-
-    /**
-     * Whether astronaut is acitive
-     *
-     * @return true if the astronaut is active, false otherwise
-     */
-    public boolean isActive() { return isActive; }
-
-    /**
-     * Sets whether the astronaut is active
-     *
-     * @param active whether the astronaut is active
-     */
-    public void setActive(boolean active) { isActive = active; }
-
-    /**
-     * Gets curAnchor for thsi astronaut
-     *
-     * @return Anchor curAnchor
-     */
-    public Anchor getCurAnchor() { return curAnchor; }
 
     /**
      * Creates a new dude at the origin.
@@ -346,8 +227,8 @@ public class AstronautModel extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public AstronautModel(float width, float height, boolean active, boolean playerOne) {
-        this(0,0,width,height, active, playerOne);
+    public Enemy(float width, float height) {
+        this(0,0,width,height);
     }
 
     /**
@@ -363,7 +244,7 @@ public class AstronautModel extends CapsuleObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public AstronautModel(float x, float y, float width, float height, boolean active, boolean playerOne) {
+    public Enemy(float x, float y, float width, float height) {
         super(x,y,width*DUDE_HSHRINK,height*DUDE_VSHRINK);
         setDensity(DUDE_DENSITY);
         setFriction(DUDE_FRICTION);  /// HE WILL STICK TO WALLS IF YOU FORGET
@@ -374,21 +255,16 @@ public class AstronautModel extends CapsuleObstacle {
         isShooting = false;
         isJumping = false;
         faceRight = true;
-        gravity = new Vector2();
-        planetMove = new Vector2();
-        onPlanet = false;
-        planetJump = new Vector2();
-        /** Is this astronaut anchored */
-        isAnchored = false;
-        /** Is this astronaut the active character*/
-        isActive = active;
-        isPlayerOne = playerOne;
 
         shootCooldown = 0;
         jumpCooldown = 0;
-        setName("dude");
-
-        anchorPos = null;
+        isFilm = false;
+        animationFrames = 1;
+        animator = null;
+        animeframe = 0;
+        animDelay = 0;
+        animFrames = 0;
+        //setName("dude");
     }
 
     /**
@@ -435,51 +311,85 @@ public class AstronautModel extends CapsuleObstacle {
      * This method should be called after the force attribute is set.
      */
     public void applyForce() {
+        if (!isActive()) {
+            return;
+        }
+
+        // Don't want to be moving. Damp out player motion
+//        if (getMovement() == 0f) {
+//            forceCache.set(-getDamping()*getVX(),0);
+//            body.applyForce(forceCache,getPosition(),true);
+//        }
+
+//        if (getOnPlanet()) {
+//            if (movement > 0) {
+//
+//            }
+//        }
 
         if (!getOnPlanet()) {
-            if (Math.abs(getAngularVelocity()) >= DUDE_MAXROT) {
-                setAngularVelocity(Math.signum(getAngle()) * getMaxSpeed());
+            // Velocity too high, clamp it
+//            if (Math.abs(getVX()) >= getMaxSpeed()) {
+//                if (getVX() * movement > 0) {
+//                    setVX(Math.signum(getVX()) * getMaxSpeed());
+//                } else {
+//                    forceCache.set(getMovement(), 0);
+//                    body.applyForce(forceCache, getPosition(), true);
+//                }
+//
+//            } else {
+//                forceCache.set(getMovement(), 0);
+//                body.applyForce(forceCache, getPosition(), true);
+//            }
+
+            if (Math.abs(getAngularVelocity()) >= DUDE_MAXSPEED) {
+                setAngularVelocity(Math.signum(getVX()) * getMaxSpeed());
             } else {
                 body.applyTorque(-getRotation(), true);
             }
         }
 
-        if (getOnPlanet()) {
-            float speed = getLinearVelocity().len();
-            if (speed < 0)
-                System.out.println("speed is less than 0 in apply force");
-
-            // Don't want to be moving. Damp out player motion
-            if (!moving)
-                forceCache.set(0, 0);
-//            else if (speed >= DUDE_MAXSPEED)
-//                forceCache.set(planetMove.setLength(DUDE_MAXSPEED));
-
-            else
-                forceCache.set(planetMove.setLength(DUDE_MAXSPEED));
-            body.applyLinearImpulse(gravity, getPosition(), true);
-            body.setLinearVelocity(forceCache);
-        }
-        moving = false;
-
         // Jump!
         if (isJumping()) {
-            forceCache.set(planetJump.setLength(DUDE_JUMP));
+            forceCache.set(dudeJump.setLength(DUDE_JUMP));
             body.setLinearVelocity(forceCache);//,getPosition(),true);
             body.setAwake(true);
-            setJumping(false);
         }
 
         // Gravity from planets
-        if (!GameController.testC ) {
+        //System.out.println(gravity);
+        if (!getOnPlanet()) {
             body.applyForce(gravity, getPosition(), true);
+            //System.out.println(body.getLinearVelocity() + ", " + gravity);
         }
+        //System.out.println(body.getLinearVelocity());
 
-        if (GameController.testC) {
-            forceCache.set(getMovement(), getMovementV());
-            body.setLinearVelocity(forceCache.scl(4));
-        }
+    }
 
+    /**
+     * Set the texture region to a non-filmstrip value.
+     * @param texture the texture to set
+     */
+    public void setTexture(TextureRegion texture){
+        super.setTexture(texture);
+        isFilm = false;
+        animator = null;
+        animationFrames = 1;
+    }
+
+    /**
+     * Sets the texture to the given filmstrip with size size and delay animDelay between frames.
+     * @param texture The filmstrip to set
+     * @param size The size of the filmstrip
+     * @param animDelay The delay between animation frames
+     */
+    public void setTexture(FilmStrip texture, int size, int animDelay) {
+        animator = texture;
+        animationFrames = size;
+        this.texture = animator;
+        isFilm = true;
+        this.animDelay = animDelay;
+        origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
     }
 
     /**
@@ -492,20 +402,17 @@ public class AstronautModel extends CapsuleObstacle {
     public void update(float dt) {
         // Apply cooldowns
 
-        if (isAnchored) setPosition(anchorPos);
+        // Increase animation frame, but only if trying to move
+        if (isFilm) {
+            animator.tick();
+        }
 
-//        if (isJumping()) {
-//            jumpCooldown = JUMP_COOLDOWN;
-//            setJumping(false);
-//        } else {
-//            jumpCooldown = Math.max(0, jumpCooldown - 1);
-//            setJumping(false);
-//        }
+        faceRight = getVX() > 0;
 
-        if (isShooting()) {
-            shootCooldown = SHOOT_COOLDOWN;
+        if (isJumping()) {
+            jumpCooldown = JUMP_COOLDOWN;
         } else {
-            shootCooldown = Math.max(0, shootCooldown - 1);
+            jumpCooldown = Math.max(0, jumpCooldown - 1);
         }
 
         super.update(dt);
@@ -518,13 +425,11 @@ public class AstronautModel extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? -1.0f : 1.0f;
-        if (isActive()) {
-            Color color = isPlayerOne ? p1glow : p2glow;
-            canvas.draw(glowTexture, color, glowOrigin.x, glowOrigin.y, (getX()) * drawScale.x,
-                    (getY()) * drawScale.y, getAngle(), effect * GLOW_SCALE, GLOW_SCALE);
+        if (isFilm) {
+            canvas.draw(animator, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
         }
-        canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,
-                getY()*drawScale.y,getAngle(),effect,1.0f);
+
+        canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 
     /**

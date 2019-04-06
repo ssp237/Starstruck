@@ -86,5 +86,16 @@ public class Planet extends WheelObstacle {
 
     }
 
+    public String toString() {
+        String out = "Planet with {";
+
+        out += "pos: " + getPosition() + ", ";
+        out += "radius: " + getRadius() + ", ";
+        out += "mass: " + mass;
+        out += "}";
+
+        return out;
+    }
+
 
 }

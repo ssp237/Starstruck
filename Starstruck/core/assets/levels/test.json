@@ -1,34 +1,220 @@
 {
+  "physicsSize":    [38.4,21.6],
+  "graphicSize":    [ 1228, 691],
+  "background": {
+    "texture": "background"
+  },
+  "gravity":  	  0,
   "level" : 1,
-  "dude 1":
-    {
-      "x": 2.5,
-      "y": 5
-    },
-  "dude 2":
-    {
-      "x": 3.5,
-      "y": 6.5
-    },
+  "astronaut 1": {
+    "pos":           [ 2.5,  5.0],
+    "size":          [ 0.7, 0.95],
+    "bodytype":      "dynamic",
+    "density":        1.0,
+    "friction":       0.0,
+    "restitution":    0.0,
+    "force": 		 20.0,
+    "damping": 		 10.0,
+    "maxspeed": 	  2.8,
+    "jumppulse": 	  6,
+    "jumplimit": 	 30,
+    "jumpsound":	 "jump",
+    "texture":       "astronaut 1",
+    "glow texture":  "glow",
+    "debugcolor":    "orange",
+    "debugopacity":  192,
+    "sensorsize": 	 [ 0.183, 0.05 ],
+    "sensorname": 	 "dudeGroundSensor",
+    "sensorcolor":   "red",
+    "sensoropacity": 192,
+  },
+  "astronaut 2": {
+    "pos":           [ 3.5,  6.5],
+    "size":          [ 0.7, 0.95],
+    "bodytype":      "dynamic",
+    "density":        1.0,
+    "friction":       0.0,
+    "restitution":    0.0,
+    "force": 		 20.0,
+    "damping": 		 10.0,
+    "maxspeed": 	  2.8,
+    "jumppulse": 	  6,
+    "jumplimit": 	 30,
+    "jumpsound":	 "jump",
+    "texture":       "astronaut 2",
+    "glow texture":  "glow",
+    "debugcolor":    "white",
+    "debugopacity":  192,
+    "sensorsize": 	 [ 0.183, 0.05 ],
+    "sensorname": 	 "dudeGroundSensor",
+    "sensorcolor":   "red",
+    "sensoropacity": 192,
+  },
+  "rope": {
+    "texture": "rope",
+    "rope width": 8.0
+  },
   "planets": [
     {
-      "x": 7,
-      "y": 7,
-      "mass": 5000,
+      "x": 1,
+      "y": 1,
+      "radius": 4,
+      "mass": 1500,
+      "grange": 4,
+      "sprite": 0
+    },
+    {
+      "x": 6,
+      "y": 12,
+      "radius": 2.5,
+      "mass": 1700,
       "grange": 2,
       "sprite": 0
+    },
+    {
+      "x": 15,
+      "y": 17,
+      "radius": 3,
+      "mass": 1700,
+      "grange": 2.5,
+      "sprite": 1
+    },
+    {
+      "x": 26,
+      "y": 8,
+      "radius": 3,
+      "mass": 1700,
+      "grange": 3,
+      "sprite": 2
+    },
+    {
+      "x": 30,
+      "y": 15,
+      "radius": 1.5,
+      "mass": 1000,
+      "grange": 2,
+      "sprite": 4
+    },
+    {
+      "x": 37,
+      "y": 5,
+      "radius": 3,
+      "mass": 1400,
+      "grange": 2,
+      "sprite": 5
+    },
+    {
+      "x": 48,
+      "y": 17,
+      "radius": 3.5,
+      "mass": 1700,
+      "grange": 3,
+      "sprite": 0
+    },
+    {
+      "x": 52,
+      "y": 6,
+      "radius": 2.5,
+      "mass": 1700,
+      "grange": 2,
+      "sprite": 3
+    },
+    {
+      "x": 8,
+      "y": 20,
+      "radius": 2.5,
+      "mass": 1700,
+      "grange": 2,
+      "sprite": 3
     }
   ],
   "anchors": [
     {
-      "x": 7,
-      "y": 15
+      "x": 32.5,
+      "y": 17,
+      "texture": "anchor"
+    },
+    {
+      "x": 37,
+      "y": 18,
+      "texture": "anchor"
+    },
+    {
+      "x": 35.5,
+      "y": 13.5,
+      "texture": "anchor"
+    },
+    {
+      "x": 14,
+      "y": 2.75,
+      "texture": "anchor"
+    },
+    {
+      "x": 18.5,
+      "y": 3,
+      "texture": "anchor"
+    },
+    {
+      "x": 16,
+      "y": 5,
+      "texture": "anchor"
+    },
+    {
+      "x": 17,
+      "y": 1,
+      "texture": "anchor"
+    },
+    {
+      "x": 8.5,
+      "y": 16,
+      "texture": "anchor"
+    },
+    {
+      "x": 9,
+      "y": 14,
+      "texture": "anchor"
+    },
+    {
+      "x": 10,
+      "y": 16,
+      "texture": "anchor"
     }
   ],
   "stars": [
     {
-      "x": 5,
-      "y": 14
+      "x": 35,
+      "y": 15.75,
+      "texture": "star"
+    },
+    {
+      "x": 35.5,
+      "y": 16.5,
+      "texture": "star"
+    },
+    {
+      "x": 35.25,
+      "y": 15,
+      "texture": "star"
+    },
+    {
+      "x": 16,
+      "y": 4,
+      "texture": "star"
+    },
+    {
+      "x": 17,
+      "y": 3,
+      "texture": "star"
+    },
+    {
+      "x": 16.5,
+      "y": 2.5,
+      "texture": "star"
+    },
+    {
+      "x": 9,
+      "y": 15,
+      "texture": "star"
     }
   ]
 }

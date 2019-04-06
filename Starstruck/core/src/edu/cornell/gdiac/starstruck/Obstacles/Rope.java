@@ -22,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.joints.*;
 import java.util.*;
 
 import edu.cornell.gdiac.starstruck.*;
+import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 
 /**
  * A bridge with planks connected by revolute joints.

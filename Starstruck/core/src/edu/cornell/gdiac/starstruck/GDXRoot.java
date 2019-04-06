@@ -14,11 +14,7 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.assets.*;
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.graphics.g2d.freetype.*;
-import com.badlogic.gdx.assets.loaders.*;
-import com.badlogic.gdx.assets.loaders.resolvers.*;
+import edu.cornell.gdiac.util.JsonAssetManager;
 import edu.cornell.gdiac.util.ScreenListener;
 
 /**
@@ -31,8 +27,6 @@ import edu.cornell.gdiac.util.ScreenListener;
  * and you would draw it as a root class in an architecture specification.
  */
 public class GDXRoot extends Game implements ScreenListener {
-	/** AssetManager to load game assets (textures, sounds, etc.) */
-	private AssetManager manager;
 	/** Drawing context to display graphics (VIEW CLASS) */
 	private GameCanvas canvas;
 	/** Avatar mode for the asset loading screen (CONTROLLER CLASS) */
@@ -50,12 +44,12 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public GDXRoot() {
 		// Start loading with the asset manager
-		manager = new AssetManager();
-
-		// Add font support to the asset manager
-		FileHandleResolver resolver = new InternalFileHandleResolver();
-		manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
-		manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
+//		manager = new AssetManager();
+//
+//		// Add font support to the asset manager
+//		FileHandleResolver resolver = new InternalFileHandleResolver();
+//		manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
+//		manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
 	}
 
 	/**
@@ -66,15 +60,15 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void create() {
 		canvas  = new GameCanvas();
-		loading = new LoadingMode(canvas,manager,1);
+		loading = new LoadingMode(canvas,1);
 
 		// Initialize the three game worlds
-		controllers = new WorldController[1];
+		controllers = new WorldController[2];
 //		controllers[0] = new RocketController();
 		controllers[0] = new GameController();
-//		controllers[2] = new RagdollController();
+		controllers[1] = new EditController();
 		for(int ii = 0; ii < controllers.length; ii++) {
-			controllers[ii].preLoadContent(manager);
+			controllers[ii].preLoadContent(JsonAssetManager.getInstance());
 		}
 		current = 0;
 		loading.setScreenListener(this);
@@ -90,7 +84,7 @@ public class GDXRoot extends Game implements ScreenListener {
 		// Call dispose on our children
 		setScreen(null);
 		for(int ii = 0; ii < controllers.length; ii++) {
-			controllers[ii].unloadContent(manager);
+			controllers[ii].unloadContent(JsonAssetManager.getInstance());
 			controllers[ii].dispose();
 		}
 
@@ -98,8 +92,8 @@ public class GDXRoot extends Game implements ScreenListener {
 		canvas = null;
 
 		// Unload all of the resources
-		manager.clear();
-		manager.dispose();
+		JsonAssetManager.getInstance().clear();
+		JsonAssetManager.getInstance().dispose();
 		super.dispose();
 	}
 
@@ -128,7 +122,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void exitScreen(Screen screen, int exitCode) {
 		if (screen == loading) {
 			for(int ii = 0; ii < controllers.length; ii++) {
-				controllers[ii].loadContent(manager);
+				controllers[ii].loadContent(JsonAssetManager.getInstance());
 				controllers[ii].setScreenListener(this);
 				controllers[ii].setCanvas(canvas);
 			}
