@@ -89,6 +89,10 @@ public class InputController {
     private boolean shiftPressed;
     private boolean shiftPrevious;
 
+    /** Mouse's current position*/
+    private float x_pos;
+    private float y_pos;
+
     /** How much did we move horizontally? */
     private float horizontal;
     /** How much did we move vertically? */
@@ -242,8 +246,15 @@ public class InputController {
      * @return true if the player wants to go to the previous level.
      */
     public boolean didRetreat() {
-        return prevPressed && !prevPrevious;
+        return prevPressed && !prevPrevious && shiftPressed;
     }
+
+    /**
+     * Returns true if the player pressed 'P'
+     *
+     * @return if the player pressed 'P'.
+     */
+    public boolean didP() { return prevPressed && !prevPrevious;}
 
     /**
      * Returns true if the player wants to go toggle the debug mode.
@@ -280,6 +291,10 @@ public class InputController {
     public boolean didD() {
         return dPressed;
     }
+
+    public float xPos() {return Gdx.input.getX();};
+
+    public float yPos() {return Gdx.input.getY();};
 
     /**
      * Creates a new input controller
