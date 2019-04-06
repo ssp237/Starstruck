@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.starstruck;
+package edu.cornell.gdiac.starstruck.Models;
 
 //import edu.cornell.gdiac.physics.*;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;

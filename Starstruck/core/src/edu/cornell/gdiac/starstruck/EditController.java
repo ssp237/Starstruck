@@ -1,18 +1,61 @@
 package edu.cornell.gdiac.starstruck;
 
-import com.badlogic.gdx.physics.box2d.Contact;
-import com.badlogic.gdx.physics.box2d.ContactImpulse;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.*;
+import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
+import edu.cornell.gdiac.starstruck.Obstacles.Obstacle;
+import edu.cornell.gdiac.starstruck.Obstacles.Planet;
 
 public class EditController extends WorldController implements ContactListener {
 
+    /** Current obstacle */
+    private Obstacle current;
+    /** VectorWorld */
+    private VectorWorld vectorWorld;
+
+    public EditController() {
+        super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
+//        jsonReader = new JsonReader();
+//        level = new LevelModel();
+        setDebug(false);
+        setComplete(false);
+        setFailure(false);
+        world.setContactListener(this);
+//        sensorFixtures = new ObjectSet<Fixture>();
+        current = null;
+        vectorWorld = new VectorWorld();
+    }
+
     public void reset() {
+        world = new World(new Vector2(0,0), false);
+        world.setContactListener(this);
+
+        setComplete(false);
+        setFailure(false);
 
     }
 
     public void update(float dt) {
+        InputController input = InputController.getInstance();
+        if (input.didP()) {
+            current = new Planet(input.xPos()/scale.x, -(input.yPos()/scale.y) + bounds.height, 1, world, scale);
+        }
 
+        if (current != null) {
+            current.setPosition(input.xPos()/scale.x, -(input.yPos()/scale.y) + bounds.height);
+        }
+
+    }
+
+    public void draw(float dt) {
+        canvas.clear();
+        canvas.begin();
+
+        if (current != null) {
+            current.draw(canvas);
+        }
+
+        canvas.end();
     }
 
     /**

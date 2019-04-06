@@ -26,7 +26,7 @@ import edu.cornell.gdiac.starstruck.Models.Enemy;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.FilmStrip;
-//import edu.cornell.gdiac.starstruck.PlayerModel;
+//import edu.cornell.gdiac.starstruck.Models.PlayerModel;
 
 /**
  * Gameplay specific controller for the platformer game.  
