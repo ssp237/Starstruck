@@ -46,7 +46,7 @@ public class Rope extends ComplexObstacle {
     private WheelObstacle finish = null;
 
     // Dimension information
-    /** The size of the entire bridge -- PRETTY SURE THIS IS USELESS FOR OUR PURPOSES*/
+    /** The size of the entire bridge */
     protected Vector2 dimension;
     /** The size of a single plank */
     protected Vector2 planksize;
@@ -58,6 +58,9 @@ public class Rope extends ComplexObstacle {
     protected float length;
     /** Number of links in the rope */
     private int nLinks;
+    /** Original number of links in the rope */
+    private int initLinks;
+    /** List of planks that make up this rope */
 
     private AstronautModel avatar;
     private AstronautModel avatar2;
@@ -131,6 +134,7 @@ public class Rope extends ComplexObstacle {
         }
 
         this.length = nLinks * linksize + nLinks * spacing;
+        initLinks = nLinks;
     }
 
     /**
@@ -229,6 +233,8 @@ public class Rope extends ComplexObstacle {
 
 
     public void newPairPlank(World world, Rope rope) {
+//        System.out.println(bodies.size);
+//        System.out.println(planks.size());
 
         //need to remove last plank and replace it with two new ones
         removeLastJoint(rope);
@@ -286,6 +292,58 @@ public class Rope extends ComplexObstacle {
         joints.add(joint);
 
         length = nLinks * linksize + nLinks * spacing;
+    }
+
+    public void extendRope(AstronautModel avatar, World world) {
+//        System.out.println(bodies.size);
+//        System.out.println(planks.size());
+
+        Joint lastJoint = joints.get(joints.size-1);
+        BoxObstacle lastPlank = (BoxObstacle)bodies.get(bodies.size-1);
+
+        // Destroy the last joint
+        if (!joints.removeValue(lastJoint, true)) System.out.println("lastJoint wasn't removed from joints");
+        world.destroyJoint(lastJoint);
+
+        //Calculate position of end of lastPlank
+        float angle = lastPlank.getAngle();
+        Vector2 endPoint = new Vector2(1, (float)Math.tan(angle));
+        endPoint.setLength(linksize/2);
+
+        //Make the new plank
+        Vector2 pos = new Vector2(lastPlank.getPosition().x + endPoint.x + linksize/2,
+                lastPlank.getPosition().y + endPoint.y);
+        BoxObstacle plank = new BoxObstacle(pos.x, pos.y, planksize.x, planksize.y);
+        plank.setName(PLANK_NAME+bodies.size);
+        plank.setDensity(BASIC_DENSITY);
+        bodies.add(plank);
+        plank.activatePhysics(world);
+        //Update nlinks and length
+        nLinks++;
+        this.length = nLinks * linksize + nLinks * spacing;
+
+        Vector2 anchor1 = new Vector2(endPoint);
+        Vector2 anchor2 = new Vector2(-linksize/2, 0);
+        RevoluteJointDef jointDef = new RevoluteJointDef();
+
+        //Connect new plank to last plank
+        jointDef.bodyA = lastPlank.getBody();
+        jointDef.bodyB = plank.getBody();
+        jointDef.localAnchorA.set(anchor1);
+        jointDef.localAnchorB.set(anchor2);
+        jointDef.collideConnected = false;
+        Joint joint = world.createJoint(jointDef);
+        joints.add(joint);
+
+        //Connect new plank to astronaut
+        anchor1.x = linksize/2; anchor1.y = 0;
+        anchor2.x = 0; anchor2.y = 0;
+        jointDef.bodyA = plank.getBody();
+        jointDef.bodyB = avatar2.getBody();
+        jointDef.localAnchorA.set(anchor1);
+        jointDef.localAnchorB.set(anchor2);
+        joint = world.createJoint(jointDef);
+        joints.add(joint);
     }
 
     /**

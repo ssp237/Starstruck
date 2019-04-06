@@ -290,6 +290,7 @@ public class GameController extends WorldController implements ContactListener {
             {18.5f, 3f},
             {16f, 5f},
             {17f, 1f},
+            {4f, 8f},
 //            {7f, 15f},
 //            {3f, 16f},
 //            {4f, 11f},
@@ -841,6 +842,7 @@ public class GameController extends WorldController implements ContactListener {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+        print(rope.nLinks());
         updateCam();
 
         if (isFailure()) return;
@@ -866,8 +868,16 @@ public class GameController extends WorldController implements ContactListener {
         avatar2.setFixedRotation(false);
 
         updateAnchor(avatar, avatar2);
-        if (avatar.isAnchored()) avatar.setFixedRotation(true);
-        if (avatar2.isAnchored()) avatar2.setFixedRotation(true);
+        if (avatar.isAnchored()) {
+            avatar.setFixedRotation(true);
+            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength())
+                rope.extendRope(avatar, world);
+        }
+        if (avatar2.isAnchored()) {
+            avatar2.setFixedRotation(true);
+            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength())
+                rope.extendRope(avatar2, world);
+        }
 
         if (avatar.isActive()) {
             updateHelp(avatar, avatar2, contactDir, contactDir2, (Planet) curPlanet, (Planet) curPlanet2, lastPoint, lastPoint2);
@@ -928,7 +938,7 @@ public class GameController extends WorldController implements ContactListener {
 
 
 
-            rope.newPairPlank(world, rope);
+//            rope.newPairPlank(world, rope);
 
 
 
