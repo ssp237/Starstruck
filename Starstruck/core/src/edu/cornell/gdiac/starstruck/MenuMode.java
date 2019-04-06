@@ -22,16 +22,24 @@
  */
 package edu.cornell.gdiac.starstruck;
 
-import com.badlogic.gdx.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.assets.*;
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.controllers.PovDirection;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.controllers.*;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector3;
+import edu.cornell.gdiac.util.JsonAssetManager;
 import edu.cornell.gdiac.util.ScreenListener;
-import edu.cornell.gdiac.util.*;
+import edu.cornell.gdiac.util.SoundController;
 
 import java.util.LinkedList;
 
@@ -48,11 +56,14 @@ import java.util.LinkedList;
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
-public class LoadingMode implements Screen, InputProcessor, ControllerListener {
+public class MenuMode implements Screen, InputProcessor, ControllerListener {
     // Textures necessary to support the loading screen
     private static final String BACKGROUND_FILE = "shared/loading.png";
     private static final String PROGRESS_FILE = "shared/progressbar.png";
     private static final String PLAY_BTN_FILE = "shared/play.png";
+    private static final String LOADING_AUDIO_FILE = "audio/loading_screen.mp3";
+
+    private static final float VOLUME = 0.3f;
 
     LinkedList<String> loaded;
 
@@ -62,6 +73,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     private Texture playButton;
     /** Texture atlas to support a progress bar */
     private Texture statusBar;
+    /** Loading audio */
+    private Sound sound;
 
     // statusBar is a "texture atlas." Break it up into parts.
     /** Left cap to the status background (grey region) */
@@ -70,11 +83,11 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     private TextureRegion statusBkgMiddle;
     /** Right cap to the status background (grey region) */
     private TextureRegion statusBkgRight;
-    /** Left cap to the status forground (colored region) */
+    /** Left cap to the status foreground (colored region) */
     private TextureRegion statusFrgLeft;
-    /** Middle portion of the status forground (colored region) */
+    /** Middle portion of the status foreground (colored region) */
     private TextureRegion statusFrgMiddle;
-    /** Right cap to the status forground (colored region) */
+    /** Right cap to the status foreground (colored region) */
     private TextureRegion statusFrgRight;
 
     /** Default budget for asset loader (do nothing but load 60 fps) */
@@ -171,7 +184,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * Creates a LoadingMode with the default budget, size and position.
      *
      */
-    public LoadingMode(GameCanvas canvas) {
+    public MenuMode(GameCanvas canvas) {
         this(canvas,DEFAULT_BUDGET);
     }
 
@@ -184,7 +197,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * do something else.  This is how game companies animate their loading screens.
      * @param millis The loading budget in milliseconds
      */
-    public LoadingMode(GameCanvas canvas, int millis) {
+    public MenuMode(GameCanvas canvas, int millis) {
         this.manager = JsonAssetManager.getInstance();
         this.canvas  = canvas;
         budget = millis;
@@ -267,12 +280,12 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
             this.progress = manager.getProgress();
             if (progress >= 1.0f) {
                 this.progress = 1.0f;
-                pressState = 2;
-//                playButton = new Texture(PLAY_BTN_FILE);
-//                playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
+                playButton = new Texture(PLAY_BTN_FILE);
+                playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
             }
         }
+        SoundController.getInstance().play(LOADING_AUDIO_FILE,LOADING_AUDIO_FILE,true,VOLUME);
+        SoundController.getInstance().update();
 
 
     }
@@ -287,13 +300,13 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     private void draw() {
         canvas.begin();
         canvas.draw(background, 0, 0, canvas.getWidth(), canvas.getHeight());
-//        if (playButton == null) {
-//            drawProgress(canvas);
-//        } else {
-//            Color tint = (pressState == 1 ? Color.GRAY: Color.WHITE);
-//            canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
-//                    centerX, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
-//        }
+        if (playButton == null) {
+            drawProgress(canvas);
+        } else {
+            Color tint = (pressState == 1 ? Color.GRAY: Color.WHITE);
+            canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
+                    centerX, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
+        }
         canvas.end();
     }
 

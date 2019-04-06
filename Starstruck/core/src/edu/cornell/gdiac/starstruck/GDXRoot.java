@@ -31,6 +31,10 @@ public class GDXRoot extends Game implements ScreenListener {
 	private GameCanvas canvas;
 	/** Avatar mode for the asset loading screen (CONTROLLER CLASS) */
 	private LoadingMode loading;
+	/** Avatar mode for the level select (CONTROLLER CLASS) */
+	private LevelSelect levelselect;
+	/** Avatar mode for the asset loading screen (CONTROLLER CLASS) */
+	private MenuMode menu;
 	/** Avatar mode for the the game proper (CONTROLLER CLASS) */
 	private int current;
 	/** List of all WorldControllers */
@@ -61,12 +65,13 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void create() {
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,1);
+		menu = new MenuMode(canvas, 1);
 
 		// Initialize the three game worlds
-		controllers = new WorldController[2];
-//		controllers[0] = new RocketController();
+		controllers = new WorldController[3];
 		controllers[0] = new GameController();
 		controllers[1] = new EditController();
+		controllers[2] = new LevelSelect();
 		for(int ii = 0; ii < controllers.length; ii++) {
 			controllers[ii].preLoadContent(JsonAssetManager.getInstance());
 		}
@@ -121,7 +126,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	 */
 	public void exitScreen(Screen screen, int exitCode) {
 		if (screen == loading) {
-			for(int ii = 0; ii < controllers.length; ii++) {
+			for (int ii = 0; ii < controllers.length; ii++) {
 				controllers[ii].loadContent(JsonAssetManager.getInstance());
 				controllers[ii].setScreenListener(this);
 				controllers[ii].setCanvas(canvas);
@@ -131,6 +136,9 @@ public class GDXRoot extends Game implements ScreenListener {
 
 			loading.dispose();
 			loading = null;
+		} else if (screen == menu) {
+			controllers[current].reset();
+			setScreen(controllers[current]);
 		} else if (exitCode == WorldController.EXIT_NEXT) {
 			current = (current+1) % controllers.length;
 			controllers[current].reset();
