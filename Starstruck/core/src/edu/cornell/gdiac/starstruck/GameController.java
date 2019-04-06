@@ -916,7 +916,8 @@ public class GameController extends WorldController implements ContactListener {
             createBullet();
         }
 
-        if (ropeExtend) {
+        //if (ropeExtend) { //temporarily commented out just to test if rope extends without even being anchored
+
 //            if (progress > 0) {
 //                float span = progress*(width-2*scale*PROGRESS_CAP)/2.0f;
 //                canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP+span, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
@@ -927,7 +928,7 @@ public class GameController extends WorldController implements ContactListener {
 
 
 
-
+            rope.newPairPlank(world, rope);
 
 
 
@@ -940,7 +941,7 @@ public class GameController extends WorldController implements ContactListener {
 //            rope = new Rope (avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH + extendInt, dwidth, dheight, avatar, avatar2);
 //            objects.add(2, rope); //this is also wrong then (match index above)
             //addObject(rope);
-         }
+         //}
 //            float ropeX = rope.getPosition().x;
 //            float ropeY = rope.getPosition().y;
 
