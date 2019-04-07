@@ -319,6 +319,8 @@ public class LevelModel {
             case PLANET: planets.addPlanet((Planet) obj, vectorWorld); break;
             case ANCHOR: activate(obj); break;
             case STAR: activate(obj); break;
+            case PLAYER: addPlayer((AstronautModel) obj); break;
+            case ROPE: activate(obj); break;
         }
     }
 
@@ -328,6 +330,19 @@ public class LevelModel {
             case ANCHOR: deactivate(obj); break;
             case STAR: deactivate(obj); break;
         }
+    }
+
+    /**
+     * Handles case of adding a player
+     * @param player Player to be added
+     */
+    private void addPlayer(AstronautModel player) {
+        if (player.getName().contains("2")) {
+            player2 = player;
+        } else {
+            player1 = player;
+        }
+        activate(player);
     }
 
     /**

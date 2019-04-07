@@ -95,7 +95,7 @@ public class AstronautModel extends CapsuleObstacle {
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
     /** Force of gravity */
-    protected Vector2 gravity;
+    public Vector2 gravity;
     /** Direction to apply force on planet */
     private Vector2 planetMove;
     /** Indicates whether astronaut is on planet */
@@ -693,6 +693,15 @@ public class AstronautModel extends CapsuleObstacle {
         }
 
         super.update(dt);
+    }
+
+    public String toString() {
+        String out = "Player with {";
+
+        out += "pos: " + getPosition();
+        out += "}";
+
+        return out;
     }
 
     /**
