@@ -18,10 +18,17 @@ public class EditController extends WorldController implements ContactListener {
     /** Reference to the game level */
     protected LevelModel level;
 
+    /** References to players and rope */
+    private AstronautModel player1;
+    private AstronautModel player2;
+    private Rope rope;
+
     /** Initial position of player 1*/
     private static Vector2 P1_POS = new Vector2(2.5f, 5.0f);
     /** Initial position of player 2*/
     private static Vector2 P2_POS = new Vector2(3.5f, 6.5f);
+    /** The width of the rope bridge */
+    private static final float  BRIDGE_WIDTH = 6.0f;
 
     public EditController() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
@@ -59,7 +66,7 @@ public class EditController extends WorldController implements ContactListener {
         texture = JsonAssetManager.getInstance().getEntry("astronaut 1", TextureRegion.class);
         dwidth = texture.getRegionWidth()/scale.x;
         dheight = texture.getRegionHeight()/scale.y;
-        AstronautModel player1 = new AstronautModel(P1_POS.x, P1_POS.y, dwidth, dheight, true, true);
+        player1 = new AstronautModel(P1_POS.x, P1_POS.y, dwidth, dheight, true, true);
         player1.setDrawScale(scale);
         player1.setTexture(texture);
         player1.setGlow(JsonAssetManager.getInstance().getEntry("glow", TextureRegion.class));
@@ -69,7 +76,7 @@ public class EditController extends WorldController implements ContactListener {
         texture = JsonAssetManager.getInstance().getEntry("astronaut 2", TextureRegion.class);
         dwidth = texture.getRegionWidth()/scale.x;
         dheight = texture.getRegionHeight()/scale.y;
-        AstronautModel player2 = new AstronautModel(P2_POS.x, P2_POS.y, dwidth, dheight, false, false);
+        player2 = new AstronautModel(P2_POS.x, P2_POS.y, dwidth, dheight, false, false);
         player2.setDrawScale(scale);
         player2.setTexture(texture);
         player2.setGlow(JsonAssetManager.getInstance().getEntry("glow", TextureRegion.class));
@@ -77,6 +84,16 @@ public class EditController extends WorldController implements ContactListener {
         player2.setName("avatar 2");
 
         level.add(player1); level.add(player2);
+
+        texture = JsonAssetManager.getInstance().getEntry("rope", TextureRegion.class);
+        dwidth = texture.getRegionWidth()/scale.x;
+        dheight = texture.getRegionHeight()/scale.y;
+        rope = new Rope(player1.getX() + 0.5f, player1.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, player1, player2);
+        rope.setTexture(texture);
+        rope.setDrawScale(scale);
+        rope.setName("rope");
+        level.add(rope);
+
     }
 
     /**
@@ -105,12 +122,20 @@ public class EditController extends WorldController implements ContactListener {
     private void updateClick() {
         InputController input = InputController.getInstance();
         if (current != null) {
+            if (current == player1 || current == player2) {
+                player1.setBodyType(BodyDef.BodyType.StaticBody);
+                player2.setBodyType(BodyDef.BodyType.StaticBody);
+            }
             current = null;
         }
         else {
             for (Obstacle obj : level.getAllObjects()) {
                 if (obj.containsPoint(input.getCrossHair())) {
                     current = obj;
+                    if (current == player1 || current == player2) {
+                        player1.setBodyType(BodyDef.BodyType.DynamicBody);
+                        player2.setBodyType(BodyDef.BodyType.DynamicBody);
+                    }
                 }
             }
         }

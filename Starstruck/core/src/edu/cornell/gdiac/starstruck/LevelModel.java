@@ -320,7 +320,7 @@ public class LevelModel {
             case ANCHOR: activate(obj); break;
             case STAR: activate(obj); break;
             case PLAYER: addPlayer((AstronautModel) obj); break;
-            case ROPE: activate(obj); break;
+            case ROPE: objects.add(0, obj); obj.activatePhysics(world); break;
         }
     }
 
