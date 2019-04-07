@@ -307,6 +307,7 @@ public class InputController {
 //        xbox = new XBox360Controller(0);
         crosshair = new Vector2();
         crosscache = new Vector2();
+
     }
 
     /**

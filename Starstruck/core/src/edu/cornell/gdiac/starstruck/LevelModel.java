@@ -315,7 +315,18 @@ public class LevelModel {
      * @param obj The obstacle to be added to this LevelModel
      */
     public void add(Obstacle obj) {
+        switch (obj.getType()) {
+            case PLANET: add((Planet) obj);
+        }
 
+    }
+
+    /**
+     * Add the specified planet to this LevelModel
+     * @param p The planet to be added to this LevelModel.
+     */
+    private void add(Planet p) {
+        planets.addPlanet(p, vectorWorld);
     }
 
     /**
