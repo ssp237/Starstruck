@@ -130,4 +130,8 @@ public class WheelObstacle extends SimpleObstacle {
     }
 
     public ObstacleType getType() { return ObstacleType.WHEEL;}
+
+    public boolean containsPoint(Vector2 point) {
+        return dist(point, center) < getRadius();
+    }
 }

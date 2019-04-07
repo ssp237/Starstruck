@@ -257,4 +257,8 @@ public class Rope extends ComplexObstacle {
     }
 
     public ObstacleType getType() { return ObstacleType.ROPE;}
+
+    public boolean containsPoint(Vector2 point) {
+        return false; //TODO Change later
+    }
 }

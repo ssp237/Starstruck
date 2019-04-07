@@ -954,6 +954,16 @@ public abstract class Obstacle {
         drawScale = new Vector2(1,1);
     }
 
+    /**
+     * Distance between two points
+     * @param p1 Point 1
+     * @param p2 Point 2
+     * @return Distance between point 1 and 2
+     */
+    public static float dist(Vector2 p1, Vector2 p2) {
+        return (float) Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y-p2.y) * (p1.y-p2.y));
+    }
+
     /// Abstract Methods
     /**
      * Creates the physics Body(s) for this object, adding them to the world.
@@ -1004,6 +1014,17 @@ public abstract class Obstacle {
      */
     public abstract void drawDebug(GameCanvas canvas);
 
+    /**
+     * Returns the type of this obstacle
+     * @return The type of this obstacle
+     */
     public abstract ObstacleType getType();
+
+    /**
+     * Returns if the given point is (approximately) in this obstacle.
+     * @param point The point to test
+     * @return If the point is (approximately) within this obstacle.
+     */
+    public abstract boolean containsPoint(Vector2 point);
 
 }

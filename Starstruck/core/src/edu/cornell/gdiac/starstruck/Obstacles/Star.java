@@ -146,4 +146,8 @@ public class Star extends ComplexObstacle {
     }
 
     public ObstacleType getType() { return ObstacleType.STAR;}
+
+    public boolean containsPoint(Vector2 point) {
+        return barrier.containsPoint(point);
+    }
 }

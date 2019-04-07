@@ -144,4 +144,8 @@ public class Anchor extends ComplexObstacle {
     }
 
     public ObstacleType getType() { return ObstacleType.ANCHOR;}
+
+    public boolean containsPoint(Vector2 point) {
+        return barrier.containsPoint(point);
+    }
 }
