@@ -255,4 +255,6 @@ public class Rope extends ComplexObstacle {
         }
         return ((SimpleObstacle)bodies.get(0)).getTexture();
     }
+
+    public ObstacleType getType() { return ObstacleType.ROPE;}
 }

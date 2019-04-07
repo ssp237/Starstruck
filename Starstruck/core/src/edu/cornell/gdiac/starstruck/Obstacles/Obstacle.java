@@ -1004,4 +1004,6 @@ public abstract class Obstacle {
      */
     public abstract void drawDebug(GameCanvas canvas);
 
+    public abstract ObstacleType getType();
+
 }

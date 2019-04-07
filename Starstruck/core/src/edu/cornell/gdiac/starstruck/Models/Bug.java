@@ -3,6 +3,7 @@ package edu.cornell.gdiac.starstruck.Models;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.starstruck.GameCanvas;
+import edu.cornell.gdiac.starstruck.Obstacles.ObstacleType;
 import edu.cornell.gdiac.util.FilmStrip;
 
 public class Bug extends Enemy {
@@ -53,4 +54,5 @@ public class Bug extends Enemy {
         canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 
+    public ObstacleType getType() { return ObstacleType.BUG;}
 }

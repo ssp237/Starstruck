@@ -292,9 +292,9 @@ public class InputController {
         return dPressed;
     }
 
-    public float xPos() {return Gdx.input.getX();};
+    public float xPos() {return Gdx.input.getX();}
 
-    public float yPos() {return Gdx.input.getY();};
+    public float yPos() {return Gdx.input.getY();}
 
     /**
      * Creates a new input controller

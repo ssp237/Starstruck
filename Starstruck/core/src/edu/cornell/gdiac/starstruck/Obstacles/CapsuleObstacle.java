@@ -536,4 +536,6 @@ public class CapsuleObstacle extends SimpleObstacle {
         }
     }
 
+    public ObstacleType getType() { return ObstacleType.CAPSULE;}
+
 }

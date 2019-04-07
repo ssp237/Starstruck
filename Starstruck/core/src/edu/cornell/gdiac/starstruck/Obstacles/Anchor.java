@@ -142,4 +142,6 @@ public class Anchor extends ComplexObstacle {
     public TextureRegion getTexture() {
         return barrier.getTexture();
     }
+
+    public ObstacleType getType() { return ObstacleType.ANCHOR;}
 }

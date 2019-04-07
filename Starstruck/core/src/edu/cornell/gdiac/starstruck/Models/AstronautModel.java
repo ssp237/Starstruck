@@ -722,4 +722,6 @@ public class AstronautModel extends CapsuleObstacle {
         super.drawDebug(canvas);
         if (sensorColor != null) canvas.drawPhysics(sensorShape,sensorColor,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
     }
+
+    public ObstacleType getType() { return ObstacleType.PLAYER;}
 }

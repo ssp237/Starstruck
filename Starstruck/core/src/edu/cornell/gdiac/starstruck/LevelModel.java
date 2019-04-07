@@ -218,19 +218,6 @@ public class LevelModel {
         scale.x = gSize[0]/pSize[0];
         scale.y = gSize[1]/pSize[1];
 
-        // Create players
-//        player1 = new AstronautModel(true);
-//        player1.initialize(levelFormat.get("astronaut 1"));
-//        player1.setDrawScale(scale);
-//        player1.setName("avatar1");
-//        activate(player1);
-//
-//        player2 = new AstronautModel(false);
-//        player2.initialize(levelFormat.get("astronaut 2"));
-//        player2.setDrawScale(scale);
-//        player1.setName("avatar2");
-//        activate(player2);
-
         player1 = createAstro(levelFormat.get("astronaut 1"), true);
         player1.setName("avatar");
         player1.activatePhysics(world);
@@ -266,17 +253,6 @@ public class LevelModel {
             planet = planet.next();
         }
 
-        //Create planets
-//        float[][] planetSpecs = null;
-//        JsonValue planet = levelFormat.get("planets").child();
-//        while(planet != null) {
-//            planetSpecs = addRow(planetSpecs, planetSpec(planet));
-//            planet = planet.next;
-//        }
-//
-//        planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
-//        planets.addPlanets(planetSpecs, world, vectorWorld);
-
         //add stars
         int i = 0;
         JsonValue starVals = levelFormat.get("stars").child();
@@ -298,48 +274,6 @@ public class LevelModel {
         }
     }
 
-    /**
-     * Return a new array that is the result of adding newRow as the last row of old.
-     * @param old The 2D array to be added to
-     * @param newRow The new row to add to old
-     * @return The result of adding newRow to old.
-     */
-    private float[][] addRow(float[][] old, float[] newRow) {
-        if (old == null) {
-            float[][] out = new float[1][newRow.length];
-            out[0] = newRow;
-            return out;
-        }
-        int n = old[0].length; int m = old.length;
-        float[][] out = new float[m+1][n];
-
-        for (int i = 0; i < m; i++) {
-            out[i] = old[i];
-        }
-
-        out[m] = newRow;
-        return out;
-    }
-
-    /**
-     * Parse a JSON pertaining to 1 planet into the relevant data entries.
-     * @param json A JsonValue containing data relating to one planet.
-     * @return A vector describing a planet where 1st col is x, 2nd is y, 3rd is radius, 4th is mass, 6th is sprite to
-     *          use and 5th is gravitational pull range.
-     */
-    private float[] planetSpec(JsonValue json) {
-        float[] out = new float[6];
-
-        out[0] = json.get("x").asFloat();
-        out[1] = json.get("y").asFloat();
-        out[2] = json.get("radius").asFloat();
-        out[3] = json.get("mass").asFloat();
-        out[4] = json.get("grange").asFloat();
-        out[5] = json.get("sprite").asFloat();
-
-        return out;
-    }
-
 
     public void dispose() {
         for(Obstacle obj : objects) {
@@ -356,6 +290,10 @@ public class LevelModel {
         objects.clear();
         planets.clear();
         vectorWorld = new VectorWorld();
+    }
+
+    public void add(Obstacle obj) {
+
     }
 
     /**

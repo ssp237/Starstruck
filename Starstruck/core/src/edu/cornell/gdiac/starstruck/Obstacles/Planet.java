@@ -167,5 +167,6 @@ public class Planet extends WheelObstacle {
         return out;
     }
 
+    public ObstacleType getType() { return ObstacleType.PLANET;}
 
 }

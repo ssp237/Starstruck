@@ -144,4 +144,6 @@ public class Star extends ComplexObstacle {
     public TextureRegion getTexture() {
         return barrier.getTexture();
     }
+
+    public ObstacleType getType() { return ObstacleType.STAR;}
 }
