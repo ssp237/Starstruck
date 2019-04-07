@@ -260,6 +260,17 @@ public class Rope extends ComplexObstacle {
 //        joint = world.createJoint(ropeJointDef);
 //        joints.insert(0, joint);
 
+        RopeJointDef ropeJoint = new RopeJointDef();
+        ropeJoint.bodyA = avatar.getBody();
+        ropeJoint.bodyB = avatar2.getBody();
+        ropeJoint.localAnchorA.set(anchor1);
+        ropeJoint.localAnchorB.set(anchor2);
+        ropeJoint.maxLength = length;
+        joint = world.createJoint(ropeJoint);
+        joints.insert(0, joint);
+
+
+
         return true;
     }
 
