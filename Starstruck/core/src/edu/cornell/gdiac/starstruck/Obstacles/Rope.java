@@ -294,7 +294,7 @@ public class Rope extends ComplexObstacle {
         length = nLinks * linksize + nLinks * spacing;
     }
 
-    public void extendRope(AstronautModel avatar, World world) {
+    public void extendRope(AstronautModel avatar, World world, TextureRegion ropeTexture) {
 //        System.out.println(bodies.size);
 //        System.out.println(planks.size());
 
@@ -318,6 +318,9 @@ public class Rope extends ComplexObstacle {
         plank.setDensity(BASIC_DENSITY);
         bodies.add(plank);
         plank.activatePhysics(world);
+        plank.setTexture(ropeTexture);
+        Vector2 plankPos = plank.getPosition();
+        System.out.println("Plank Pos = " + plankPos);
         //Update nlinks and length
         nLinks++;
         this.length = nLinks * linksize + nLinks * spacing;

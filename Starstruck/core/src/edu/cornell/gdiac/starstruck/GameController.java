@@ -868,17 +868,19 @@ public class GameController extends WorldController implements ContactListener {
         avatar2.setFixedRotation(false);
 
         updateAnchor(avatar, avatar2);
-        if (avatar.isAnchored()) {
-            avatar.setFixedRotation(true);
-            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength())
-                rope.extendRope(avatar, world);
-        }
-        if (avatar2.isAnchored()) {
-            avatar2.setFixedRotation(true);
-            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength())
-                rope.extendRope(avatar2, world);
-        }
-
+//        if (avatar.isAnchored()) {
+//            avatar.setFixedRotation(true);
+//            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength())
+//                rope.extendRope(avatar, world, bridgeTexture);
+//                rope.setDrawScale(scale);
+//        }
+//        if (avatar2.isAnchored()) {
+//            avatar2.setFixedRotation(true);
+//            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength())
+//                rope.extendRope(avatar2, world, bridgeTexture);
+//                rope.setDrawScale(scale);
+//        }
+//
         if (avatar.isActive()) {
             updateHelp(avatar, avatar2, contactDir, contactDir2, (Planet) curPlanet, (Planet) curPlanet2, lastPoint, lastPoint2);
             if (testC) {
