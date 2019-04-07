@@ -83,6 +83,9 @@ public abstract class ComplexObstacle extends Obstacle {
         } else {
             super.setBodyType(value);
         }
+        for (Obstacle obj : bodies) {
+            obj.setBodyType(value);
+        }
     }
 
     /**

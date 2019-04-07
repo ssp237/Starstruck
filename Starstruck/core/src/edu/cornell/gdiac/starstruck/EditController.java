@@ -126,10 +126,10 @@ public class EditController extends WorldController implements ContactListener {
     public void update(float dt) {
         //System.out.println(current);
         int i = 0;
-        for (Obstacle obj : level.getAllObjects()) {
-            i += obj.getType() == ObstacleType.ANCHOR ? 1 : 0;
-        }
-        System.out.println(i);
+//        for (Obstacle obj : level.getAllObjects()) {
+//            i += obj.getType() == ObstacleType.ANCHOR ? 1 : 0;
+//        }
+//        System.out.println(i);
         //System.out.println(level.getAllObjects());
         //System.out.println(level.getPlayer1().getVX() + "   " + level.getPlayer1().getVY());
         InputController input = InputController.getInstance();
@@ -154,12 +154,12 @@ public class EditController extends WorldController implements ContactListener {
                 Vector2 pos = input.getCrossHair();
                 current = new Anchor(pos.x, pos.y, JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
                 level.add(current);
-                //current.setBodyType(BodyDef.BodyType.StaticBody);
+                current.setBodyType(BodyDef.BodyType.StaticBody);
             } else if (input.didS()) {
                 Vector2 pos = input.getCrossHair();
                 current = new Star(pos.x, pos.y, JsonAssetManager.getInstance().getEntry("star", TextureRegion.class), scale);
                 level.add(current);
-                //current.setBodyType(BodyDef.BodyType.StaticBody);
+                current.setBodyType(BodyDef.BodyType.StaticBody);
             }
             if (input.mouseDragged()) {
                 updateCamera();
