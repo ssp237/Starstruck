@@ -129,4 +129,10 @@ public class WheelObstacle extends SimpleObstacle {
         canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),drawScale.x,drawScale.y);
     }
 
+    public ObstacleType getType() { return ObstacleType.WHEEL;}
+
+    public boolean containsPoint(Vector2 point) {
+        //System.out.println("dist is " + Obstacle.dist(point, center) + "   and radius is " + getRadius());
+        return Obstacle.dist(point, getPosition()) < getRadius();
+    }
 }

@@ -92,6 +92,19 @@ public class Star extends ComplexObstacle {
     }
 
     /**
+     * Create a new star at (x,y) with the given texture and draw scale.
+     * @param x X coord of the new star
+     * @param y Y coord of the new star
+     * @param texture Texture for the new star
+     * @param scale Draw scale for the new star
+     */
+    public Star(float x, float y, TextureRegion texture, Vector2 scale) {
+        this(x,y,texture.getRegionWidth(),texture.getRegionHeight());
+        setDrawScale(scale);
+        setTexture(texture);
+    }
+
+    /**
      * Return a new star with parameters specified by the JSON
      * @param json A JSON containing data for one star
      * @param scale The scale to convert physics units to drawing units
@@ -143,5 +156,11 @@ public class Star extends ComplexObstacle {
 
     public TextureRegion getTexture() {
         return barrier.getTexture();
+    }
+
+    public ObstacleType getType() { return ObstacleType.STAR;}
+
+    public boolean containsPoint(Vector2 point) {
+        return barrier.containsPoint(point) || pivot.containsPoint(point);
     }
 }

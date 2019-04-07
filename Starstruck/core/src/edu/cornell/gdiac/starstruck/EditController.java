@@ -1,10 +1,16 @@
 package edu.cornell.gdiac.starstruck;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
+import edu.cornell.gdiac.starstruck.Obstacles.Anchor;
 import edu.cornell.gdiac.starstruck.Obstacles.Obstacle;
 import edu.cornell.gdiac.starstruck.Obstacles.Planet;
+import edu.cornell.gdiac.starstruck.Obstacles.Star;
+import edu.cornell.gdiac.util.JsonAssetManager;
 
 public class EditController extends WorldController implements ContactListener {
 
@@ -12,11 +18,12 @@ public class EditController extends WorldController implements ContactListener {
     private Obstacle current;
     /** VectorWorld */
     private VectorWorld vectorWorld;
+    /** Reference to the game level */
+    protected LevelModel level;
 
     public EditController() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
-//        jsonReader = new JsonReader();
-//        level = new LevelModel();
+        level = new LevelModel();
         setDebug(false);
         setComplete(false);
         setFailure(false);
@@ -27,35 +34,98 @@ public class EditController extends WorldController implements ContactListener {
     }
 
     public void reset() {
-        world = new World(new Vector2(0,0), false);
-        world.setContactListener(this);
+        level.dispose();
+
+        level.setBackround(JsonAssetManager.getInstance().getEntry("background", Texture.class));
+        level.getWorld().setContactListener(this);
+        world = level.getWorld();
 
         setComplete(false);
         setFailure(false);
 
     }
 
+    /**
+     * Helper to update current obstacle if it is a planet.
+     */
+    private void updatePlanet() {
+        InputController input = InputController.getInstance();
+        if (input.didPrimary()){
+            Planet p = (Planet) current;
+            Vector2 pos = p.getPosition();
+            current = new Planet(pos.x, pos.y, p.getInd() + 1, world, scale);
+        } else if (input.didDown()) {
+            Planet p = (Planet) current;
+            Vector2 pos = p.getPosition();
+            current = new Planet(pos.x, pos.y, p.getInd() - 1, world, scale);
+        }
+    }
+
+    /**
+     * Helper function to process clicking
+     */
+    private void updateClick() {
+        InputController input = InputController.getInstance();
+        if (current != null) {
+            current = null;
+        }
+        else {
+            for (Obstacle obj : level.getAllObjects()) {
+                if (obj.containsPoint(input.getCrossHair())) {
+                    current = obj;
+                }
+            }
+        }
+    }
+
     public void update(float dt) {
+        System.out.println(current);
+        //System.out.println(level.getAllObjects());
         InputController input = InputController.getInstance();
         if (input.didP()) {
-            current = new Planet(input.xPos()/scale.x, -(input.yPos()/scale.y) + bounds.height, 1, world, scale);
+            Vector2 pos = input.getCrossHair();
+            current = new Planet(pos.x, pos.y, 1, world, scale);
+            level.add(current);
+        } else if (input.didA()) {
+            Vector2 pos = input.getCrossHair();
+            current = new Anchor(pos.x, pos.y, JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
+            level.add(current);
+        } else if (input.didS()) {
+            Vector2 pos = input.getCrossHair();
+            current = new Star(pos.x, pos.y, JsonAssetManager.getInstance().getEntry("star", TextureRegion.class), scale);
+            level.add(current);
+        }
+        if (current != null) {
+            if (input.didBackspace()) {
+                level.remove(current);
+            } else {
+                current.setPosition(input.xPos() / scale.x, -(input.yPos() / scale.y) + bounds.height);
+                switch (current.getType()) {
+                    case PLANET:
+                        updatePlanet();
+                }
+            }
+        } else {
+
         }
 
-        if (current != null) {
-            current.setPosition(input.xPos()/scale.x, -(input.yPos()/scale.y) + bounds.height);
+        if (input.didTertiary()) {
+            updateClick();
         }
 
     }
 
     public void draw(float dt) {
         canvas.clear();
-        canvas.begin();
 
-        if (current != null) {
-            current.draw(canvas);
-        }
+        level.draw(canvas);
 
-        canvas.end();
+//        canvas.begin();
+//        if (current != null) {
+//            current.draw(canvas);
+//        }
+//
+//        canvas.end();
     }
 
     /**

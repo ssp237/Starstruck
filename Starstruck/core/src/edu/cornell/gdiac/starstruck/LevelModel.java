@@ -44,13 +44,13 @@ public class LevelModel {
     /** The Box2D world */
     protected World world;
     /** The vector world */
-    protected VectorWorld vectorWorld;
+    private VectorWorld vectorWorld;
     /** The boundary of the world */
-    protected Rectangle bounds;
+    private Rectangle bounds;
     /** The world scale */
     protected Vector2 scale;
     /** The background texture*/
-    protected Texture background;
+    private Texture background;
 
     // Physics objects for the game
     /** Reference to the first character avatar */
@@ -176,9 +176,19 @@ public class LevelModel {
      * the JSON file to initialize the level
      */
     public LevelModel() {
+        this(new Rectangle(0,0,1,1), new Vector2(1,1));
+    }
+
+    /**
+     * Creates a new LevelModel with the specified bounds and scale.
+     *
+     * @param bounds The bounds for this level.
+     * @param scale The scale for this level.
+     */
+    public LevelModel(Rectangle bounds, Vector2 scale) {
         world  = new World(new Vector2(0,0), false);
-        bounds = new Rectangle(0,0,1,1);
-        scale = new Vector2(1,1);
+        this.bounds = bounds;
+        this.scale = scale;
         debug  = false;
         planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
     }
@@ -203,6 +213,14 @@ public class LevelModel {
     }
 
     /**
+     * Set the background to the specified texture.
+     * @param background The texture to use as the background.
+     */
+    public void setBackround(Texture background) {
+        this.background = background;
+    }
+
+    /**
      * Lays out the game geography from the given JSON file. Requires planets is not null.
      *
      * @param levelFormat	the JSON file defining the level
@@ -217,19 +235,6 @@ public class LevelModel {
         bounds = new Rectangle(0,0,pSize[0],pSize[1]);
         scale.x = gSize[0]/pSize[0];
         scale.y = gSize[1]/pSize[1];
-
-        // Create players
-//        player1 = new AstronautModel(true);
-//        player1.initialize(levelFormat.get("astronaut 1"));
-//        player1.setDrawScale(scale);
-//        player1.setName("avatar1");
-//        activate(player1);
-//
-//        player2 = new AstronautModel(false);
-//        player2.initialize(levelFormat.get("astronaut 2"));
-//        player2.setDrawScale(scale);
-//        player1.setName("avatar2");
-//        activate(player2);
 
         player1 = createAstro(levelFormat.get("astronaut 1"), true);
         player1.setName("avatar");
@@ -266,17 +271,6 @@ public class LevelModel {
             planet = planet.next();
         }
 
-        //Create planets
-//        float[][] planetSpecs = null;
-//        JsonValue planet = levelFormat.get("planets").child();
-//        while(planet != null) {
-//            planetSpecs = addRow(planetSpecs, planetSpec(planet));
-//            planet = planet.next;
-//        }
-//
-//        planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
-//        planets.addPlanets(planetSpecs, world, vectorWorld);
-
         //add stars
         int i = 0;
         JsonValue starVals = levelFormat.get("stars").child();
@@ -298,48 +292,6 @@ public class LevelModel {
         }
     }
 
-    /**
-     * Return a new array that is the result of adding newRow as the last row of old.
-     * @param old The 2D array to be added to
-     * @param newRow The new row to add to old
-     * @return The result of adding newRow to old.
-     */
-    private float[][] addRow(float[][] old, float[] newRow) {
-        if (old == null) {
-            float[][] out = new float[1][newRow.length];
-            out[0] = newRow;
-            return out;
-        }
-        int n = old[0].length; int m = old.length;
-        float[][] out = new float[m+1][n];
-
-        for (int i = 0; i < m; i++) {
-            out[i] = old[i];
-        }
-
-        out[m] = newRow;
-        return out;
-    }
-
-    /**
-     * Parse a JSON pertaining to 1 planet into the relevant data entries.
-     * @param json A JsonValue containing data relating to one planet.
-     * @return A vector describing a planet where 1st col is x, 2nd is y, 3rd is radius, 4th is mass, 6th is sprite to
-     *          use and 5th is gravitational pull range.
-     */
-    private float[] planetSpec(JsonValue json) {
-        float[] out = new float[6];
-
-        out[0] = json.get("x").asFloat();
-        out[1] = json.get("y").asFloat();
-        out[2] = json.get("radius").asFloat();
-        out[3] = json.get("mass").asFloat();
-        out[4] = json.get("grange").asFloat();
-        out[5] = json.get("sprite").asFloat();
-
-        return out;
-    }
-
 
     public void dispose() {
         for(Obstacle obj : objects) {
@@ -359,14 +311,44 @@ public class LevelModel {
     }
 
     /**
+     * Add the specified obstacle to this LevelModel
+     * @param obj The obstacle to be added to this LevelModel
+     */
+    public void add(Obstacle obj) {
+        switch (obj.getType()) {
+            case PLANET: planets.addPlanet((Planet) obj, vectorWorld); break;
+            case ANCHOR: activate(obj); break;
+            case STAR: activate(obj); break;
+        }
+    }
+
+    public void remove(Obstacle obj) {
+        switch (obj.getType()) {
+            case PLANET: planets.remove((Planet) obj); break;
+            case ANCHOR: deactivate(obj); break;
+            case STAR: deactivate(obj); break;
+        }
+    }
+
+    /**
      * Immediately adds the object to the physics world
      *
-     * param obj The object to add
+     * @param obj The object to add
      */
     protected void activate(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
         objects.add(obj);
         obj.activatePhysics(world);
+    }
+
+    /**
+     * Remove the object from the physics world
+     *
+     * @param obj The object to remove
+     */
+    private void deactivate(Obstacle obj) {
+        objects.remove(obj);
+        obj.deactivatePhysics(world);
     }
 
     /**
@@ -382,6 +364,13 @@ public class LevelModel {
         boolean horiz = (bounds.x <= obj.getX() && obj.getX() <= bounds.x+bounds.width);
         boolean vert  = (bounds.y <= obj.getY() && obj.getY() <= bounds.y+bounds.height);
         return horiz && vert;
+    }
+
+    public PooledList<Obstacle> getAllObjects() {
+        PooledList<Obstacle> out = new PooledList<Obstacle>();
+        out.addAll(objects);
+        out.addAll(planets.getPlanets());
+        return out;
     }
 
     /**
