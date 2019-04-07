@@ -286,7 +286,7 @@ public class InputController {
     public boolean didDown() { return downPressed && !downPrevious; }
 
     public boolean didA() {
-        return aPressed;
+        return aPressed && !aPrevious;
     }
 
     public boolean didD() {

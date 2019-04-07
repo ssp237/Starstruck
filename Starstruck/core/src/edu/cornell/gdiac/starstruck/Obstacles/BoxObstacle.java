@@ -207,7 +207,7 @@ public class BoxObstacle extends SimpleObstacle {
     public ObstacleType getType() { return ObstacleType.BOX;}
 
     public boolean containsPoint(Vector2 point) {
-        return dist(point, getPosition()) < shape.getRadius();
+        return Obstacle.dist(point, getPosition()) < shape.getRadius();
     }
 
 

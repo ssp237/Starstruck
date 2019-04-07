@@ -2,9 +2,11 @@ package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
+import edu.cornell.gdiac.starstruck.Obstacles.Anchor;
 import edu.cornell.gdiac.starstruck.Obstacles.Obstacle;
 import edu.cornell.gdiac.starstruck.Obstacles.Planet;
 import edu.cornell.gdiac.util.JsonAssetManager;
@@ -77,9 +79,15 @@ public class EditController extends WorldController implements ContactListener {
 
     public void update(float dt) {
         System.out.println(current);
+        //System.out.println(level.getAllObjects());
         InputController input = InputController.getInstance();
         if (input.didP()) {
-            current = new Planet(input.xPos()/scale.x, -(input.yPos()/scale.y) + bounds.height, 1, world, scale);
+            Vector2 pos = input.getCrossHair();
+            current = new Planet(pos.x, pos.y, 1, world, scale);
+            level.add(current);
+        } else if (input.didA()) {
+            Vector2 pos = input.getCrossHair();
+            current = new Anchor(pos.x, pos.y, JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
             level.add(current);
         }
         if (current != null) {

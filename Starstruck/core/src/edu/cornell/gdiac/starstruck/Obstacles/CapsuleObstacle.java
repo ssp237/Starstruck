@@ -539,7 +539,7 @@ public class CapsuleObstacle extends SimpleObstacle {
     public ObstacleType getType() { return ObstacleType.CAPSULE;}
 
     public boolean containsPoint(Vector2 point) {
-        return dist(point, getPosition()) < shape.getRadius();
+        return Obstacle.dist(point, getPosition()) < shape.getRadius();
     }
 
 }

@@ -117,6 +117,9 @@ public abstract class ComplexObstacle extends Obstacle {
         } else {
             super.setPosition(value);
         }
+        for (Obstacle obj : bodies) {
+            obj.setPosition(value);
+        }
     }
 
     /**
@@ -136,6 +139,9 @@ public abstract class ComplexObstacle extends Obstacle {
             body.setTransform(positionCache,body.getAngle());
         } else {
             super.setPosition(x,y);
+        }
+        for (Obstacle obj : bodies) {
+            obj.setPosition(x,y);
         }
     }
 
