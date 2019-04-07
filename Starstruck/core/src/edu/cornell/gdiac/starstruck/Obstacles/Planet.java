@@ -16,13 +16,15 @@ import edu.cornell.gdiac.util.JsonAssetManager;
 public class Planet extends WheelObstacle {
 
     /** Number of possible planets */
-    private final int NUM_PLANETS = 4;
+    public final int NUM_PLANETS = 4;
     /** The mass of a planet in [slightly arbitrary] units. */
     protected float mass;
     /** The range from which gravity is effective for this planet (physics units)*/
     public float grange;
     /** Texture for gravity ring */
     protected TextureRegion ringTexture;
+    /** Identifier for index of planet.*/
+    private int ind;
 
     /** Pre-set masses */
     private static float mass1;
@@ -65,6 +67,8 @@ public class Planet extends WheelObstacle {
         setName("planet" + counter);
         counter++;
 
+        ind = 0;
+
         // Not needed?
         //setFriction(BASIC_FRICTION);
         //setRestitution(BASIC_RESTITUTION);
@@ -81,7 +85,11 @@ public class Planet extends WheelObstacle {
     public Planet(float x, float y, int i, World world, Vector2 scale) {
         super(x,y, 0);
 
-        i = ((i - 1) % NUM_PLANETS) + 1;
+        if (i > 0) {
+            i = ((i - 1) % NUM_PLANETS) + 1;
+        } else {
+            i = ((i - 1) % NUM_PLANETS) + 1 + NUM_PLANETS;
+        }
 
         texture = JsonAssetManager.getInstance().getEntry(("wp p" + i), TextureRegion.class);
         ringTexture = JsonAssetManager.getInstance().getEntry(("wp g" + i), TextureRegion.class);
@@ -106,7 +114,16 @@ public class Planet extends WheelObstacle {
 
         setName("planet" + counter);
         counter++;
+
+        ind = i;
     }
+
+    /**
+     * Return the index of this planet.
+     *
+     * @return The index of this planet.
+     */
+    public int getInd() {return ind;}
 
     private float massOfInd(int i) {
         switch (i) {

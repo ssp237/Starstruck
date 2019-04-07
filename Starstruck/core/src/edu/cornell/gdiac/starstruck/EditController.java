@@ -35,6 +35,24 @@ public class EditController extends WorldController implements ContactListener {
 
     }
 
+    /**
+     * Helper to update current obstacle if it is a planet.
+     */
+    private void updatePlanet() {
+        InputController input = InputController.getInstance();
+        if (input.didPrimary()){
+            Planet p = (Planet) current;
+            Vector2 pos = p.getPosition();
+            current = new Planet(pos.x, pos.y, p.getInd() + 1, world, scale);
+        } else if (input.didDown()) {
+            Planet p = (Planet) current;
+            Vector2 pos = p.getPosition();
+            current = new Planet(pos.x, pos.y, p.getInd() - 1, world, scale);
+        }
+
+
+    }
+
     public void update(float dt) {
         InputController input = InputController.getInstance();
         if (input.didP()) {
@@ -43,6 +61,11 @@ public class EditController extends WorldController implements ContactListener {
 
         if (current != null) {
             current.setPosition(input.xPos()/scale.x, -(input.yPos()/scale.y) + bounds.height);
+            switch (current.getType()) {
+                case PLANET: updatePlanet();
+            }
+        } else {
+
         }
 
     }

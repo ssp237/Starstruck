@@ -44,13 +44,13 @@ public class LevelModel {
     /** The Box2D world */
     protected World world;
     /** The vector world */
-    protected VectorWorld vectorWorld;
+    private VectorWorld vectorWorld;
     /** The boundary of the world */
-    protected Rectangle bounds;
+    private Rectangle bounds;
     /** The world scale */
     protected Vector2 scale;
     /** The background texture*/
-    protected Texture background;
+    private Texture background;
 
     // Physics objects for the game
     /** Reference to the first character avatar */
@@ -176,9 +176,19 @@ public class LevelModel {
      * the JSON file to initialize the level
      */
     public LevelModel() {
+        this(new Rectangle(0,0,1,1), new Vector2(1,1));
+    }
+
+    /**
+     * Creates a new LevelModel with the specified bounds and scale.
+     *
+     * @param bounds The bounds for this level.
+     * @param scale The scale for this level.
+     */
+    public LevelModel(Rectangle bounds, Vector2 scale) {
         world  = new World(new Vector2(0,0), false);
-        bounds = new Rectangle(0,0,1,1);
-        scale = new Vector2(1,1);
+        this.bounds = bounds;
+        this.scale = scale;
         debug  = false;
         planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
     }
@@ -200,6 +210,14 @@ public class LevelModel {
         astro.setGlow(texture);
 
         return astro;
+    }
+
+    /**
+     * Set the background to the specified texture.
+     * @param background The texture to use as the background.
+     */
+    public void setBackround(Texture background) {
+        this.background = background;
     }
 
     /**
@@ -292,6 +310,10 @@ public class LevelModel {
         vectorWorld = new VectorWorld();
     }
 
+    /**
+     * Add the specified obstacle to this LevelModel
+     * @param obj The obstacle to be added to this LevelModel
+     */
     public void add(Obstacle obj) {
 
     }
