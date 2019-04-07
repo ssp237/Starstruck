@@ -956,12 +956,12 @@ public abstract class Obstacle {
 
     /**
      * Distance between two points
-     * @param p1 Point 1
-     * @param p2 Point 2
+     * @param v1 Point 1
+     * @param v2 Point 2
      * @return Distance between point 1 and 2
      */
-    public static float dist(Vector2 p1, Vector2 p2) {
-        return (float) Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y-p2.y) * (p1.y-p2.y));
+    public static float dist(Vector2 v1, Vector2 v2) {
+        return (float) Math.sqrt((v1.x - v2.x)*(v1.x-v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
     }
 
     /// Abstract Methods

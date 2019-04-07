@@ -63,6 +63,7 @@ public class InputController {
     private boolean secondPrevious;
     /** Whether the teritiary action button was pressed. */
     private boolean tertiaryPressed;
+    private boolean tertiaryPrevious;
     /** Whether the debug toggle was pressed. */
     private boolean debugPressed;
     private boolean debugPrevious;
@@ -214,12 +215,12 @@ public class InputController {
      * Returns true if the tertiary action button was pressed.
      *
      * This is a sustained button. It will returns true as long as the player
-     * holds it down.
+     * holds it down. NOT ANYMORE MUAHHAHAHA
      *
      * @return true if the secondary action button was pressed.
      */
     public boolean didTertiary() {
-        return tertiaryPressed;
+        return tertiaryPressed && !tertiaryPrevious;
     }
 
     /**
@@ -337,6 +338,7 @@ public class InputController {
         dPrevious = dPressed;
         spacePrevious = spacePressed;
         shiftPrevious = shiftPressed;
+        tertiaryPrevious = tertiaryPressed;
 
         // Check to see if a GamePad is connected
 //        if (xbox.isConnected()) {

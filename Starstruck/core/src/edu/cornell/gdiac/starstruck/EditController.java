@@ -58,7 +58,25 @@ public class EditController extends WorldController implements ContactListener {
         }
     }
 
+    /**
+     * Helper function to process clicking
+     */
+    private void updateClick() {
+        InputController input = InputController.getInstance();
+        if (current != null) {
+            current = null;
+        }
+        else {
+            for (Obstacle obj : level.getAllObjects()) {
+                if (obj.containsPoint(input.getCrossHair())) {
+                    current = obj;
+                }
+            }
+        }
+    }
+
     public void update(float dt) {
+        System.out.println(current);
         InputController input = InputController.getInstance();
         if (input.didP()) {
             current = new Planet(input.xPos()/scale.x, -(input.yPos()/scale.y) + bounds.height, 1, world, scale);
@@ -74,7 +92,7 @@ public class EditController extends WorldController implements ContactListener {
         }
 
         if (input.didTertiary()) {
-            current = null;
+            updateClick();
         }
 
     }

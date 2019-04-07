@@ -355,6 +355,13 @@ public class LevelModel {
         return horiz && vert;
     }
 
+    public PooledList<Obstacle> getAllObjects() {
+        PooledList<Obstacle> out = new PooledList<Obstacle>();
+        out.addAll(objects);
+        out.addAll(planets.getPlanets());
+        return out;
+    }
+
     /**
      * Draws the level to the given game canvas
      *
