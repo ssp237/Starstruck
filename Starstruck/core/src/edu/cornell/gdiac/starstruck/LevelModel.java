@@ -216,7 +216,7 @@ public class LevelModel {
      * Set the background to the specified texture.
      * @param background The texture to use as the background.
      */
-    public void setBackround(Texture background) {
+    public void setBackground(Texture background) {
         this.background = background;
     }
 

@@ -1,6 +1,5 @@
 package edu.cornell.gdiac.starstruck;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -36,7 +35,7 @@ public class EditController extends WorldController implements ContactListener {
     public void reset() {
         level.dispose();
 
-        level.setBackround(JsonAssetManager.getInstance().getEntry("background", Texture.class));
+        level.setBackground(JsonAssetManager.getInstance().getEntry("background", Texture.class));
         level.getWorld().setContactListener(this);
         world = level.getWorld();
 
@@ -52,12 +51,16 @@ public class EditController extends WorldController implements ContactListener {
         InputController input = InputController.getInstance();
         if (input.didPrimary()){
             Planet p = (Planet) current;
+            level.remove(p);
             Vector2 pos = p.getPosition();
             current = new Planet(pos.x, pos.y, p.getInd() + 1, world, scale);
+            level.add(current);
         } else if (input.didDown()) {
             Planet p = (Planet) current;
+            level.remove(p);
             Vector2 pos = p.getPosition();
             current = new Planet(pos.x, pos.y, p.getInd() - 1, world, scale);
+            level.add(current);
         }
     }
 
@@ -76,6 +79,13 @@ public class EditController extends WorldController implements ContactListener {
                 }
             }
         }
+    }
+
+    /**
+     * Helper function to update camera due to mouse dragging when no obstacle is selected.
+     */
+    private void updateCamera() {
+
     }
 
     public void update(float dt) {
@@ -106,7 +116,9 @@ public class EditController extends WorldController implements ContactListener {
                 }
             }
         } else {
-
+            if (input.mouseDragged()) {
+                updateCamera();
+            }
         }
 
         if (input.didTertiary()) {

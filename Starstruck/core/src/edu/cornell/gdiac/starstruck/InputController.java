@@ -231,6 +231,13 @@ public class InputController {
     }
 
     /**
+     *  Returns true if the mouse is currently pressed and the mouse was previously pressed.
+     *
+     * @return True if the mouse is being dragged for at least two frames.
+     */
+    public boolean mouseDragged() {return tertiaryPressed && tertiaryPrevious; }
+
+    /**
      * Returns true if the reset button was pressed.
      *
      * @return true if the reset button was pressed.

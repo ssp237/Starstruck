@@ -150,6 +150,15 @@ public class Star extends ComplexObstacle {
         return true;
     }
 
+    public String toString() {
+        String out = "Star with {";
+
+        out += "pos: " + getPosition();
+        out += "}";
+
+        return out;
+    }
+
     public void setTexture(TextureRegion texture) {
         barrier.setTexture(texture);
     }
