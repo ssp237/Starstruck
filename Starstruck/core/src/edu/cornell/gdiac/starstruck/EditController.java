@@ -9,6 +9,7 @@ import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Obstacles.Anchor;
 import edu.cornell.gdiac.starstruck.Obstacles.Obstacle;
 import edu.cornell.gdiac.starstruck.Obstacles.Planet;
+import edu.cornell.gdiac.starstruck.Obstacles.Star;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
 public class EditController extends WorldController implements ContactListener {
@@ -89,11 +90,20 @@ public class EditController extends WorldController implements ContactListener {
             Vector2 pos = input.getCrossHair();
             current = new Anchor(pos.x, pos.y, JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
             level.add(current);
+        } else if (input.didS()) {
+            Vector2 pos = input.getCrossHair();
+            current = new Star(pos.x, pos.y, JsonAssetManager.getInstance().getEntry("star", TextureRegion.class), scale);
+            level.add(current);
         }
         if (current != null) {
-            current.setPosition(input.xPos()/scale.x, -(input.yPos()/scale.y) + bounds.height);
-            switch (current.getType()) {
-                case PLANET: updatePlanet();
+            if (input.didBackspace()) {
+                level.remove(current);
+            } else {
+                current.setPosition(input.xPos() / scale.x, -(input.yPos() / scale.y) + bounds.height);
+                switch (current.getType()) {
+                    case PLANET:
+                        updatePlanet();
+                }
             }
         } else {
 

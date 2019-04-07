@@ -83,12 +83,17 @@ public class InputController {
     private boolean dPrevious;
     private boolean aPressed;
     private boolean aPrevious;
+    private boolean sPressed;
+    private boolean sPrevious;
     /** Whether space was pressed */
     private boolean spacePressed;
     private boolean spacePrevious;
     /** Whether shift was pressed */
     private boolean shiftPressed;
     private boolean shiftPrevious;
+    /** Whether backspace was pressed */
+    private boolean backspacePressed;
+    private boolean backspacePrevious;
 
     /** Mouse's current position*/
     private float x_pos;
@@ -211,6 +216,8 @@ public class InputController {
 
     public boolean didShift() { return shiftPressed && !shiftPrevious; }
 
+    public boolean didBackspace() { return backspacePressed && !backspacePrevious; }
+
     /**
      * Returns true if the tertiary action button was pressed.
      *
@@ -289,6 +296,10 @@ public class InputController {
         return aPressed && !aPrevious;
     }
 
+    public boolean didS() {
+        return sPressed && !sPrevious;
+    }
+
     public boolean didD() {
         return dPressed;
     }
@@ -336,9 +347,11 @@ public class InputController {
         leftPrevious = leftPressed;
         aPrevious = aPressed;
         dPrevious = dPressed;
+        sPrevious = sPressed;
         spacePrevious = spacePressed;
         shiftPrevious = shiftPressed;
         tertiaryPrevious = tertiaryPressed;
+        backspacePrevious = backspacePressed;
 
         // Check to see if a GamePad is connected
 //        if (xbox.isConnected()) {
@@ -406,11 +419,13 @@ public class InputController {
         exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
         spacePressed = (secondary && spacePressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
         shiftPressed = (secondary && shiftPressed) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT));
+        backspacePressed = (secondary && backspacePressed) || (Gdx.input.isKeyPressed(Input.Keys.BACKSPACE));
         // TODO no controller support
         rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT);
         leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT);
         downPressed = Gdx.input.isKeyPressed (Input.Keys.DOWN);
         aPressed = Gdx.input.isKeyPressed (Input.Keys.A);
+        sPressed = Gdx.input.isKeyPressed (Input.Keys.S);
         dPressed = Gdx.input.isKeyPressed (Input.Keys.D);
         resetPressed = Gdx.input.isKeyPressed(Input.Keys.R);
 

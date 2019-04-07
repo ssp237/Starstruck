@@ -1,11 +1,8 @@
 package edu.cornell.gdiac.starstruck.Obstacles;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.Galaxy;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
@@ -19,26 +16,6 @@ import java.util.ArrayList;
  * Stores texture files, so that different galaxy themes can be selected.
  */
 public class PlanetList {
-
-    /** Track all loaded assets (for unloading purposes) */
-    private Array<String> assets;
-
-    /** File for gravity ring */
-    private static String GRING_FILE = "planets/gravity ring.png";
-
-    /** Files for default galaxy planets*/
-    private static String GALAXY1_PLANET1_FILE = "planets/planet1.png";
-    private static String GALAXY1_PLANET2_FILE = "planets/planet2.png";
-    private static String GALAXY1_PLANET3_FILE = "planets/planet3.png";
-    private static String GALAXY1_PLANET4_FILE = "planets/planet4.png";
-
-    private static String WHIRL_P1 = "planets/whirlpool planet1.png";
-    private static String WHIRL_P2 = "planets/whirlpool planet2.png";
-    private static String WHIRL_P3 = "planets/whirlpool planet3.png";
-    private static String WHIRL_P4 = "planets/whirlpool planet4.png";
-    private static String WHIRL_P5 = "planets/whirlpool planet5.png";
-    private static String WHIRL_P6 = "planets/whirlpool planet6.png";
-
 
     /** Textures to be used when drawing planets*/
     private TextureRegion planet1_texture;
@@ -217,6 +194,15 @@ public class PlanetList {
      */
     public void clear() {
         planets = new ArrayList<Planet>();
+    }
+
+    /**
+     * Remove planet p from the PlanetList
+     *
+     * @param p The planet to be removed
+     */
+    public void remove(Planet p) {
+        planets.remove(p);
     }
 
     public String toString() {

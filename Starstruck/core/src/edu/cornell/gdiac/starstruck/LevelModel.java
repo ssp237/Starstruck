@@ -317,20 +317,38 @@ public class LevelModel {
     public void add(Obstacle obj) {
         switch (obj.getType()) {
             case PLANET: planets.addPlanet((Planet) obj, vectorWorld); break;
-            case ANCHOR: objects.add(obj); break;
-            case STAR: objects.add(obj); break;
+            case ANCHOR: activate(obj); break;
+            case STAR: activate(obj); break;
+        }
+    }
+
+    public void remove(Obstacle obj) {
+        switch (obj.getType()) {
+            case PLANET: planets.remove((Planet) obj); break;
+            case ANCHOR: deactivate(obj); break;
+            case STAR: deactivate(obj); break;
         }
     }
 
     /**
      * Immediately adds the object to the physics world
      *
-     * param obj The object to add
+     * @param obj The object to add
      */
     protected void activate(Obstacle obj) {
         assert inBounds(obj) : "Object is not in bounds";
         objects.add(obj);
         obj.activatePhysics(world);
+    }
+
+    /**
+     * Remove the object from the physics world
+     *
+     * @param obj The object to remove
+     */
+    private void deactivate(Obstacle obj) {
+        objects.remove(obj);
+        obj.deactivatePhysics(world);
     }
 
     /**
