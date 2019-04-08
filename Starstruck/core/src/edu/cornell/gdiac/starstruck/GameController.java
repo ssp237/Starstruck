@@ -278,7 +278,7 @@ public class GameController extends WorldController implements ContactListener {
     public void reset() {
         level.dispose();
 
-        levelFormat = jsonReader.parse(Gdx.files.internal("levels/testsave.json"));
+        levelFormat = jsonReader.parse(Gdx.files.internal("levels/alpha2.json"));
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
 
@@ -318,8 +318,8 @@ public class GameController extends WorldController implements ContactListener {
         camera.viewportWidth = camWidth;
         camera.viewportHeight = camHeight;
 
-        xBound = (1024*1.2f) / scale.x;
-        yBound = (576*1.2f) / scale.y;
+        xBound = (1024*1.2f*1.5f) / scale.x;
+        yBound = (576*1.2f*1.5f) / scale.y;
 
         stars = level.stars;
         anchors = level.anchors;
@@ -337,7 +337,7 @@ public class GameController extends WorldController implements ContactListener {
         enemy.setDrawScale(scale);
         enemy.setTexture(enemyTexture, 3, 10);
         enemy.setName("bug");
-        addObject(enemy);
+        //addObject(enemy);
 
         // Create pink worm enemy
         dwidth  = pinkwormTexture.getRegionWidth()/scale.x;
@@ -346,7 +346,7 @@ public class GameController extends WorldController implements ContactListener {
         pinkworm.setDrawScale(scale);
         pinkworm.setTexture(pinkwormTexture,14,7);
         pinkworm.setName("pinkworm");
-        addObject(pinkworm);
+        //addObject(pinkworm);
         pinkworm.setVX(2f);
 
         // Create green worm enemy
@@ -356,7 +356,7 @@ public class GameController extends WorldController implements ContactListener {
         greenworm.setDrawScale(scale);
         greenworm.setTexture(greenwormTexture,14,6);
         greenworm.setName("greenworm");
-        addObject(greenworm);
+        //addObject(greenworm);
         greenworm.setVX(1.4f);
 
     }
@@ -501,12 +501,12 @@ public class GameController extends WorldController implements ContactListener {
 
         if (xCam < camWidth/2)
             xCam = camWidth/2;
-        else if (xCam > canvas.getWidth() - camWidth/2)
-            xCam = canvas.getWidth() - camWidth/2;
+        else if (xCam > xBound*scale.x - camWidth/2)
+            xCam = xBound*scale.x - camWidth/2;
         if (yCam < camHeight/2)
             yCam = camHeight/2;
-        else if (yCam > canvas.getHeight() - camHeight/2)
-            yCam = canvas.getHeight()-camHeight/2;
+        else if (yCam > yBound*scale.y - camHeight/2)
+            yCam = yBound*scale.y - camHeight/2;
 
 //        canvas.getCamera().position.set(new Vector3(xCam, canvas.getCamera().position.y, 0));
         canvas.getCamera().position.set(new Vector3(xCam, yCam, 0));
@@ -1135,23 +1135,24 @@ public class GameController extends WorldController implements ContactListener {
      * @param delta The delay in seconds since the last update
      */
     public void draw(float delta) {
-        canvas.clear();
+        OrthographicCamera cam = (OrthographicCamera)canvas.getCamera();
 
+        canvas.clear();
         level.draw(canvas);
 
         if (isFailure()) {
             displayFont.setColor(Color.RED);
             canvas.begin(); // DO NOT SCALE
-            canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
+            //canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
+            canvas.drawText("u ded :(", displayFont, cam.position.x-140, cam.position.y+30);
             canvas.end();
         }
 
         if (isComplete()){
             displayFont.setColor(Color.GREEN);
             canvas.begin();
-            canvas.drawTextCentered("Yay! :):)", displayFont, 0.0f);
+            canvas.drawText("Yay! :):)", displayFont, cam.position.x-140, cam.position.y+30);
             canvas.end();
-
         }
     }
 }
