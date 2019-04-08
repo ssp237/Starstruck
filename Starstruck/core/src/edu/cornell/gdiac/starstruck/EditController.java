@@ -95,6 +95,7 @@ public class EditController extends WorldController implements ContactListener {
         TextureRegion texture;
 
         camOffsetX = 0;
+        camOffsetY = 0;
 
         texture = JsonAssetManager.getInstance().getEntry("astronaut 1", TextureRegion.class);
         dwidth = texture.getRegionWidth()/scale.x;
@@ -136,13 +137,13 @@ public class EditController extends WorldController implements ContactListener {
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
-            current = new Planet(pos.x + camOffsetX/scale.x, pos.y, p.getInd() + 1, world, scale);
+            current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, p.getInd() + 1, world, scale);
             level.add(current);
         } else if (input.didDown()) {
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
-            current = new Planet(pos.x + camOffsetX/scale.x, pos.y, p.getInd() - 1, world, scale);
+            current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, p.getInd() - 1, world, scale);
             level.add(current);
         }
     }
@@ -212,7 +213,8 @@ public class EditController extends WorldController implements ContactListener {
                 level.remove(current);
                 current = null;
             } else {
-                current.setPosition((input.xPos() + camOffsetX) / scale.x, -((input.yPos() + camOffsetY)/ scale.y) + bounds.height);
+                current.setPosition((input.xPos() + camOffsetX) / scale.x,
+                        -((input.yPos() - camOffsetY)/ scale.y) + bounds.height);
                 switch (current.getType()) {
                     case PLANET:
                         updatePlanet();
@@ -223,15 +225,17 @@ public class EditController extends WorldController implements ContactListener {
                 Gdx.input.getTextInput(save, "Save as...", "level.json", "");
             } else if (input.didP()) {
                 Vector2 pos = input.getCrossHair();
-                current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY, 1, world, scale);
+                current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, 1, world, scale);
                 level.add(current);
             } else if (input.didA()) {
                 Vector2 pos = input.getCrossHair();
-                current = new Anchor(pos.x + camOffsetX/scale.x, pos.y + camOffsetY, JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
+                current = new Anchor(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y,
+                        JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
                 level.add(current);
             } else if (input.didS()) {
                 Vector2 pos = input.getCrossHair();
-                current = new Star(pos.x + camOffsetX/scale.x, pos.y + camOffsetY, JsonAssetManager.getInstance().getEntry("star", TextureRegion.class), scale);
+                current = new Star(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y,
+                        JsonAssetManager.getInstance().getEntry("star", TextureRegion.class), scale);
                 level.add(current);
             }
             if (input.mouseDragged()) {
