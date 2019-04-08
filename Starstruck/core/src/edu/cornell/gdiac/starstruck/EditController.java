@@ -1,5 +1,6 @@
 package edu.cornell.gdiac.starstruck;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
@@ -30,12 +31,19 @@ public class EditController extends WorldController implements ContactListener {
             file = null;
         }
     }
+
+    /** Speed of camera pan */
+    private static final float PAN_CONST = 2;
+
     /** Current obstacle */
     private Obstacle current;
     /** VectorWorld */
     private VectorWorld vectorWorld;
     /** Reference to the game level */
     protected LevelModel level;
+    /** Camera offset */
+    private float camOffsetX;
+    private float camOffsetY;
     /** Listener for save data */
     private SaveListener save;
 
@@ -86,6 +94,9 @@ public class EditController extends WorldController implements ContactListener {
         float dheight;
         TextureRegion texture;
 
+        camOffsetX = 0;
+        camOffsetY = 0;
+
         texture = JsonAssetManager.getInstance().getEntry("astronaut 1", TextureRegion.class);
         dwidth = texture.getRegionWidth()/scale.x;
         dheight = texture.getRegionHeight()/scale.y;
@@ -126,13 +137,13 @@ public class EditController extends WorldController implements ContactListener {
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
-            current = new Planet(pos.x, pos.y, p.getInd() + 1, world, scale);
+            current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, p.getInd() + 1, world, scale);
             level.add(current);
         } else if (input.didDown()) {
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
-            current = new Planet(pos.x, pos.y, p.getInd() - 1, world, scale);
+            current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, p.getInd() - 1, world, scale);
             level.add(current);
         }
     }
@@ -158,13 +169,25 @@ public class EditController extends WorldController implements ContactListener {
      * Helper function to update camera panning with arrow keys when no planet is selected
      */
     private void updateCamera() {
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         InputController input = InputController.getInstance();
         if (input.didLeft()) {
-
+            camera.position.x = camera.position.x - PAN_CONST;
+            camOffsetX = camOffsetX - PAN_CONST;
+        }
+        if (input.heldUp()) {
+            camera.position.y = camera.position.y + PAN_CONST;
+            camOffsetY = camOffsetY + PAN_CONST;
         }
         if (input.didRight()) {
-            
+            camera.position.x = camera.position.x + PAN_CONST;
+            camOffsetX = camOffsetX + PAN_CONST;
         }
+        if (input.heldDown()) {
+            camera.position.y = camera.position.y - PAN_CONST;
+            camOffsetY = camOffsetY - PAN_CONST;
+        }
+        camera.update();
     }
 
     public void update(float dt) {
@@ -178,6 +201,8 @@ public class EditController extends WorldController implements ContactListener {
         //System.out.println(level.getPlayer1().getVX() + "   " + level.getPlayer1().getVY());
         InputController input = InputController.getInstance();
 
+        if (current == null)
+            updateCamera();
         if (save.file != null) {
             System.out.println(level.toJSON());
             save.file = null;
@@ -188,7 +213,8 @@ public class EditController extends WorldController implements ContactListener {
                 level.remove(current);
                 current = null;
             } else {
-                current.setPosition(input.xPos() / scale.x, -(input.yPos() / scale.y) + bounds.height);
+                current.setPosition((input.xPos() + camOffsetX) / scale.x,
+                        -((input.yPos() - camOffsetY)/ scale.y) + bounds.height);
                 switch (current.getType()) {
                     case PLANET:
                         updatePlanet();
@@ -199,15 +225,17 @@ public class EditController extends WorldController implements ContactListener {
                 Gdx.input.getTextInput(save, "Save as...", "level.json", "");
             } else if (input.didP()) {
                 Vector2 pos = input.getCrossHair();
-                current = new Planet(pos.x, pos.y, 1, world, scale);
+                current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, 1, world, scale);
                 level.add(current);
             } else if (input.didA()) {
                 Vector2 pos = input.getCrossHair();
-                current = new Anchor(pos.x, pos.y, JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
+                current = new Anchor(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y,
+                        JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
                 level.add(current);
             } else if (input.didS()) {
                 Vector2 pos = input.getCrossHair();
-                current = new Star(pos.x, pos.y, JsonAssetManager.getInstance().getEntry("star", TextureRegion.class), scale);
+                current = new Star(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y,
+                        JsonAssetManager.getInstance().getEntry("star", TextureRegion.class), scale);
                 level.add(current);
             }
             if (input.mouseDragged()) {
