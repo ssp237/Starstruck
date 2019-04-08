@@ -323,6 +323,12 @@ public class InputController {
     public float yPos() {return Gdx.input.getY();}
 
     /**
+     * Is shift being held down?
+     * @return Is shift being held down?
+     */
+    public boolean shiftHeld() {return shiftPressed && shiftPrevious;}
+
+    /**
      * Creates a new input controller
      *
      * The input controller attempts to connect to the X-Box controller at device 0,

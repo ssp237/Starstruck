@@ -1,5 +1,7 @@
 package edu.cornell.gdiac.starstruck;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -11,12 +13,31 @@ import edu.cornell.gdiac.util.JsonAssetManager;
 
 public class EditController extends WorldController implements ContactListener {
 
+    private class SaveListener implements Input.TextInputListener {
+
+        public String file;
+
+        public SaveListener(){
+            file = null;
+        }
+
+        public void input (String text) {
+            file = text;
+        }
+
+
+        public void canceled () {
+            file = null;
+        }
+    }
     /** Current obstacle */
     private Obstacle current;
     /** VectorWorld */
     private VectorWorld vectorWorld;
     /** Reference to the game level */
     protected LevelModel level;
+    /** Listener for save data */
+    private SaveListener save;
 
     /** References to players and rope */
     private AstronautModel player1;
@@ -40,6 +61,7 @@ public class EditController extends WorldController implements ContactListener {
 //        sensorFixtures = new ObjectSet<Fixture>();
         current = null;
         vectorWorld = new VectorWorld();
+        save = new SaveListener();
     }
 
     public void reset() {
@@ -55,6 +77,7 @@ public class EditController extends WorldController implements ContactListener {
 
         setComplete(false);
         setFailure(false);
+        save = new SaveListener();
 
     }
 
@@ -155,6 +178,11 @@ public class EditController extends WorldController implements ContactListener {
         //System.out.println(level.getPlayer1().getVX() + "   " + level.getPlayer1().getVY());
         InputController input = InputController.getInstance();
 
+        if (save.file != null) {
+            //System.out.println(level.toJSON());
+            save.file = null;
+        }
+
         if (current != null) {
             if (input.didBackspace() && current.getType() != ObstacleType.PLAYER) {
                 level.remove(current);
@@ -167,7 +195,9 @@ public class EditController extends WorldController implements ContactListener {
                 }
             }
         } else {
-            if (input.didP()) {
+            if (input.shiftHeld() && input.didS()){
+                Gdx.input.getTextInput(save, "Save as...", "level.json", "");
+            } else if (input.didP()) {
                 Vector2 pos = input.getCrossHair();
                 current = new Planet(pos.x, pos.y, 1, world, scale);
                 level.add(current);

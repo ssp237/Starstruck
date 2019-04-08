@@ -335,6 +335,12 @@ public class LevelModel {
         }
     }
 
+    /**
+     * Uh remove idk
+     * Player and rope can NOT be removed, so this method will do nothing.
+     *
+     * @param obj Object to be removed.
+     */
     public void remove(Obstacle obj) {
         switch (obj.getType()) {
             case PLANET: planets.remove((Planet) obj); break;
@@ -399,6 +405,12 @@ public class LevelModel {
         return out;
     }
 
+    public String toJSON(){
+        Json out = new Json();
+
+        return out.toJson(this);
+    }
+
     /**
      * Draws the level to the given game canvas
      *
@@ -413,9 +425,12 @@ public class LevelModel {
         canvas.begin();
 
         float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
+        float y = (float) Math.floor((canvas.getCamera().position.y - canvas.getHeight()/2)/canvas.getHeight()) * canvas.getHeight();
 
-        canvas.draw(background, Color.WHITE, x, 0,canvas.getWidth(),canvas.getHeight());
-        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), 0,canvas.getWidth(),canvas.getHeight());
+        canvas.draw(background, Color.WHITE, x, y,canvas.getWidth(),canvas.getHeight());
+        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y,canvas.getWidth(),canvas.getHeight());
+        canvas.draw(background, Color.WHITE, x, y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
+        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
 
         for(Planet p : planets.getPlanets()){
             p.draw(canvas);
