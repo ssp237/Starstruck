@@ -12,30 +12,13 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonValue.PrettyPrintSettings;
 import com.badlogic.gdx.utils.JsonWriter;
+import edu.cornell.gdiac.starstruck.Gravity.SaveListener;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
 public class EditController extends WorldController implements ContactListener {
-
-    private class SaveListener implements Input.TextInputListener {
-
-        public String file;
-
-        public SaveListener(){
-            file = null;
-        }
-
-        public void input (String text) {
-            file = text;
-        }
-
-
-        public void canceled () {
-            file = null;
-        }
-    }
 
     /** Speed of camera pan */
     private static final float PAN_CONST = 2;
@@ -212,6 +195,10 @@ public class EditController extends WorldController implements ContactListener {
         camera.update();
     }
 
+    /**
+     * Try resetting the current level to the level in loader; return true if succesful.
+     * @return If the level was successfully reset.
+     */
     private boolean loadNewFile() {
         try {
             levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + load.file));
@@ -277,6 +264,8 @@ public class EditController extends WorldController implements ContactListener {
                 Gdx.input.getTextInput(load, "Load...", "level.json", "");
             } else if (input.shiftHeld() && input.didD()) {
                 loadFile = null;
+                reset();
+                return;
             } else if (input.didP()) {
                 Vector2 pos = input.getCrossHair();
                 current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, 1, world, scale);
