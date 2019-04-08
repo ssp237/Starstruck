@@ -8,33 +8,17 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonValue.PrettyPrintSettings;
 import com.badlogic.gdx.utils.JsonWriter;
+import edu.cornell.gdiac.starstruck.Gravity.SaveListener;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
 public class EditController extends WorldController implements ContactListener {
-
-    private class SaveListener implements Input.TextInputListener {
-
-        public String file;
-
-        public SaveListener(){
-            file = null;
-        }
-
-        public void input (String text) {
-            file = text;
-        }
-
-
-        public void canceled () {
-            file = null;
-        }
-    }
 
     /** Speed of camera pan */
     private static final float PAN_CONST = 2;
@@ -54,6 +38,10 @@ public class EditController extends WorldController implements ContactListener {
     private SaveListener load;
     /** File to load (if non-null) */
     private String loadFile;
+    /** The JSON defining the level model */
+    private JsonValue  levelFormat;
+    /** The reader to process JSON files */
+    private JsonReader jsonReader;
 
     /** References to players and rope */
     private AstronautModel player1;
@@ -78,22 +66,31 @@ public class EditController extends WorldController implements ContactListener {
         current = null;
         vectorWorld = new VectorWorld();
         save = new SaveListener();
+        jsonReader = new JsonReader();
+        loadFile = null;
+        levelFormat = null;
     }
 
     public void reset() {
         level.dispose();
 
-        level.setBackground(JsonAssetManager.getInstance().getEntry("background", Texture.class));
+        if (loadFile != null) {
+            levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
+            level.populate(levelFormat);
+        } else {
+
+            level.setBackground(JsonAssetManager.getInstance().getEntry("background", Texture.class));
+            createPlayers();
+        }
         level.getWorld().setContactListener(this);
         world = level.getWorld();
-
-        createPlayers();
 
         current = null;
 
         setComplete(false);
         setFailure(false);
         save = new SaveListener();
+        load = new SaveListener();
 
     }
 
@@ -198,6 +195,24 @@ public class EditController extends WorldController implements ContactListener {
         camera.update();
     }
 
+    /**
+     * Try resetting the current level to the level in loader; return true if succesful.
+     * @return If the level was successfully reset.
+     */
+    private boolean loadNewFile() {
+        try {
+            levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + load.file));
+            level.populate(levelFormat);
+            loadFile = load.file;
+            load.file = null;
+
+            return true;
+        } catch (Exception e) {
+            load.file = null;
+            return false;
+        }
+    }
+
     public void update(float dt) {
         //System.out.println(current);
         int i = 0;
@@ -219,10 +234,16 @@ public class EditController extends WorldController implements ContactListener {
             PrettyPrintSettings saveSettings = new PrettyPrintSettings();
             saveSettings.outputType = JsonWriter.OutputType.json;
             saveFile.writeString(saveVal.prettyPrint(saveSettings), false);
+            load.file = save.file;
             save.file = null;
         }
 
-
+        if (load.file != null) {
+            if (loadNewFile()) {
+                reset();
+                return;
+            }
+        }
 
         if (current != null) {
             if (input.didBackspace() && current.getType() != ObstacleType.PLAYER) {
@@ -239,8 +260,12 @@ public class EditController extends WorldController implements ContactListener {
         } else {
             if (input.shiftHeld() && input.didS()) {
                 Gdx.input.getTextInput(save, "Save as...", "level.json", "");
-            } else if (input.shiftHeld() && input.didO()){
+            } else if (input.shiftHeld() && input.didO()) {
                 Gdx.input.getTextInput(load, "Load...", "level.json", "");
+            } else if (input.shiftHeld() && input.didD()) {
+                loadFile = null;
+                reset();
+                return;
             } else if (input.didP()) {
                 Vector2 pos = input.getCrossHair();
                 current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, 1, world, scale);

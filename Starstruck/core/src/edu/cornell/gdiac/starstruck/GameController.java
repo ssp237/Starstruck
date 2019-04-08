@@ -21,6 +21,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import java.util.*;
 
 //import edu.cornell.gdiac.physics.*;
+import edu.cornell.gdiac.starstruck.Gravity.SaveListener;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
 import edu.cornell.gdiac.util.*;
@@ -148,20 +149,6 @@ public class GameController extends WorldController implements ContactListener {
     // Physics constants for initialization
     /** The new heavier gravity for this world (so it is not so floaty) */
     private static final float  DEFAULT_GRAVITY = 0f;//-14.7f;
-    /** The density for most physics objects */
-    private static final float  BASIC_DENSITY = 0.0f;
-    /** The density for a bullet */
-    private static final float  HEAVY_DENSITY = 10.0f;
-    /** Friction of most platforms */
-    private static final float  BASIC_FRICTION = 0.4f;
-    /** The restitution for all physics objects */
-    private static final float  BASIC_RESTITUTION = 0.1f;
-    /** The width of the rope bridge */
-    private static final float  BRIDGE_WIDTH = 6.0f;
-    /** Offset for bullet when firing */
-    private static final float  BULLET_OFFSET = 0.2f;
-    /** The speed of the bullet after firing */
-    private static final float  BULLET_SPEED = 20.0f;
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
     /** The volume for music */
@@ -235,6 +222,10 @@ public class GameController extends WorldController implements ContactListener {
     private float yBound;
     /** Amount rope is extended */
     private int extendInt = 0;
+    /** Level to load */
+    private String loadFile;
+    /** Listener for load data */
+    SaveListener loader;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -268,6 +259,8 @@ public class GameController extends WorldController implements ContactListener {
         setFailure(false);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
+        loadFile = "test.json";
+        loader = new SaveListener();
     }
 
     /**
@@ -278,7 +271,8 @@ public class GameController extends WorldController implements ContactListener {
     public void reset() {
         level.dispose();
 
-        levelFormat = jsonReader.parse(Gdx.files.internal("levels/alpha2.json"));
+        //levelFormat = jsonReader.parse(Gdx.files.internal("levels/alpha2.json"));
+        levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
 
@@ -703,6 +697,24 @@ public class GameController extends WorldController implements ContactListener {
     }
 
     /**
+     * Try resetting the current level to the level in loader; return true if succesful.
+     * @return If the level was successfully reset.
+     */
+    private boolean loadNewFile() {
+        try {
+            levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loader.file));
+            level.populate(levelFormat);
+            loadFile = loader.file;
+            loader.file = null;
+
+            return true;
+        } catch (Exception e) {
+            loader.file = null;
+            return false;
+        }
+    }
+
+    /**
      * The core gameplay loop of this world.
      *
      * This method contains the specific update code for this mini-game. It does
@@ -717,6 +729,16 @@ public class GameController extends WorldController implements ContactListener {
         updateCam();
 
         if (isFailure()) return;
+
+        if (loader.file != null) {
+            if (loadNewFile()) {
+                reset();
+                return;
+            }
+        }
+        if (InputController.getInstance().shiftHeld() && InputController.getInstance().didO()) {
+            Gdx.input.getTextInput(loader, "Load...", "level.json", "");
+        }
 
         if (switched()) {
             avatar.setActive(!avatar.isActive());
