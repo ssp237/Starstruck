@@ -75,6 +75,9 @@ public class InputController {
     private boolean rightPrevious;
     private boolean leftPressed;
     private boolean leftPrevious;
+    /** Whether up and down arrow keys are being pressed & held */
+    private boolean downHeld;
+    private boolean upHeld;
     /** Whether down key was pressed */
     private boolean downPressed;
     private boolean downPrevious;
@@ -297,6 +300,10 @@ public class InputController {
         return leftPressed;
     }
 
+    public boolean heldUp() { return upHeld; }
+
+    public boolean heldDown() { return downHeld; }
+
     public boolean didDown() { return downPressed && !downPrevious; }
 
     public boolean didA() {
@@ -430,6 +437,8 @@ public class InputController {
         // TODO no controller support
         rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT);
         leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT);
+        upHeld = Gdx.input.isKeyPressed (Input.Keys.UP);
+        downHeld = Gdx.input.isKeyPressed (Input.Keys.DOWN);
         downPressed = Gdx.input.isKeyPressed (Input.Keys.DOWN);
         aPressed = Gdx.input.isKeyPressed (Input.Keys.A);
         sPressed = Gdx.input.isKeyPressed (Input.Keys.S);

@@ -142,10 +142,16 @@ public class EditController extends WorldController implements ContactListener {
     }
 
     /**
-     * Helper function to update camera due to mouse dragging when no obstacle is selected.
+     * Helper function to update camera panning with arrow keys when no planet is selected
      */
     private void updateCamera() {
+        InputController input = InputController.getInstance();
+        if (input.didLeft()) {
 
+        }
+        if (input.didRight()) {
+            
+        }
     }
 
     public void update(float dt) {

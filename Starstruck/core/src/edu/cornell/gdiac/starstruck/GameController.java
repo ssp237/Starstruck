@@ -179,7 +179,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Allows manual control of astronaut in space for testing */
     public static final boolean testC = false;
     /** Camera zoom */
-    private static final float ZOOM_FACTOR = 0.8f;
+    private static final float ZOOM_FACTOR = 1f;
     /** True when the rope can be extended (astronaut is anchored and other astronaut is far enough away) */
     public static boolean ropeExtend = false;
 
