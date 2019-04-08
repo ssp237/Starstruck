@@ -70,7 +70,6 @@ public class EditController extends WorldController implements ContactListener {
         player1.setDrawScale(scale);
         player1.setTexture(texture);
         player1.setGlow(JsonAssetManager.getInstance().getEntry("glow", TextureRegion.class));
-        player1.setBodyType(BodyDef.BodyType.StaticBody);
         player1.setName("avatar 1");
 
         texture = JsonAssetManager.getInstance().getEntry("astronaut 2", TextureRegion.class);
@@ -80,7 +79,6 @@ public class EditController extends WorldController implements ContactListener {
         player2.setDrawScale(scale);
         player2.setTexture(texture);
         player2.setGlow(JsonAssetManager.getInstance().getEntry("glow", TextureRegion.class));
-        player2.setBodyType(BodyDef.BodyType.StaticBody);
         player2.setName("avatar 2");
 
         level.add(player1); level.add(player2);
@@ -122,20 +120,12 @@ public class EditController extends WorldController implements ContactListener {
     private void updateClick() {
         InputController input = InputController.getInstance();
         if (current != null) {
-            if (current == player1 || current == player2) {
-                player1.setBodyType(BodyDef.BodyType.StaticBody);
-                player2.setBodyType(BodyDef.BodyType.StaticBody);
-            }
             current = null;
         }
         else {
             for (Obstacle obj : level.getAllObjects()) {
                 if (obj.containsPoint(input.getCrossHair())) {
                     current = obj;
-                    if (current == player1 || current == player2) {
-                        player1.setBodyType(BodyDef.BodyType.DynamicBody);
-                        player2.setBodyType(BodyDef.BodyType.DynamicBody);
-                    }
                 }
             }
         }
@@ -185,12 +175,10 @@ public class EditController extends WorldController implements ContactListener {
                 Vector2 pos = input.getCrossHair();
                 current = new Anchor(pos.x, pos.y, JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
                 level.add(current);
-                current.setBodyType(BodyDef.BodyType.StaticBody);
             } else if (input.didS()) {
                 Vector2 pos = input.getCrossHair();
                 current = new Star(pos.x, pos.y, JsonAssetManager.getInstance().getEntry("star", TextureRegion.class), scale);
                 level.add(current);
-                current.setBodyType(BodyDef.BodyType.StaticBody);
             }
             if (input.mouseDragged()) {
                 updateCamera();

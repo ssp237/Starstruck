@@ -56,9 +56,9 @@
   },
   "planet specs": {
     "p1 mass": 700,
-    "p2 mass": 900,
-    "p3 mass": 1100,
-    "p4 mass": 1300
+    "p2 mass": 800,
+    "p3 mass": 900,
+    "p4 mass": 1000
   },
   "planets": [
     {
