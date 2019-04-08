@@ -38,7 +38,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	/** List of all WorldControllers */
 	private WorldController[] controllers;
 	/** Number of special screens */
-	private static int SCREENS = 4;
+	private static int SCREENS = 3;
 
 	/**
 	 * Creates a new game from the configuration settings.
@@ -69,9 +69,9 @@ public class GDXRoot extends Game implements ScreenListener {
 		// Initialize the three game worlds
 		controllers = new WorldController[SCREENS];
 		controllers[0] = new MenuMode(canvas);
-		controllers[1] = new LevelSelect();
+//		controllers[1] = new LevelSelect();
 		controllers[2] = new EditController();
-		controllers[3] = new GameController();
+		controllers[1] = new GameController();
 		for(int ii = 0; ii < controllers.length; ii++) {
 			controllers[ii].preLoadContent(JsonAssetManager.getInstance());
 		}
