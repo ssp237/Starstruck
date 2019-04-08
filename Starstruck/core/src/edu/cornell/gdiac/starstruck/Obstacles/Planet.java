@@ -141,10 +141,11 @@ public class Planet extends WheelObstacle {
      * @param json The json containing data to set preset values.
      */
     public static void setPresets(JsonValue json) {
-        mass1 = json.getFloat("p1 mass");
-        mass2 = json.getFloat("p2 mass");
-        mass3 = json.getFloat("p3 mass");
-        mass4 = json.getFloat("p4 mass");
+        float[] vals = json.asFloatArray();
+        mass1 = vals[0];
+        mass2 = vals[1];
+        mass3 = vals[2];
+        mass4 = vals[3];
     }
 
     /**

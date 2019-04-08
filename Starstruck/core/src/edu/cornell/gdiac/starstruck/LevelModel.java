@@ -218,7 +218,7 @@ public class LevelModel {
         float[] pSize = levelFormat.get("physicsSize").asFloatArray();
         int[] gSize = levelFormat.get("graphicSize").asIntArray();
 
-        String key = levelFormat.get("background").get("texture").asString();
+        String key = levelFormat.get("background").asString();
         background = JsonAssetManager.getInstance().getEntry(key, Texture.class);
 
         bounds = new Rectangle(0,0,pSize[0],pSize[1]);
