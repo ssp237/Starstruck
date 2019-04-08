@@ -295,12 +295,15 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
 //            if (!music.isPlaying()) { music.play();}
             // We are are ready, notify our listener
             if (isReady() && listener != null && buttonId == PLAY) {
-                listener.exitScreen(this, 1);
+                pressState = 0;
+                listener.exitScreen(this, WorldController.EXIT_NEXT);
             }
             if (isReady() && listener != null && buttonId == BUILD) {
-                listener.exitScreen(this, 2);
+                pressState = 0;
+                listener.exitScreen(this, WorldController.TO_EDIT);
             }
             if (isReady() && listener != null && buttonId == QUIT) {
+                pressState = 0;
                 listener.exitScreen(this, 0);
             }
         }

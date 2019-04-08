@@ -214,9 +214,9 @@ public abstract class WorldController implements Screen {
     /** Exit code for quitting the game */
     public static final int EXIT_QUIT = 0;
     /** Exit code for advancing to next level */
-    public static final int EXIT_NEXT = 1;
+    public static final int EXIT_NEXT = 3;
     /** Exit code for jumping back to previous level */
-    public static final int EXIT_PREV = 2;
+    public static final int TO_EDIT = 2;
     /** How many frames after winning/losing do we continue? */
     public static final int EXIT_COUNT = 120;
 
@@ -521,7 +521,7 @@ public abstract class WorldController implements Screen {
             listener.exitScreen(this, EXIT_NEXT);
             return false;
         } else if (input.didRetreat()) {
-            listener.exitScreen(this, EXIT_PREV);
+            listener.exitScreen(this, TO_EDIT);
             return false;
         } else if (countdown > 0) {
             countdown--;
