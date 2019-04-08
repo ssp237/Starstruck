@@ -62,7 +62,7 @@ public class Rope extends ComplexObstacle {
     /** Lengh of the rope */
     protected float length;
     /** Number of links in the rope */
-    private int nLinks;
+    protected int nlinks;
     /** Original number of links in the rope */
     private int initLinks;
     /** List of planks that make up this rope */
@@ -114,7 +114,7 @@ public class Rope extends ComplexObstacle {
         norm.nor();
 
         // If too small, only make one plank.
-        nLinks = (int)(length / linksize);
+        int nLinks = (int)(length / linksize);
         if (nLinks <= 1) {
             nLinks = 1;
             linksize = length;
@@ -137,7 +137,7 @@ public class Rope extends ComplexObstacle {
             plank.setDensity(BASIC_DENSITY);
             bodies.add(plank);
         }
-
+        nlinks = nLinks;
         this.length = nLinks * linksize + nLinks * spacing;
         initLinks = nLinks;
     }
@@ -274,7 +274,7 @@ public class Rope extends ComplexObstacle {
 
     public float getLength() { return length; }
 
-    public int nLinks(){ return nLinks; }
+    public int nLinks(){ return nlinks; }
 
     //public void setLength(int newLength) {length = newLength;}
 
@@ -302,23 +302,23 @@ public class Rope extends ComplexObstacle {
         // Create the extra plank
         planksize.x = linksize;
         Vector2 pos = new Vector2();
-        nLinks++;
+        nlinks++;
 
-        float t = (nLinks - 1) *(linksize+spacing) + linksize/2.0f;
+        float t = (nlinks - 1) *(linksize+spacing) + linksize/2.0f;
         // pos.set(norm);
         pos.scl(t);
         pos.add(x0,y0);
         BoxObstacle plank = new BoxObstacle(pos.x, pos.y, planksize.x, planksize.y);
-        plank.setName(PLANK_NAME+(nLinks - 1));
+        plank.setName(PLANK_NAME+(nlinks - 1));
         plank.setDensity(BASIC_DENSITY);
         bodies.add(plank);
 
-        t = (nLinks) *(linksize+spacing) + linksize/2.0f;
+        t = (nlinks) *(linksize+spacing) + linksize/2.0f;
         // pos.set(norm);
         pos.scl(t);
         pos.add(x0,y0);
         BoxObstacle plank2 = new BoxObstacle(pos.x, pos.y, planksize.x, planksize.y);
-        plank2.setName(PLANK_NAME+(nLinks));
+        plank2.setName(PLANK_NAME+(nlinks));
         plank2.setDensity(BASIC_DENSITY);
         bodies.add(plank2);
 
@@ -347,7 +347,7 @@ public class Rope extends ComplexObstacle {
         joint = world.createJoint(jointDef);
         joints.add(joint);
 
-        length = nLinks * linksize + nLinks * spacing;
+        length = nlinks * linksize + nlinks * spacing;
     }
 
     public void extendRope(AstronautModel avatar, World world, TextureRegion ropeTexture) {
@@ -381,8 +381,8 @@ public class Rope extends ComplexObstacle {
         Vector2 plankPos = plank.getPosition();
         System.out.println("Plank Pos = " + plankPos);
         //Update nlinks and length
-        nLinks++;
-        this.length = nLinks * linksize + nLinks * spacing;
+        nlinks++;
+        this.length = nlinks * linksize + nlinks * spacing;
 
         Vector2 anchor1 = new Vector2(endPoint);
         Vector2 anchor2 = new Vector2(-linksize/2, 0);
@@ -402,7 +402,7 @@ public class Rope extends ComplexObstacle {
         ropeJointDef.localAnchorA.set(reset);
         ropeJointDef.localAnchorB.set(anchor2);
         ropeJointDef.collideConnected = false;
-        ropeJointDef.maxLength = nLinks*linksize + linksize/2; //(nLinks-1)*linksize
+        ropeJointDef.maxLength = nlinks*linksize + linksize/2; //(nLinks-1)*linksize
         joint = world.createJoint(ropeJointDef);
         joints.add(joint);
 //        ropeJointDef.bodyA = this.avatar2.getBody();
