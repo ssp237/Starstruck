@@ -457,4 +457,64 @@ public class JsonAssetManager extends AssetManager {
 		
 	}
 
+	/**
+	 * Reverse lookup of a key given a Texture. Null if not found.
+	 * @param texture Texture to be searched for.
+	 * @return Key associated with texture; null if not found.
+	 */
+	public String getKey(Texture texture) {
+		for (ObjectMap.Entry<String, Texture> entry : textures) {
+			if (texture.equals(entry.value)) return entry.key;
+		}
+		return null; //Not found
+	}
+
+	/**
+	 * Reverse lookup of a key given a TextureRegion. Null if not found.
+	 * @param texture TextureRegion to be searched for.
+	 * @return Key associated with texture; null if not found.
+	 */
+	public String getKey(TextureRegion texture) {
+		for (ObjectMap.Entry<String, TextureRegion> entry : regions) {
+			if (texture.equals(entry.value)) return entry.key;
+		}
+		return null; //Not found
+	}
+
+	/**
+	 * Reverse lookup of a key given a Filmstrip. Null if not found.
+	 * @param strip Filmstrip to be searched for.
+	 * @return Key associated with strip; null if not found.
+	 */
+	public String getKey(FilmStrip strip) {
+		for (ObjectMap.Entry<String, FilmStrip> entry : filmstrips) {
+			if (strip.equals(entry.value)) return entry.key;
+		}
+		return null; //Not found
+	}
+
+	/**
+	 * Reverse lookup of a key given a font. Null if not found.
+	 * @param font font to be searched for.
+	 * @return Key associated with font; null if not found.
+	 */
+	public String getKey(BitmapFont font) {
+		for (ObjectMap.Entry<String, BitmapFont> entry : fonts) {
+			if (font.equals(entry.value)) return entry.key;
+		}
+		return null; //Not found
+	}
+
+	/**
+	 * Reverse lookup of a key given a Sound. Null if not found.
+	 * @param sound Sound to be searched for.
+	 * @return Key associated with sound; null if not found.
+	 */
+	public String getKey(Sound sound) {
+		for (ObjectMap.Entry<String, Sound> entry : sounds) {
+			if (sound.equals(entry.value)) return entry.key;
+		}
+		return null; //Not found
+	}
+
 }
