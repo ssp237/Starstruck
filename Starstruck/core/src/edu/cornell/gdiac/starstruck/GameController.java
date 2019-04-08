@@ -769,22 +769,22 @@ public class GameController extends WorldController implements ContactListener {
                 angle = -contactDir2.angleRad(new Vector2 (0, 1));
                 avatar2.setAngle(angle);
                 if (curPlanet == curPlanet2) { //If the two avatars are on the same planet, move inactive avatar
-//                    if (updateRope(avatar, avatar2, rope, 'c')) {
-//                        updateMovement(avatar2, contactDir2, curPlanet2, true);
-//                    }
+                    if (updateRope(avatar, avatar2, rope, 'c')) {
+                        updateMovement(avatar2, contactDir2, curPlanet2, true);
+                    }
                 }
                 else { // Else if inactive is on a different planet, set it's location, restrict mvoement of other avatar
                     avatar2.setPosition(lastPos2);
-//                    if (updateRope(avatar, avatar2, rope, 'p')) {
-//                        avatar.setPosition(lastPos);
-//                    }
+                    if (updateRope(avatar, avatar2, rope, 'p')) {
+                        avatar.setPosition(lastPos);
+                    }
                 }
             }
 
             else if (avatar2.isAnchored()) { //If inactive avatar is anchored restrict rope length
-                if (updateRope(avatar, avatar2, rope, 'p')) {
-                    avatar.setPosition(lastPos);
-                }
+//                if (updateRope(avatar, avatar2, rope, 'p')) {
+//                    avatar.setPosition(lastPos);
+//                }
             }
         }
         else {
@@ -842,7 +842,7 @@ public class GameController extends WorldController implements ContactListener {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
-        print(rope.nLinks());
+        //print(rope.nLinks());
         updateCam();
 
         if (isFailure()) return;
@@ -870,13 +870,15 @@ public class GameController extends WorldController implements ContactListener {
         updateAnchor(avatar, avatar2);
         if (avatar.isAnchored()) {
             avatar.setFixedRotation(true);
-            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength())
+            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength() - rope.linksize)
+                    //&& avatar2.getLinearVelocity() != reset )
                 rope.extendRope(avatar, world, bridgeTexture);
                 rope.setDrawScale(scale);
         }
         if (avatar2.isAnchored()) {
             avatar2.setFixedRotation(true);
-            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength())
+            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength() - rope.linksize)
+                    //&& avatar.getLinearVelocity() != reset)
                 rope.extendRope(avatar2, world, bridgeTexture);
                 rope.setDrawScale(scale);
         }
@@ -1232,10 +1234,10 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(false);
             }
             //Enables collisions between rope and anchor
-//            if (bd1.getName().contains("rope") && bd2.getName().contains("anchor")
-//                    || bd1.getName().contains("anchor") && bd2.getName().contains("rope")) {
-//                contact.setEnabled(true);
-//            }
+            if (bd1.getName().contains("rope") && bd2.getName().contains("anchor")
+                    || bd1.getName().contains("anchor") && bd2.getName().contains("rope")) {
+                contact.setEnabled(true);
+            }
             //Enables collisions between rope and planet
             if (bd1.getName().contains("rope") && bd2.getName().contains("planet")
                     || bd1.getName().contains("planet") && bd2.getName().contains("rope")) {
