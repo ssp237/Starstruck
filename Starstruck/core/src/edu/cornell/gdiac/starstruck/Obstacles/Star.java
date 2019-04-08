@@ -105,7 +105,7 @@ public class Star extends ComplexObstacle {
      * @param scale Draw scale for the new star
      */
     public Star(float x, float y, TextureRegion texture, Vector2 scale) {
-        this(x,y,texture.getRegionWidth(),texture.getRegionHeight());
+        this(x,y,texture.getRegionWidth()/scale.x,texture.getRegionHeight()/scale.y);
         setDrawScale(scale);
         setTexture(texture);
     }
