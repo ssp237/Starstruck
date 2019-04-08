@@ -53,7 +53,7 @@ public class EditController extends WorldController implements ContactListener {
 
     public EditController() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
-        level = new LevelModel();
+        level = new LevelModel(bounds, scale);
         setDebug(false);
         setComplete(false);
         setFailure(false);
@@ -89,7 +89,7 @@ public class EditController extends WorldController implements ContactListener {
         texture = JsonAssetManager.getInstance().getEntry("astronaut 1", TextureRegion.class);
         dwidth = texture.getRegionWidth()/scale.x;
         dheight = texture.getRegionHeight()/scale.y;
-        player1 = new AstronautModel(P1_POS.x, P1_POS.y, dwidth, dheight, true, true);
+        player1 = new AstronautModel(P1_POS.x, P1_POS.y, 0.7f, 0.95f, true, true);
         player1.setDrawScale(scale);
         player1.setTexture(texture);
         player1.setGlow(JsonAssetManager.getInstance().getEntry("glow", TextureRegion.class));
@@ -179,7 +179,7 @@ public class EditController extends WorldController implements ContactListener {
         InputController input = InputController.getInstance();
 
         if (save.file != null) {
-            //System.out.println(level.toJSON());
+            System.out.println(level.toJSON());
             save.file = null;
         }
 

@@ -199,24 +199,7 @@ public class LevelModel {
         planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
     }
 
-    public AstronautModel createAstro(JsonValue json, boolean active) {
-        float[] pos  = json.get("pos").asFloatArray();
-        float posX = pos[0], posY = pos[1];
-        float[] size = json.get("size").asFloatArray();
-        float sizeX = size[0], sizeY = size[1];
-        AstronautModel astro = new AstronautModel(posX, posY, sizeX, sizeY, active, active);
-        astro.setDrawScale(scale);
 
-        String key = json.get("texture").asString();
-        TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        astro.setTexture(texture);
-
-        key = json.get("glow texture").asString();
-        texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        astro.setGlow(texture);
-
-        return astro;
-    }
 
     /**
      * Set the background to the specified texture.
@@ -242,12 +225,12 @@ public class LevelModel {
         scale.x = gSize[0]/pSize[0];
         scale.y = gSize[1]/pSize[1];
 
-        player1 = createAstro(levelFormat.get("astronaut 1"), true);
+        player1 = AstronautModel.fromJson(levelFormat.get("astronaut 1"), scale,true);
         player1.setName("avatar");
         player1.activatePhysics(world);
         //addObject(player1);
 
-        player2 = createAstro(levelFormat.get("astronaut 2"), false);
+        player2 = AstronautModel.fromJson(levelFormat.get("astronaut 2"), scale, false);
         player2.setName("avatar2");
         player2.activatePhysics(world);
 
@@ -405,10 +388,52 @@ public class LevelModel {
         return out;
     }
 
-    public String toJSON(){
-        Json out = new Json();
+    /**
+     * Write this level to a JsonValue that, when parsed, would return the same level.
+     * @return A JsonValue representing this level.
+     */
+    public JsonValue toJSON(){
+        JsonValue out = new JsonValue(JsonValue.ValueType.object);
 
-        return out.toJson(this);
+        //Add size fields
+        JsonValue physicsSize = new JsonValue(JsonValue.ValueType.array);
+        physicsSize.addChild(new JsonValue(bounds.width));
+        physicsSize.addChild(new JsonValue(bounds.height));
+
+        JsonValue graphicsSize = new JsonValue(JsonValue.ValueType.array);
+        graphicsSize.addChild(new JsonValue((int) (bounds.width * scale.x)));
+        graphicsSize.addChild(new JsonValue((int) (bounds.height * scale.y)));
+
+        out.addChild("physics size", physicsSize);
+        out.addChild("graphics size", graphicsSize);
+
+        //Add background
+        out.addChild("background", new JsonValue(JsonAssetManager.getInstance().getKey(background)));
+
+        //Add astronauts
+        out.addChild("astronaut 1", player1.toJson());
+        out.addChild("astronaut 2", player2.toJson());
+
+        //Add obstacles
+        JsonValue rope = new JsonValue(JsonValue.ValueType.object);
+        JsonValue anchors = new JsonValue(JsonValue.ValueType.object);
+        JsonValue stars = new JsonValue(JsonValue.ValueType.object);
+
+        for (Obstacle obj : objects) {
+            switch (obj.getType()) {
+                case STAR: stars.addChild(((Star) obj).toJson());
+            }
+            System.out.println(obj);
+            System.out.println(stars);
+        }
+        System.out.println(stars);
+
+//        out.addChild("rope", rope);
+//        out.addChild("anchors", anchors);
+//        out.addChild("stars", stars);
+
+
+        return out;
     }
 
     /**

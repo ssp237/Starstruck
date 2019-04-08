@@ -585,6 +585,60 @@ public class AstronautModel extends CapsuleObstacle {
     }
 
     /**
+     * Return a new astronaut with parameters specified by the JSON
+     * @param json A JSON containing data for one astronaut
+     * @param scale The scale to convert physics units to drawing units
+     * @param active Whether this astronaut is player 1/active.
+     * @return An astronaut created according to the specifications in the JSON
+     */
+    public static AstronautModel fromJson(JsonValue json, Vector2 scale, boolean active) {
+        float[] pos  = json.get("pos").asFloatArray();
+        float posX = pos[0], posY = pos[1];
+        float[] size = json.get("size").asFloatArray();
+        float sizeX = size[0], sizeY = size[1];
+        AstronautModel astro = new AstronautModel(posX, posY, sizeX, sizeY, active, active);
+        astro.setDrawScale(scale);
+
+        String key = json.get("texture").asString();
+        TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        astro.setTexture(texture);
+
+        key = json.get("glow texture").asString();
+        texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        astro.setGlow(texture);
+
+        return astro;
+    }
+
+    /**
+     * Write this astronaut to a JsonValue. When parsed, this JsonValue should return the same astronaut.
+     * @return A JsonValue representing this AstronautModel.
+     */
+    public JsonValue toJson() {
+        JsonValue json = new JsonValue(JsonValue.ValueType.object);
+
+        //Write position and size
+        Vector2 pos = getPosition();
+
+        JsonValue position = new JsonValue(JsonValue.ValueType.array);
+        position.addChild(new JsonValue(pos.x));
+        position.addChild(new JsonValue(pos.y));
+
+        JsonValue size = new JsonValue(JsonValue.ValueType.array);
+        size.addChild(new JsonValue(getWidth()/DUDE_HSHRINK));
+        size.addChild(new JsonValue(getHeight()/DUDE_VSHRINK));
+
+        json.addChild("pos", position);
+        json.addChild("size", size);
+
+        //Add textures
+        json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(texture)));
+        json.addChild("glow texture", new JsonValue(JsonAssetManager.getInstance().getKey(glowTexture)));
+
+        return json;
+    }
+
+    /**
      * Creates the physics Body(s) for this object, adding them to the world.
      *
      * This method overrides the base method to keep your ship from spinning.

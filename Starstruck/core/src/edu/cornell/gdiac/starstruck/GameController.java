@@ -183,53 +183,6 @@ public class GameController extends WorldController implements ContactListener {
     /** True when the rope can be extended (astronaut is anchored and other astronaut is far enough away) */
     public static boolean ropeExtend = false;
 
-
-
-    // Location, radius, and drawscale of all the planets.
-    // Each row is a planet. 1st col is x, 2nd is y, 3rd is radius, 4th is mass, 6th is sprite to use and
-    // 5th is gravitational pull range.
-    // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
-    // Better solution for drawing?
-    private static final float[][] PLANETS = {
-            {1f, 1f, 4f, 2500f, 4, 0},
-            {6f, 12f, 2.5f, 3700f, 2, 0.8f},
-            {15f, 17f, 3f, 4000f, 2.5f, 1.7f},
-            {26f, 8f, 3f, 2000f, 3, 2f},
-            {30f, 15f, 1.5f, 3000f, 2, 2.7f},
-            {37f, 5f, 3f, 2000f, 2, 3.5f},
-            {48f, 17f, 3.5f, 2500f, 3, 5},
-            {50f, 25f, 1f, 4000f, 1, 3},
-            {52f, 6f, 2.5f, 4000f, 2, 3},
-    };
-
-    // Location of each star (TODO add more fields later, SHOULD MAKE INTO A CLASS)
-    private static final float[][] STARS = {
-            {35f, 15.75f},
-            {35.5f, 16.5f},
-            {35.25f, 15f},
-            {16f, 4f},
-            {17f, 3f},
-            {16.5f, 2.5f},
-//            {5f, 14f},
-//            {6f, 14f},
-//            {5.5f, 13f},
-    };
-
-    // Location of anchor points (TODO add more fields later, SHOULD MAKE INTO A CLASS)
-    private static final float[][] ANCHORS = {
-            {33.5f, 17f},
-            {37f, 18f},
-            {35.5f, 13.5f},
-            {14f, 2.75f},
-            {18.5f, 3f},
-            {16f, 5f},
-            {17f, 1f},
-            {4f, 8f},
-//            {7f, 15f},
-//            {3f, 16f},
-//            {4f, 11f},
-    };
-
     // Other game objects
     /** The position of the spinning barrier */
     private static Vector2 SPIN_POS = new Vector2(13.0f,12.5f);
