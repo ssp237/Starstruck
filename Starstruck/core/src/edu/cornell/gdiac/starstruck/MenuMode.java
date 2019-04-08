@@ -27,7 +27,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.Controllers;
@@ -35,11 +35,9 @@ import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import edu.cornell.gdiac.util.JsonAssetManager;
 import edu.cornell.gdiac.util.ScreenListener;
-import edu.cornell.gdiac.util.SoundController;
 
 import java.util.LinkedList;
 
@@ -56,12 +54,14 @@ import java.util.LinkedList;
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
-public class MenuMode implements Screen, InputProcessor, ControllerListener {
+public class MenuMode extends GameController implements Screen, InputProcessor, ControllerListener {
     // Textures necessary to support the loading screen
-    private static final String BACKGROUND_FILE = "shared/loading.png";
-    private static final String PROGRESS_FILE = "shared/progressbar.png";
-    private static final String PLAY_BTN_FILE = "shared/play.png";
-    private static final String LOADING_AUDIO_FILE = "audio/loading_screen.mp3";
+    private static final String BACKGROUND_FILE = "shared/menu.png";
+    private static final String PLAY_BTN_FILE = "buttons/play.png";
+    private static final String BUILD_BTN_FILE = "buttons/build.png";
+    private static final String QUIT_BTN_FILE = "buttons/quit.png";
+    private static final String SETTINGS_BTN_FILE = "buttons/settings.png";
+    private static final String MUSIC_FILE = "audio/loading_screen.mp3";
 
     private static final float VOLUME = 0.3f;
 
@@ -69,43 +69,21 @@ public class MenuMode implements Screen, InputProcessor, ControllerListener {
 
     /** Background texture for start-up */
     private Texture background;
-    /** Play button to display when done */
+    /** Play button to display to go to level select*/
     private Texture playButton;
-    /** Texture atlas to support a progress bar */
-    private Texture statusBar;
+    /** Build button to display to go to build mode */
+    private Texture buildButton;
+    /** Quit button to display to exit the window */
+    private Texture quitButton;
+    /** Play button to display when done */
+    private Texture settingsButton;
     /** Loading audio */
-    private Sound sound;
+    private Music music;
 
-    // statusBar is a "texture atlas." Break it up into parts.
-    /** Left cap to the status background (grey region) */
-    private TextureRegion statusBkgLeft;
-    /** Middle portion of the status background (grey region) */
-    private TextureRegion statusBkgMiddle;
-    /** Right cap to the status background (grey region) */
-    private TextureRegion statusBkgRight;
-    /** Left cap to the status foreground (colored region) */
-    private TextureRegion statusFrgLeft;
-    /** Middle portion of the status foreground (colored region) */
-    private TextureRegion statusFrgMiddle;
-    /** Right cap to the status foreground (colored region) */
-    private TextureRegion statusFrgRight;
-
-    /** Default budget for asset loader (do nothing but load 60 fps) */
-    private static int DEFAULT_BUDGET = 15;
     /** Standard window size (for scaling) */
-    private static int STANDARD_WIDTH  = 800;
+    private static int STANDARD_WIDTH  = (int) (1024*1.2);
     /** Standard window height (for scaling) */
-    private static int STANDARD_HEIGHT = 700;
-    /** Ratio of the bar width to the screen */
-    private static float BAR_WIDTH_RATIO  = 0.33f;
-    /** Ration of the bar height to the screen */
-    private static float BAR_HEIGHT_RATIO = 0.15f;
-    /** Height of the progress bar */
-    private static int PROGRESS_HEIGHT = 30;
-    /** Width of the rounded cap on left or right */
-    private static int PROGRESS_CAP    = 30;
-    /** Width of the middle portion in texture atlas */
-    private static int PROGRESS_MIDDLE = 200;
+    private static int STANDARD_HEIGHT = (int) (576*1.2);
     /** Amount to scale the play button */
     private static float BUTTON_SCALE  = 0.75f;
 
@@ -124,9 +102,13 @@ public class MenuMode implements Screen, InputProcessor, ControllerListener {
     /** The width of the progress bar */
     private int width;
     /** The y-coordinate of the center of the progress bar */
-    private int centerY;
+    private int centerY = 375;
     /** The x-coordinate of the center of the progress bar */
     private int centerX;
+    /** Offset of next button */
+    private int OFFSET1 = 25;
+    /** Offset of next button */
+    private int OFFSET2 = 18;
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
     private int heightY;
     /** Scaling factor for when the student changes the resolution. */
@@ -135,13 +117,26 @@ public class MenuMode implements Screen, InputProcessor, ControllerListener {
     /** Current progress (0 to 1) of the asset manager */
     private float progress;
     /** The current state of the play button */
-    private int   pressState;
+    private int pressState;
+    /** Button down */
+    private int buttonId;
     /** The amount of time to devote to loading assets (as opposed to on screen hints, etc.) */
     private int   budget;
     /** Support for the X-Box start button in place of play button */
     private int   startButton;
     /** Whether or not this player mode is still active */
     private boolean active;
+
+    /** Play button down */
+    private static int PLAY = 1;
+    /** Play button down */
+    private static int BUILD = 2;
+    /** Play button down */
+    private static int QUIT = 3;
+    /** button down */
+    private static boolean DOWN = false;
+    /** button up */
+    private static boolean UP = true;
 
     /**
      * Returns the budget for the asset loader.
@@ -181,50 +176,38 @@ public class MenuMode implements Screen, InputProcessor, ControllerListener {
     }
 
     /**
-     * Creates a LoadingMode with the default budget, size and position.
-     *
-     */
-    public MenuMode(GameCanvas canvas) {
-        this(canvas,DEFAULT_BUDGET);
-    }
-
-    /**
      * Creates a LoadingMode with the default size and position.
      *
      * The budget is the number of milliseconds to spend loading assets each animation
      * frame.  This allows you to do something other than load assets.  An animation
      * frame is ~16 milliseconds. So if the budget is 10, you have 6 milliseconds to
      * do something else.  This is how game companies animate their loading screens.
-     * @param millis The loading budget in milliseconds
      */
-    public MenuMode(GameCanvas canvas, int millis) {
-        this.manager = JsonAssetManager.getInstance();
+    public MenuMode(GameCanvas canvas) {
+//        this.manager = JsonAssetManager.getInstance();
         this.canvas  = canvas;
-        budget = millis;
 
         // Compute the dimensions from the canvas
         resize(canvas.getWidth(),canvas.getHeight());
 
         // Load the next two images immediately.
-        playButton = null;
-        background = new Texture(BACKGROUND_FILE);
-        statusBar  = new Texture(PROGRESS_FILE);
+//        playButton = JsonAssetManager.getInstance().getEntry("play",
+//                Texture.class);
+//        buildButton = JsonAssetManager.getInstance().getEntry("build", Texture.class);
+//        quitButton = JsonAssetManager.getInstance().getEntry("quit", Texture.class);
+//        background = JsonAssetManager.getInstance().getEntry("loading", Texture.class);
 
+        playButton = new Texture(PLAY_BTN_FILE);
+        buildButton = new Texture(BUILD_BTN_FILE);
+        background = new Texture(BACKGROUND_FILE);
+        quitButton = new Texture(QUIT_BTN_FILE);;
+
+//        music = JsonAssetManager.getInstance().getEntry("menu", Music.class);
 
         // No progress so far.
-        progress   = 0;
         pressState = 0;
         active = false;
-
-        // Break up the status bar texture into regions
-        statusBkgLeft   = new TextureRegion(statusBar,0,0,PROGRESS_CAP,PROGRESS_HEIGHT);
-        statusBkgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP,0,PROGRESS_CAP,PROGRESS_HEIGHT);
-        statusBkgMiddle = new TextureRegion(statusBar,PROGRESS_CAP,0,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
-
-        int offset = statusBar.getHeight()-PROGRESS_HEIGHT;
-        statusFrgLeft   = new TextureRegion(statusBar,0,offset,PROGRESS_CAP,PROGRESS_HEIGHT);
-        statusFrgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP,offset,PROGRESS_CAP,PROGRESS_HEIGHT);
-        statusFrgMiddle = new TextureRegion(statusBar,PROGRESS_CAP,offset,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
+        buttonId = 0;
 
         startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
         Gdx.input.setInputProcessor(this);
@@ -240,22 +223,17 @@ public class MenuMode implements Screen, InputProcessor, ControllerListener {
      * Called when this screen should release all resources.
      */
     public void dispose() {
-        statusBkgLeft = null;
-        statusBkgRight = null;
-        statusBkgMiddle = null;
-
-        statusFrgLeft = null;
-        statusFrgRight = null;
-        statusFrgMiddle = null;
-
         background.dispose();
-        statusBar.dispose();
         background = null;
-        statusBar  = null;
-        if (playButton != null) {
-            playButton.dispose();
-            playButton = null;
-        }
+        playButton.dispose();
+        playButton = null;
+        buildButton.dispose();
+        buildButton = null;
+        quitButton.dispose();
+        quitButton = null;
+//        music.stop();
+//        music.dispose();
+//        music = null;
     }
 
     /**
@@ -267,27 +245,17 @@ public class MenuMode implements Screen, InputProcessor, ControllerListener {
      *
      * @param delta Number of seconds since last animation frame
      */
-    private void update(float delta) {
-
-        if (playButton == null) {
-            for(String s : manager.getAssetNames()) {
-                if (manager.isLoaded(s) && !loaded.contains(s)){
-                    System.out.println(s);
-                    loaded.add(s);
-                }
-            }
-            manager.update(budget);
-            this.progress = manager.getProgress();
-            if (progress >= 1.0f) {
-                this.progress = 1.0f;
-                playButton = new Texture(PLAY_BTN_FILE);
-                playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-            }
-        }
-        SoundController.getInstance().play(LOADING_AUDIO_FILE,LOADING_AUDIO_FILE,true,VOLUME);
-        SoundController.getInstance().update();
-
-
+    public void update(float delta) {
+//        playButton = new Texture(PLAY_BTN_FILE);
+//        playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+//
+//        playButton = new Texture(PLAY_BTN_FILE);
+//        playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+//
+//        playButton = new Texture(PLAY_BTN_FILE);
+//        playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+//        SoundController.getInstance().play(MUSIC_FILE,MUSIC_FILE,true,VOLUME);
+//        SoundController.getInstance().update();
     }
 
     /**
@@ -300,38 +268,15 @@ public class MenuMode implements Screen, InputProcessor, ControllerListener {
     private void draw() {
         canvas.begin();
         canvas.draw(background, 0, 0, canvas.getWidth(), canvas.getHeight());
-        if (playButton == null) {
-            drawProgress(canvas);
-        } else {
-            Color tint = (pressState == 1 ? Color.GRAY: Color.WHITE);
-            canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
-                    centerX, centerY, 0, BUTTON_SCALE*scale, BUTTON_SCALE*scale);
-        }
+        Color tint = (pressState == 1 ? Color.GRAY: Color.WHITE);
+        canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
+                centerX, centerY, 0, scale, scale);
+        canvas.draw(buildButton, tint, buildButton.getWidth()/2, buildButton.getHeight()/2,
+                centerX, centerY-playButton.getHeight()-OFFSET1, 0, scale, scale);
+        canvas.draw(quitButton, tint, quitButton.getWidth()/2, quitButton.getHeight()/2,
+                centerX, centerY-playButton.getHeight()-OFFSET1-buildButton.getHeight()-OFFSET2,
+                0, scale, scale);
         canvas.end();
-    }
-
-    /**
-     * Updates the progress bar according to loading progress
-     *
-     * The progress bar is composed of parts: two rounded caps on the end,
-     * and a rectangle in a middle.  We adjust the size of the rectangle in
-     * the middle to represent the amount of progress.
-     *
-     * @param canvas The drawing context
-     */
-    private void drawProgress(GameCanvas canvas) {
-        canvas.draw(statusBkgLeft,   Color.WHITE, centerX-width/2, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-        canvas.draw(statusBkgRight,  Color.WHITE, centerX+width/2-scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-        canvas.draw(statusBkgMiddle, Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, width-2*scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-
-        canvas.draw(statusFrgLeft,   Color.WHITE, centerX-width/2, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-        if (progress > 0) {
-            float span = progress*(width-2*scale*PROGRESS_CAP)/2.0f;
-            canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP+span, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-            canvas.draw(statusFrgMiddle, Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, span, scale*PROGRESS_HEIGHT);
-        } else {
-            canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-        }
     }
 
     // ADDITIONAL SCREEN METHODS
@@ -347,9 +292,15 @@ public class MenuMode implements Screen, InputProcessor, ControllerListener {
         if (active) {
             update(delta);
             draw();
-
+//            if (!music.isPlaying()) { music.play();}
             // We are are ready, notify our listener
-            if (isReady() && listener != null) {
+            if (isReady() && listener != null && buttonId == PLAY) {
+                listener.exitScreen(this, 1);
+            }
+            if (isReady() && listener != null && buttonId == BUILD) {
+                listener.exitScreen(this, 2);
+            }
+            if (isReady() && listener != null && buttonId == QUIT) {
                 listener.exitScreen(this, 0);
             }
         }
@@ -370,8 +321,8 @@ public class MenuMode implements Screen, InputProcessor, ControllerListener {
         float sy = ((float)height)/STANDARD_HEIGHT;
         scale = (sx < sy ? sx : sy);
 
-        this.width = (int)(BAR_WIDTH_RATIO*width);
-        centerY = (int)(BAR_HEIGHT_RATIO*height);
+        this.width = width;
+        centerY = (int)(height*.56);
         centerX = width/2;
         heightY = height;
     }
@@ -436,20 +387,28 @@ public class MenuMode implements Screen, InputProcessor, ControllerListener {
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (playButton == null || pressState == 2) {
+        if (playButton == null || buildButton == null || quitButton == null || pressState == 2) {
+            buttonId = 0;
             return true;
         }
 
         // Flip to match graphics coordinates
         screenY = heightY-screenY;
 
-        // TODO: Fix scaling
-        // Play button is a circle.
-        float radius = BUTTON_SCALE*scale*playButton.getWidth()/2.0f;
-        float dist = (screenX-centerX)*(screenX-centerX)+(screenY-centerY)*(screenY-centerY);
-        if (dist < radius*radius) {
+        float xdist = Math.abs(screenX-centerX);
+        float ydist = Math.abs(screenY-centerY);
+        if (xdist < playButton.getWidth()/2 && ydist < playButton.getWidth()/2) {
             pressState = 1;
         }
+        ydist = Math.abs(ydist - playButton.getHeight() - OFFSET1);
+        if (xdist < buildButton.getWidth()/2 && ydist < buildButton.getWidth()/2) {
+            pressState = 1;
+        }
+        ydist = Math.abs(ydist - playButton.getHeight() - OFFSET1 - buildButton.getHeight() - OFFSET2);
+        if (xdist < quitButton.getWidth()/2 && ydist < quitButton.getWidth()/2) {
+            pressState = 1;
+        }
+
         return false;
     }
 
@@ -465,12 +424,27 @@ public class MenuMode implements Screen, InputProcessor, ControllerListener {
      * @return whether to hand the event to other listeners.
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (pressState == 1) {
+        float xdist = screenX-centerX;
+        float ydist = screenY-centerY;
+        if (pressState == 1 && xdist < playButton.getWidth()/2 && ydist < playButton.getWidth()/2) {
             pressState = 2;
+            buttonId = PLAY;
+            return false;
+        }
+        ydist = Math.abs(ydist - playButton.getHeight() - OFFSET1);
+        if (pressState == 1 && xdist < buildButton.getWidth()/2 && ydist < buildButton.getWidth()/2) {
+            pressState = 2;
+            buttonId = BUILD;
+            return false;
+        }
+        ydist = Math.abs(ydist - playButton.getHeight() - OFFSET1 - buildButton.getHeight() - OFFSET2);
+        if (pressState == 1 && xdist < quitButton.getWidth()/2 && ydist < quitButton.getWidth()/2) {
+            pressState = 2;
+            buttonId = QUIT;
             return false;
         }
         return true;
-    }
+    } 
 
     /**
      * Called when a button on the Controller was pressed.

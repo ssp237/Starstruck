@@ -84,12 +84,16 @@
       "file": "platform/static_glow_v1.png",
       "wrap": false
     },
-    "progress bar": {
-      "file": "shared/progressbar.png",
+    "play": {
+      "file": "buttons/play.png",
       "wrap": false
     },
-    "play": {
-      "file": "shared/play.png",
+    "build": {
+      "file": "buttons/build.png",
+      "wrap": false
+    },
+    "quit": {
+      "file": "buttons/quit.png",
       "wrap": false
     },
     "loading": {
@@ -162,6 +166,12 @@
     },
     "space sounds": {
       "file": "audio/sounds from space/VanB-2017-04-05-2229.mp3",
+      "volume": 1
+    }
+  },
+  "music": {
+    "menu":     {
+      "file": "audio/loading_screen.mp3",
       "volume": 1
     }
   }

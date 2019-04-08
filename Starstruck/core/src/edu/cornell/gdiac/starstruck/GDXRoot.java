@@ -31,14 +31,14 @@ public class GDXRoot extends Game implements ScreenListener {
 	private GameCanvas canvas;
 	/** Avatar mode for the asset loading screen (CONTROLLER CLASS) */
 	private LoadingMode loading;
-	/** Avatar mode for the level select (CONTROLLER CLASS) */
-	private LevelSelect levelselect;
-	/** Avatar mode for the asset loading screen (CONTROLLER CLASS) */
+	/** Avatar mode for the main menu (CONTROLLER CLASS) */
 	private MenuMode menu;
 	/** Avatar mode for the the game proper (CONTROLLER CLASS) */
 	private int current;
 	/** List of all WorldControllers */
 	private WorldController[] controllers;
+	/** Number of special screens */
+	private static int SCREENS = 4;
 
 	/**
 	 * Creates a new game from the configuration settings.
@@ -65,13 +65,13 @@ public class GDXRoot extends Game implements ScreenListener {
 	public void create() {
 		canvas  = new GameCanvas();
 		loading = new LoadingMode(canvas,1);
-		menu = new MenuMode(canvas, 1);
 
 		// Initialize the three game worlds
-		controllers = new WorldController[3];
-		controllers[0] = new GameController();
-		controllers[1] = new EditController();
-		controllers[2] = new LevelSelect();
+		controllers = new WorldController[SCREENS];
+		controllers[0] = new MenuMode(canvas);
+		controllers[1] = new LevelSelect();
+		controllers[2] = new EditController();
+		controllers[3] = new GameController();
 		for(int ii = 0; ii < controllers.length; ii++) {
 			controllers[ii].preLoadContent(JsonAssetManager.getInstance());
 		}
@@ -136,9 +136,6 @@ public class GDXRoot extends Game implements ScreenListener {
 
 			loading.dispose();
 			loading = null;
-		} else if (screen == menu) {
-			controllers[current].reset();
-			setScreen(controllers[current]);
 		} else if (exitCode == WorldController.EXIT_NEXT) {
 			current = (current+1) % controllers.length;
 			controllers[current].reset();
