@@ -67,7 +67,8 @@ public class GameController extends WorldController implements ContactListener {
     private FilmStrip pinkwormTexture;
     /** Texture asset for the enemy */
     private FilmStrip greenwormTexture;
-
+    /** Texture asset for rope */
+    private TextureRegion ropeTexture;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -179,6 +180,55 @@ public class GameController extends WorldController implements ContactListener {
     public static final boolean testC = false;
     /** Camera zoom */
     private static final float ZOOM_FACTOR = 0.8f;
+    /** True when the rope can be extended (astronaut is anchored and other astronaut is far enough away) */
+    public static boolean ropeExtend = false;
+
+
+
+    // Location, radius, and drawscale of all the planets.
+    // Each row is a planet. 1st col is x, 2nd is y, 3rd is radius, 4th is mass, 6th is sprite to use and
+    // 5th is gravitational pull range.
+    // Force setting mass is temporary fix -- in future add dynmaic planet to pin and fix rotation?
+    // Better solution for drawing?
+    private static final float[][] PLANETS = {
+            {1f, 1f, 4f, 2500f, 4, 0},
+            {6f, 12f, 2.5f, 3700f, 2, 0.8f},
+            {15f, 17f, 3f, 4000f, 2.5f, 1.7f},
+            {26f, 8f, 3f, 2000f, 3, 2f},
+            {30f, 15f, 1.5f, 3000f, 2, 2.7f},
+            {37f, 5f, 3f, 2000f, 2, 3.5f},
+            {48f, 17f, 3.5f, 2500f, 3, 5},
+            {50f, 25f, 1f, 4000f, 1, 3},
+            {52f, 6f, 2.5f, 4000f, 2, 3},
+    };
+
+    // Location of each star (TODO add more fields later, SHOULD MAKE INTO A CLASS)
+    private static final float[][] STARS = {
+            {35f, 15.75f},
+            {35.5f, 16.5f},
+            {35.25f, 15f},
+            {16f, 4f},
+            {17f, 3f},
+            {16.5f, 2.5f},
+//            {5f, 14f},
+//            {6f, 14f},
+//            {5.5f, 13f},
+    };
+
+    // Location of anchor points (TODO add more fields later, SHOULD MAKE INTO A CLASS)
+    private static final float[][] ANCHORS = {
+            {33.5f, 17f},
+            {37f, 18f},
+            {35.5f, 13.5f},
+            {14f, 2.75f},
+            {18.5f, 3f},
+            {16f, 5f},
+            {17f, 1f},
+            {4f, 8f},
+//            {7f, 15f},
+//            {3f, 16f},
+//            {4f, 11f},
+    };
 
     // Other game objects
     /** The position of the spinning barrier */
@@ -208,6 +258,8 @@ public class GameController extends WorldController implements ContactListener {
     private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
     /** WHY GRAVITY */
     public ArrayList<Star> stars = new ArrayList<Star>();
+    /** List of Rope */
+    private ArrayList<Rope> ropes = new ArrayList<Rope>();
     /** Planets */
     private PlanetList planets;
     /** Planets */
@@ -225,6 +277,8 @@ public class GameController extends WorldController implements ContactListener {
     /** Viewport width and height */
     private float camWidth;
     private float camHeight;
+    /** Amount rope is extended */
+    private int extendInt = 0;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -310,6 +364,7 @@ public class GameController extends WorldController implements ContactListener {
 
         stars = level.stars;
         anchors = level.anchors;
+        ropeTexture = level.ropeTexture;
 
         // Add level goal
         float dwidth;
@@ -565,6 +620,11 @@ public class GameController extends WorldController implements ContactListener {
                     return true;
                 }
             }
+            if ((avatar1.isAnchored()) || (avatar2.isAnchored())) { //TODO Not doing anything at the moment?
+                if (dist >= length) {
+                    ropeExtend = true;
+                }
+            }
         }
 
         //avatar1 is active, avatar2 is not, both are on the same planet
@@ -624,9 +684,9 @@ public class GameController extends WorldController implements ContactListener {
             }
 
             else if (avatar2.isAnchored()) { //If inactive avatar is anchored restrict rope length
-                if (updateRope(avatar, avatar2, rope, 'p')) {
-                    avatar.setPosition(avatar.lastPoint);
-                }
+//                if (updateRope(avatar, avatar2, rope, 'p')) {
+//                    avatar.setPosition(avatar.lastPoint);
+//                }
             }
         }
         else {
@@ -656,15 +716,17 @@ public class GameController extends WorldController implements ContactListener {
             return false;
         }
 
-        if (!isFailure() && (avatar.getY() < - 2 || avatar.getY() > bounds.height + 2
-                || avatar.getX() < -2)) {
+        if ((!isFailure() && (avatar.getY() < - 2 || avatar.getY() > bounds.height + 2
+                || avatar.getX() < -2)) && (!avatar.getOnPlanet() || !avatar2.getOnPlanet()
+                || !avatar.isAnchored() || !avatar2.isAnchored())) {
             // || avatar.getX() > bounds.getWidth() + 1)) {
             setFailure(true);
             return false;
         }
 
-        if (!isFailure() && (avatar2.getY() < - 2 || avatar2.getY() > bounds.height + 2
-                || avatar2.getX() < -2)) {
+        if ((!isFailure() && (avatar2.getY() < - 2 || avatar2.getY() > bounds.height + 2
+                || avatar2.getX() < -2)) && (!avatar.getOnPlanet() || !avatar2.getOnPlanet()
+                || !avatar.isAnchored() || !avatar2.isAnchored())) {
             // || avatar2.getX() > bounds.getWidth() + 1)) {
             setFailure(true);
             return false;
@@ -684,6 +746,7 @@ public class GameController extends WorldController implements ContactListener {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+        //print(rope.nLinks());
         updateCam();
 
         if (isFailure()) return;
@@ -709,8 +772,20 @@ public class GameController extends WorldController implements ContactListener {
         avatar2.setFixedRotation(false);
 
         updateAnchor(avatar, avatar2);
-        if (avatar.isAnchored()) avatar.setFixedRotation(true);
-        if (avatar2.isAnchored()) avatar2.setFixedRotation(true);
+        if (avatar.isAnchored()) {
+            avatar.setFixedRotation(true);
+            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength() - rope.linksize)
+                //&& avatar2.getLinearVelocity() != reset )
+                rope.extendRope(avatar, world, ropeTexture);
+            rope.setDrawScale(scale);
+        }
+        if (avatar2.isAnchored()) {
+            avatar2.setFixedRotation(true);
+            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength() - rope.linksize)
+                //&& avatar.getLinearVelocity() != reset)
+                rope.extendRope(avatar2, world, ropeTexture);
+            rope.setDrawScale(scale);
+        }
         if (touching) {
             removeStar.clear();
             //TODO check star collection
@@ -774,6 +849,43 @@ public class GameController extends WorldController implements ContactListener {
 
         avatar.lastPoint.set(avatar.getPosition());
         avatar2.lastPoint.set(avatar2.getPosition());
+
+        //if (ropeExtend) { //temporarily commented out just to test if rope extends without even being anchored
+
+//            if (progress > 0) {
+//                float span = progress*(width-2*scale*PROGRESS_CAP)/2.0f;
+//                canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP+span, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+//                canvas.draw(statusFrgMiddle, Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, span, scale*PROGRESS_HEIGHT);
+//            } else {
+//                canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+//            }
+
+
+
+//            rope.newPairPlank(world, rope);
+
+
+
+
+
+//            extendInt++;
+//            objects.remove(2);//this is wrong index (it's the pink avatar)
+//            float dwidth  = bridgeTexture.getRegionWidth()/scale.x;
+//            float dheight = bridgeTexture.getRegionHeight()/scale.y;
+//            rope = new Rope (avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH + extendInt, dwidth, dheight, avatar, avatar2);
+//            objects.add(2, rope); //this is also wrong then (match index above)
+            //addObject(rope);
+         //}
+//            float ropeX = rope.getPosition().x;
+//            float ropeY = rope.getPosition().y;
+
+//
+//            rope = new Rope(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
+//            rope.setTexture(bridgeTexture);
+//            rope.setDrawScale(scale);
+//            rope.setName("rope");
+//            addObject(rope);
+
 
         //TODO Removed sound stuffs
 //        if (avatar.isJumping() || avatar2.isJumping()) {

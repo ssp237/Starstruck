@@ -63,21 +63,19 @@ public class LevelModel {
     private PlanetList planets;
     /** Rope */
     private Rope rope;
-
     /** Whether or not the level is in debug more (showing off physics) */
     private boolean debug;
-
     /** AstronautModel cache */
     AstronautModel astroCache;
-
     /** All the objects in the world. */
     protected PooledList<Obstacle> objects  = new PooledList<Obstacle>();
-
     /** List of stars in the world */
     protected ArrayList<Star> stars = new ArrayList<Star>();
-
     /** List of anchors in the world */
     protected ArrayList<Anchor> anchors = new ArrayList<Anchor>();
+    /** Rope texture for extension method */
+    protected TextureRegion ropeTexture;
+
 
     /**
      * Returns the bounding rectangle for the physics world
@@ -258,12 +256,13 @@ public class LevelModel {
         JsonValue ropeVal = levelFormat.get("rope");
 
         key = ropeVal.get("texture").asString();
-        TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        float dwidth  = texture.getRegionWidth()/scale.x;
-        float dheight = texture.getRegionHeight()/scale.y;
+        //TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        ropeTexture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        float dwidth  = ropeTexture.getRegionWidth()/scale.x;
+        float dheight = ropeTexture.getRegionHeight()/scale.y;
         rope = new Rope(player1.getX() + 0.5f, player1.getY() + 0.5f,
                 ropeVal.get("rope width").asFloat(), dwidth, dheight, player1, player2);
-        rope.setTexture(texture);
+        rope.setTexture(ropeTexture);
         rope.setDrawScale(scale);
         rope.setName("rope");
         activate(rope);
