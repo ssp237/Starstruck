@@ -48,6 +48,10 @@ public class EditController extends WorldController implements ContactListener {
     private float camOffsetY;
     /** Listener for save data */
     private SaveListener save;
+    /** Listener for load data */
+    private SaveListener load;
+    /** File to load (if non-null) */
+    private String loadFile;
 
     /** References to players and rope */
     private AstronautModel player1;
@@ -214,6 +218,8 @@ public class EditController extends WorldController implements ContactListener {
             save.file = null;
         }
 
+
+
         if (current != null) {
             if (input.didBackspace() && current.getType() != ObstacleType.PLAYER) {
                 level.remove(current);
@@ -227,8 +233,10 @@ public class EditController extends WorldController implements ContactListener {
                 }
             }
         } else {
-            if (input.shiftHeld() && input.didS()){
+            if (input.shiftHeld() && input.didS()) {
                 Gdx.input.getTextInput(save, "Save as...", "level.json", "");
+            } else if (input.shiftHeld() && input.didO()){
+                Gdx.input.getTextInput(load, "Load...", "level.json", "");
             } else if (input.didP()) {
                 Vector2 pos = input.getCrossHair();
                 current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, 1, world, scale);

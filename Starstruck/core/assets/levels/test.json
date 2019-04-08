@@ -1,9 +1,7 @@
 {
   "physicsSize":    [38.4,21.6],
   "graphicSize":    [ 1228, 691],
-  "background": {
-    "texture": "background"
-  },
+  "background": "background",
   "gravity":  	  0,
   "level" : 1,
   "astronaut 1": {
@@ -54,12 +52,7 @@
     "texture": "rope",
     "rope width": 6.0
   },
-  "planet specs": {
-    "p1 mass": 700,
-    "p2 mass": 800,
-    "p3 mass": 900,
-    "p4 mass": 1000
-  },
+  "planet specs": [700, 800, 900, 1000],
   "planets": [
     {
       "x": 3,
