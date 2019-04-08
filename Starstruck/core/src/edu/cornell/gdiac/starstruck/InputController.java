@@ -257,7 +257,7 @@ public class InputController {
      * @return true if the player wants to go to the next level.
      */
     public boolean didAdvance() {
-        return nextPressed && !nextPrevious;
+        return nextPressed && !nextPrevious && shiftPressed;
     }
 
     /**
