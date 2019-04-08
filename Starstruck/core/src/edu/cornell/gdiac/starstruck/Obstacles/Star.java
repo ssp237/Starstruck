@@ -142,7 +142,7 @@ public class Star extends ComplexObstacle {
         //Add textures
         json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));
 
-        System.out.println(json);
+        //System.out.println(json);
 
         return json;
     }

@@ -27,10 +27,10 @@ public class Planet extends WheelObstacle {
     private int ind;
 
     /** Pre-set masses */
-    private static float mass1;
-    private static float mass2;
-    private static float mass3;
-    private static float mass4;
+    private static float mass1 = 700;
+    private static float mass2 = 800;
+    private static float mass3 = 900;
+    private static float mass4 = 1000;
 
     private float grscale;
 
@@ -145,6 +145,45 @@ public class Planet extends WheelObstacle {
         mass2 = json.getFloat("p2 mass");
         mass3 = json.getFloat("p3 mass");
         mass4 = json.getFloat("p4 mass");
+    }
+
+    /**
+     * Return a JsonValue representing the preset mass values for planets such that this JsonValue could
+     * be passed into setPresets() to return the same preset mass values.
+     *
+     * @return A JsonValue representing the preset mass values for planets.
+     */
+    public static JsonValue presetJson() {
+        JsonValue json = new JsonValue(JsonValue.ValueType.array);
+
+        json.addChild("p1 mass", new JsonValue(mass1));
+        json.addChild("p2 mass", new JsonValue(mass2));
+        json.addChild("p3 mass", new JsonValue(mass3));
+        json.addChild("p4 mass", new JsonValue(mass4));
+
+        //System.out.println(json);
+
+        return json;
+    }
+
+    /**
+     * Write this astronaut to a JsonValue. When parsed, this JsonValue should return the same planet.
+     * @return A JsonValue representing this Planet.
+     */
+    public JsonValue toJson() {
+        JsonValue json = new JsonValue(JsonValue.ValueType.object);
+
+        //Write position
+        Vector2 pos = getPosition();
+        json.addChild("x", new JsonValue(pos.x));
+        json.addChild("y", new JsonValue(pos.y));
+
+        //Add index
+        json.addChild("i", new JsonValue(ind));
+
+        //System.out.println(json);
+
+        return json;
     }
 
     /**

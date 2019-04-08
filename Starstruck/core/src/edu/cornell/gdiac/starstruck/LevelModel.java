@@ -314,7 +314,7 @@ public class LevelModel {
             case ANCHOR: activate(obj); break;
             case STAR: activate(obj); break;
             case PLAYER: addPlayer((AstronautModel) obj); break;
-            case ROPE: objects.add(0, obj); obj.activatePhysics(world); break;
+            case ROPE: objects.add(0, obj); obj.activatePhysics(world); rope = (Rope) obj; break;
         }
     }
 
@@ -414,23 +414,29 @@ public class LevelModel {
         out.addChild("astronaut 1", player1.toJson());
         out.addChild("astronaut 2", player2.toJson());
 
+        //Add rope
+        out.addChild("rope", rope.toJson());
+
+        //Add planet presets
+        out.addChild("planet specs", Planet.presetJson());
+
+        //Add planets
+        out.addChild("planets", planets.toJson());
+
         //Add obstacles
-        JsonValue rope = new JsonValue(JsonValue.ValueType.object);
-        JsonValue anchors = new JsonValue(JsonValue.ValueType.object);
-        JsonValue stars = new JsonValue(JsonValue.ValueType.object);
+        JsonValue anchors = new JsonValue(JsonValue.ValueType.array);
+        JsonValue stars = new JsonValue(JsonValue.ValueType.array);
 
         for (Obstacle obj : objects) {
             switch (obj.getType()) {
-                case STAR: stars.addChild(((Star) obj).toJson());
+                case STAR: stars.addChild(((Star) obj).toJson()); break;
+                case ANCHOR: anchors.addChild(((Anchor) obj).toJson()); break;
             }
-            System.out.println(obj);
-            System.out.println(stars);
         }
-        System.out.println(stars);
 
-//        out.addChild("rope", rope);
-//        out.addChild("anchors", anchors);
-//        out.addChild("stars", stars);
+
+        out.addChild("anchors", anchors);
+        out.addChild("stars", stars);
 
 
         return out;

@@ -22,8 +22,10 @@ import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 
 import java.util.*;
 
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.*;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
+import edu.cornell.gdiac.util.JsonAssetManager;
 
 /**
  * A bridge with planks connected by revolute joints.
@@ -498,6 +500,29 @@ public class Rope extends ComplexObstacle {
         }
         return vertices;
     }
+
+    /**
+     * Write this astronaut to a JsonValue. When parsed, this JsonValue should return the same astronaut.
+     * @return A JsonValue representing this AstronautModel.
+     */
+    public JsonValue toJson() {
+        JsonValue json = new JsonValue(JsonValue.ValueType.object);
+
+
+        //Add textures
+        json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));
+
+
+        //Write width
+
+        json.addChild("rope width", new JsonValue(dimension.x));
+
+        //System.out.println(json);
+
+        return json;
+    }
+
+
     public ObstacleType getType() { return ObstacleType.ROPE;}
 
     public boolean containsPoint(Vector2 point) {
