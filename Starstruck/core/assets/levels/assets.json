@@ -114,7 +114,7 @@
       "rows": 1,
       "cols": 11,
       "size": 11,
-      "delay": 10
+      "delay": 5
     },
     "astronaut 2 idle": {
       "file": "astronauts/animated_astronaut(blue)_walking_jumping.png",
@@ -122,7 +122,7 @@
       "rows": 1,
       "cols": 11,
       "size": 11,
-      "delay": 10
+      "delay": 5
     },
     "green worm": {
       "file": "platform/animated_wpenemy(green)_moving+biting.png",
