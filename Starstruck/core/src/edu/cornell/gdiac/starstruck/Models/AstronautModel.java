@@ -739,7 +739,12 @@ public class AstronautModel extends CapsuleObstacle {
     public void update(float dt) {
         // Apply cooldowns
 
-        if (isAnchored) setPosition(anchorPos);
+        if (isAnchored){
+            //setPosition(anchorPos);
+            setBodyType(BodyDef.BodyType.StaticBody);
+        } else {
+            setBodyType(BodyDef.BodyType.DynamicBody);
+        }
 
 //        if (isJumping()) {
 //            jumpCooldown = JUMP_COOLDOWN;
