@@ -1,6 +1,8 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -11,6 +13,24 @@ import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
 public class EditController extends WorldController implements ContactListener {
+
+    private class SaveListener implements Input.TextInputListener {
+
+        public String file;
+
+        public SaveListener(){
+            file = null;
+        }
+
+        public void input (String text) {
+            file = text;
+        }
+
+
+        public void canceled () {
+            file = null;
+        }
+    }
 
     /** Speed of camera pan */
     private static final float PAN_CONST = 2;
@@ -24,6 +44,8 @@ public class EditController extends WorldController implements ContactListener {
     /** Camera offset */
     private float camOffsetX;
     private float camOffsetY;
+    /** Listener for save data */
+    private SaveListener save;
 
     /** References to players and rope */
     private AstronautModel player1;
@@ -47,6 +69,7 @@ public class EditController extends WorldController implements ContactListener {
 //        sensorFixtures = new ObjectSet<Fixture>();
         current = null;
         vectorWorld = new VectorWorld();
+        save = new SaveListener();
     }
 
     public void reset() {
@@ -62,6 +85,7 @@ public class EditController extends WorldController implements ContactListener {
 
         setComplete(false);
         setFailure(false);
+        save = new SaveListener();
 
     }
 
@@ -178,6 +202,10 @@ public class EditController extends WorldController implements ContactListener {
 
         if (current == null)
             updateCamera();
+        if (save.file != null) {
+            //System.out.println(level.toJSON());
+            save.file = null;
+        }
 
         if (current != null) {
             if (input.didBackspace() && current.getType() != ObstacleType.PLAYER) {
@@ -191,7 +219,9 @@ public class EditController extends WorldController implements ContactListener {
                 }
             }
         } else {
-            if (input.didP()) {
+            if (input.shiftHeld() && input.didS()){
+                Gdx.input.getTextInput(save, "Save as...", "level.json", "");
+            } else if (input.didP()) {
                 Vector2 pos = input.getCrossHair();
                 current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY, 1, world, scale);
                 level.add(current);
