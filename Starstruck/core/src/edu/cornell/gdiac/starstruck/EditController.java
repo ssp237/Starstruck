@@ -273,8 +273,10 @@ public class EditController extends WorldController implements ContactListener {
         } else {
             if (input.shiftHeld() && input.didS()) {
                 Gdx.input.getTextInput(save, "Save as...", "level.json", "");
-            } else if (input.shiftHeld() && input.didO()){
+            } else if (input.shiftHeld() && input.didO()) {
                 Gdx.input.getTextInput(load, "Load...", "level.json", "");
+            } else if (input.shiftHeld() && input.didD()) {
+                loadFile = null;
             } else if (input.didP()) {
                 Vector2 pos = input.getCrossHair();
                 current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, 1, world, scale);
