@@ -99,7 +99,7 @@ public class Anchor extends ComplexObstacle {
      * @param scale Draw scale for the new anchor
      */
     public Anchor(float x, float y, TextureRegion texture, Vector2 scale) {
-        this(x,y,texture.getRegionWidth(),texture.getRegionHeight());
+        this(x,y,texture.getRegionWidth()/scale.x,texture.getRegionHeight()/scale.y);
         setDrawScale(scale);
         setTexture(texture);
     }
@@ -118,6 +118,27 @@ public class Anchor extends ComplexObstacle {
         out.setDrawScale(scale);
         out.setTexture(texture);
         return out;
+    }
+
+    /**
+     * Write this astronaut to a JsonValue. When parsed, this JsonValue should return the same astronaut.
+     * @return A JsonValue representing this AstronautModel.
+     */
+    public JsonValue toJson() {
+        JsonValue json = new JsonValue(JsonValue.ValueType.object);
+
+        //Write position and size
+        Vector2 pos = getPosition();
+
+        json.addChild("x", new JsonValue(pos.x));
+        json.addChild("y", new JsonValue(pos.y));
+
+        //Add textures
+        json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));
+
+        //System.out.println(json);
+
+        return json;
     }
 
     /**

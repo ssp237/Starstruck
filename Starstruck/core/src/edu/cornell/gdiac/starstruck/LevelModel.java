@@ -28,6 +28,8 @@ import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 
+import java.util.ArrayList;
+
 /**
  * Represents a single level in our game
  *
@@ -61,15 +63,19 @@ public class LevelModel {
     private PlanetList planets;
     /** Rope */
     private Rope rope;
-
     /** Whether or not the level is in debug more (showing off physics) */
     private boolean debug;
-
     /** AstronautModel cache */
     AstronautModel astroCache;
-
     /** All the objects in the world. */
     protected PooledList<Obstacle> objects  = new PooledList<Obstacle>();
+    /** List of stars in the world */
+    protected ArrayList<Star> stars = new ArrayList<Star>();
+    /** List of anchors in the world */
+    protected ArrayList<Anchor> anchors = new ArrayList<Anchor>();
+    /** Rope texture for extension method */
+    protected TextureRegion ropeTexture;
+
 
     /**
      * Returns the bounding rectangle for the physics world
@@ -193,30 +199,13 @@ public class LevelModel {
         planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
     }
 
-    public AstronautModel createAstro(JsonValue json, boolean active) {
-        float[] pos  = json.get("pos").asFloatArray();
-        float posX = pos[0], posY = pos[1];
-        float[] size = json.get("size").asFloatArray();
-        float sizeX = size[0], sizeY = size[1];
-        AstronautModel astro = new AstronautModel(posX, posY, sizeX, sizeY, active, active);
-        astro.setDrawScale(scale);
 
-        String key = json.get("texture").asString();
-        TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        astro.setTexture(texture);
-
-        key = json.get("glow texture").asString();
-        texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        astro.setGlow(texture);
-
-        return astro;
-    }
 
     /**
      * Set the background to the specified texture.
      * @param background The texture to use as the background.
      */
-    public void setBackround(Texture background) {
+    public void setBackground(Texture background) {
         this.background = background;
     }
 
@@ -229,19 +218,19 @@ public class LevelModel {
         float[] pSize = levelFormat.get("physicsSize").asFloatArray();
         int[] gSize = levelFormat.get("graphicSize").asIntArray();
 
-        String key = levelFormat.get("background").get("texture").asString();
+        String key = levelFormat.get("background").asString();
         background = JsonAssetManager.getInstance().getEntry(key, Texture.class);
 
         bounds = new Rectangle(0,0,pSize[0],pSize[1]);
         scale.x = gSize[0]/pSize[0];
         scale.y = gSize[1]/pSize[1];
 
-        player1 = createAstro(levelFormat.get("astronaut 1"), true);
+        player1 = AstronautModel.fromJson(levelFormat.get("astronaut 1"), scale,true);
         player1.setName("avatar");
         player1.activatePhysics(world);
         //addObject(player1);
 
-        player2 = createAstro(levelFormat.get("astronaut 2"), false);
+        player2 = AstronautModel.fromJson(levelFormat.get("astronaut 2"), scale, false);
         player2.setName("avatar2");
         player2.activatePhysics(world);
 
@@ -250,12 +239,13 @@ public class LevelModel {
         JsonValue ropeVal = levelFormat.get("rope");
 
         key = ropeVal.get("texture").asString();
-        TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        float dwidth  = texture.getRegionWidth()/scale.x;
-        float dheight = texture.getRegionHeight()/scale.y;
+        //TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        ropeTexture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        float dwidth  = ropeTexture.getRegionWidth()/scale.x;
+        float dheight = ropeTexture.getRegionHeight()/scale.y;
         rope = new Rope(player1.getX() + 0.5f, player1.getY() + 0.5f,
                 ropeVal.get("rope width").asFloat(), dwidth, dheight, player1, player2);
-        rope.setTexture(texture);
+        rope.setTexture(ropeTexture);
         rope.setDrawScale(scale);
         rope.setName("rope");
         activate(rope);
@@ -278,6 +268,7 @@ public class LevelModel {
             Star star = Star.fromJSON(starVals, scale);
             star.setName("star" + i);
             activate(star);
+            stars.add(star);
             starVals = starVals.next;
         }
 
@@ -288,6 +279,7 @@ public class LevelModel {
             Anchor anchor = Anchor.fromJSON(anchorVals, scale);
             anchor.setName("anchor" + i);
             activate(anchor);
+            anchors.add(anchor);
             anchorVals = anchorVals.next;
         }
     }
@@ -307,6 +299,8 @@ public class LevelModel {
         }
         objects.clear();
         planets.clear();
+        stars.clear();
+        anchors.clear();
         vectorWorld = new VectorWorld();
     }
 
@@ -319,15 +313,36 @@ public class LevelModel {
             case PLANET: planets.addPlanet((Planet) obj, vectorWorld); break;
             case ANCHOR: activate(obj); break;
             case STAR: activate(obj); break;
+            case PLAYER: addPlayer((AstronautModel) obj); break;
+            case ROPE: objects.add(0, obj); obj.activatePhysics(world); rope = (Rope) obj; break;
         }
     }
 
+    /**
+     * Uh remove idk
+     * Player and rope can NOT be removed, so this method will do nothing.
+     *
+     * @param obj Object to be removed.
+     */
     public void remove(Obstacle obj) {
         switch (obj.getType()) {
             case PLANET: planets.remove((Planet) obj); break;
             case ANCHOR: deactivate(obj); break;
             case STAR: deactivate(obj); break;
         }
+    }
+
+    /**
+     * Handles case of adding a player
+     * @param player Player to be added
+     */
+    private void addPlayer(AstronautModel player) {
+        if (player.getName().contains("2")) {
+            player2 = player;
+        } else {
+            player1 = player;
+        }
+        activate(player);
     }
 
     /**
@@ -374,6 +389,60 @@ public class LevelModel {
     }
 
     /**
+     * Write this level to a JsonValue that, when parsed, would return the same level.
+     * @return A JsonValue representing this level.
+     */
+    public JsonValue toJSON(){
+        JsonValue out = new JsonValue(JsonValue.ValueType.object);
+
+        //Add size fields
+        JsonValue physicsSize = new JsonValue(JsonValue.ValueType.array);
+        physicsSize.addChild(new JsonValue(bounds.width));
+        physicsSize.addChild(new JsonValue(bounds.height));
+
+        JsonValue graphicsSize = new JsonValue(JsonValue.ValueType.array);
+        graphicsSize.addChild(new JsonValue((int) (bounds.width * scale.x)));
+        graphicsSize.addChild(new JsonValue((int) (bounds.height * scale.y)));
+
+        out.addChild("physicsSize", physicsSize);
+        out.addChild("graphicSize", graphicsSize);
+
+        //Add background
+        out.addChild("background", new JsonValue(JsonAssetManager.getInstance().getKey(background)));
+
+        //Add astronauts
+        out.addChild("astronaut 1", player1.toJson());
+        out.addChild("astronaut 2", player2.toJson());
+
+        //Add rope
+        out.addChild("rope", rope.toJson());
+
+        //Add planet presets
+        out.addChild("planet specs", Planet.presetJson());
+
+        //Add planets
+        out.addChild("planets", planets.toJson());
+
+        //Add obstacles
+        JsonValue anchors = new JsonValue(JsonValue.ValueType.array);
+        JsonValue stars = new JsonValue(JsonValue.ValueType.array);
+
+        for (Obstacle obj : objects) {
+            switch (obj.getType()) {
+                case STAR: stars.addChild(((Star) obj).toJson()); break;
+                case ANCHOR: anchors.addChild(((Anchor) obj).toJson()); break;
+            }
+        }
+
+
+        out.addChild("anchors", anchors);
+        out.addChild("stars", stars);
+
+
+        return out;
+    }
+
+    /**
      * Draws the level to the given game canvas
      *
      * If debug mode is true, it will outline all physics bodies as wireframes. Otherwise
@@ -387,9 +456,12 @@ public class LevelModel {
         canvas.begin();
 
         float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
+        float y = (float) Math.floor((canvas.getCamera().position.y - canvas.getHeight()/2)/canvas.getHeight()) * canvas.getHeight();
 
-        canvas.draw(background, Color.WHITE, x, 0,canvas.getWidth(),canvas.getHeight());
-        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), 0,canvas.getWidth(),canvas.getHeight());
+        canvas.draw(background, Color.WHITE, x, y,canvas.getWidth(),canvas.getHeight());
+        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y,canvas.getWidth(),canvas.getHeight());
+        canvas.draw(background, Color.WHITE, x, y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
+        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
 
         for(Planet p : planets.getPlanets()){
             p.draw(canvas);

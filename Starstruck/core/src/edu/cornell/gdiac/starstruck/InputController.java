@@ -75,6 +75,9 @@ public class InputController {
     private boolean rightPrevious;
     private boolean leftPressed;
     private boolean leftPrevious;
+    /** Whether up and down arrow keys are being pressed & held */
+    private boolean downHeld;
+    private boolean upHeld;
     /** Whether down key was pressed */
     private boolean downPressed;
     private boolean downPrevious;
@@ -85,6 +88,8 @@ public class InputController {
     private boolean aPrevious;
     private boolean sPressed;
     private boolean sPrevious;
+    private boolean oPressed;
+    private boolean oPrevious;
     /** Whether space was pressed */
     private boolean spacePressed;
     private boolean spacePrevious;
@@ -231,6 +236,13 @@ public class InputController {
     }
 
     /**
+     *  Returns true if the mouse is currently pressed and the mouse was previously pressed.
+     *
+     * @return True if the mouse is being dragged for at least two frames.
+     */
+    public boolean mouseDragged() {return tertiaryPressed && tertiaryPrevious; }
+
+    /**
      * Returns true if the reset button was pressed.
      *
      * @return true if the reset button was pressed.
@@ -290,6 +302,10 @@ public class InputController {
         return leftPressed;
     }
 
+    public boolean heldUp() { return upHeld; }
+
+    public boolean heldDown() { return downHeld; }
+
     public boolean didDown() { return downPressed && !downPrevious; }
 
     public boolean didA() {
@@ -300,6 +316,10 @@ public class InputController {
         return sPressed && !sPrevious;
     }
 
+    public boolean didO() {
+        return oPressed && !oPrevious;
+    }
+
     public boolean didD() {
         return dPressed;
     }
@@ -307,6 +327,12 @@ public class InputController {
     public float xPos() {return Gdx.input.getX();}
 
     public float yPos() {return Gdx.input.getY();}
+
+    /**
+     * Is shift being held down?
+     * @return Is shift being held down?
+     */
+    public boolean shiftHeld() {return shiftPressed && shiftPrevious;}
 
     /**
      * Creates a new input controller
@@ -348,6 +374,7 @@ public class InputController {
         aPrevious = aPressed;
         dPrevious = dPressed;
         sPrevious = sPressed;
+        oPrevious = oPressed;
         spacePrevious = spacePressed;
         shiftPrevious = shiftPressed;
         tertiaryPrevious = tertiaryPressed;
@@ -423,10 +450,13 @@ public class InputController {
         // TODO no controller support
         rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT);
         leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT);
+        upHeld = Gdx.input.isKeyPressed (Input.Keys.UP);
+        downHeld = Gdx.input.isKeyPressed (Input.Keys.DOWN);
         downPressed = Gdx.input.isKeyPressed (Input.Keys.DOWN);
         aPressed = Gdx.input.isKeyPressed (Input.Keys.A);
         sPressed = Gdx.input.isKeyPressed (Input.Keys.S);
         dPressed = Gdx.input.isKeyPressed (Input.Keys.D);
+        oPressed = Gdx.input.isKeyPressed (Input.Keys.O);
         resetPressed = Gdx.input.isKeyPressed(Input.Keys.R);
 
         // Directional controls

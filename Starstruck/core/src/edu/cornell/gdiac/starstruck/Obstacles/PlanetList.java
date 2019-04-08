@@ -190,6 +190,20 @@ public class PlanetList {
     }
 
     /**
+     * Write this astronaut to a JsonValue. When parsed, this JsonValue should return the same planetList.
+     * @return A JsonValue representing this planetList.
+     */
+    public JsonValue toJson() {
+        JsonValue json = new JsonValue(JsonValue.ValueType.array);
+
+        for (Planet p : planets) {
+            json.addChild(p.toJson());
+        }
+
+        return json;
+    }
+
+    /**
      * Remove all planets
      */
     public void clear() {
@@ -208,4 +222,6 @@ public class PlanetList {
     public String toString() {
         return planets.toString();
     }
+
+    public int size() { return planets.size(); }
 }

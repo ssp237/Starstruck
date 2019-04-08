@@ -21,6 +21,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import java.util.*;
 
 //import edu.cornell.gdiac.physics.*;
+import edu.cornell.gdiac.starstruck.Gravity.SaveListener;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
 import edu.cornell.gdiac.util.*;
@@ -67,7 +68,8 @@ public class GameController extends WorldController implements ContactListener {
     private FilmStrip pinkwormTexture;
     /** Texture asset for the enemy */
     private FilmStrip greenwormTexture;
-
+    /** Texture asset for rope */
+    private TextureRegion ropeTexture;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -147,20 +149,6 @@ public class GameController extends WorldController implements ContactListener {
     // Physics constants for initialization
     /** The new heavier gravity for this world (so it is not so floaty) */
     private static final float  DEFAULT_GRAVITY = 0f;//-14.7f;
-    /** The density for most physics objects */
-    private static final float  BASIC_DENSITY = 0.0f;
-    /** The density for a bullet */
-    private static final float  HEAVY_DENSITY = 10.0f;
-    /** Friction of most platforms */
-    private static final float  BASIC_FRICTION = 0.4f;
-    /** The restitution for all physics objects */
-    private static final float  BASIC_RESTITUTION = 0.1f;
-    /** The width of the rope bridge */
-    private static final float  BRIDGE_WIDTH = 6.0f;
-    /** Offset for bullet when firing */
-    private static final float  BULLET_OFFSET = 0.2f;
-    /** The speed of the bullet after firing */
-    private static final float  BULLET_SPEED = 20.0f;
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
     /** The volume for music */
@@ -177,6 +165,10 @@ public class GameController extends WorldController implements ContactListener {
     public static final boolean testE = false;
     /** Allows manual control of astronaut in space for testing */
     public static final boolean testC = false;
+    /** Camera zoom */
+    private static final float ZOOM_FACTOR = 1f;
+    /** True when the rope can be extended (astronaut is anchored and other astronaut is far enough away) */
+    public static boolean ropeExtend = false;
 
     // Other game objects
     /** The position of the spinning barrier */
@@ -205,15 +197,35 @@ public class GameController extends WorldController implements ContactListener {
     /** List of anchors, temporary quick solution */
     private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
     /** WHY GRAVITY */
-    private ArrayList<Star> stars = new ArrayList<Star>();
+    public ArrayList<Star> stars = new ArrayList<Star>();
+    /** List of Rope */
+    private ArrayList<Rope> ropes = new ArrayList<Rope>();
     /** Planets */
     private PlanetList planets;
     /** Planets */
     private Galaxy galaxy = Galaxy.WHIRLPOOL;
-    /** Check not barrier */
+    /** Non planet objects when checking collisions */
     private boolean barrier;
+    /** If the two astronauts are "on the same anchor" */
+    private boolean touching;
     /** Rope */
     private Rope rope;
+    /** Star collection count */
+    private int starCount;
+    /** List of stars to be removed */
+    private ArrayList<Star> removeStar = new ArrayList<Star>();
+    /** Viewport width and height */
+    private float camWidth;
+    private float camHeight;
+    /** Level bounds */
+    private float xBound;
+    private float yBound;
+    /** Amount rope is extended */
+    private int extendInt = 0;
+    /** Level to load */
+    private String loadFile;
+    /** Listener for load data */
+    SaveListener loader;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -247,6 +259,8 @@ public class GameController extends WorldController implements ContactListener {
         setFailure(false);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
+        loadFile = "test.json";
+        loader = new SaveListener();
     }
 
     /**
@@ -257,14 +271,15 @@ public class GameController extends WorldController implements ContactListener {
     public void reset() {
         level.dispose();
 
-        levelFormat = jsonReader.parse(Gdx.files.internal("levels/test.json"));
+        //levelFormat = jsonReader.parse(Gdx.files.internal("levels/alpha2.json"));
+        levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
 
         setComplete(false);
         setFailure(false);
         assignLevelFields();
-        populateLevel(); //Just to add enemies
+        populateLevel(); //Just to add enemies and special lists of objects
     }
 
     /**
@@ -290,9 +305,24 @@ public class GameController extends WorldController implements ContactListener {
      * Lays out the game geography.
      */
     private void populateLevel() {
+        //Set zoom of camera
+        Camera camera = canvas.getCamera();
+        camWidth = 1024*1.2f*ZOOM_FACTOR;
+        camHeight = 576*1.2f*ZOOM_FACTOR;
+        camera.viewportWidth = camWidth;
+        camera.viewportHeight = camHeight;
+
+        xBound = (1024*1.2f*1.5f) / scale.x;
+        yBound = (576*1.2f*1.5f) / scale.y;
+
+        stars = level.stars;
+        anchors = level.anchors;
+        ropeTexture = level.ropeTexture;
+
         // Add level goal
         float dwidth;
         float dheight;
+        starCount = 0;
 
         // Create enemy
         dwidth  = enemyTexture.getRegionWidth()/scale.x;
@@ -301,7 +331,7 @@ public class GameController extends WorldController implements ContactListener {
         enemy.setDrawScale(scale);
         enemy.setTexture(enemyTexture, 3, 10);
         enemy.setName("bug");
-        addObject(enemy);
+        //addObject(enemy);
 
         // Create pink worm enemy
         dwidth  = pinkwormTexture.getRegionWidth()/scale.x;
@@ -310,7 +340,7 @@ public class GameController extends WorldController implements ContactListener {
         pinkworm.setDrawScale(scale);
         pinkworm.setTexture(pinkwormTexture,14,7);
         pinkworm.setName("pinkworm");
-        addObject(pinkworm);
+        //addObject(pinkworm);
         pinkworm.setVX(2f);
 
         // Create green worm enemy
@@ -320,7 +350,7 @@ public class GameController extends WorldController implements ContactListener {
         greenworm.setDrawScale(scale);
         greenworm.setTexture(greenwormTexture,14,6);
         greenworm.setName("greenworm");
-        addObject(greenworm);
+        //addObject(greenworm);
         greenworm.setVX(1.4f);
 
     }
@@ -339,7 +369,7 @@ public class GameController extends WorldController implements ContactListener {
      *
      * @return true if switch was pressed
      */
-    private boolean shifted() {
+    private boolean switched() {
         return InputController.getInstance().didSpace();
     }
 
@@ -358,6 +388,7 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void anchorHelp(AstronautModel avatar1, AstronautModel avatar2, Anchor anchor) {  //Anchor astronaut 1 & set inactive, unanchor astronaut 2 & set active
         avatar1.setAnchored(anchor);
+        avatar1.curAnchor = anchor;
         avatar1.setActive(false);
         avatar1.setPosition(SPIN_POS.x, SPIN_POS.y);
         avatar1.setLinearVelocity(reset);
@@ -386,7 +417,7 @@ public class GameController extends WorldController implements ContactListener {
      * @param avatar2 avatar 2
      */
     private void updateAnchor(AstronautModel avatar1, AstronautModel avatar2) {
-        //If both are unanchored and space is hit
+        //If both are unanchored and anchor is hit
         if (!avatar1.isAnchored() && !avatar2.isAnchored() && anchord()) {
             if (avatar1.isActive() && !avatar1.getOnPlanet()) {
                 for (Anchor a : anchors) {
@@ -408,18 +439,20 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
-        //If avatar1 is already anchored, check if space or shift was hit
+        //If avatar1 is already anchored, check if anchor or switch was hit
         else if (avatar1.isAnchored()) {
-            if (anchord() && !avatar2.getOnPlanet()) { //If space was hit and avatar2 is not on planet -- couldb e anchored
+            if (anchord() && !avatar2.getOnPlanet()) { //If anchor was hit and avatar2 is not on planet -- could be anchored
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
                         anchorHelp(avatar2, avatar1, a);
+                        if (avatar1.curAnchor.equals(avatar2.curAnchor))
+                            touching = true;
                         return;
                     }
                 }
             }
-            else if (shifted()) { //If shift was hit unanchor avatar1 and make active
+            else if (switched()) { //If switch was hit unanchor avatar1 and make active
                 SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
                 avatar1.setUnAnchored();
                 avatar1.setActive(true);
@@ -427,18 +460,20 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
-        //If avatar2 is already anchored, check if space or shift was hit
+        //If avatar2 is already anchored, check if anchor or switch was hit
         else if (avatar2.isAnchored()) {
-            if (anchord() && !avatar1.getOnPlanet()) { //If space was hit and avatar1 is not on planet -- could be anchored
+            if (anchord() && !avatar1.getOnPlanet()) { //If anchor was hit and avatar1 is not on planet -- could be anchored
                 for (Anchor a : anchors) {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
                         anchorHelp(avatar1, avatar2, a);
+                        if (avatar1.curAnchor.equals(avatar2.curAnchor))
+                            touching = true;
                         return;
                     }
                 }
             }
-            else if (shifted()) { //If shift was hit unanchor avatar2 and make active
+            else if (switched()) { //If switch was hit unanchor avatar2 and make active
                 SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
                 avatar2.setUnAnchored();
                 avatar2.setActive(true);
@@ -454,11 +489,22 @@ public class GameController extends WorldController implements ContactListener {
         float a1x = avatar.getPosition().x * avatar.drawScale.x;
         float a2x = avatar2.getPosition().x * avatar2.drawScale.x;
         float xCam = (a1x + a2x) / 2;
-        if (xCam < canvas.getWidth()/2) xCam = canvas.getWidth()/2;
-        canvas.getCamera().position.set(new Vector3(xCam, canvas.getCamera().position.y, 0));
+        float a1y = avatar.getPosition().y * avatar.drawScale.y;
+        float a2y = avatar2.getPosition().y * avatar2.drawScale.y;
+        float yCam = (a1y + a2y) / 2;
+
+        if (xCam < camWidth/2)
+            xCam = camWidth/2;
+        else if (xCam > xBound*scale.x - camWidth/2)
+            xCam = xBound*scale.x - camWidth/2;
+        if (yCam < camHeight/2)
+            yCam = camHeight/2;
+        else if (yCam > yBound*scale.y - camHeight/2)
+            yCam = yBound*scale.y - camHeight/2;
+
+//        canvas.getCamera().position.set(new Vector3(xCam, canvas.getCamera().position.y, 0));
+        canvas.getCamera().position.set(new Vector3(xCam, yCam, 0));
         canvas.getCamera().update();
-//        System.out.println(canvas.getCamera().position);
-//        System.out.println(canvas.getHeight());
     }
 
     /**
@@ -527,6 +573,11 @@ public class GameController extends WorldController implements ContactListener {
                     return true;
                 }
             }
+            if ((avatar1.isAnchored()) || (avatar2.isAnchored())) { //TODO Not doing anything at the moment?
+                if (dist >= length) {
+                    ropeExtend = true;
+                }
+            }
         }
 
         //avatar1 is active, avatar2 is not, both are on the same planet
@@ -586,9 +637,9 @@ public class GameController extends WorldController implements ContactListener {
             }
 
             else if (avatar2.isAnchored()) { //If inactive avatar is anchored restrict rope length
-                if (updateRope(avatar, avatar2, rope, 'p')) {
-                    avatar.setPosition(avatar.lastPoint);
-                }
+//                if (updateRope(avatar, avatar2, rope, 'p')) {
+//                    avatar.setPosition(avatar.lastPoint);
+//                }
             }
         }
         else {
@@ -618,21 +669,49 @@ public class GameController extends WorldController implements ContactListener {
             return false;
         }
 
-        if (!isFailure() && (avatar.getY() < - 2 || avatar.getY() > bounds.height + 2
-                || avatar.getX() < -2)) {
-            // || avatar.getX() > bounds.getWidth() + 1)) {
+        // +/- 1 for a little bit of buffer space because astronaut position is at its center
+        if (!isFailure() && (avatar.getY() < -1 || avatar.getY() > yBound+1 || avatar.getX() < -1 || avatar.getX() > xBound+1)
+                && (avatar2.getY() < -1 || avatar2.getY() > yBound+1 || avatar2.getX() < -1 || avatar2.getX() > xBound+1)
+                && !avatar.getOnPlanet() && !avatar2.getOnPlanet() && !avatar.isAnchored() && !avatar2.isAnchored()){
             setFailure(true);
             return false;
         }
 
-        if (!isFailure() && (avatar2.getY() < - 2 || avatar2.getY() > bounds.height + 2
-                || avatar2.getX() < -2)) {
-            // || avatar2.getX() > bounds.getWidth() + 1)) {
-            setFailure(true);
-            return false;
-        }
+//        if (!isFailure() && (avatar.getY() < 0 || avatar.getY() > yBound //avatar.getY() > bounds.height + 2
+//                || avatar.getX() < 0 || avatar.getX() > xBound) && !avatar.getOnPlanet() && !avatar2.getOnPlanet()
+//                && !avatar.isAnchored() && !avatar2.isAnchored()) {
+//            // || avatar.getX() > bounds.getWidth() + 1)) {
+//            setFailure(true);
+//            return false;
+//        }
+
+//        if (!isFailure() && (avatar2.getY() < 0 || avatar2.getY() > yBound //bounds.height + 2
+//                || avatar2.getX() < 0 || avatar2.getX() > xBound) && !avatar.getOnPlanet() && !avatar2.getOnPlanet()
+//                && !avatar.isAnchored() && !avatar2.isAnchored()) {
+//            // || avatar2.getX() > bounds.getWidth() + 1)) {
+//            setFailure(true);
+//            return false;
+//        }
 
         return true;
+    }
+
+    /**
+     * Try resetting the current level to the level in loader; return true if succesful.
+     * @return If the level was successfully reset.
+     */
+    private boolean loadNewFile() {
+        try {
+            levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loader.file));
+            level.populate(levelFormat);
+            loadFile = loader.file;
+            loader.file = null;
+
+            return true;
+        } catch (Exception e) {
+            loader.file = null;
+            return false;
+        }
     }
 
     /**
@@ -646,11 +725,22 @@ public class GameController extends WorldController implements ContactListener {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+        //print(rope.nLinks());
         updateCam();
 
         if (isFailure()) return;
 
-        if (shifted()) {
+        if (loader.file != null) {
+            if (loadNewFile()) {
+                reset();
+                return;
+            }
+        }
+        if (InputController.getInstance().shiftHeld() && InputController.getInstance().didO()) {
+            Gdx.input.getTextInput(loader, "Load...", "level.json", "");
+        }
+
+        if (switched()) {
             avatar.setActive(!avatar.isActive());
             avatar2.setActive(!avatar2.isActive());
             SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
@@ -671,8 +761,43 @@ public class GameController extends WorldController implements ContactListener {
         avatar2.setFixedRotation(false);
 
         updateAnchor(avatar, avatar2);
-        if (avatar.isAnchored()) avatar.setFixedRotation(true);
-        if (avatar2.isAnchored()) avatar2.setFixedRotation(true);
+        if (avatar.isAnchored()) {
+            avatar.setFixedRotation(true);
+//            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength() - rope.linksize) {
+//                //&& avatar2.getLinearVelocity() != reset )
+//                rope.extendRope(avatar, world, ropeTexture);
+//                rope.setDrawScale(scale);
+//            }
+        }
+        if (avatar2.isAnchored()) {
+            avatar2.setFixedRotation(true);
+//            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength() - rope.linksize) {
+//                //&& avatar.getLinearVelocity() != reset)
+//                rope.extendRope(avatar2, world, ropeTexture);
+//                rope.setDrawScale(scale);
+//            }
+        }
+        if (touching) {
+            removeStar.clear();
+            //TODO check star collection
+            for (Star s : stars) {
+                if (s.collect(rope.getVertices())) {
+                    starCount++;
+                    s.deactivatePhysics(world);
+                    removeStar.add(s);
+                    objects.remove(s);
+                }
+            }
+            for (Star s : removeStar) {
+                stars.remove(s);
+            }
+            print(starCount);
+            touching = false;
+        }
+        if (stars.isEmpty()) {
+            print("win");
+            setComplete(true);
+        }
 
         if (avatar.isActive()) {
             updateHelp(avatar, avatar2);
@@ -715,6 +840,43 @@ public class GameController extends WorldController implements ContactListener {
 
         avatar.lastPoint.set(avatar.getPosition());
         avatar2.lastPoint.set(avatar2.getPosition());
+
+        //if (ropeExtend) { //temporarily commented out just to test if rope extends without even being anchored
+
+//            if (progress > 0) {
+//                float span = progress*(width-2*scale*PROGRESS_CAP)/2.0f;
+//                canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP+span, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+//                canvas.draw(statusFrgMiddle, Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, span, scale*PROGRESS_HEIGHT);
+//            } else {
+//                canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+//            }
+
+
+
+//            rope.newPairPlank(world, rope);
+
+
+
+
+
+//            extendInt++;
+//            objects.remove(2);//this is wrong index (it's the pink avatar)
+//            float dwidth  = bridgeTexture.getRegionWidth()/scale.x;
+//            float dheight = bridgeTexture.getRegionHeight()/scale.y;
+//            rope = new Rope (avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH + extendInt, dwidth, dheight, avatar, avatar2);
+//            objects.add(2, rope); //this is also wrong then (match index above)
+            //addObject(rope);
+         //}
+//            float ropeX = rope.getPosition().x;
+//            float ropeY = rope.getPosition().y;
+
+//
+//            rope = new Rope(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
+//            rope.setTexture(bridgeTexture);
+//            rope.setDrawScale(scale);
+//            rope.setName("rope");
+//            addObject(rope);
+
 
         //TODO Removed sound stuffs
 //        if (avatar.isJumping() || avatar2.isJumping()) {
@@ -995,14 +1157,23 @@ public class GameController extends WorldController implements ContactListener {
      * @param delta The delay in seconds since the last update
      */
     public void draw(float delta) {
-        canvas.clear();
+        OrthographicCamera cam = (OrthographicCamera)canvas.getCamera();
 
+        canvas.clear();
         level.draw(canvas);
 
         if (isFailure()) {
             displayFont.setColor(Color.RED);
             canvas.begin(); // DO NOT SCALE
-            canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
+            //canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
+            canvas.drawText("u ded :(", displayFont, cam.position.x-140, cam.position.y+30);
+            canvas.end();
+        }
+
+        if (isComplete()){
+            displayFont.setColor(Color.GREEN);
+            canvas.begin();
+            canvas.drawText("Yay! :):)", displayFont, cam.position.x-140, cam.position.y+30);
             canvas.end();
         }
     }

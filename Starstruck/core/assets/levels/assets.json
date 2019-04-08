@@ -9,7 +9,7 @@
       "wrap": false
     },
     "star": {
-      "file": "platform/star.png",
+      "file": "platform/static_star_01.png",
       "wrap": false
     },
     "whirlpool planet 1": {
@@ -109,20 +109,20 @@
   },
   "filmstrips" : {
     "green worm": {
-      "file": "platform/green_worm.png",
+      "file": "platform/animated_wpenemy(green)_moving+biting.png",
       "wrap": false,
       "rows": 1,
       "cols": 14,
       "size": 14,
-      "delay": 7
+      "delay": 5
     },
     "pink worm": {
-      "file": "platform/pink_worm.png",
+      "file": "platform/animated_wpenemy(pink)_moving+biting.png",
       "wrap": false,
       "rows": 1,
       "cols": 14,
       "size": 14,
-      "delay": 7
+      "delay": 5
     },
     "orange bug": {
       "file": "platform/enemy.png",
