@@ -444,7 +444,7 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
             return false;
         }
         return true;
-    } 
+    }
 
     /**
      * Called when a button on the Controller was pressed.
