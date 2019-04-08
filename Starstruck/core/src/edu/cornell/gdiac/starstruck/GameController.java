@@ -278,7 +278,7 @@ public class GameController extends WorldController implements ContactListener {
     public void reset() {
         level.dispose();
 
-        levelFormat = jsonReader.parse(Gdx.files.internal("levels/testsave.json"));
+        levelFormat = jsonReader.parse(Gdx.files.internal("levels/test.json"));
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
 

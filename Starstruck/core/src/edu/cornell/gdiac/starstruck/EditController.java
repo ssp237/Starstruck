@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
@@ -52,6 +53,10 @@ public class EditController extends WorldController implements ContactListener {
     private SaveListener load;
     /** File to load (if non-null) */
     private String loadFile;
+    /** The JSON defining the level model */
+    private JsonValue  levelFormat;
+    /** The reader to process JSON files */
+    private JsonReader jsonReader;
 
     /** References to players and rope */
     private AstronautModel player1;
@@ -76,22 +81,31 @@ public class EditController extends WorldController implements ContactListener {
         current = null;
         vectorWorld = new VectorWorld();
         save = new SaveListener();
+        jsonReader = new JsonReader();
+        loadFile = null;
+        levelFormat = null;
     }
 
     public void reset() {
         level.dispose();
 
-        level.setBackground(JsonAssetManager.getInstance().getEntry("background", Texture.class));
+        if (loadFile != null) {
+            levelFormat = jsonReader.parse(Gdx.files.internal(loadFile));
+            level.populate(levelFormat);
+        } else {
+
+            level.setBackground(JsonAssetManager.getInstance().getEntry("background", Texture.class));
+            createPlayers();
+        }
         level.getWorld().setContactListener(this);
         world = level.getWorld();
-
-        createPlayers();
 
         current = null;
 
         setComplete(false);
         setFailure(false);
         save = new SaveListener();
+        load = new SaveListener();
 
     }
 
@@ -196,6 +210,20 @@ public class EditController extends WorldController implements ContactListener {
         camera.update();
     }
 
+    private boolean loadNewFile() {
+        try {
+            levelFormat = jsonReader.parse(Gdx.files.internal(load.file));
+            level.populate(levelFormat);
+            loadFile = load.file;
+            load.file = null;
+
+            return true;
+        } catch (Exception e) {
+            load.file = null;
+            return false;
+        }
+    }
+
     public void update(float dt) {
         //System.out.println(current);
         int i = 0;
@@ -215,10 +243,16 @@ public class EditController extends WorldController implements ContactListener {
             String saveName = save.file;
             FileHandle saveFile = Gdx.files.local(saveName);
             saveFile.writeString(saveVal.toString(), false);
+            load.file = save.file;
             save.file = null;
         }
 
-
+        if (load.file != null) {
+            if (loadNewFile()) {
+                reset();
+                return;
+            }
+        }
 
         if (current != null) {
             if (input.didBackspace() && current.getType() != ObstacleType.PLAYER) {
