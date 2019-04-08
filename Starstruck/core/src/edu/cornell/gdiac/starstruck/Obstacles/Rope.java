@@ -263,18 +263,23 @@ public class Rope extends ComplexObstacle {
     }
 
     public Vector2[] getVertices() {
-        Vector2[] vertices = new Vector2[planks.size()+1]; //Number of planks - 1 to only get in between the planks, + 2 get each end
+        Vector2[] vertices = new Vector2[planks.size() + 1]; //Number of planks - 1 to only get in between the planks, + 2 get each end
         vertices[0] = avatar.getCurAnchor().getPosition();
         vertices[planks.size()] = avatar2.getCurAnchor().getPosition();
-        for (int i = 0; i < planks.size()-1; i++) {
-            int j = i+1; // position in vertices array
+        for (int i = 0; i < planks.size() - 1; i++) {
+            int j = i + 1; // position in vertices array
             BoxObstacle plank0 = planks.get(i);
-            BoxObstacle plank1 = planks.get(i+1);
+            BoxObstacle plank1 = planks.get(i + 1);
             Vector2 dir = plank1.getPosition().cpy().sub(plank0.getPosition());
             dir.scl(0.5f);
             vertices[j] = plank0.getPosition().cpy().add(dir);
 
         }
         return vertices;
+    }
+    public ObstacleType getType() { return ObstacleType.ROPE;}
+
+    public boolean containsPoint(Vector2 point) {
+        return false; //TODO Change later
     }
 }

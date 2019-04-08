@@ -536,4 +536,10 @@ public class CapsuleObstacle extends SimpleObstacle {
         }
     }
 
+    public ObstacleType getType() { return ObstacleType.CAPSULE;}
+
+    public boolean containsPoint(Vector2 point) {
+        return Obstacle.dist(point, getPosition()) < (Math.max(getHeight(), getWidth())/2);
+    }
+
 }

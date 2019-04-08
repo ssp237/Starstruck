@@ -92,6 +92,19 @@ public class Anchor extends ComplexObstacle {
     }
 
     /**
+     * Create a new anchor at (x,y) with the given texture and draw scale.
+     * @param x X coord of the new anchor
+     * @param y Y coord of the new anchor
+     * @param texture Texture for the new anchor
+     * @param scale Draw scale for the new anchor
+     */
+    public Anchor(float x, float y, TextureRegion texture, Vector2 scale) {
+        this(x,y,texture.getRegionWidth(),texture.getRegionHeight());
+        setDrawScale(scale);
+        setTexture(texture);
+    }
+
+    /**
      * Return a new anchor with parameters specified by the JSON
      * @param json A JSON containing data for one anchor
      * @param scale The scale to convert physics units to drawing units
@@ -135,11 +148,26 @@ public class Anchor extends ComplexObstacle {
         return true;
     }
 
+    public String toString() {
+        String out = "Anchor with {";
+
+        out += "pos: " + getPosition();
+        out += "}";
+
+        return out;
+    }
+
     public void setTexture(TextureRegion texture) {
         barrier.setTexture(texture);
     }
 
     public TextureRegion getTexture() {
         return barrier.getTexture();
+    }
+
+    public ObstacleType getType() { return ObstacleType.ANCHOR;}
+
+    public boolean containsPoint(Vector2 point) {
+        return barrier.containsPoint(point) || pivot.containsPoint(point);
     }
 }

@@ -1,11 +1,9 @@
 package edu.cornell.gdiac.starstruck.Obstacles;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.Galaxy;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.util.JsonAssetManager;
@@ -18,26 +16,6 @@ import java.util.ArrayList;
  * Stores texture files, so that different galaxy themes can be selected.
  */
 public class PlanetList {
-
-    /** Track all loaded assets (for unloading purposes) */
-    private Array<String> assets;
-
-    /** File for gravity ring */
-    private static String GRING_FILE = "planets/gravity ring.png";
-
-    /** Files for default galaxy planets*/
-    private static String GALAXY1_PLANET1_FILE = "planets/planet1.png";
-    private static String GALAXY1_PLANET2_FILE = "planets/planet2.png";
-    private static String GALAXY1_PLANET3_FILE = "planets/planet3.png";
-    private static String GALAXY1_PLANET4_FILE = "planets/planet4.png";
-
-    private static String WHIRL_P1 = "planets/whirlpool planet1.png";
-    private static String WHIRL_P2 = "planets/whirlpool planet2.png";
-    private static String WHIRL_P3 = "planets/whirlpool planet3.png";
-    private static String WHIRL_P4 = "planets/whirlpool planet4.png";
-    private static String WHIRL_P5 = "planets/whirlpool planet5.png";
-    private static String WHIRL_P6 = "planets/whirlpool planet6.png";
-
 
     /** Textures to be used when drawing planets*/
     private TextureRegion planet1_texture;
@@ -140,8 +118,36 @@ public class PlanetList {
      * Add the specified planet to the planet list
      * @param p The planet to be added
      */
-    public void addPlanet(Planet p) {
+    public void addPlanet(Planet p, VectorWorld vectorWorld) {
+        vectorWorld.addPlanet(p);
         planets.add(p);
+    }
+
+    /**
+     * Add planet i centered at (x,y) to the planet list using World world and VectorWorld vectorWorld.
+     * @param x X coord of center of planet.
+     * @param y Y coord of center of planet.
+     * @param i Index of planet to create.
+     * @param world World this planet exists in.
+     * @param vectorWorld VectorWorld controlling gravity for this planet.
+     */
+    public void addPlanet(float x, float y, int i, World world, VectorWorld vectorWorld) {
+        Planet p = new Planet(x, y, i, world, scale);
+        vectorWorld.addPlanet(p);
+        planets.add(p);
+    }
+
+    /**
+     * Add the planet specified by JsonValue json to the PlanetList using World world and VectorWorld vectorWorld.
+     * @param json JsonValue containing data for the planet to be added.
+     * @param world World this planet exists in.
+     * @param vectorWorld VectorWorld controlling gravity for this planet.
+     */
+    public void addPlanet(JsonValue json, World world, VectorWorld vectorWorld) {
+        float x = json.getFloat("x");
+        float y = json.getFloat("y");
+        int i = json.getInt("i");
+        addPlanet(x,y,i,world,vectorWorld);
     }
 
     /**
@@ -188,6 +194,15 @@ public class PlanetList {
      */
     public void clear() {
         planets = new ArrayList<Planet>();
+    }
+
+    /**
+     * Remove planet p from the PlanetList
+     *
+     * @param p The planet to be removed
+     */
+    public void remove(Planet p) {
+        planets.remove(p);
     }
 
     public String toString() {

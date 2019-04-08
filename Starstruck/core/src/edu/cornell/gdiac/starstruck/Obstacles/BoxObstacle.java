@@ -204,5 +204,11 @@ public class BoxObstacle extends SimpleObstacle {
         canvas.drawPhysics(shape,Color.YELLOW,getX(),getY(),getAngle(),drawScale.x,drawScale.y);
     }
 
+    public ObstacleType getType() { return ObstacleType.BOX;}
+
+    public boolean containsPoint(Vector2 point) {
+        return Obstacle.dist(point, getPosition()) < shape.getRadius();
+    }
+
 
 }

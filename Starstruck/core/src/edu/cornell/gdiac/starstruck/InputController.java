@@ -63,6 +63,7 @@ public class InputController {
     private boolean secondPrevious;
     /** Whether the teritiary action button was pressed. */
     private boolean tertiaryPressed;
+    private boolean tertiaryPrevious;
     /** Whether the debug toggle was pressed. */
     private boolean debugPressed;
     private boolean debugPrevious;
@@ -82,12 +83,21 @@ public class InputController {
     private boolean dPrevious;
     private boolean aPressed;
     private boolean aPrevious;
+    private boolean sPressed;
+    private boolean sPrevious;
     /** Whether space was pressed */
     private boolean spacePressed;
     private boolean spacePrevious;
     /** Whether shift was pressed */
     private boolean shiftPressed;
     private boolean shiftPrevious;
+    /** Whether backspace was pressed */
+    private boolean backspacePressed;
+    private boolean backspacePrevious;
+
+    /** Mouse's current position*/
+    private float x_pos;
+    private float y_pos;
 
     /** How much did we move horizontally? */
     private float horizontal;
@@ -206,17 +216,26 @@ public class InputController {
 
     public boolean didShift() { return shiftPressed && !shiftPrevious; }
 
+    public boolean didBackspace() { return backspacePressed && !backspacePrevious; }
+
     /**
      * Returns true if the tertiary action button was pressed.
      *
      * This is a sustained button. It will returns true as long as the player
-     * holds it down.
+     * holds it down. NOT ANYMORE MUAHHAHAHA
      *
      * @return true if the secondary action button was pressed.
      */
     public boolean didTertiary() {
-        return tertiaryPressed;
+        return tertiaryPressed && !tertiaryPrevious;
     }
+
+    /**
+     *  Returns true if the mouse is currently pressed and the mouse was previously pressed.
+     *
+     * @return True if the mouse is being dragged for at least two frames.
+     */
+    public boolean mouseDragged() {return tertiaryPressed && tertiaryPrevious; }
 
     /**
      * Returns true if the reset button was pressed.
@@ -242,8 +261,15 @@ public class InputController {
      * @return true if the player wants to go to the previous level.
      */
     public boolean didRetreat() {
-        return prevPressed && !prevPrevious;
+        return prevPressed && !prevPrevious && shiftPressed;
     }
+
+    /**
+     * Returns true if the player pressed 'P'
+     *
+     * @return if the player pressed 'P'.
+     */
+    public boolean didP() { return prevPressed && !prevPrevious;}
 
     /**
      * Returns true if the player wants to go toggle the debug mode.
@@ -274,12 +300,20 @@ public class InputController {
     public boolean didDown() { return downPressed && !downPrevious; }
 
     public boolean didA() {
-        return aPressed;
+        return aPressed && !aPrevious;
+    }
+
+    public boolean didS() {
+        return sPressed && !sPrevious;
     }
 
     public boolean didD() {
         return dPressed;
     }
+
+    public float xPos() {return Gdx.input.getX();}
+
+    public float yPos() {return Gdx.input.getY();}
 
     /**
      * Creates a new input controller
@@ -292,6 +326,7 @@ public class InputController {
 //        xbox = new XBox360Controller(0);
         crosshair = new Vector2();
         crosscache = new Vector2();
+
     }
 
     /**
@@ -319,8 +354,11 @@ public class InputController {
         leftPrevious = leftPressed;
         aPrevious = aPressed;
         dPrevious = dPressed;
+        sPrevious = sPressed;
         spacePrevious = spacePressed;
         shiftPrevious = shiftPressed;
+        tertiaryPrevious = tertiaryPressed;
+        backspacePrevious = backspacePressed;
 
         // Check to see if a GamePad is connected
 //        if (xbox.isConnected()) {
@@ -388,11 +426,13 @@ public class InputController {
         exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
         spacePressed = (secondary && spacePressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
         shiftPressed = (secondary && shiftPressed) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT));
+        backspacePressed = (secondary && backspacePressed) || (Gdx.input.isKeyPressed(Input.Keys.BACKSPACE));
         // TODO no controller support
         rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT);
         leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT);
         downPressed = Gdx.input.isKeyPressed (Input.Keys.DOWN);
         aPressed = Gdx.input.isKeyPressed (Input.Keys.A);
+        sPressed = Gdx.input.isKeyPressed (Input.Keys.S);
         dPressed = Gdx.input.isKeyPressed (Input.Keys.D);
         resetPressed = Gdx.input.isKeyPressed(Input.Keys.R);
 
