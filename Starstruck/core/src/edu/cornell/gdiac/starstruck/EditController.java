@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.JsonValue;
+import com.badlogic.gdx.utils.JsonValue.PrettyPrintSettings;
+import com.badlogic.gdx.utils.JsonWriter;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
@@ -209,8 +211,10 @@ public class EditController extends WorldController implements ContactListener {
             System.out.println(level.toJSON());
             JsonValue saveVal = level.toJSON();
             String saveName = save.file;
-            FileHandle saveFile = Gdx.files.local(saveName);
-            saveFile.writeString(saveVal.toString(), false);
+            FileHandle saveFile = Gdx.files.local("levels/" + saveName);
+            PrettyPrintSettings saveSettings = new PrettyPrintSettings();
+            saveSettings.outputType = JsonWriter.OutputType.json;
+            saveFile.writeString(saveVal.prettyPrint(saveSettings), false);
             save.file = null;
         }
 

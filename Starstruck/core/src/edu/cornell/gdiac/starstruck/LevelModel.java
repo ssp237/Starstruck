@@ -404,8 +404,8 @@ public class LevelModel {
         graphicsSize.addChild(new JsonValue((int) (bounds.width * scale.x)));
         graphicsSize.addChild(new JsonValue((int) (bounds.height * scale.y)));
 
-        out.addChild("physics size", physicsSize);
-        out.addChild("graphics size", graphicsSize);
+        out.addChild("physicsSize", physicsSize);
+        out.addChild("graphicSize", graphicsSize);
 
         //Add background
         out.addChild("background", new JsonValue(JsonAssetManager.getInstance().getKey(background)));
