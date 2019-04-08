@@ -277,6 +277,9 @@ public class GameController extends WorldController implements ContactListener {
     /** Viewport width and height */
     private float camWidth;
     private float camHeight;
+    /** Level bounds */
+    private float xBound;
+    private float yBound;
     /** Amount rope is extended */
     private int extendInt = 0;
 
@@ -361,6 +364,9 @@ public class GameController extends WorldController implements ContactListener {
         camHeight = 576*1.2f*ZOOM_FACTOR;
         camera.viewportWidth = camWidth;
         camera.viewportHeight = camHeight;
+
+        xBound = (1024*1.2f) / scale.x;
+        yBound = (576*1.2f) / scale.y;
 
         stars = level.stars;
         anchors = level.anchors;
@@ -542,8 +548,8 @@ public class GameController extends WorldController implements ContactListener {
 
         if (xCam < camWidth/2)
             xCam = camWidth/2;
-//        else if (xCam > canvas.getWidth() - camWidth/2)
-//            xCam = canvas.getWidth() - camWidth/2;
+        else if (xCam > canvas.getWidth() - camWidth/2)
+            xCam = canvas.getWidth() - camWidth/2;
         if (yCam < camHeight/2)
             yCam = camHeight/2;
         else if (yCam > canvas.getHeight() - camHeight/2)
@@ -716,21 +722,29 @@ public class GameController extends WorldController implements ContactListener {
             return false;
         }
 
-        if ((!isFailure() && (avatar.getY() < - 2 || avatar.getY() > bounds.height + 2
-                || avatar.getX() < -2)) && (!avatar.getOnPlanet() || !avatar2.getOnPlanet()
-                || !avatar.isAnchored() || !avatar2.isAnchored())) {
-            // || avatar.getX() > bounds.getWidth() + 1)) {
+        // +/- 1 for a little bit of buffer space because astronaut position is at its center
+        if (!isFailure() && (avatar.getY() < -1 || avatar.getY() > yBound+1 || avatar.getX() < -1 || avatar.getX() > xBound+1)
+                && (avatar2.getY() < -1 || avatar2.getY() > yBound+1 || avatar2.getX() < -1 || avatar2.getX() > xBound+1)
+                && !avatar.getOnPlanet() && !avatar2.getOnPlanet() && !avatar.isAnchored() && !avatar2.isAnchored()){
             setFailure(true);
             return false;
         }
 
-        if ((!isFailure() && (avatar2.getY() < - 2 || avatar2.getY() > bounds.height + 2
-                || avatar2.getX() < -2)) && (!avatar.getOnPlanet() || !avatar2.getOnPlanet()
-                || !avatar.isAnchored() || !avatar2.isAnchored())) {
-            // || avatar2.getX() > bounds.getWidth() + 1)) {
-            setFailure(true);
-            return false;
-        }
+//        if (!isFailure() && (avatar.getY() < 0 || avatar.getY() > yBound //avatar.getY() > bounds.height + 2
+//                || avatar.getX() < 0 || avatar.getX() > xBound) && !avatar.getOnPlanet() && !avatar2.getOnPlanet()
+//                && !avatar.isAnchored() && !avatar2.isAnchored()) {
+//            // || avatar.getX() > bounds.getWidth() + 1)) {
+//            setFailure(true);
+//            return false;
+//        }
+
+//        if (!isFailure() && (avatar2.getY() < 0 || avatar2.getY() > yBound //bounds.height + 2
+//                || avatar2.getX() < 0 || avatar2.getX() > xBound) && !avatar.getOnPlanet() && !avatar2.getOnPlanet()
+//                && !avatar.isAnchored() && !avatar2.isAnchored()) {
+//            // || avatar2.getX() > bounds.getWidth() + 1)) {
+//            setFailure(true);
+//            return false;
+//        }
 
         return true;
     }
