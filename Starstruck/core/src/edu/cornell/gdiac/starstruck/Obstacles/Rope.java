@@ -495,7 +495,6 @@ public class Rope extends ComplexObstacle {
         BoxObstacle lastPlank = (BoxObstacle)bodies.get(bodies.size-1);
         if (!isAvatar2)
             lastPlank = (BoxObstacle)bodies.get(0);
-        //astroCache.setPosition(lastPlank.getPosition());
 
         jointDef.bodyA = lastPlank.getBody();
         jointDef.bodyB = astroCache.getBody();
@@ -509,8 +508,10 @@ public class Rope extends ComplexObstacle {
 
         Vector2 force = other.getPosition().cpy().sub(astroCache.getPosition());
         force.setLength(6);
-        if (astroCache.getOnPlanet())
+        if (astroCache.getOnPlanet()) {
+            astroCache.setPosition(lastPlank.getPosition());
             astroCache.setOnPlanet(false);
+        }
         astroCache.getBody().applyForceToCenter(force, true);
     }
 
