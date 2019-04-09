@@ -387,7 +387,10 @@ public class Rope extends ComplexObstacle {
         Vector2 pos = new Vector2(lastPlank.getPosition().x + endPoint.x + linksize/2,
                 lastPlank.getPosition().y + endPoint.y);
         BoxObstacle plank = new BoxObstacle(pos.x, pos.y, planksize.x, planksize.y);
-        plank.setName(PLANK_NAME+bodies.size);
+        if (isAvatar2)
+            plank.setName(PLANK_NAME+bodies.size);
+        else
+            plank.setName(PLANK_NAME + (-bodies.size));
         plank.setDensity(BASIC_DENSITY);
         if (isAvatar2)
             bodies.add(plank);
@@ -448,46 +451,67 @@ public class Rope extends ComplexObstacle {
     }
 
     /**
-     * Shortens the rope by __ links
+     * Shortens the rope by n links, applys a force to shortened side
      *
-     * @param isAvatar2 Was avatar2 the avatar that was just unanchored
+     * @param isAvatar2 Is avatar2 the side to be shortened
      * @param world The world
      */
-    public void shortenRope(boolean isAvatar2, World world) {
-        astroCache = avatar2;
+    public void shortenRope(boolean isAvatar2, AstronautModel other, World world, int n) {
+        if (isAvatar2)
+            astroCache = avatar2;
+        else
+            astroCache = avatar;
 
-        int shorten = 1;
-        if (nlinks - shorten < initLinks)
-            shorten = nlinks - initLinks;
+        if (nlinks - n < initLinks)
+            n = nlinks - initLinks;
 
         //Remove the last two joints
-        for (int i = 0; i <= shorten; i++) {
-            world.destroyJoint(joints.removeIndex(joints.size-1));
+        for (int i = 0; i <= n; i++) {
+            if (isAvatar2)
+                world.destroyJoint(joints.removeIndex(joints.size-1));
+            else
+                world.destroyJoint(joints.removeIndex(0));
         }
 
         //Remove the last plank
-        for (int i = 0; i < shorten; i++) {
-            bodies.removeIndex(bodies.size-1).deactivatePhysics(world);
+        for (int i = 0; i < n; i++) {
+            if (isAvatar2)
+                bodies.removeIndex(bodies.size-1).deactivatePhysics(world);
+            else
+                bodies.removeIndex(0).deactivatePhysics(world);
         }
 
         //Update nlinks and length
-        nlinks = nlinks - shorten;
+        nlinks = nlinks - n;
         this.length = nlinks * linksize + nlinks * spacing;
 
 
         //Create a new joint & reattach astronaut
         Vector2 anchor1 = new Vector2(linksize/2, 0);
         Vector2 anchor2 = new Vector2(0, 0);
+        if(!isAvatar2)
+            anchor1.x = -linksize/2;
         RevoluteJointDef jointDef = new RevoluteJointDef();
         BoxObstacle lastPlank = (BoxObstacle)bodies.get(bodies.size-1);
-        astroCache.setPosition(lastPlank.getPosition());
+        if (!isAvatar2)
+            lastPlank = (BoxObstacle)bodies.get(0);
+        //astroCache.setPosition(lastPlank.getPosition());
 
         jointDef.bodyA = lastPlank.getBody();
         jointDef.bodyB = astroCache.getBody();
         jointDef.localAnchorA.set(anchor1);
         jointDef.localAnchorB.set(anchor2);
         Joint joint = world.createJoint(jointDef);
-        joints.add(joint);
+        if (isAvatar2)
+            joints.add(joint);
+        else
+            joints.insert(0, joint);
+
+        Vector2 force = other.getPosition().cpy().sub(astroCache.getPosition());
+        force.setLength(6);
+        if (astroCache.getOnPlanet())
+            astroCache.setOnPlanet(false);
+        astroCache.getBody().applyForceToCenter(force, true);
     }
 
     /**

@@ -815,18 +815,16 @@ public class GameController extends WorldController implements ContactListener {
             setComplete(true);
         }
         if (avatarShorten) {
-            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(false, world); }
+            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(false, avatar2, world, 1); }
             else {
                 avatarShorten = false;
-                avatar.setLinearVelocity(new Vector2(2, 0));
                 avatar.setOnPlanet(false);
             }
         }
         if (avatar2Shorten) {
-            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(true, world); }
+            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(true, avatar, world, 1); }
             else {
                 avatar2Shorten = false;
-                avatar2.setLinearVelocity(new Vector2(2, 0));
                 avatar2.setOnPlanet(false);
             }
         }
