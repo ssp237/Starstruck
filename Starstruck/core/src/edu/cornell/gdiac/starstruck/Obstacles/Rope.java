@@ -358,7 +358,7 @@ public class Rope extends ComplexObstacle {
      * @param isAvatar2 Whether avatar2 is anchored. True for avatar2, false for avatar
      * @param world this world
      */
-    public void extendRope(boolean isAvatar2, World world) {
+    public void extendRope(boolean isAvatar2, World world, TextureRegion ropeTexture) {
         this.isAvatar2 = isAvatar2;
 
         Joint lastJoint;
@@ -394,7 +394,7 @@ public class Rope extends ComplexObstacle {
         else
             bodies.insert(0, plank);
         plank.activatePhysics(world);
-        plank.setTexture(this.getTexture());
+        plank.setTexture(ropeTexture);
         Vector2 plankPos = plank.getPosition();
 
         //Update nlinks and length
@@ -453,7 +453,7 @@ public class Rope extends ComplexObstacle {
      * @param world
      */
     public void shortenRope(boolean isAvatar2, World world) {
-        
+
     }
 
     /**
