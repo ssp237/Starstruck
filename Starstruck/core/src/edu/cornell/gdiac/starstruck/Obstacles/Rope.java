@@ -68,9 +68,9 @@ public class Rope extends ComplexObstacle {
     /** Lengh of the rope */
     protected float length;
     /** Number of links in the rope */
-    protected int nlinks;
+    private int nlinks;
     /** Original number of links in the rope */
-    private int initLinks;
+    public int initLinks;
     /** Initial size of joints list*/
     private int initJointSize;
     /** Initial size of planks list*/
@@ -448,12 +448,46 @@ public class Rope extends ComplexObstacle {
     }
 
     /**
+     * Shortens the rope by __ links
      *
      * @param isAvatar2 Was avatar2 the avatar that was just unanchored
-     * @param world
+     * @param world The world
      */
     public void shortenRope(boolean isAvatar2, World world) {
+        astroCache = avatar2;
 
+        int shorten = 1;
+        if (nlinks - shorten < initLinks)
+            shorten = nlinks - initLinks;
+
+        //Remove the last two joints
+        for (int i = 0; i <= shorten; i++) {
+            world.destroyJoint(joints.removeIndex(joints.size-1));
+        }
+
+        //Remove the last plank
+        for (int i = 0; i < shorten; i++) {
+            bodies.removeIndex(bodies.size-1).deactivatePhysics(world);
+        }
+
+        //Update nlinks and length
+        nlinks = nlinks - shorten;
+        this.length = nlinks * linksize + nlinks * spacing;
+
+
+        //Create a new joint & reattach astronaut
+        Vector2 anchor1 = new Vector2(linksize/2, 0);
+        Vector2 anchor2 = new Vector2(0, 0);
+        RevoluteJointDef jointDef = new RevoluteJointDef();
+        BoxObstacle lastPlank = (BoxObstacle)bodies.get(bodies.size-1);
+        astroCache.setPosition(lastPlank.getPosition());
+
+        jointDef.bodyA = lastPlank.getBody();
+        jointDef.bodyB = astroCache.getBody();
+        jointDef.localAnchorA.set(anchor1);
+        jointDef.localAnchorB.set(anchor2);
+        Joint joint = world.createJoint(jointDef);
+        joints.add(joint);
     }
 
     /**

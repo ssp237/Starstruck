@@ -227,6 +227,10 @@ public class GameController extends WorldController implements ContactListener {
     private String loadFile;
     /** Listener for load data */
     SaveListener loader;
+    /** If avatar was unanchored */
+    private boolean avatarShorten;
+    /** If avatar2 was unanchored */
+    private boolean avatar2Shorten;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -319,6 +323,9 @@ public class GameController extends WorldController implements ContactListener {
         stars = level.stars;
         anchors = level.anchors;
         //ropeTexture = level.ropeTexture;
+
+        avatarShorten = false;
+        avatar2Shorten = false;
 
         // Add level goal
         float dwidth;
@@ -447,6 +454,7 @@ public class GameController extends WorldController implements ContactListener {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
                         anchorHelp(avatar2, avatar1, a);
+                        avatarShorten = true;
                         if (avatar1.curAnchor.equals(avatar2.curAnchor))
                             touching = true;
                         return;
@@ -457,6 +465,7 @@ public class GameController extends WorldController implements ContactListener {
                 SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
                 avatar1.setUnAnchored();
                 avatar1.setActive(true);
+                avatarShorten = true;
                 return;
             }
         }
@@ -468,6 +477,7 @@ public class GameController extends WorldController implements ContactListener {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
                         anchorHelp(avatar1, avatar2, a);
+                        avatar2Shorten = true;
                         if (avatar1.curAnchor.equals(avatar2.curAnchor))
                             touching = true;
                         return;
@@ -478,6 +488,7 @@ public class GameController extends WorldController implements ContactListener {
                 SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
                 avatar2.setUnAnchored();
                 avatar2.setActive(true);
+                avatar2Shorten = true;
                 return;
             }
         }
@@ -802,6 +813,14 @@ public class GameController extends WorldController implements ContactListener {
         if (stars.isEmpty()) {
             print("win");
             setComplete(true);
+        }
+        if (avatarShorten) {
+            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(false, world); }
+            else { avatarShorten = false; }
+        }
+        if (avatar2Shorten) {
+            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(true, world); }
+            else { avatar2Shorten = false; }
         }
 
         if (avatar.isActive()) {
