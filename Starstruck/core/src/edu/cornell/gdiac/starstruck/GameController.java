@@ -69,14 +69,13 @@ public class GameController extends WorldController implements ContactListener {
     /** Texture asset for the enemy */
     private FilmStrip greenwormTexture;
     /** Texture asset for rope */
-    private TextureRegion ropeTexture;
+    //private TextureRegion ropeTexture;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
 
     /** Cache variable to store current planet being drawn*/
     private WheelObstacle planetCache;
-
 
     /** Location and animation information for enemy */
     private Enemy enemy;
@@ -319,7 +318,7 @@ public class GameController extends WorldController implements ContactListener {
 
         stars = level.stars;
         anchors = level.anchors;
-        ropeTexture = level.ropeTexture;
+        //ropeTexture = level.ropeTexture;
 
         // Add level goal
         float dwidth;
@@ -769,7 +768,7 @@ public class GameController extends WorldController implements ContactListener {
             avatar.setFixedRotation(true);
             if ((rope.stretched(dt) || !avatar2.getOnPlanet() && avatar2.getLinearVelocity().len() > 0
                     && dist(avatar.getPosition(), avatar2.getPosition()) > rope.getLength()/2) && rope.nLinks() < MAX_EXTEND) {
-                rope.extendRope(false, world, ropeTexture);
+                rope.extendRope(false, world);
                 rope.setDrawScale(scale);
             }
         }
@@ -779,7 +778,7 @@ public class GameController extends WorldController implements ContactListener {
             avatar2.setFixedRotation(true);
             if ((rope.stretched(dt) || !avatar.getOnPlanet() && avatar.getLinearVelocity().len() > 0
                     && dist(avatar.getPosition(), avatar2.getPosition()) > rope.getLength()/2) && rope.nLinks() < MAX_EXTEND) {
-                rope.extendRope(true, world, ropeTexture);
+                rope.extendRope(true, world);
                 rope.setDrawScale(scale);
             }
         }

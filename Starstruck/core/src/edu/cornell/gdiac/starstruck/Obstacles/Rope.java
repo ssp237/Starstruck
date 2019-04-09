@@ -69,11 +69,14 @@ public class Rope extends ComplexObstacle {
     protected float length;
     /** Number of links in the rope */
     protected int nlinks;
-    /** List of planks that make up this rope TODO remove*/
-    private ArrayList<BoxObstacle> planks = new ArrayList<BoxObstacle>();
     /** Original number of links in the rope */
     private int initLinks;
-    /** List of planks that make up this rope */
+    /** Initial size of joints list*/
+    private int initJointSize;
+    /** Initial size of planks list*/
+    private int initPlankSize;
+    /** Whether avatar2 was the one on anchor */
+    private boolean isAvatar2 = false;
 
     private AstronautModel avatar;
     private AstronautModel avatar2;
@@ -147,11 +150,11 @@ public class Rope extends ComplexObstacle {
             plank.setName(PLANK_NAME+ii);
             plank.setDensity(BASIC_DENSITY);
             bodies.add(plank);
-            planks.add(plank);
         }
         nlinks = nLinks;
         this.length = nLinks * linksize + nLinks * spacing;
         initLinks = nLinks;
+        initPlankSize = bodies.size;
     }
 
     /**
@@ -223,6 +226,8 @@ public class Rope extends ComplexObstacle {
 //            ropeJointDef.maxLength = linksize*(ii+1) + linksize/2;
 //            joint = world.createJoint(ropeJointDef);
 //            joints.add(joint);
+
+            initJointSize = joints.size;
 
             //#endregion
         }
@@ -352,12 +357,12 @@ public class Rope extends ComplexObstacle {
      *
      * @param isAvatar2 Whether avatar2 is anchored. True for avatar2, false for avatar
      * @param world this world
-     * @param ropeTexture The texture of the rope
      */
-    public void extendRope(boolean isAvatar2, World world, TextureRegion ropeTexture) {
+    public void extendRope(boolean isAvatar2, World world) {
+        this.isAvatar2 = isAvatar2;
+
         Joint lastJoint;
         BoxObstacle lastPlank;
-
         if (isAvatar2) {
             lastJoint = joints.get(joints.size - 1);
             lastPlank = (BoxObstacle) bodies.get(bodies.size - 1);
@@ -389,7 +394,7 @@ public class Rope extends ComplexObstacle {
         else
             bodies.insert(0, plank);
         plank.activatePhysics(world);
-        plank.setTexture(ropeTexture);
+        plank.setTexture(this.getTexture());
         Vector2 plankPos = plank.getPosition();
 
         //Update nlinks and length
@@ -443,6 +448,15 @@ public class Rope extends ComplexObstacle {
     }
 
     /**
+     *
+     * @param isAvatar2 Was avatar2 the avatar that was just unanchored
+     * @param world
+     */
+    public void shortenRope(boolean isAvatar2, World world) {
+        
+    }
+
+    /**
      * Destroys the physics Body(s) of this object if applicable,
      * removing them from the world.
      *
@@ -482,13 +496,13 @@ public class Rope extends ComplexObstacle {
     }
 
     public Vector2[] getVertices() {
-        Vector2[] vertices = new Vector2[planks.size() + 1]; //Number of planks - 1 to only get in between the planks, + 2 get each end
+        Vector2[] vertices = new Vector2[bodies.size + 1]; //Number of planks - 1 to only get in between the planks, + 2 get each end
         vertices[0] = avatar.getCurAnchor().getPosition();
-        vertices[planks.size()] = avatar2.getCurAnchor().getPosition();
-        for (int i = 0; i < planks.size() - 1; i++) {
+        vertices[bodies.size] = avatar2.getCurAnchor().getPosition();
+        for (int i = 0; i < bodies.size - 1; i++) {
             int j = i + 1; // position in vertices array
-            BoxObstacle plank0 = planks.get(i);
-            BoxObstacle plank1 = planks.get(i + 1);
+            BoxObstacle plank0 = (BoxObstacle)bodies.get(i);
+            BoxObstacle plank1 = (BoxObstacle)bodies.get(i + 1);
             Vector2 dir = plank1.getPosition().cpy().sub(plank0.getPosition());
             dir.scl(0.5f);
             vertices[j] = plank0.getPosition().cpy().add(dir);
