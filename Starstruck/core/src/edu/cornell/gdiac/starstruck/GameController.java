@@ -769,7 +769,7 @@ public class GameController extends WorldController implements ContactListener {
             avatar.setFixedRotation(true);
             if ((rope.stretched(dt) || !avatar2.getOnPlanet() && avatar2.getLinearVelocity().len() > 0
                     && dist(avatar.getPosition(), avatar2.getPosition()) > rope.getLength()/2) && rope.nLinks() < MAX_EXTEND) {
-                rope.extendRope(avatar, world, ropeTexture);
+                rope.extendRope(false, world, ropeTexture);
                 rope.setDrawScale(scale);
             }
         }
@@ -779,7 +779,7 @@ public class GameController extends WorldController implements ContactListener {
             avatar2.setFixedRotation(true);
             if ((rope.stretched(dt) || !avatar.getOnPlanet() && avatar.getLinearVelocity().len() > 0
                     && dist(avatar.getPosition(), avatar2.getPosition()) > rope.getLength()/2) && rope.nLinks() < MAX_EXTEND) {
-                rope.extendRope(avatar2, world, ropeTexture);
+                rope.extendRope(true, world, ropeTexture);
                 rope.setDrawScale(scale);
             }
         }
