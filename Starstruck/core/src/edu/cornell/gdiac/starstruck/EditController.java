@@ -21,7 +21,7 @@ import edu.cornell.gdiac.util.JsonAssetManager;
 public class EditController extends WorldController implements ContactListener {
 
     /** Speed of camera pan */
-    private static final float PAN_CONST = 2;
+    private static final float PAN_CONST = 4;
 
     /** Current obstacle */
     private Obstacle current;
@@ -163,7 +163,8 @@ public class EditController extends WorldController implements ContactListener {
         }
         else {
             for (Obstacle obj : level.getAllObjects()) {
-                if (obj.containsPoint(input.getCrossHair())) {
+                Vector2 camOffset = new Vector2(camOffsetX/scale.x, camOffsetY/scale.y);
+                if (obj.containsPoint(input.getCrossHair().cpy().add(camOffset))) {
                     current = obj;
                 }
             }

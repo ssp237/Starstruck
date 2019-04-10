@@ -326,7 +326,7 @@ public class LevelModel {
      */
     public void remove(Obstacle obj) {
         switch (obj.getType()) {
-            case PLANET: planets.remove((Planet) obj); break;
+            case PLANET: obj.deactivatePhysics(world); planets.remove((Planet) obj); break;
             case ANCHOR: deactivate(obj); break;
             case STAR: deactivate(obj); break;
         }
