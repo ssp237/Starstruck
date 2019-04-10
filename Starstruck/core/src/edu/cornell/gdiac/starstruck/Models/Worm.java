@@ -55,8 +55,6 @@ public class Worm extends Enemy{
             this.setPosition(right_bound, y_pos);
         }
 
-        //collisions
-
     }
 
 
