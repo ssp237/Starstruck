@@ -15,16 +15,13 @@ import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 
 import java.util.*;
 
 //import edu.cornell.gdiac.physics.*;
-import edu.cornell.gdiac.starstruck.Gravity.SaveListener;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
-import edu.cornell.gdiac.starstruck.Models.Worm;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.FilmStrip;

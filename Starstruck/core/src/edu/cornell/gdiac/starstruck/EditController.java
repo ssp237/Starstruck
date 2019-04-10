@@ -1,9 +1,9 @@
 package edu.cornell.gdiac.starstruck;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -12,9 +12,9 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonValue.PrettyPrintSettings;
 import com.badlogic.gdx.utils.JsonWriter;
-import edu.cornell.gdiac.starstruck.Gravity.SaveListener;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
+import edu.cornell.gdiac.starstruck.Models.Worm;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
@@ -38,6 +38,8 @@ public class EditController extends WorldController implements ContactListener {
     private SaveListener load;
     /** File to load (if non-null) */
     private String loadFile;
+    /** Listener for worm data */
+    private WormListener wormListener;
     /** The JSON defining the level model */
     private JsonValue  levelFormat;
     /** The reader to process JSON files */
@@ -55,6 +57,36 @@ public class EditController extends WorldController implements ContactListener {
     /** The width of the rope bridge */
     private static final float  BRIDGE_WIDTH = 6.0f;
 
+    public class WormListener implements Input.TextInputListener {
+
+        public float vx;
+        public Worm worm;
+
+        public WormListener(){
+            vx = 0; worm = null;
+        }
+
+        public void input (String text) {
+            try {
+                vx = Float.parseFloat(text);
+            } catch (Exception e) {
+                vx = 0;
+                System.out.println("Error setting velocity");
+            }
+        }
+
+        public void canceled () {
+            vx = 0;
+            worm = null;
+        }
+
+        public void setVel() {
+            worm.setVX(vx);
+            worm = null; vx = 0;
+        }
+    }
+
+
     public EditController() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
         level = new LevelModel(bounds, scale);
@@ -66,6 +98,7 @@ public class EditController extends WorldController implements ContactListener {
         current = null;
         vectorWorld = new VectorWorld();
         save = new SaveListener();
+        wormListener = new WormListener();
         jsonReader = new JsonReader();
         loadFile = null;
         levelFormat = null;
