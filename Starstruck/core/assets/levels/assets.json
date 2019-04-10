@@ -108,6 +108,22 @@
     }
   },
   "filmstrips" : {
+    "astronaut 1 idle": {
+      "file": "astronauts/animated_astronaut(pink)_walking_jumping.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 11,
+      "size": 11,
+      "delay": 5
+    },
+    "astronaut 2 idle": {
+      "file": "astronauts/animated_astronaut(blue)_walking_jumping.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 11,
+      "size": 11,
+      "delay": 5
+    },
     "green worm": {
       "file": "platform/animated_wpenemy(green)_moving+biting.png",
       "wrap": false,

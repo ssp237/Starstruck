@@ -20,6 +20,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.starstruck.GameController;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
 import java.lang.reflect.Field;
@@ -110,6 +111,8 @@ public class AstronautModel extends CapsuleObstacle {
     private boolean isActive;
     /** Texture region for the flow */
     private TextureRegion glowTexture;
+    /** Filmstrip for idle animation */
+    private FilmStrip idle;
     /** Origin of the glow texture */
     private Vector2 glowOrigin;
     /** Whether the astronaut is being moved, i.e. movement keys pressed */
@@ -511,6 +514,9 @@ public class AstronautModel extends CapsuleObstacle {
         anchorPos = null;
 
         sensorColor = Color.RED;
+
+        String film = playerOne ? "astronaut 1 idle" : "astronaut 2 idle";
+        idle = JsonAssetManager.getInstance().getEntry(film, FilmStrip.class);
     }
 
     /**
@@ -739,7 +745,14 @@ public class AstronautModel extends CapsuleObstacle {
     public void update(float dt) {
         // Apply cooldowns
 
-        if (isAnchored) setPosition(anchorPos);
+        if (onPlanet) idle.tick();
+
+        if (isAnchored){
+            //setPosition(anchorPos);
+            setBodyType(BodyDef.BodyType.StaticBody);
+        } else {
+            setBodyType(BodyDef.BodyType.DynamicBody);
+        }
 
 //        if (isJumping()) {
 //            jumpCooldown = JUMP_COOLDOWN;
@@ -779,8 +792,13 @@ public class AstronautModel extends CapsuleObstacle {
             canvas.draw(glowTexture, color, glowOrigin.x, glowOrigin.y, (getX()) * drawScale.x,
                     (getY()) * drawScale.y, getAngle(), effect * GLOW_SCALE, GLOW_SCALE);
         }
-        canvas.draw(texture,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,
-                getY()*drawScale.y,getAngle(),effect,1.0f);
+        if (onPlanet){
+            canvas.draw(idle,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,
+                    getY()*drawScale.y,getAngle(),effect,1.0f);
+        } else {
+            canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x,
+                    getY() * drawScale.y, getAngle(), effect, 1.0f);
+        }
     }
 
     /**
