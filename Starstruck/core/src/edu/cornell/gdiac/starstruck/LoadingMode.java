@@ -66,9 +66,9 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     /** Default budget for asset loader (do nothing but load 60 fps) */
     private static int DEFAULT_BUDGET = 15;
     /** Standard window size (for scaling) */
-    private static int STANDARD_WIDTH  = (int) (1024*1.2);
+    private static int STANDARD_WIDTH  = (int) (1280);
     /** Standard window height (for scaling) */
-    private static int STANDARD_HEIGHT = (int) (576*1.2);
+    private static int STANDARD_HEIGHT = (int) (720);
     /** originX of loading spin */
     private static int SPIN_X = STANDARD_WIDTH/2;
     /** originY of loading spin */

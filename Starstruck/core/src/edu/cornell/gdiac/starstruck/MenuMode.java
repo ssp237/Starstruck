@@ -81,9 +81,9 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
     private Music music;
 
     /** Standard window size (for scaling) */
-    private static int STANDARD_WIDTH  = (int) (1024*1.2);
+    private static int STANDARD_WIDTH  = (int) (1280);
     /** Standard window height (for scaling) */
-    private static int STANDARD_HEIGHT = (int) (576*1.2);
+    private static int STANDARD_HEIGHT = (int) (720);
     /** Amount to scale the play button */
     private static float BUTTON_SCALE  = 0.75f;
 
