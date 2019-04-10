@@ -40,6 +40,8 @@ import edu.cornell.gdiac.util.FilmStrip;
  */
 public class GameController extends WorldController implements ContactListener {
 
+    int count;
+
     /** The reader to process JSON files */
     private JsonReader jsonReader;
     /** The JSON asset directory */
@@ -280,6 +282,8 @@ public class GameController extends WorldController implements ContactListener {
         setFailure(false);
         assignLevelFields();
         populateLevel(); //Just to add enemies and special lists of objects
+
+        count = 5;
     }
 
     /**
@@ -725,6 +729,7 @@ public class GameController extends WorldController implements ContactListener {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+
         //print(rope.nLinks());
         updateCam();
 
@@ -1157,6 +1162,12 @@ public class GameController extends WorldController implements ContactListener {
      * @param delta The delay in seconds since the last update
      */
     public void draw(float delta) {
+
+        if (count >= 0) {
+            count --;
+            return;
+        }
+
         OrthographicCamera cam = (OrthographicCamera)canvas.getCamera();
 
         canvas.clear();
