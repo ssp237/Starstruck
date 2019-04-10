@@ -65,7 +65,6 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
 
     private static final float VOLUME = 0.3f;
 
-    LinkedList<String> loaded;
 
     /** Background texture for start-up */
     private Texture background;
@@ -75,7 +74,7 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
     private Texture buildButton;
     /** Quit button to display to exit the window */
     private Texture quitButton;
-    /** Play button to display when done */
+    /** Settings button to display to edit settings */
     private Texture settingsButton;
     /** Loading audio */
     private Music music;
@@ -84,23 +83,17 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
     private static int STANDARD_WIDTH  = (int) (1024*1.2);
     /** Standard window height (for scaling) */
     private static int STANDARD_HEIGHT = (int) (576*1.2);
-    /** Amount to scale the play button */
-    private static float BUTTON_SCALE  = 0.75f;
 
     /** Start button for XBox controller on Windows */
     private static int WINDOWS_START = 7;
     /** Start button for XBox controller on Mac OS X */
     private static int MAC_OS_X_START = 4;
 
-    /** AssetManager to be loading in the background */
-    private AssetManager manager;
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
 
-    /** The width of the progress bar */
-    private int width;
     /** The y-coordinate of the center of the progress bar */
     private int centerY = 375;
     /** The x-coordinate of the center of the progress bar */
@@ -114,14 +107,10 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
     /** Scaling factor for when the student changes the resolution. */
     private float scale;
 
-    /** Current progress (0 to 1) of the asset manager */
-    private float progress;
     /** The current state of the play button */
     private int pressState;
     /** Button down */
     private int buttonId;
-    /** The amount of time to devote to loading assets (as opposed to on screen hints, etc.) */
-    private int   budget;
     /** Support for the X-Box start button in place of play button */
     private int   startButton;
     /** Whether or not this player mode is still active */
@@ -137,34 +126,6 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
     private static boolean DOWN = false;
     /** button up */
     private static boolean UP = true;
-
-    /**
-     * Returns the budget for the asset loader.
-     *
-     * The budget is the number of milliseconds to spend loading assets each animation
-     * frame.  This allows you to do something other than load assets.  An animation
-     * frame is ~16 milliseconds. So if the budget is 10, you have 6 milliseconds to
-     * do something else.  This is how game companies animate their loading screens.
-     *
-     * @return the budget in milliseconds
-     */
-    public int getBudget() {
-        return budget;
-    }
-
-    /**
-     * Sets the budget for the asset loader.
-     *
-     * The budget is the number of milliseconds to spend loading assets each animation
-     * frame.  This allows you to do something other than load assets.  An animation
-     * frame is ~16 milliseconds. So if the budget is 10, you have 6 milliseconds to
-     * do something else.  This is how game companies animate their loading screens.
-     *
-     * @param millis the budget in milliseconds
-     */
-    public void setBudget(int millis) {
-        budget = millis;
-    }
 
     /**
      * Returns true if all assets are loaded and the player is ready to go.
@@ -216,7 +177,6 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
             controller.addListener(this);
         }
         active = true;
-        loaded = new LinkedList<String>();
     }
 
     /**
@@ -296,15 +256,18 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
             // We are are ready, notify our listener
             if (isReady() && listener != null && buttonId == PLAY) {
                 pressState = 0;
+                buttonId = 0;
                 listener.exitScreen(this, WorldController.EXIT_NEXT);
             }
             if (isReady() && listener != null && buttonId == BUILD) {
                 pressState = 0;
+                buttonId = 0;
                 listener.exitScreen(this, WorldController.TO_EDIT);
             }
             if (isReady() && listener != null && buttonId == QUIT) {
                 pressState = 0;
-                listener.exitScreen(this, 0);
+                buttonId = 0;
+                listener.exitScreen(this, WorldController.EXIT_QUIT);
             }
         }
     }
@@ -324,7 +287,6 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
         float sy = ((float)height)/STANDARD_HEIGHT;
         scale = (sx < sy ? sx : sy);
 
-        this.width = width;
         centerY = (int)(height*.56);
         centerX = width/2;
         heightY = height;
@@ -482,6 +444,7 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
     public boolean buttonUp (Controller controller, int buttonCode) {
         if (pressState == 1 && buttonCode == startButton) {
             pressState = 2;
+            buttonId = PLAY;
             return false;
         }
         return true;
@@ -519,6 +482,7 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
     public boolean keyUp(int keycode) {
         if (keycode == Input.Keys.N || keycode == Input.Keys.P) {
             pressState = 2;
+            buttonId = PLAY;
             return false;
         }
         return true;
