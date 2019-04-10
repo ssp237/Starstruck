@@ -118,9 +118,9 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
 
     /** Play button down */
     private static int PLAY = 1;
-    /** Play button down */
+    /** Build button down */
     private static int BUILD = 2;
-    /** Play button down */
+    /** Quit button down */
     private static int QUIT = 3;
     /** button down */
     private static boolean DOWN = false;
@@ -191,9 +191,6 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
         buildButton = null;
         quitButton.dispose();
         quitButton = null;
-//        music.stop();
-//        music.dispose();
-//        music = null;
     }
 
     /**
@@ -254,19 +251,24 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
             draw();
 //            if (!music.isPlaying()) { music.play();}
             // We are are ready, notify our listener
+
             if (isReady() && listener != null && buttonId == PLAY) {
                 pressState = 0;
                 buttonId = 0;
+                System.out.println("play");
                 listener.exitScreen(this, WorldController.EXIT_NEXT);
             }
             if (isReady() && listener != null && buttonId == BUILD) {
                 pressState = 0;
                 buttonId = 0;
+                System.out.println("build");
+
                 listener.exitScreen(this, WorldController.TO_EDIT);
             }
             if (isReady() && listener != null && buttonId == QUIT) {
                 pressState = 0;
                 buttonId = 0;
+                System.out.println("exit");
                 listener.exitScreen(this, WorldController.EXIT_QUIT);
             }
         }
@@ -362,16 +364,19 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
 
         float xdist = Math.abs(screenX-centerX);
         float ydist = Math.abs(screenY-centerY);
-        if (xdist < playButton.getWidth()/2 && ydist < playButton.getWidth()/2) {
+        if (xdist < playButton.getWidth()/2 && ydist < playButton.getHeight()/2) {
             pressState = 1;
+            buttonId = PLAY;
         }
-        ydist = Math.abs(ydist - playButton.getHeight() - OFFSET1);
-        if (xdist < buildButton.getWidth()/2 && ydist < buildButton.getWidth()/2) {
+        ydist = Math.abs(screenY - centerY + playButton.getHeight() + OFFSET1);
+        if (xdist < buildButton.getWidth()/2 && ydist < buildButton.getHeight()/2) {
             pressState = 1;
+            buttonId = BUILD;
         }
-        ydist = Math.abs(ydist - playButton.getHeight() - OFFSET1 - buildButton.getHeight() - OFFSET2);
-        if (xdist < quitButton.getWidth()/2 && ydist < quitButton.getWidth()/2) {
+        ydist = Math.abs(screenY - centerY + playButton.getHeight() + OFFSET1 + buildButton.getHeight() + OFFSET2);
+        if (xdist < quitButton.getWidth()/2 && ydist < quitButton.getHeight()/2) {
             pressState = 1;
+            buttonId = QUIT;
         }
 
         return false;
@@ -389,25 +394,32 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
      * @return whether to hand the event to other listeners.
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        float xdist = screenX-centerX;
-        float ydist = screenY-centerY;
-        if (pressState == 1 && xdist < playButton.getWidth()/2 && ydist < playButton.getWidth()/2) {
+
+        // Flip to match graphics coordinates
+        screenY = heightY-screenY;
+
+        float xdist = Math.abs(screenX-centerX);
+        float ydist = Math.abs(screenY-centerY);
+        if (pressState == 1 && buttonId == PLAY && xdist < playButton.getWidth()/2 && ydist < playButton.getHeight()/2) {
             pressState = 2;
-            buttonId = PLAY;
             return false;
         }
-        ydist = Math.abs(ydist - playButton.getHeight() - OFFSET1);
-        if (pressState == 1 && xdist < buildButton.getWidth()/2 && ydist < buildButton.getWidth()/2) {
+        ydist = Math.abs(screenY - centerY + playButton.getHeight() + OFFSET1);
+        if (pressState == 1 && buttonId == BUILD && xdist < buildButton.getWidth()/2 && ydist < buildButton.getHeight()/2) {
             pressState = 2;
-            buttonId = BUILD;
             return false;
         }
-        ydist = Math.abs(ydist - playButton.getHeight() - OFFSET1 - buildButton.getHeight() - OFFSET2);
-        if (pressState == 1 && xdist < quitButton.getWidth()/2 && ydist < quitButton.getWidth()/2) {
+        ydist = Math.abs(screenY - centerY + playButton.getHeight() + OFFSET1 + buildButton.getHeight() + OFFSET2);
+        if (pressState == 1 && buttonId == QUIT && xdist < quitButton.getWidth()/2 && ydist < quitButton.getHeight()/2) {
             pressState = 2;
-            buttonId = QUIT;
             return false;
         }
+
+        if (pressState == 1) {
+            pressState = 0;
+            buttonId = 0;
+        }
+
         return true;
     }
 
@@ -425,6 +437,7 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
     public boolean buttonDown (Controller controller, int buttonCode) {
         if (buttonCode == startButton && pressState == 0) {
             pressState = 1;
+            buttonId = PLAY;
             return false;
         }
         return true;
@@ -444,7 +457,6 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
     public boolean buttonUp (Controller controller, int buttonCode) {
         if (pressState == 1 && buttonCode == startButton) {
             pressState = 2;
-            buttonId = PLAY;
             return false;
         }
         return true;
@@ -459,6 +471,19 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
      * @return whether to hand the event to other listeners.
      */
     public boolean keyDown(int keycode) {
+        if (pressState == 0 && keycode == Input.Keys.N) {
+            pressState = 1;
+            buttonId = PLAY;
+            return false;
+        } else if (pressState == 0 && keycode == Input.Keys.P) {
+            pressState = 1;
+            buttonId = BUILD;
+        }
+//        else if (pressState == 0 && keycode == Input.Keys.ESCAPE) {
+//            pressState = 1;
+//            buttonId = QUIT;
+//            return false;
+//        }
         return true;
     }
 
@@ -480,11 +505,18 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
      * @return whether to hand the event to other listeners.
      */
     public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.N || keycode == Input.Keys.P) {
+        if (pressState == 1 && keycode == Input.Keys.N || keycode == Input.Keys.P) {
             pressState = 2;
             buttonId = PLAY;
             return false;
+        } else if (pressState == 1 && keycode == Input.Keys.P) {
+            pressState = 2;
+            return false;
         }
+//        else if (keycode == Input.Keys.ESCAPE) {
+//            pressState = 2;
+//            return false;
+//        }
         return true;
     }
 
@@ -608,4 +640,13 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
         return true;
     }
 
+
+    /**
+     * Resets the status of the game so that we can play again.
+     *
+     * This method disposes of the world and creates a new one.
+     */
+    public void reset() {
+
+    }
 }
