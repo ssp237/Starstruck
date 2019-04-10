@@ -761,13 +761,13 @@ public class GameController extends WorldController implements ContactListener {
         if ((dist(avatar.getPosition(), enemy.getPosition()) < 1f || dist(avatar2.getPosition(), enemy.getPosition()) < 1f) && !testE)
             setFailure(true);
 
-        if (pinkworm.getPosition().x > 19 || pinkworm.getPosition().x < 12) {
-            pinkworm.setVX(-pinkworm.getVX());
-        }
-
-        if (greenworm.getPosition().x > 19 || greenworm.getPosition().x < 10) {
-            greenworm.setVX(-greenworm.getVX());
-        }
+//        if (pinkworm.getPosition().x > 19 || pinkworm.getPosition().x < 12) {
+//            pinkworm.setVX(-pinkworm.getVX());
+//        }
+//
+//        if (greenworm.getPosition().x > 19 || greenworm.getPosition().x < 10) {
+//            greenworm.setVX(-greenworm.getVX());
+//        }
 
         avatar.setFixedRotation(false);
         avatar2.setFixedRotation(false);
