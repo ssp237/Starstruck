@@ -107,12 +107,20 @@ public class Worm extends Enemy{
 
     }
 
+    public FilmStrip getTexture() {
+        return texture;
+    }
+
     public void draw(GameCanvas canvas) {
         float effect = isFacingRight() ? -1.0f : 1.0f;
         canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 
     public ObstacleType getType() { return ObstacleType.WORM;}
+
+    public String toString(){
+        return "Worm with { velocity " + getVX() + " and position " + getPosition() +"}";
+    }
 
 
 

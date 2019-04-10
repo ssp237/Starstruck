@@ -125,7 +125,7 @@
       "delay": 5
     },
     "green worm": {
-      "file": "platform/animated_wpenemy(green)_moving+biting.png",
+      "file": "whirlpool/enemies/worms/animated_wpenemy(green)_moving+biting.png",
       "wrap": false,
       "rows": 1,
       "cols": 14,
@@ -133,7 +133,39 @@
       "delay": 5
     },
     "pink worm": {
-      "file": "platform/animated_wpenemy(pink)_moving+biting.png",
+      "file": "whirlpool/enemies/worms/animated_wpenemy(pink)_moving+biting.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 14,
+      "size": 14,
+      "delay": 5
+    },
+    "red worm": {
+      "file": "whirlpool/enemies/worms/animated_wpenemy(red)_moving+biting.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 14,
+      "size": 14,
+      "delay": 5
+    },
+    "purple worm": {
+      "file": "whirlpool/enemies/worms/animated_wpenemy(purple)_moving+biting.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 14,
+      "size": 14,
+      "delay": 5
+    },
+    "yellow worm": {
+      "file": "whirlpool/enemies/worms/animated_wpenemy(yellow)_moving+biting.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 14,
+      "size": 14,
+      "delay": 5
+    },
+    "blue worm": {
+      "file": "whirlpool/enemies/worms/animated_wpenemy(blue)_moving+biting.png",
       "wrap": false,
       "rows": 1,
       "cols": 14,
