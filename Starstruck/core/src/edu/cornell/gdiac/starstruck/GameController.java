@@ -842,7 +842,7 @@ public class GameController extends WorldController implements ContactListener {
             touching = false;
         }
         if (stars.isEmpty()) {
-            print("win");
+            //print("win");
             setComplete(true);
         }
         if (avatarShorten) {
@@ -979,8 +979,6 @@ public class GameController extends WorldController implements ContactListener {
             String bd1N = bd1.getName();
             String bd2N = bd2.getName();
 
-            //System.out.println(bd1N + bd2N);
-
             if ((bd1N.contains("avatar") || bd2N.contains("avatar")) && (
                     bd1N.contains("rope") || bd2N.contains("rope") ||
                             bd1N.contains("worm") || bd2N.contains("worm") ||
@@ -991,10 +989,19 @@ public class GameController extends WorldController implements ContactListener {
             else
                 barrier = false;
 
-            if ((bd1.getName().contains("worm") || bd2.getName().contains("worm"))
-                    && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar")) && !testE) {
+            //If worm and astronaut touch and astronaut is not on planet then lose
+            if (bd1 == avatar && !avatar.getOnPlanet() && bd2.getType() == ObstacleType.WORM
+                    || bd2 == avatar && !avatar.getOnPlanet() && bd1.getType() == ObstacleType.WORM) {
                 setFailure(true);
             }
+            if (bd1 == avatar2 && !avatar2.getOnPlanet() && bd2.getType() == ObstacleType.WORM
+                    || bd2 == avatar2 && !avatar2.getOnPlanet() && bd1.getType() == ObstacleType.WORM) {
+                setFailure(true);
+            }
+//            if ((bd1.getName().contains("worm") || bd2.getName().contains("worm"))
+//                    && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar")) && !testE) {
+//                setFailure(true);
+//            }
 
             if ((bd1 == avatar || bd2 == avatar) && (bd1N.contains("planet") || bd2N.contains("planet")) && !barrier) {
                 avatar.curPlanet = (bd1 == avatar) ? bd2 : bd1;
@@ -1085,7 +1092,7 @@ public class GameController extends WorldController implements ContactListener {
             }
 
             // Check for win condition
-            //TODO Removed win
+            //Removed win
 //            if ((bd1 == avatar   && bd2 == goalDoor) ||
 //                    (bd1 == goalDoor && bd2 == avatar)) {
 //                setComplete(true);
@@ -1155,20 +1162,22 @@ public class GameController extends WorldController implements ContactListener {
             String bd1N = bd1.getName();
             String bd2N = bd2.getName();
 
+//            if (bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) {
+//                print(bd1N);
+//                print(bd2N);
+//                print("________________________");
+//            }
 
-            //Disable collisions between enemies and everything except for avatars
+            //Disable all collisions for worms
             if (bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) {
                 contact.setEnabled(false);
             }
 
-            if ((bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) &&
-                    (bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))) {
-                contact.setEnabled(true);
-            }
-
-
-            if (bd1N.contains("avatar1") || bd2N.contains("avatar1"))
-                System.out.println(bd1.getName() + bd2.getName());
+            //Enable collisions for worm and astronauts -- NOT NECESSARY
+//            if ((bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) &&
+//                    (bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))) {
+//                contact.setEnabled(true);
+//            }
 
             //Disables all collisions w rope
             if (bd1.getName().contains("rope") || bd2.getName().contains("rope")) {
@@ -1260,9 +1269,9 @@ public class GameController extends WorldController implements ContactListener {
             canvas.end();
         }
         canvas.begin();
-        for (Enemy e: enemies) {
-            e.draw(canvas);
-        }
+//        for (Enemy e: enemies) {
+//            e.draw(canvas);
+//        }
         canvas.end();
 
         if(isDebug()){

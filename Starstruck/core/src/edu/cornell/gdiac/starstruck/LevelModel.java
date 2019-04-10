@@ -306,10 +306,6 @@ public class LevelModel {
         }
     }
 
-
-
-
-
     public void dispose() {
         for(Obstacle obj : objects) {
             obj.deactivatePhysics(world);
@@ -499,10 +495,11 @@ public class LevelModel {
         for(Obstacle obj : objects) {
             if (obj.getType() != ObstacleType.PLAYER) obj.draw(canvas);
         }
+        if (player1.isActive()) { player2.draw(canvas); player1.draw(canvas); }
+        else { player1.draw(canvas); player2.draw(canvas); }
         for (Enemy e: enemies) {
             e.draw(canvas);
         }
-        player1.draw(canvas); player2.draw(canvas);
         canvas.end();
 
         if (debug) {
