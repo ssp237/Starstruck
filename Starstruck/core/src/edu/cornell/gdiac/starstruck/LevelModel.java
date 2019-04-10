@@ -451,6 +451,7 @@ public class LevelModel {
         //Add obstacles
         JsonValue anchors = new JsonValue(JsonValue.ValueType.array);
         JsonValue stars = new JsonValue(JsonValue.ValueType.array);
+        JsonValue worms = new JsonValue(JsonValue.ValueType.array);
 
         for (Obstacle obj : objects) {
             switch (obj.getType()) {
@@ -462,6 +463,10 @@ public class LevelModel {
 
         out.addChild("anchors", anchors);
         out.addChild("stars", stars);
+
+        //Add enemies
+
+        out.addChild("worm", worms);
 
 
         return out;
