@@ -173,6 +173,8 @@ public class GameController extends WorldController implements ContactListener {
     private static final float ZOOM_FACTOR = 1f;
     /** Max max extension of rope */
     private static final int MAX_EXTEND = 50;
+    /** Rope timer reset */
+    private static final int ROPE_RESET = 9;
     /** True when the rope can be extended (astronaut is anchored and other astronaut is far enough away) */
     public static boolean ropeExtend = false;
 
@@ -236,6 +238,8 @@ public class GameController extends WorldController implements ContactListener {
     private boolean avatarShorten;
     /** If avatar2 was unanchored */
     private boolean avatar2Shorten;
+    /** Timer for extending rope */
+    private int ropeCount;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -337,6 +341,7 @@ public class GameController extends WorldController implements ContactListener {
 
         avatarShorten = false;
         avatar2Shorten = false;
+        ropeCount = ROPE_RESET;
 
         // Add level goal
         float dwidth;
@@ -796,22 +801,28 @@ public class GameController extends WorldController implements ContactListener {
         if (avatar.isAnchored()) {
 //            print(rope.getJointList().get(0).getReactionForce(1/dt).len());
 //            print(rope.getJointList().get(rope.getJointList().size/2).getReactionForce(1/dt).len());
+            //print(avatar2.getLinearVelocity().len());
             avatar.setFixedRotation(true);
             if ((rope.stretched(dt) || !avatar2.getOnPlanet() && avatar2.getLinearVelocity().len() > 0
-                    && dist(avatar.getPosition(), avatar2.getPosition()) > rope.getLength()/2) && rope.nLinks() < MAX_EXTEND) {
-                rope.extendRope(false, world, rope.getTexture());
+                    && ropeCount <= 0) && rope.nLinks() < MAX_EXTEND) {
+                rope.extendRope(true, world, rope.getTexture());
                 rope.setDrawScale(scale);
+                ropeCount = ROPE_RESET;
             }
+            else ropeCount--;
         }
         if (avatar2.isAnchored()) {
 //            print(rope.getJointList().get(0).getReactionForce(1/dt).len());
 //            print(rope.getJointList().get(rope.getJointList().size/2).getReactionForce(1/dt).len());
+            //print(avatar.getLinearVelocity().len());
             avatar2.setFixedRotation(true);
             if ((rope.stretched(dt) || !avatar.getOnPlanet() && avatar.getLinearVelocity().len() > 0
-                    && dist(avatar.getPosition(), avatar2.getPosition()) > rope.getLength()/2) && rope.nLinks() < MAX_EXTEND) {
-                rope.extendRope(true, world, rope.getTexture());
+                    && ropeCount <= 0) && rope.nLinks() < MAX_EXTEND) {
+                rope.extendRope(false, world, rope.getTexture());
                 rope.setDrawScale(scale);
+                ropeCount = ROPE_RESET;
             }
+            else ropeCount--;
         }
         if (touching) {
             removeStar.clear();
@@ -835,14 +846,14 @@ public class GameController extends WorldController implements ContactListener {
             setComplete(true);
         }
         if (avatarShorten) {
-            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(false, avatar2, world, 1); }
+            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(false, avatar2.getPosition(), world, 1); }
             else {
                 avatarShorten = false;
                 avatar.setOnPlanet(false);
             }
         }
         if (avatar2Shorten) {
-            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(true, avatar, world, 1); }
+            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(true, avatar.getPosition(), world, 1); }
             else {
                 avatar2Shorten = false;
                 avatar2.setOnPlanet(false);
@@ -890,6 +901,8 @@ public class GameController extends WorldController implements ContactListener {
 
         avatar.lastPoint.set(avatar.getPosition());
         avatar2.lastPoint.set(avatar2.getPosition());
+        avatar.lastVel.set(avatar.getLinearVelocity());
+        avatar2.lastVel.set(avatar.getLinearVelocity());
 
         //if (ropeExtend) { //temporarily commented out just to test if rope extends without even being anchored
 
