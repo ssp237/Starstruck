@@ -46,7 +46,7 @@ public class AstronautModel extends CapsuleObstacle {
     /** The maximum character rotation in space */
     private static final float DUDE_MAXROT = 6.5f;
     /** The impulse for the character jump */
-    private float DUDE_JUMP = 6f;
+    private float DUDE_JUMP = 10f;
     /** Cooldown (in animation frames) for jumping */
     private int JUMP_COOLDOWN = 30;
     /** Cooldown (in animation frames) for shooting */
