@@ -150,9 +150,10 @@ public class GDXRoot extends Game implements ScreenListener {
 				Gdx.app.exit();
 			} else {
 				// We quit to the menu
-				current = WorldController.EXIT_QUIT;
-				controllers[current].reset();
-				setScreen(controllers[current]);
+				Gdx.app.exit();
+//				current = WorldController.EXIT_QUIT;
+////				controllers[current].reset();
+////				setScreen(controllers[current]);
 			}
 		}
 	}
