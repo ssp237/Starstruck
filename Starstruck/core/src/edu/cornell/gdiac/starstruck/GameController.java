@@ -316,13 +316,13 @@ public class GameController extends WorldController implements ContactListener {
     private void populateLevel() {
         //Set zoom of camera
         Camera camera = canvas.getCamera();
-        camWidth = 1024*1.2f*ZOOM_FACTOR;
-        camHeight = 576*1.2f*ZOOM_FACTOR;
+        camWidth = 1280*ZOOM_FACTOR;
+        camHeight = 720*ZOOM_FACTOR;
         camera.viewportWidth = camWidth;
         camera.viewportHeight = camHeight;
 
-        xBound = (1024*1.2f*1.5f) / scale.x;
-        yBound = (576*1.2f*1.5f) / scale.y;
+        xBound = (1280*1.5f) / scale.x;
+        yBound = (720*1.5f) / scale.y;
 
         stars = level.stars;
         anchors = level.anchors;
