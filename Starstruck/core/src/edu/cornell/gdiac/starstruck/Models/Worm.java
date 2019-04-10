@@ -24,6 +24,8 @@ public class Worm extends Enemy{
     private float right_bound;
     /** Counter for names */
     private static int worm_count = 1;
+    /** Delay for wormie to come back on screen */
+    private int delay_pos = 1000;
 
 
     /**
@@ -96,7 +98,11 @@ public class Worm extends Enemy{
         System.out.println(getVX());
 
         if (this.getPosition().x < 0) {
-            this.setPosition(right_bound, y_pos);
+            delay_pos--;
+            if (delay_pos == 0) {
+                delay_pos = 1000;
+                this.setPosition(right_bound, y_pos);
+            }
         }
 
     }
