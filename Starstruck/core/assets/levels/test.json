@@ -1,6 +1,6 @@
 {
   "physicsSize":    [38.4,21.6],
-  "graphicSize":    [ 1228, 691],
+  "graphicSize":    [ 1280, 720],
   "background": "background",
   "gravity":  	  0,
   "level" : 1,

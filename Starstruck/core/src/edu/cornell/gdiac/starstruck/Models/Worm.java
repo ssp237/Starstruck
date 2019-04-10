@@ -101,7 +101,6 @@ public class Worm extends Enemy{
 
     }
 
-
     public void draw(GameCanvas canvas) {
         float effect = isFacingRight() ? -1.0f : 1.0f;
         canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);

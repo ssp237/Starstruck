@@ -355,7 +355,7 @@ public class Rope extends ComplexObstacle {
     /**
      * Extends the rope
      *
-     * @param isAvatar2 Whether avatar2 is anchored. True for avatar2, false for avatar
+     * @param isAvatar2 If avatar2 is the one to extend. True for avatar2, false for avatar
      * @param world this world
      */
     public void extendRope(boolean isAvatar2, World world, TextureRegion ropeTexture) {
@@ -386,7 +386,7 @@ public class Rope extends ComplexObstacle {
         //Make the new plank
         Vector2 pos = new Vector2(lastPlank.getPosition().x + endPoint.x + linksize/2,
                 lastPlank.getPosition().y + endPoint.y);
-        BoxObstacle plank = new BoxObstacle(pos.x, pos.y, planksize.x, planksize.y);
+        BoxObstacle plank = new BoxObstacle(lastPlank.getPosition().x, lastPlank.getPosition().y, planksize.x, planksize.y);
         if (isAvatar2)
             plank.setName(PLANK_NAME+bodies.size);
         else
@@ -448,6 +448,9 @@ public class Rope extends ComplexObstacle {
             joints.add(joint);
         else
             joints.insert(0, joint);
+
+        if (!astroCache.getOnPlanet() && astroCache.getLinearVelocity().len() != 0)
+            astroCache.getBody().applyForceToCenter(astroCache.lastVel, true);
     }
 
     /**
@@ -456,7 +459,7 @@ public class Rope extends ComplexObstacle {
      * @param isAvatar2 Is avatar2 the side to be shortened
      * @param world The world
      */
-    public void shortenRope(boolean isAvatar2, AstronautModel other, World world, int n) {
+    public void shortenRope(boolean isAvatar2, Vector2 otherPos, World world, int n) {
         if (isAvatar2)
             astroCache = avatar2;
         else
@@ -506,12 +509,14 @@ public class Rope extends ComplexObstacle {
         else
             joints.insert(0, joint);
 
-        Vector2 force = other.getPosition().cpy().sub(astroCache.getPosition());
+        Vector2 force = otherPos.cpy().sub(astroCache.getPosition());
         force.setLength(6);
-        if (astroCache.getOnPlanet()) {
-            astroCache.setPosition(lastPlank.getPosition());
-            astroCache.setOnPlanet(false);
-        }
+//        if (astroCache.getOnPlanet()) {
+//            astroCache.setPosition(lastPlank.getPosition());
+//            astroCache.setOnPlanet(false);
+//        }
+        astroCache.setPosition(lastPlank.getPosition());
+        astroCache.setOnPlanet(false);
         astroCache.getBody().applyForceToCenter(force, true);
     }
 

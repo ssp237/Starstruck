@@ -649,6 +649,7 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
-
+        buttonId = 0;
+        pressState = 0;
     }
 }
