@@ -467,8 +467,9 @@ public class LevelModel {
             p.draw(canvas);
         }
         for(Obstacle obj : objects) {
-            obj.draw(canvas);
+            if (obj.getType() != ObstacleType.PLAYER) obj.draw(canvas);
         }
+        player1.draw(canvas); player2.draw(canvas);
         canvas.end();
 
         if (debug) {
