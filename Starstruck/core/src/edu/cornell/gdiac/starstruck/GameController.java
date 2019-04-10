@@ -40,6 +40,8 @@ import edu.cornell.gdiac.util.FilmStrip;
  */
 public class GameController extends WorldController implements ContactListener {
 
+    int count;
+
     /** The reader to process JSON files */
     private JsonReader jsonReader;
     /** The JSON asset directory */
@@ -69,14 +71,13 @@ public class GameController extends WorldController implements ContactListener {
     /** Texture asset for the enemy */
     private FilmStrip greenwormTexture;
     /** Texture asset for rope */
-    private TextureRegion ropeTexture;
+    //private TextureRegion ropeTexture;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
 
     /** Cache variable to store current planet being drawn*/
     private WheelObstacle planetCache;
-
 
     /** Location and animation information for enemy */
     private Enemy enemy;
@@ -167,6 +168,8 @@ public class GameController extends WorldController implements ContactListener {
     public static final boolean testC = false;
     /** Camera zoom */
     private static final float ZOOM_FACTOR = 1f;
+    /** Max max extension of rope */
+    private static final int MAX_EXTEND = 50;
     /** True when the rope can be extended (astronaut is anchored and other astronaut is far enough away) */
     public static boolean ropeExtend = false;
 
@@ -226,6 +229,10 @@ public class GameController extends WorldController implements ContactListener {
     private String loadFile;
     /** Listener for load data */
     SaveListener loader;
+    /** If avatar was unanchored */
+    private boolean avatarShorten;
+    /** If avatar2 was unanchored */
+    private boolean avatar2Shorten;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -280,6 +287,8 @@ public class GameController extends WorldController implements ContactListener {
         setFailure(false);
         assignLevelFields();
         populateLevel(); //Just to add enemies and special lists of objects
+
+        count = 5;
     }
 
     /**
@@ -307,17 +316,20 @@ public class GameController extends WorldController implements ContactListener {
     private void populateLevel() {
         //Set zoom of camera
         Camera camera = canvas.getCamera();
-        camWidth = 1024*1.2f*ZOOM_FACTOR;
-        camHeight = 576*1.2f*ZOOM_FACTOR;
+        camWidth = 1280*ZOOM_FACTOR;
+        camHeight = 720*ZOOM_FACTOR;
         camera.viewportWidth = camWidth;
         camera.viewportHeight = camHeight;
 
-        xBound = (1024*1.2f*1.5f) / scale.x;
-        yBound = (576*1.2f*1.5f) / scale.y;
+        xBound = (1280*1.5f) / scale.x;
+        yBound = (720*1.5f) / scale.y;
 
         stars = level.stars;
         anchors = level.anchors;
-        ropeTexture = level.ropeTexture;
+        //ropeTexture = level.ropeTexture;
+
+        avatarShorten = false;
+        avatar2Shorten = false;
 
         // Add level goal
         float dwidth;
@@ -446,6 +458,7 @@ public class GameController extends WorldController implements ContactListener {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
                         anchorHelp(avatar2, avatar1, a);
+                        avatarShorten = true;
                         if (avatar1.curAnchor.equals(avatar2.curAnchor))
                             touching = true;
                         return;
@@ -456,6 +469,7 @@ public class GameController extends WorldController implements ContactListener {
                 SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
                 avatar1.setUnAnchored();
                 avatar1.setActive(true);
+                avatarShorten = true;
                 return;
             }
         }
@@ -467,6 +481,7 @@ public class GameController extends WorldController implements ContactListener {
                     SPIN_POS.set(a.getPosition());
                     if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
                         anchorHelp(avatar1, avatar2, a);
+                        avatar2Shorten = true;
                         if (avatar1.curAnchor.equals(avatar2.curAnchor))
                             touching = true;
                         return;
@@ -477,6 +492,7 @@ public class GameController extends WorldController implements ContactListener {
                 SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
                 avatar2.setUnAnchored();
                 avatar2.setActive(true);
+                avatar2Shorten = true;
                 return;
             }
         }
@@ -725,6 +741,7 @@ public class GameController extends WorldController implements ContactListener {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
+
         //print(rope.nLinks());
         updateCam();
 
@@ -762,20 +779,24 @@ public class GameController extends WorldController implements ContactListener {
 
         updateAnchor(avatar, avatar2);
         if (avatar.isAnchored()) {
+//            print(rope.getJointList().get(0).getReactionForce(1/dt).len());
+//            print(rope.getJointList().get(rope.getJointList().size/2).getReactionForce(1/dt).len());
             avatar.setFixedRotation(true);
-//            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength() - rope.linksize) {
-//                //&& avatar2.getLinearVelocity() != reset )
-//                rope.extendRope(avatar, world, ropeTexture);
-//                rope.setDrawScale(scale);
-//            }
+            if ((rope.stretched(dt) || !avatar2.getOnPlanet() && avatar2.getLinearVelocity().len() > 0
+                    && dist(avatar.getPosition(), avatar2.getPosition()) > rope.getLength()/2) && rope.nLinks() < MAX_EXTEND) {
+                rope.extendRope(false, world, rope.getTexture());
+                rope.setDrawScale(scale);
+            }
         }
         if (avatar2.isAnchored()) {
+//            print(rope.getJointList().get(0).getReactionForce(1/dt).len());
+//            print(rope.getJointList().get(rope.getJointList().size/2).getReactionForce(1/dt).len());
             avatar2.setFixedRotation(true);
-//            if (dist(avatar.getPosition(), avatar2.getPosition()) >= rope.getLength() - rope.linksize) {
-//                //&& avatar.getLinearVelocity() != reset)
-//                rope.extendRope(avatar2, world, ropeTexture);
-//                rope.setDrawScale(scale);
-//            }
+            if ((rope.stretched(dt) || !avatar.getOnPlanet() && avatar.getLinearVelocity().len() > 0
+                    && dist(avatar.getPosition(), avatar2.getPosition()) > rope.getLength()/2) && rope.nLinks() < MAX_EXTEND) {
+                rope.extendRope(true, world, rope.getTexture());
+                rope.setDrawScale(scale);
+            }
         }
         if (touching) {
             removeStar.clear();
@@ -791,12 +812,26 @@ public class GameController extends WorldController implements ContactListener {
             for (Star s : removeStar) {
                 stars.remove(s);
             }
-            print(starCount);
+            //print(starCount);
             touching = false;
         }
         if (stars.isEmpty()) {
             print("win");
             setComplete(true);
+        }
+        if (avatarShorten) {
+            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(false, avatar2, world, 1); }
+            else {
+                avatarShorten = false;
+                avatar.setOnPlanet(false);
+            }
+        }
+        if (avatar2Shorten) {
+            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(true, avatar, world, 1); }
+            else {
+                avatar2Shorten = false;
+                avatar2.setOnPlanet(false);
+            }
         }
 
         if (avatar.isActive()) {
@@ -1157,6 +1192,12 @@ public class GameController extends WorldController implements ContactListener {
      * @param delta The delay in seconds since the last update
      */
     public void draw(float delta) {
+
+        if (count >= 0) {
+            count --;
+            return;
+        }
+
         OrthographicCamera cam = (OrthographicCamera)canvas.getCamera();
 
         canvas.clear();

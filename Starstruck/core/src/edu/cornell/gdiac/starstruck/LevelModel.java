@@ -74,7 +74,7 @@ public class LevelModel {
     /** List of anchors in the world */
     protected ArrayList<Anchor> anchors = new ArrayList<Anchor>();
     /** Rope texture for extension method */
-    protected TextureRegion ropeTexture;
+    //protected TextureRegion ropeTexture;
 
 
     /**
@@ -239,13 +239,13 @@ public class LevelModel {
         JsonValue ropeVal = levelFormat.get("rope");
 
         key = ropeVal.get("texture").asString();
-        //TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        ropeTexture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        float dwidth  = ropeTexture.getRegionWidth()/scale.x;
-        float dheight = ropeTexture.getRegionHeight()/scale.y;
+        TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        //ropeTexture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        float dwidth  = texture.getRegionWidth()/scale.x;
+        float dheight = texture.getRegionHeight()/scale.y;
         rope = new Rope(player1.getX() + 0.5f, player1.getY() + 0.5f,
                 ropeVal.get("rope width").asFloat(), dwidth, dheight, player1, player2);
-        rope.setTexture(ropeTexture);
+        rope.setTexture(texture);
         rope.setDrawScale(scale);
         rope.setName("rope");
         activate(rope);
@@ -326,7 +326,7 @@ public class LevelModel {
      */
     public void remove(Obstacle obj) {
         switch (obj.getType()) {
-            case PLANET: planets.remove((Planet) obj); break;
+            case PLANET: obj.deactivatePhysics(world); planets.remove((Planet) obj); break;
             case ANCHOR: deactivate(obj); break;
             case STAR: deactivate(obj); break;
         }

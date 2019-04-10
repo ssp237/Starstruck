@@ -22,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 
 import java.util.*;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.*;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
@@ -67,15 +68,21 @@ public class Rope extends ComplexObstacle {
     /** Lengh of the rope */
     protected float length;
     /** Number of links in the rope */
-    protected int nlinks;
-    /** List of planks that make up this rope TODO remove*/
-    private ArrayList<BoxObstacle> planks = new ArrayList<BoxObstacle>();
+    private int nlinks;
     /** Original number of links in the rope */
-    private int initLinks;
-    /** List of planks that make up this rope */
+    public int initLinks;
+    /** Initial size of joints list*/
+    private int initJointSize;
+    /** Initial size of planks list*/
+    private int initPlankSize;
+    /** Whether avatar2 was the one on anchor */
+    private boolean isAvatar2 = false;
 
     private AstronautModel avatar;
     private AstronautModel avatar2;
+
+    /** AstonautModel cache for extending rope */
+    private AstronautModel astroCache;
 
     /**
      * Creates a new rope bridge at the given position.
@@ -143,11 +150,11 @@ public class Rope extends ComplexObstacle {
             plank.setName(PLANK_NAME+ii);
             plank.setDensity(BASIC_DENSITY);
             bodies.add(plank);
-            planks.add(plank);
         }
         nlinks = nLinks;
         this.length = nLinks * linksize + nLinks * spacing;
         initLinks = nLinks;
+        initPlankSize = bodies.size;
     }
 
     /**
@@ -191,23 +198,14 @@ public class Rope extends ComplexObstacle {
         jointDef.collideConnected = false;
         Joint joint = world.createJoint(jointDef);
         joints.add(joint);
-        ropeJointDef.bodyA = avatar.getBody();
-        ropeJointDef.bodyB = bodies.get(0).getBody();
-        ropeJointDef.localAnchorA.set(anchor1);
-        ropeJointDef.localAnchorB.set(anchor2);
-        ropeJointDef.collideConnected = false;
-        ropeJointDef.maxLength = linksize/2;//0.01f;
-        joint = world.createJoint(ropeJointDef);
-        joints.add(joint);
-//        ropeJointDef.bodyA = avatar2.getBody();
+//        ropeJointDef.bodyA = avatar.getBody();
 //        ropeJointDef.bodyB = bodies.get(0).getBody();
 //        ropeJointDef.localAnchorA.set(anchor1);
 //        ropeJointDef.localAnchorB.set(anchor2);
 //        ropeJointDef.collideConnected = false;
-//        ropeJointDef.maxLength = linksize*nLinks;
+//        ropeJointDef.maxLength = linksize/2;//0.01f;
 //        joint = world.createJoint(ropeJointDef);
 //        joints.add(joint);
-
 
         // Link the planks together
         anchor1.x = linksize / 2;
@@ -220,22 +218,16 @@ public class Rope extends ComplexObstacle {
             jointDef.localAnchorB.set(anchor2);
             joint = world.createJoint(jointDef);
             joints.add(joint);
-            ropeJointDef.bodyA = avatar.getBody();
-            ropeJointDef.bodyB = bodies.get(ii+1).getBody();
-            ropeJointDef.localAnchorA.set(reset);
-            ropeJointDef.localAnchorB.set(anchor2);
-            //ropeJointDef.collideConnected = false;
-            ropeJointDef.maxLength = linksize*(ii+1) + linksize/2;
-            joint = world.createJoint(ropeJointDef);
-            joints.add(joint);
-//            ropeJointDef.bodyA = avatar2.getBody();
+//            ropeJointDef.bodyA = avatar.getBody();
 //            ropeJointDef.bodyB = bodies.get(ii+1).getBody();
 //            ropeJointDef.localAnchorA.set(reset);
 //            ropeJointDef.localAnchorB.set(anchor2);
 //            //ropeJointDef.collideConnected = false;
-//            ropeJointDef.maxLength = (nLinks - ii+1) * linksize;
+//            ropeJointDef.maxLength = linksize*(ii+1) + linksize/2;
 //            joint = world.createJoint(ropeJointDef);
 //            joints.add(joint);
+
+            initJointSize = joints.size;
 
             //#endregion
         }
@@ -285,6 +277,8 @@ public class Rope extends ComplexObstacle {
     public int nLinks(){ return nlinks; }
 
     //public void setLength(int newLength) {length = newLength;}
+
+    public Array<Joint> getJointList() { return joints; }
 
 
     public Body getLastPlankBody() {
@@ -358,19 +352,31 @@ public class Rope extends ComplexObstacle {
         length = nlinks * linksize + nlinks * spacing;
     }
 
-    public void extendRope(AstronautModel avatar, World world, TextureRegion ropeTexture) {
-//        System.out.println(bodies.size);
-//        System.out.println(planks.size());
+    /**
+     * Extends the rope
+     *
+     * @param isAvatar2 Whether avatar2 is anchored. True for avatar2, false for avatar
+     * @param world this world
+     */
+    public void extendRope(boolean isAvatar2, World world, TextureRegion ropeTexture) {
+        this.isAvatar2 = isAvatar2;
 
-        Joint lastJoint = joints.get(joints.size-1);
-        //Joint lastRopeJoint = joints.get(joints.size-1);
-        BoxObstacle lastPlank = (BoxObstacle)bodies.get(bodies.size-1);
+        Joint lastJoint;
+        BoxObstacle lastPlank;
+        if (isAvatar2) {
+            lastJoint = joints.get(joints.size - 1);
+            lastPlank = (BoxObstacle) bodies.get(bodies.size - 1);
+            astroCache = avatar2;
+        }
+        else {
+            lastJoint = joints.get(0);
+            lastPlank = (BoxObstacle) bodies.get(0);
+            astroCache = avatar;
+        }
 
         // Destroy the last joint
-        if (!joints.removeValue(lastJoint, true)) System.out.println("lastJoint wasn't removed from joints");
-        //if (!joints.removeValue(lastRopeJoint, true)) System.out.println("lastJoint wasn't removed from joints");
+        if (!joints.removeValue(lastJoint, true)) { System.out.println("lastJoint wasn't removed from joints"); }
         world.destroyJoint(lastJoint);
-        //world.destroyJoint(lastRopeJoint);
 
         //Calculate position of end of lastPlank
         float angle = lastPlank.getAngle();
@@ -381,19 +387,32 @@ public class Rope extends ComplexObstacle {
         Vector2 pos = new Vector2(lastPlank.getPosition().x + endPoint.x + linksize/2,
                 lastPlank.getPosition().y + endPoint.y);
         BoxObstacle plank = new BoxObstacle(pos.x, pos.y, planksize.x, planksize.y);
-        plank.setName(PLANK_NAME+bodies.size);
+        if (isAvatar2)
+            plank.setName(PLANK_NAME+bodies.size);
+        else
+            plank.setName(PLANK_NAME + (-bodies.size));
         plank.setDensity(BASIC_DENSITY);
-        bodies.add(plank);
+        if (isAvatar2)
+            bodies.add(plank);
+        else
+            bodies.insert(0, plank);
         plank.activatePhysics(world);
         plank.setTexture(ropeTexture);
         Vector2 plankPos = plank.getPosition();
-        System.out.println("Plank Pos = " + plankPos);
+
         //Update nlinks and length
         nlinks++;
         this.length = nlinks * linksize + nlinks * spacing;
 
-        Vector2 anchor1 = new Vector2(endPoint);
-        Vector2 anchor2 = new Vector2(-linksize/2, 0);
+        Vector2 anchor1; Vector2 anchor2;
+        if (isAvatar2) {
+            anchor1 = new Vector2(linksize / 2, 0);
+            anchor2 = new Vector2(-linksize / 2, 0);
+        }
+        else {
+            anchor1 = new Vector2(-linksize/2, 0);
+            anchor2 = new Vector2(linksize/2, 0);
+        }
         RevoluteJointDef jointDef = new RevoluteJointDef();
         RopeJointDef ropeJointDef = new RopeJointDef();
 
@@ -404,46 +423,96 @@ public class Rope extends ComplexObstacle {
         jointDef.localAnchorB.set(anchor2);
         jointDef.collideConnected = false;
         Joint joint = world.createJoint(jointDef);
-        joints.add(joint);
-        ropeJointDef.bodyA = this.avatar.getBody();
-        ropeJointDef.bodyB = plank.getBody();
-        ropeJointDef.localAnchorA.set(reset);
-        ropeJointDef.localAnchorB.set(anchor2);
-        ropeJointDef.collideConnected = false;
-        ropeJointDef.maxLength = nlinks*linksize + linksize/2; //(nLinks-1)*linksize
-        joint = world.createJoint(ropeJointDef);
-        joints.add(joint);
-//        ropeJointDef.bodyA = this.avatar2.getBody();
+        if (isAvatar2)
+            joints.add(joint);
+        else
+            joints.insert(0, joint);
+//        ropeJointDef.bodyA = this.avatar.getBody();
 //        ropeJointDef.bodyB = plank.getBody();
 //        ropeJointDef.localAnchorA.set(reset);
 //        ropeJointDef.localAnchorB.set(anchor2);
 //        ropeJointDef.collideConnected = false;
-//        ropeJointDef.maxLength = linksize;
+//        ropeJointDef.maxLength = nlinks*linksize + linksize/2; //(nLinks-1)*linksize
 //        joint = world.createJoint(ropeJointDef);
 //        joints.add(joint);
 
         //Connect new plank to astronaut
-        anchor1.x = linksize/2; anchor1.y = 0;
+        //anchor1.x = linksize/2; anchor1.y = 0;
         anchor2.x = 0; anchor2.y = 0;
         jointDef.bodyA = plank.getBody();
-        jointDef.bodyB = avatar2.getBody();
+        jointDef.bodyB = astroCache.getBody();
         jointDef.localAnchorA.set(anchor1);
         jointDef.localAnchorB.set(anchor2);
         joint = world.createJoint(jointDef);
-        joints.add(joint);
-//        ropeJointDef.bodyA = plank.getBody();
-//        ropeJointDef.bodyB = avatar2.getBody();
-//        ropeJointDef.localAnchorA.set(anchor1);
-//        ropeJointDef.localAnchorB.set(anchor2);
-//        ropeJointDef.collideConnected = false;
-//        ropeJointDef.maxLength = MAX_LENGTH;
-//        joint = world.createJoint(ropeJointDef);
-//        joints.add(joint);
+        if (isAvatar2)
+            joints.add(joint);
+        else
+            joints.insert(0, joint);
+    }
 
-//        Joint ropeJoint = joints.get(0);
-//        ((RopeJoint)ropeJoint).setMaxLength(length);
+    /**
+     * Shortens the rope by n links, applys a force to shortened side
+     *
+     * @param isAvatar2 Is avatar2 the side to be shortened
+     * @param world The world
+     */
+    public void shortenRope(boolean isAvatar2, AstronautModel other, World world, int n) {
+        if (isAvatar2)
+            astroCache = avatar2;
+        else
+            astroCache = avatar;
 
-        //if (!avatar.isActive()) System.out.println("yeet");
+        if (nlinks - n < initLinks)
+            n = nlinks - initLinks;
+
+        //Remove the last two joints
+        for (int i = 0; i <= n; i++) {
+            if (isAvatar2)
+                world.destroyJoint(joints.removeIndex(joints.size-1));
+            else
+                world.destroyJoint(joints.removeIndex(0));
+        }
+
+        //Remove the last plank
+        for (int i = 0; i < n; i++) {
+            if (isAvatar2)
+                bodies.removeIndex(bodies.size-1).deactivatePhysics(world);
+            else
+                bodies.removeIndex(0).deactivatePhysics(world);
+        }
+
+        //Update nlinks and length
+        nlinks = nlinks - n;
+        this.length = nlinks * linksize + nlinks * spacing;
+
+
+        //Create a new joint & reattach astronaut
+        Vector2 anchor1 = new Vector2(linksize/2, 0);
+        Vector2 anchor2 = new Vector2(0, 0);
+        if(!isAvatar2)
+            anchor1.x = -linksize/2;
+        RevoluteJointDef jointDef = new RevoluteJointDef();
+        BoxObstacle lastPlank = (BoxObstacle)bodies.get(bodies.size-1);
+        if (!isAvatar2)
+            lastPlank = (BoxObstacle)bodies.get(0);
+
+        jointDef.bodyA = lastPlank.getBody();
+        jointDef.bodyB = astroCache.getBody();
+        jointDef.localAnchorA.set(anchor1);
+        jointDef.localAnchorB.set(anchor2);
+        Joint joint = world.createJoint(jointDef);
+        if (isAvatar2)
+            joints.add(joint);
+        else
+            joints.insert(0, joint);
+
+        Vector2 force = other.getPosition().cpy().sub(astroCache.getPosition());
+        force.setLength(6);
+        if (astroCache.getOnPlanet()) {
+            astroCache.setPosition(lastPlank.getPosition());
+            astroCache.setOnPlanet(false);
+        }
+        astroCache.getBody().applyForceToCenter(force, true);
     }
 
     /**
@@ -486,19 +555,31 @@ public class Rope extends ComplexObstacle {
     }
 
     public Vector2[] getVertices() {
-        Vector2[] vertices = new Vector2[planks.size() + 1]; //Number of planks - 1 to only get in between the planks, + 2 get each end
+        Vector2[] vertices = new Vector2[bodies.size + 1]; //Number of planks - 1 to only get in between the planks, + 2 get each end
         vertices[0] = avatar.getCurAnchor().getPosition();
-        vertices[planks.size()] = avatar2.getCurAnchor().getPosition();
-        for (int i = 0; i < planks.size() - 1; i++) {
+        vertices[bodies.size] = avatar2.getCurAnchor().getPosition();
+        for (int i = 0; i < bodies.size - 1; i++) {
             int j = i + 1; // position in vertices array
-            BoxObstacle plank0 = planks.get(i);
-            BoxObstacle plank1 = planks.get(i + 1);
+            BoxObstacle plank0 = (BoxObstacle)bodies.get(i);
+            BoxObstacle plank1 = (BoxObstacle)bodies.get(i + 1);
             Vector2 dir = plank1.getPosition().cpy().sub(plank0.getPosition());
             dir.scl(0.5f);
             vertices[j] = plank0.getPosition().cpy().add(dir);
 
         }
         return vertices;
+    }
+
+    /**
+     * The rope is stretched if a joint in the middle of the rope has a reaction force greater than 10.
+     *
+     * @return True if rope is completely stretched, false otherwise
+     */
+    public boolean stretched(float dt) {
+        int index = joints.size/2;
+        Joint joint = joints.get(index);
+        if (joint.getReactionForce(1/dt).len() > 10) return true;
+        return false;
     }
 
     /**
