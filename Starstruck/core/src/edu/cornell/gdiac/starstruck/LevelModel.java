@@ -25,6 +25,8 @@ import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
+import edu.cornell.gdiac.starstruck.Models.Enemy;
+import edu.cornell.gdiac.starstruck.Models.Worm;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 
@@ -75,7 +77,8 @@ public class LevelModel {
     protected ArrayList<Anchor> anchors = new ArrayList<Anchor>();
     /** Rope texture for extension method */
     //protected TextureRegion ropeTexture;
-
+    /** List of enemies in the world */
+    protected PooledList<Enemy> enemies = new PooledList<Enemy>();
 
     /**
      * Returns the bounding rectangle for the physics world
@@ -113,6 +116,15 @@ public class LevelModel {
      */
     public VectorWorld getVectorWorld() {
         return vectorWorld;
+    }
+
+    /**
+     * Returns a reference to the enemy list
+     *
+     * @return a reference to the enemy list
+     */
+    public PooledList<Enemy> getEnemies() {
+        return enemies;
     }
 
     /**
@@ -282,8 +294,17 @@ public class LevelModel {
             anchors.add(anchor);
             anchorVals = anchorVals.next;
         }
-    }
 
+
+        //add worms
+       JsonValue wormVals = levelFormat.get("worms").child();
+        while (wormVals != null) {
+            Worm wormie = Worm.fromJSON(wormVals, scale, bounds.getWidth());
+            activate(wormie);
+            enemies.add(wormie);
+            wormVals = wormVals.next;
+        }
+    }
 
     public void dispose() {
         for(Obstacle obj : objects) {
@@ -426,6 +447,7 @@ public class LevelModel {
         //Add obstacles
         JsonValue anchors = new JsonValue(JsonValue.ValueType.array);
         JsonValue stars = new JsonValue(JsonValue.ValueType.array);
+        JsonValue worms = new JsonValue(JsonValue.ValueType.array);
 
         for (Obstacle obj : objects) {
             switch (obj.getType()) {
@@ -437,6 +459,10 @@ public class LevelModel {
 
         out.addChild("anchors", anchors);
         out.addChild("stars", stars);
+
+        //Add enemies
+
+        out.addChild("worm", worms);
 
 
         return out;
@@ -467,7 +493,12 @@ public class LevelModel {
             p.draw(canvas);
         }
         for(Obstacle obj : objects) {
-            obj.draw(canvas);
+            if (obj.getType() != ObstacleType.PLAYER) obj.draw(canvas);
+        }
+        if (player1.isActive()) { player2.draw(canvas); player1.draw(canvas); }
+        else { player1.draw(canvas); player2.draw(canvas); }
+        for (Enemy e: enemies) {
+            e.draw(canvas);
         }
         canvas.end();
 
@@ -478,6 +509,9 @@ public class LevelModel {
             }
             for(Obstacle obj : objects) {
                 obj.drawDebug(canvas);
+            }
+            for (Enemy e: enemies) {
+             e.drawDebug(canvas);
             }
             canvas.endDebug();
         }

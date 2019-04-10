@@ -24,6 +24,7 @@ import java.util.*;
 import edu.cornell.gdiac.starstruck.Gravity.SaveListener;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
+import edu.cornell.gdiac.starstruck.Models.Worm;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -85,6 +86,8 @@ public class GameController extends WorldController implements ContactListener {
     private Enemy pinkworm;
 
     private Enemy greenworm;
+
+
     /**
      * Preloads the assets for this controller.
      *
@@ -170,6 +173,8 @@ public class GameController extends WorldController implements ContactListener {
     private static final float ZOOM_FACTOR = 1f;
     /** Max max extension of rope */
     private static final int MAX_EXTEND = 50;
+    /** Rope timer reset */
+    private static final int ROPE_RESET = 9;
     /** True when the rope can be extended (astronaut is anchored and other astronaut is far enough away) */
     public static boolean ropeExtend = false;
 
@@ -233,6 +238,8 @@ public class GameController extends WorldController implements ContactListener {
     private boolean avatarShorten;
     /** If avatar2 was unanchored */
     private boolean avatar2Shorten;
+    /** Timer for extending rope */
+    private int ropeCount;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -283,6 +290,9 @@ public class GameController extends WorldController implements ContactListener {
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
 
+        enemies.clear();
+
+
         setComplete(false);
         setFailure(false);
         assignLevelFields();
@@ -299,6 +309,7 @@ public class GameController extends WorldController implements ContactListener {
         rope = level.getRope();
         objects = level.objects; planets = level.getPlanets();
         world = level.getWorld(); vectorWorld = level.getVectorWorld();
+        enemies = level.getEnemies();
     }
 
     /**
@@ -330,6 +341,7 @@ public class GameController extends WorldController implements ContactListener {
 
         avatarShorten = false;
         avatar2Shorten = false;
+        ropeCount = ROPE_RESET;
 
         // Add level goal
         float dwidth;
@@ -346,24 +358,29 @@ public class GameController extends WorldController implements ContactListener {
         //addObject(enemy);
 
         // Create pink worm enemy
-        dwidth  = pinkwormTexture.getRegionWidth()/scale.x;
-        dheight = pinkwormTexture.getRegionHeight()/scale.y;
-        pinkworm = new Enemy(DUDE_POS.x + 10, DUDE_POS.y + 4, dwidth, dheight);
-        pinkworm.setDrawScale(scale);
-        pinkworm.setTexture(pinkwormTexture,14,7);
-        pinkworm.setName("pinkworm");
+        //dwidth  = pinkwormTexture.getRegionWidth()/scale.x;
+        //dheight = pinkwormTexture.getRegionHeight()/scale.y;
+        //pinkworm = new Worm(DUDE_POS.x + 10, DUDE_POS.y + 4, pinkwormTexture, scale, -2f, bounds.getWidth());
+        //pinkworm.setDrawScale(scale);
+        //pinkworm.setTexture(pinkwormTexture,14,7);
+        //pinkworm.setName("pinkworm");
+        //pinkworm.activatePhysics(world);
         //addObject(pinkworm);
-        pinkworm.setVX(2f);
+        //pinkworm.setVX(2f);
+        //enemies.add(pinkworm);
 
         // Create green worm enemy
-        dwidth  = greenwormTexture.getRegionWidth()/scale.x;
-        dheight = greenwormTexture.getRegionHeight()/scale.y;
-        greenworm = new Enemy(DUDE_POS.x + 10, DUDE_POS.y + 2, dwidth, dheight);
-        greenworm.setDrawScale(scale);
-        greenworm.setTexture(greenwormTexture,14,6);
-        greenworm.setName("greenworm");
+        //dwidth  = greenwormTexture.getRegionWidth()/scale.x;
+        //dheight = greenwormTexture.getRegionHeight()/scale.y;
+        //greenworm = new Worm(DUDE_POS.x + 10, DUDE_POS.y + 2, greenwormTexture, scale, -1.4f, bounds.getWidth());
+        //greenworm.setDrawScale(scale);
+        //greenworm.setTexture(greenwormTexture,14,6);
+        //greenworm.setName("greenworm");
+        //greenworm.activatePhysics(world);
         //addObject(greenworm);
-        greenworm.setVX(1.4f);
+        //greenworm.setVX(1.4f);
+        //enemies.add(greenworm);
+
 
     }
 
@@ -766,12 +783,15 @@ public class GameController extends WorldController implements ContactListener {
         if ((dist(avatar.getPosition(), enemy.getPosition()) < 1f || dist(avatar2.getPosition(), enemy.getPosition()) < 1f) && !testE)
             setFailure(true);
 
-        if (pinkworm.getPosition().x > 19 || pinkworm.getPosition().x < 12) {
-            pinkworm.setVX(-pinkworm.getVX());
-        }
-
-        if (greenworm.getPosition().x > 19 || greenworm.getPosition().x < 10) {
-            greenworm.setVX(-greenworm.getVX());
+//        if (pinkworm.getPosition().x > 19 || pinkworm.getPosition().x < 12) {
+//            pinkworm.setVX(-pinkworm.getVX());
+//        }
+//
+//        if (greenworm.getPosition().x > 19 || greenworm.getPosition().x < 10) {
+//            greenworm.setVX(-greenworm.getVX());
+//        }
+        for (int i = 0; i < enemies.size(); i++) {
+            enemies.get(i).update(dt);
         }
 
         avatar.setFixedRotation(false);
@@ -781,22 +801,28 @@ public class GameController extends WorldController implements ContactListener {
         if (avatar.isAnchored()) {
 //            print(rope.getJointList().get(0).getReactionForce(1/dt).len());
 //            print(rope.getJointList().get(rope.getJointList().size/2).getReactionForce(1/dt).len());
+            //print(avatar2.getLinearVelocity().len());
             avatar.setFixedRotation(true);
             if ((rope.stretched(dt) || !avatar2.getOnPlanet() && avatar2.getLinearVelocity().len() > 0
-                    && dist(avatar.getPosition(), avatar2.getPosition()) > rope.getLength()/2) && rope.nLinks() < MAX_EXTEND) {
-                rope.extendRope(false, world, rope.getTexture());
+                    && ropeCount <= 0) && rope.nLinks() < MAX_EXTEND) {
+                rope.extendRope(true, world, rope.getTexture());
                 rope.setDrawScale(scale);
+                ropeCount = ROPE_RESET;
             }
+            else ropeCount--;
         }
         if (avatar2.isAnchored()) {
 //            print(rope.getJointList().get(0).getReactionForce(1/dt).len());
 //            print(rope.getJointList().get(rope.getJointList().size/2).getReactionForce(1/dt).len());
+            //print(avatar.getLinearVelocity().len());
             avatar2.setFixedRotation(true);
             if ((rope.stretched(dt) || !avatar.getOnPlanet() && avatar.getLinearVelocity().len() > 0
-                    && dist(avatar.getPosition(), avatar2.getPosition()) > rope.getLength()/2) && rope.nLinks() < MAX_EXTEND) {
-                rope.extendRope(true, world, rope.getTexture());
+                    && ropeCount <= 0) && rope.nLinks() < MAX_EXTEND) {
+                rope.extendRope(false, world, rope.getTexture());
                 rope.setDrawScale(scale);
+                ropeCount = ROPE_RESET;
             }
+            else ropeCount--;
         }
         if (touching) {
             removeStar.clear();
@@ -816,18 +842,18 @@ public class GameController extends WorldController implements ContactListener {
             touching = false;
         }
         if (stars.isEmpty()) {
-            print("win");
+            //print("win");
             setComplete(true);
         }
         if (avatarShorten) {
-            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(false, avatar2, world, 1); }
+            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(false, avatar2.getPosition(), world, 1); }
             else {
                 avatarShorten = false;
                 avatar.setOnPlanet(false);
             }
         }
         if (avatar2Shorten) {
-            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(true, avatar, world, 1); }
+            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(true, avatar.getPosition(), world, 1); }
             else {
                 avatar2Shorten = false;
                 avatar2.setOnPlanet(false);
@@ -875,6 +901,8 @@ public class GameController extends WorldController implements ContactListener {
 
         avatar.lastPoint.set(avatar.getPosition());
         avatar2.lastPoint.set(avatar2.getPosition());
+        avatar.lastVel.set(avatar.getLinearVelocity());
+        avatar2.lastVel.set(avatar.getLinearVelocity());
 
         //if (ropeExtend) { //temporarily commented out just to test if rope extends without even being anchored
 
@@ -951,8 +979,6 @@ public class GameController extends WorldController implements ContactListener {
             String bd1N = bd1.getName();
             String bd2N = bd2.getName();
 
-            //System.out.println(bd1N + bd2N);
-
             if ((bd1N.contains("avatar") || bd2N.contains("avatar")) && (
                     bd1N.contains("rope") || bd2N.contains("rope") ||
                             bd1N.contains("worm") || bd2N.contains("worm") ||
@@ -963,10 +989,19 @@ public class GameController extends WorldController implements ContactListener {
             else
                 barrier = false;
 
-            if ((bd1.getName().contains("worm") || bd2.getName().contains("worm"))
-                    && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar")) && !testE) {
+            //If worm and astronaut touch and astronaut is not on planet then lose
+            if (bd1 == avatar && !avatar.getOnPlanet() && bd2.getType() == ObstacleType.WORM
+                    || bd2 == avatar && !avatar.getOnPlanet() && bd1.getType() == ObstacleType.WORM) {
                 setFailure(true);
             }
+            if (bd1 == avatar2 && !avatar2.getOnPlanet() && bd2.getType() == ObstacleType.WORM
+                    || bd2 == avatar2 && !avatar2.getOnPlanet() && bd1.getType() == ObstacleType.WORM) {
+                setFailure(true);
+            }
+//            if ((bd1.getName().contains("worm") || bd2.getName().contains("worm"))
+//                    && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar")) && !testE) {
+//                setFailure(true);
+//            }
 
             if ((bd1 == avatar || bd2 == avatar) && (bd1N.contains("planet") || bd2N.contains("planet")) && !barrier) {
                 avatar.curPlanet = (bd1 == avatar) ? bd2 : bd1;
@@ -1057,7 +1092,7 @@ public class GameController extends WorldController implements ContactListener {
             }
 
             // Check for win condition
-            //TODO Removed win
+            //Removed win
 //            if ((bd1 == avatar   && bd2 == goalDoor) ||
 //                    (bd1 == goalDoor && bd2 == avatar)) {
 //                setComplete(true);
@@ -1127,8 +1162,22 @@ public class GameController extends WorldController implements ContactListener {
             String bd1N = bd1.getName();
             String bd2N = bd2.getName();
 
-            if (bd1N.contains("avatar1") || bd2N.contains("avatar1"))
-                System.out.println(bd1.getName() + bd2.getName());
+//            if (bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) {
+//                print(bd1N);
+//                print(bd2N);
+//                print("________________________");
+//            }
+
+            //Disable all collisions for worms
+            if (bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) {
+                contact.setEnabled(false);
+            }
+
+            //Enable collisions for worm and astronauts -- NOT NECESSARY
+//            if ((bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) &&
+//                    (bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))) {
+//                contact.setEnabled(true);
+//            }
 
             //Disables all collisions w rope
             if (bd1.getName().contains("rope") || bd2.getName().contains("rope")) {
@@ -1163,6 +1212,8 @@ public class GameController extends WorldController implements ContactListener {
                     || bd1.getName().contains("star") && bd2.getName().contains("avatar")) {
                 contact.setEnabled(false);
             }
+
+
             //Disable the collision between anchors and rope on avatar
             int n = rope.nLinks() - 1 ;//(int) BRIDGE_WIDTH*2-1;
             if ((bd1N.contains("anchor") || bd2N.contains("anchor")) && (
@@ -1216,6 +1267,19 @@ public class GameController extends WorldController implements ContactListener {
             canvas.begin();
             canvas.drawText("Yay! :):)", displayFont, cam.position.x-140, cam.position.y+30);
             canvas.end();
+        }
+        canvas.begin();
+//        for (Enemy e: enemies) {
+//            e.draw(canvas);
+//        }
+        canvas.end();
+
+        if(isDebug()){
+            canvas.beginDebug();
+            for (Enemy e : enemies) {
+                if (isDebug()) e.drawDebug(canvas);
+            }
+            canvas.endDebug();
         }
     }
 }

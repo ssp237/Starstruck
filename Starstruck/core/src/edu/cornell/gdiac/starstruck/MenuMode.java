@@ -83,6 +83,8 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
     private static int STANDARD_WIDTH  = 1280;
     /** Standard window height (for scaling) */
     private static int STANDARD_HEIGHT = 720;
+    /** Amount to scale the play button */
+    private static float BUTTON_SCALE  = 0.75f;
 
     /** Start button for XBox controller on Windows */
     private static int WINDOWS_START = 7;

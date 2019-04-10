@@ -2,7 +2,7 @@
 
 "physicsSize": [ 38.400001525878906, 21.600000381469727 ],
 
-"graphicSize": [ 1228, 691 ],
+"graphicSize": [ 1280, 720 ],
 
 "background": { 
 "texture": 
@@ -80,5 +80,7 @@
 
 "anchors": [],
 
-"stars": []
+"stars": [],
+
+	"worms": []
 }

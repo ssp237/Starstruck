@@ -1,6 +1,6 @@
 {
   "physicsSize":    [38.4,21.6],
-  "graphicSize":    [ 1228, 691],
+  "graphicSize":    [ 1280, 720],
   "background": "background",
   "gravity":  	  0,
   "level" : 1,
@@ -171,6 +171,20 @@
       "x": 9,
       "y": 15,
       "texture": "star"
+    }
+  ],
+  "worms": [
+    {
+      "texture": "pink worm",
+      "x": 6.5,
+      "y": 7,
+      "velocity": -1.4
+    },
+    {
+      "texture": "green worm",
+      "x": 6.5,
+      "y": 9,
+      "velocity": -2
     }
   ]
 }
