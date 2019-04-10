@@ -172,5 +172,19 @@
       "y": 15,
       "texture": "star"
     }
+  ],
+  "worms": [
+    {
+      "texture": "pink worm",
+      "x": 6.5,
+      "y": 7,
+      "velocity": -1.4
+    },
+    {
+      "texture": "green worm",
+      "x": 6.5,
+      "y": 9,
+      "velocity": -2
+    }
   ]
 }

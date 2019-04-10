@@ -26,6 +26,7 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.graphics.g2d.freetype.*;
+import edu.cornell.gdiac.starstruck.Models.Enemy;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
 import edu.cornell.gdiac.util.*;
@@ -238,6 +239,8 @@ public abstract class WorldController implements Screen {
     protected GameCanvas canvas;
     /** All the objects in the world. */
     protected PooledList<Obstacle> objects  = new PooledList<Obstacle>();
+    /** All the enemies in the world. */
+    protected PooledList<Enemy> enemies  = new PooledList<Enemy>();
     /** Queue for adding objects */
     protected PooledList<Obstacle> addQueue = new PooledList<Obstacle>();
     /** Listener that will update the player mode when we are done */

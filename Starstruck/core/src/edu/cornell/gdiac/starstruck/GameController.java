@@ -24,6 +24,7 @@ import java.util.*;
 import edu.cornell.gdiac.starstruck.Gravity.SaveListener;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
+import edu.cornell.gdiac.starstruck.Models.Worm;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -83,6 +84,8 @@ public class GameController extends WorldController implements ContactListener {
     private Enemy pinkworm;
 
     private Enemy greenworm;
+
+
     /**
      * Preloads the assets for this controller.
      *
@@ -281,6 +284,9 @@ public class GameController extends WorldController implements ContactListener {
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
 
+        enemies.clear();
+
+
         setComplete(false);
         setFailure(false);
         assignLevelFields();
@@ -295,6 +301,7 @@ public class GameController extends WorldController implements ContactListener {
         rope = level.getRope();
         objects = level.objects; planets = level.getPlanets();
         world = level.getWorld(); vectorWorld = level.getVectorWorld();
+        enemies = level.getEnemies();
     }
 
     /**
@@ -342,24 +349,29 @@ public class GameController extends WorldController implements ContactListener {
         //addObject(enemy);
 
         // Create pink worm enemy
-        dwidth  = pinkwormTexture.getRegionWidth()/scale.x;
-        dheight = pinkwormTexture.getRegionHeight()/scale.y;
-        pinkworm = new Enemy(DUDE_POS.x + 10, DUDE_POS.y + 4, dwidth, dheight);
-        pinkworm.setDrawScale(scale);
-        pinkworm.setTexture(pinkwormTexture,14,7);
-        pinkworm.setName("pinkworm");
+        //dwidth  = pinkwormTexture.getRegionWidth()/scale.x;
+        //dheight = pinkwormTexture.getRegionHeight()/scale.y;
+        //pinkworm = new Worm(DUDE_POS.x + 10, DUDE_POS.y + 4, pinkwormTexture, scale, -2f, bounds.getWidth());
+        //pinkworm.setDrawScale(scale);
+        //pinkworm.setTexture(pinkwormTexture,14,7);
+        //pinkworm.setName("pinkworm");
+        //pinkworm.activatePhysics(world);
         //addObject(pinkworm);
-        pinkworm.setVX(2f);
+        //pinkworm.setVX(2f);
+        //enemies.add(pinkworm);
 
         // Create green worm enemy
-        dwidth  = greenwormTexture.getRegionWidth()/scale.x;
-        dheight = greenwormTexture.getRegionHeight()/scale.y;
-        greenworm = new Enemy(DUDE_POS.x + 10, DUDE_POS.y + 2, dwidth, dheight);
-        greenworm.setDrawScale(scale);
-        greenworm.setTexture(greenwormTexture,14,6);
-        greenworm.setName("greenworm");
+        //dwidth  = greenwormTexture.getRegionWidth()/scale.x;
+        //dheight = greenwormTexture.getRegionHeight()/scale.y;
+        //greenworm = new Worm(DUDE_POS.x + 10, DUDE_POS.y + 2, greenwormTexture, scale, -1.4f, bounds.getWidth());
+        //greenworm.setDrawScale(scale);
+        //greenworm.setTexture(greenwormTexture,14,6);
+        //greenworm.setName("greenworm");
+        //greenworm.activatePhysics(world);
         //addObject(greenworm);
-        greenworm.setVX(1.4f);
+        //greenworm.setVX(1.4f);
+        //enemies.add(greenworm);
+
 
     }
 
@@ -768,6 +780,9 @@ public class GameController extends WorldController implements ContactListener {
 //        if (greenworm.getPosition().x > 19 || greenworm.getPosition().x < 10) {
 //            greenworm.setVX(-greenworm.getVX());
 //        }
+        for (int i = 0; i < enemies.size(); i++) {
+            enemies.get(i).update(dt);
+        }
 
         avatar.setFixedRotation(false);
         avatar2.setFixedRotation(false);
@@ -1122,6 +1137,18 @@ public class GameController extends WorldController implements ContactListener {
             String bd1N = bd1.getName();
             String bd2N = bd2.getName();
 
+
+            //Disable collisions between enemies and everything except for avatars
+            if (bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) {
+                contact.setEnabled(false);
+            }
+
+            if ((bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) &&
+                    (bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))) {
+                contact.setEnabled(true);
+            }
+
+
             if (bd1N.contains("avatar1") || bd2N.contains("avatar1"))
                 System.out.println(bd1.getName() + bd2.getName());
 
@@ -1158,6 +1185,8 @@ public class GameController extends WorldController implements ContactListener {
                     || bd1.getName().contains("star") && bd2.getName().contains("avatar")) {
                 contact.setEnabled(false);
             }
+
+
             //Disable the collision between anchors and rope on avatar
             int n = rope.nLinks() - 1 ;//(int) BRIDGE_WIDTH*2-1;
             if ((bd1N.contains("anchor") || bd2N.contains("anchor")) && (
@@ -1205,6 +1234,19 @@ public class GameController extends WorldController implements ContactListener {
             canvas.begin();
             canvas.drawText("Yay! :):)", displayFont, cam.position.x-140, cam.position.y+30);
             canvas.end();
+        }
+        canvas.begin();
+        for (Enemy e: enemies) {
+            e.draw(canvas);
+        }
+        canvas.end();
+
+        if(isDebug()){
+            canvas.beginDebug();
+            for (Enemy e : enemies) {
+                if (isDebug()) e.drawDebug(canvas);
+            }
+            canvas.endDebug();
         }
     }
 }
