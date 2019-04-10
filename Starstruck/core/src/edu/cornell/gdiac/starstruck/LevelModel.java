@@ -351,7 +351,7 @@ public class LevelModel {
      */
     public void remove(Obstacle obj) {
         switch (obj.getType()) {
-            case PLANET: planets.remove((Planet) obj); break;
+            case PLANET: obj.deactivatePhysics(world); planets.remove((Planet) obj); break;
             case ANCHOR: deactivate(obj); break;
             case STAR: deactivate(obj); break;
         }
@@ -497,12 +497,12 @@ public class LevelModel {
             p.draw(canvas);
         }
         for(Obstacle obj : objects) {
-            obj.draw(canvas);
+            if (obj.getType() != ObstacleType.PLAYER) obj.draw(canvas);
         }
         for (Enemy e: enemies) {
             e.draw(canvas);
         }
-
+        player1.draw(canvas); player2.draw(canvas);
         canvas.end();
 
         if (debug) {
