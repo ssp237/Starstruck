@@ -127,6 +127,8 @@ public class AstronautModel extends CapsuleObstacle {
     public Vector2 lastPoint;
     /** The direction this astronaut is facing */
     public Vector2 contactDir;
+    /** The previous linear velocity of this astronaut */
+    public Vector2 lastVel;
 
 
     /** Cache for internal force calculations */
@@ -506,6 +508,7 @@ public class AstronautModel extends CapsuleObstacle {
         isPlayerOne = playerOne;
         lastPoint = new Vector2();
         contactDir = new Vector2();
+        lastVel = new Vector2();
 
         shootCooldown = 0;
         jumpCooldown = 0;
