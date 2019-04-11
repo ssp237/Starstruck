@@ -299,7 +299,7 @@ public class LevelModel {
         //add worms
        JsonValue wormVals = levelFormat.get("worms").child();
         while (wormVals != null) {
-            Worm wormie = Worm.fromJSON(wormVals, scale, bounds.getWidth());
+            Worm wormie = Worm.fromJSON(wormVals, scale);
             activate(wormie);
             enemies.add(wormie);
             wormVals = wormVals.next;

@@ -41,10 +41,10 @@ public class Worm extends Enemy{
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Worm(float x, float y, float width, float height, float velocityX, float right_b) {
+    public Worm(float x, float y, float width, float height, float velocityX) {
         super(x,y,width,height);
         this.setVX(velocityX);
-        right_bound = right_b;
+        //right_bound = right_b;
         setName("worm" + worm_count);
         worm_count++;
     }
@@ -61,8 +61,8 @@ public class Worm extends Enemy{
      * @param y  		Initial y position of the avatar center
 
      */
-    public Worm(float x, float y, FilmStrip texture, Vector2 scale, float velocityX, float right_b) {
-        this(x,y,texture.getRegionWidth()/scale.x,texture.getRegionHeight()/scale.y, velocityX, right_b);
+    public Worm(float x, float y, FilmStrip texture, Vector2 scale, float velocityX) {
+        this(x,y,texture.getRegionWidth()/scale.x,texture.getRegionHeight()/scale.y, velocityX);
         setTexture(texture);
         setDrawScale(scale);
         y_pos = y;
@@ -76,10 +76,10 @@ public class Worm extends Enemy{
      * @param scale The scale to convert physics units to drawing units
      * @return A star created according to the specifications in the JSON
      */
-    public static Worm fromJSON(JsonValue json, Vector2 scale, float right_b) {
+    public static Worm fromJSON(JsonValue json, Vector2 scale) {
         String key = json.get("texture").asString();
         FilmStrip texture = JsonAssetManager.getInstance().getEntry(key, FilmStrip.class);
-        Worm out =  new Worm(json.get("x").asFloat(), json.get("y").asFloat(), texture, scale, json.get("velocity").asFloat(), right_b);
+        Worm out =  new Worm(json.get("x").asFloat(), json.get("y").asFloat(), texture, scale, json.get("velocity").asFloat());
         return out;
     }
 
@@ -115,7 +115,8 @@ public class Worm extends Enemy{
 
     public ObstacleType getType() { return ObstacleType.WORM;}
 
-
+    /** Sets the place where the worm re-enters to the rightmost bound of the level*/
+    public void setRight_bound(float r_bound) {right_bound = r_bound;}
 
 }
 

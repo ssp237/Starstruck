@@ -168,7 +168,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Turns off enemy collisions for testing */
     public static final boolean testE = false;
     /** Allows manual control of astronaut in space for testing */
-    public static final boolean testC = false;
+    public static final boolean testC = true;
     /** Camera zoom */
     private static final float ZOOM_FACTOR = 1f;
     /** Max max extension of rope */
@@ -787,6 +787,11 @@ public class GameController extends WorldController implements ContactListener {
 //        }
         for (int i = 0; i < enemies.size(); i++) {
             enemies.get(i).update(dt);
+            if (enemies.get(i).getType() == ObstacleType.WORM) {
+                ((Worm)enemies.get(i)).setRight_bound(canvas.getCamera().position.x + bounds.width);
+                System.out.println((Worm)enemies.get(i));
+            }
+
         }
 
         avatar.setFixedRotation(false);
