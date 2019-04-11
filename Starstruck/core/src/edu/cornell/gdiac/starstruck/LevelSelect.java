@@ -934,7 +934,7 @@ public class LevelSelect extends WorldController implements ContactListener {
             String bd2N = bd2.getName();
 
             if (bd1N.contains("avatar1") || bd2N.contains("avatar1"))
-                System.out.println(bd1.getName() + bd2.getName());
+                //System.out.println(bd1.getName() + bd2.getName());
 
             //Disables all collisions w rope
             if (bd1.getName().contains("rope") || bd2.getName().contains("rope")) {

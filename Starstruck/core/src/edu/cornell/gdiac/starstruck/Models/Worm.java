@@ -95,7 +95,7 @@ public class Worm extends Enemy{
     public void update(float dt) {
         texture.tick(); //Animation
         super.update(dt);
-        System.out.println(getVX());
+        //System.out.println(getVX());
 
         if (this.getPosition().x < 0) {
             delay_pos--;

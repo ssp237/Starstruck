@@ -213,7 +213,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 
         for(String s : manager.getAssetNames()) {
             if (manager.isLoaded(s) && !loaded.contains(s)){
-                System.out.println(s);
+                //System.out.println(s);
                 loaded.add(s);
             }
         }

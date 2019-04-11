@@ -224,6 +224,8 @@ public class GameController extends WorldController implements ContactListener {
     private boolean barrier;
     /** If the two astronauts are "on the same anchor" */
     private boolean touching;
+    /** If a star has been collected */
+    private boolean collection = false;
     /** Rope */
     private Rope rope;
     /** Star collection count */
@@ -426,7 +428,6 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void anchorHelp(AstronautModel avatar1, AstronautModel avatar2, Anchor anchor) {  //Anchor astronaut 1 & set inactive, unanchor astronaut 2 & set active
         avatar1.setAnchored(anchor);
-        avatar1.curAnchor = anchor;
         avatar1.setActive(false);
         avatar1.setPosition(SPIN_POS.x, SPIN_POS.y);
         avatar1.setLinearVelocity(reset);
@@ -434,7 +435,6 @@ public class GameController extends WorldController implements ContactListener {
         avatar2.setUnAnchored();
         avatar2.setActive(true);
         SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
-
     }
 
     /**
@@ -803,7 +803,7 @@ public class GameController extends WorldController implements ContactListener {
             //enemies.get(i).update(dt);
             if (enemies.get(i).getType() == ObstacleType.WORM) {
                 ((Worm)enemies.get(i)).setRight_bound(canvas.getCamera().position.x/scale.x + bounds.width);
-                System.out.println((Worm)enemies.get(i));
+                //System.out.println((Worm)enemies.get(i));
             }
         }
 
@@ -812,10 +812,6 @@ public class GameController extends WorldController implements ContactListener {
 
         updateAnchor(avatar, avatar2);
         if (avatar.isAnchored()) {
-//            print(rope.getJointList().get(0).getReactionForce(1/dt).len());
-//            print(rope.getJointList().get(rope.getJointList().size/2).getReactionForce(1/dt).len());
-            //print(avatar2.getLinearVelocity().len());
-            
             avatar.setFixedRotation(true);
             if ((rope.stretched(dt) || !avatar2.getOnPlanet() && avatar2.getLinearVelocity().len() > 0
                     && ropeCount <= 0) && rope.nLinks() < MAX_EXTEND) {
@@ -826,9 +822,6 @@ public class GameController extends WorldController implements ContactListener {
             else ropeCount--;
         }
         if (avatar2.isAnchored()) {
-//            print(rope.getJointList().get(0).getReactionForce(1/dt).len());
-//            print(rope.getJointList().get(rope.getJointList().size/2).getReactionForce(1/dt).len());
-            //print(avatar.getLinearVelocity().len());
             avatar2.setFixedRotation(true);
             if ((rope.stretched(dt) || !avatar.getOnPlanet() && avatar.getLinearVelocity().len() > 0
                     && ropeCount <= 0) && rope.nLinks() < MAX_EXTEND) {
@@ -840,9 +833,9 @@ public class GameController extends WorldController implements ContactListener {
         }
         if (touching) {
             removeStar.clear();
-            //TODO check star collection
             for (Star s : stars) {
                 if (s.collect(rope.getVertices())) {
+                    collection = true;
                     starCount++;
                     s.deactivatePhysics(world);
                     removeStar.add(s);
@@ -860,18 +853,41 @@ public class GameController extends WorldController implements ContactListener {
             setComplete(true);
         }
         if (avatarShorten) {
-            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(false, avatar2.getPosition(), world, 1); }
+            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(avatar, avatar2.getPosition(), world, 1); }
             else {
                 avatarShorten = false;
-                avatar.setOnPlanet(false);
+                //avatar.setOnPlanet(false);
             }
         }
         if (avatar2Shorten) {
-            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(true, avatar.getPosition(), world, 1); }
+            if (rope.nLinks() > rope.initLinks) { rope.shortenRope(avatar2, avatar.getPosition(), world, 1); }
             else {
                 avatar2Shorten = false;
-                avatar2.setOnPlanet(false);
+                //avatar2.setOnPlanet(false);
             }
+        }
+        if (collection) {
+            Vector2 nearest = planets.toNearest(avatar.getPosition());
+            nearest.setLength(avatar.getJumpPulse()*2);
+            if (avatar.isAnchored()) {
+                avatar.setActive(true);
+                avatar2.setActive(false);
+                avatar.setUnAnchored();;
+                avatar.setAwake(true);
+                rope.shortenRope(avatar, avatar2.getPosition(), world, 1);
+                avatar2.setLinearVelocity(nearest);
+                avatar.setLinearVelocity(nearest.cpy().scl(0.5f));
+            }
+            else if (avatar2.isAnchored()) {
+                avatar2.setActive(true);
+                avatar.setActive(false);
+                avatar2.setUnAnchored();;
+                avatar2.setAwake(true);
+                rope.shortenRope(avatar2, avatar.getPosition(), world, 1);
+                avatar.setLinearVelocity(nearest);
+                avatar2.setLinearVelocity(nearest.cpy().scl(0.5f));
+            }
+            collection = false;
         }
 
         if (avatar.isActive()) {

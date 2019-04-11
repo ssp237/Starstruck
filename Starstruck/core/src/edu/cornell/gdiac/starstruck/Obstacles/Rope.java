@@ -456,10 +456,11 @@ public class Rope extends ComplexObstacle {
     /**
      * Shortens the rope by n links, applys a force to shortened side
      *
-     * @param isAvatar2 Is avatar2 the side to be shortened
+     * @param astro The side to be shortened
      * @param world The world
      */
-    public void shortenRope(boolean isAvatar2, Vector2 otherPos, World world, int n) {
+    public void shortenRope(AstronautModel astro, Vector2 otherPos, World world, int n) {
+        boolean isAvatar2 = astro == avatar2;
         if (isAvatar2)
             astroCache = avatar2;
         else

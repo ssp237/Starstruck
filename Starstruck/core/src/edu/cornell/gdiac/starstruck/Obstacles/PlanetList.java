@@ -190,6 +190,47 @@ public class PlanetList {
     }
 
     /**
+     * Helper to find distance
+     *
+     * @param v1 v1
+     * @param v2 v2
+     * @return distance between v1 and v2
+     */
+    private float dist(Vector2 v1, Vector2 v2) {
+        return (float) Math.sqrt((v1.x - v2.x)*(v1.x-v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
+    }
+
+    /**
+     * Finds and returns the direction of the planet with the nearest surface
+     * Assumes that planetList is not empty
+     *
+     * @param pos The point at which to find the nearest planet
+     */
+    public Vector2 toNearest(Vector2 pos) {
+        ArrayList<Planet> planets = getPlanets();
+        if (planets.size() == 0) System.out.println("PLANET LIST EMPTY");
+        Planet minPlanet = planets.get(0);
+        float minDist;
+        Vector2 dir = pos.cpy().sub(minPlanet.getPosition());
+        dir.setLength(minPlanet.grange);
+        Vector2 surface = minPlanet.getPosition().cpy().add(dir);
+        float dist = dist(pos, surface);
+        minDist = dist;
+        for (Planet p : planets) {
+            dir = pos.cpy().sub(p.getPosition());
+            dir.setLength(p.grange);
+            surface = p.getPosition().cpy().add(dir);
+            dist = dist(pos, surface);
+            if (dist > minDist) {
+                minDist = dist;
+                minPlanet = p;
+            }
+        }
+
+        return minPlanet.getPosition().cpy().sub(pos).nor();
+    }
+
+    /**
      * Write this astronaut to a JsonValue. When parsed, this JsonValue should return the same planetList.
      * @return A JsonValue representing this planetList.
      */
