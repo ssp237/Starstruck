@@ -816,6 +816,7 @@ public class GameController extends WorldController implements ContactListener {
 //            print(rope.getJointList().get(0).getReactionForce(1/dt).len());
 //            print(rope.getJointList().get(rope.getJointList().size/2).getReactionForce(1/dt).len());
             //print(avatar2.getLinearVelocity().len());
+            
             avatar.setFixedRotation(true);
             if ((rope.stretched(dt) || !avatar2.getOnPlanet() && avatar2.getLinearVelocity().len() > 0
                     && ropeCount <= 0) && rope.nLinks() < MAX_EXTEND) {
