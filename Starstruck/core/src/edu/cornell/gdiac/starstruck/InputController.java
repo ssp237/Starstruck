@@ -90,6 +90,8 @@ public class InputController {
     private boolean sPrevious;
     private boolean oPressed;
     private boolean oPrevious;
+    private boolean wPressed;
+    private boolean wPrevious;
     /** Whether space was pressed */
     private boolean spacePressed;
     private boolean spacePrevious;
@@ -266,7 +268,7 @@ public class InputController {
      * @return true if the player wants to go to the previous level.
      */
     public boolean didRetreat() {
-        return prevPressed && !prevPrevious;
+        return prevPressed && !prevPrevious && shiftPressed;
     }
 
     /**
@@ -321,7 +323,10 @@ public class InputController {
     }
 
     public boolean didD() {
-        return dPressed;
+        return dPressed && !dPrevious;
+    }
+    public boolean didW() {
+        return wPressed && !wPrevious;
     }
 
     public float xPos() {return Gdx.input.getX();}
@@ -375,6 +380,7 @@ public class InputController {
         dPrevious = dPressed;
         sPrevious = sPressed;
         oPrevious = oPressed;
+        wPrevious = wPressed;
         spacePrevious = spacePressed;
         shiftPrevious = shiftPressed;
         tertiaryPrevious = tertiaryPressed;
@@ -445,7 +451,7 @@ public class InputController {
         nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
         exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
         spacePressed = (secondary && spacePressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
-        shiftPressed = (secondary && shiftPressed) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT));
+        shiftPressed = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT));
         backspacePressed = (secondary && backspacePressed) || (Gdx.input.isKeyPressed(Input.Keys.BACKSPACE));
         // TODO no controller support
         rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT);
@@ -457,6 +463,7 @@ public class InputController {
         sPressed = Gdx.input.isKeyPressed (Input.Keys.S);
         dPressed = Gdx.input.isKeyPressed (Input.Keys.D);
         oPressed = Gdx.input.isKeyPressed (Input.Keys.O);
+        wPressed = Gdx.input.isKeyPressed (Input.Keys.W);
         resetPressed = Gdx.input.isKeyPressed(Input.Keys.R);
 
         // Directional controls

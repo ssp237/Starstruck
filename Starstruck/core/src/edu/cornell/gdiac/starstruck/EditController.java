@@ -1,9 +1,9 @@
 package edu.cornell.gdiac.starstruck;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -12,11 +12,15 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonValue.PrettyPrintSettings;
 import com.badlogic.gdx.utils.JsonWriter;
-import edu.cornell.gdiac.starstruck.Gravity.SaveListener;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
+import edu.cornell.gdiac.starstruck.Models.Enemy;
+import edu.cornell.gdiac.starstruck.Models.Worm;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
+
+import java.util.Arrays;
 
 public class EditController extends WorldController implements ContactListener {
 
@@ -38,6 +42,8 @@ public class EditController extends WorldController implements ContactListener {
     private SaveListener load;
     /** File to load (if non-null) */
     private String loadFile;
+    /** Listener for worm data */
+    private WormListener wormListener;
     /** The JSON defining the level model */
     private JsonValue  levelFormat;
     /** The reader to process JSON files */
@@ -48,12 +54,46 @@ public class EditController extends WorldController implements ContactListener {
     private AstronautModel player2;
     private Rope rope;
 
+    /** Possible worm textures */
+    private static final String[] WORM_TEXTURES = { "blue worm", "green worm", "pink worm", "purple worm", "red worm", "yellow worm"};
+
     /** Initial position of player 1*/
     private static Vector2 P1_POS = new Vector2(2.5f, 5.0f);
     /** Initial position of player 2*/
     private static Vector2 P2_POS = new Vector2(3.5f, 6.5f);
     /** The width of the rope bridge */
     private static final float  BRIDGE_WIDTH = 6.0f;
+
+    public class WormListener implements Input.TextInputListener {
+
+        public float vx;
+        public Worm worm;
+
+        public WormListener(){
+            vx = 0; worm = null;
+        }
+
+        public void input (String text) {
+            try {
+                vx = Float.parseFloat(text);
+                setVel();
+            } catch (Exception e) {
+                vx = 0;
+                System.out.println("Error setting velocity");
+            }
+        }
+
+        public void canceled () {
+            vx = 0;
+            worm = null;
+        }
+
+        public void setVel() {
+            worm.setVX(vx);
+            worm = null; vx = 0;
+        }
+    }
+
 
     public EditController() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
@@ -66,6 +106,7 @@ public class EditController extends WorldController implements ContactListener {
         current = null;
         vectorWorld = new VectorWorld();
         save = new SaveListener();
+        wormListener = new WormListener();
         jsonReader = new JsonReader();
         loadFile = null;
         levelFormat = null;
@@ -92,6 +133,11 @@ public class EditController extends WorldController implements ContactListener {
         save = new SaveListener();
         load = new SaveListener();
 
+//        canvas.getCamera().position.x -= camOffsetX;
+//        canvas.getCamera().position.y -= camOffsetY;
+//        camOffsetX = camOffsetY = 0;
+//        canvas.getCamera().update();
+
     }
 
     private void createPlayers() {
@@ -105,7 +151,7 @@ public class EditController extends WorldController implements ContactListener {
         texture = JsonAssetManager.getInstance().getEntry("astronaut 1", TextureRegion.class);
         dwidth = texture.getRegionWidth()/scale.x;
         dheight = texture.getRegionHeight()/scale.y;
-        player1 = new AstronautModel(P1_POS.x, P1_POS.y, 0.7f, 0.95f, true, true);
+        player1 = new AstronautModel(P1_POS.x, P1_POS.y, dwidth, dheight, true, true);
         player1.setDrawScale(scale);
         player1.setTexture(texture);
         player1.setGlow(JsonAssetManager.getInstance().getEntry("glow", TextureRegion.class));
@@ -131,6 +177,32 @@ public class EditController extends WorldController implements ContactListener {
         rope.setName("rope");
         level.add(rope);
 
+    }
+
+    /**
+     * Update worm's texture and velocity fields dependent on user input.
+     */
+    private void updateWorm() {
+        InputController input = InputController.getInstance();
+
+       // System.out.println(input.shiftHeld());
+
+        if (input.didPrimary()){
+            Worm wormy = (Worm) current;
+            String key = JsonAssetManager.getInstance().getKey(wormy.getTexture());
+            int i = Arrays.binarySearch(WORM_TEXTURES, key);
+            wormy.setTexture(JsonAssetManager.getInstance().getEntry(WORM_TEXTURES[(i + 1) % WORM_TEXTURES.length], FilmStrip.class));
+
+        } else if (input.didDown()) {
+            Worm wormy = (Worm) current;
+            String key = JsonAssetManager.getInstance().getKey(wormy.getTexture());
+            int i = Arrays.binarySearch(WORM_TEXTURES, key);
+            wormy.setTexture(JsonAssetManager.getInstance().getEntry(WORM_TEXTURES[i == 0 ? WORM_TEXTURES.length - 1 : (i - 1) % WORM_TEXTURES.length], FilmStrip.class));
+        } else if (input.shiftHeld() && input.didTertiary()){
+            wormListener.worm = (Worm) current;
+            Gdx.input.getTextInput(wormListener, "Set velocity to...", Float.toString(current.getVX()), "");
+            current = null;
+        }
     }
 
     /**
@@ -215,6 +287,7 @@ public class EditController extends WorldController implements ContactListener {
     }
 
     public void update(float dt) {
+        //System.out.println(wormListener.worm);
         //System.out.println(current);
         int i = 0;
 //        for (Obstacle obj : level.getAllObjects()) {
@@ -255,7 +328,8 @@ public class EditController extends WorldController implements ContactListener {
                         -((input.yPos() - camOffsetY)/ scale.y) + bounds.height);
                 switch (current.getType()) {
                     case PLANET:
-                        updatePlanet();
+                        updatePlanet(); break;
+                    case WORM: updateWorm(); break;
                 }
             }
         } else {
@@ -281,6 +355,11 @@ public class EditController extends WorldController implements ContactListener {
                 current = new Star(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y,
                         JsonAssetManager.getInstance().getEntry("star", TextureRegion.class), scale);
                 level.add(current);
+            } else if (input.didW()){
+                Vector2 pos = input.getCrossHair();
+                current = new Worm(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y,
+                        JsonAssetManager.getInstance().getEntry("pink worm", FilmStrip.class), scale, 0, bounds.x);
+                level.add(current);
             }
             if (input.mouseDragged()) {
                 updateCamera();
@@ -289,6 +368,10 @@ public class EditController extends WorldController implements ContactListener {
 
         if (input.didTertiary()) {
             updateClick();
+        }
+
+        for (Enemy e : level.getEnemies()) {
+            e.update(dt);
         }
 
     }

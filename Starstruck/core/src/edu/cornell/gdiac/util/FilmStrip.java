@@ -35,6 +35,10 @@ import com.badlogic.gdx.graphics.*;
  * from the frame number.
  */
 public class FilmStrip extends TextureRegion {
+
+    /** The number of rows in this filmstrip */
+    private int rows;
+
     /** The number of columns in this filmstrip */
     private int cols;
 
@@ -102,6 +106,7 @@ public class FilmStrip extends TextureRegion {
             Gdx.app.error("FilmStrip", "Invalid strip size", new IllegalArgumentException());
             return;
         }
+        this.rows = rows;
         this.cols = cols;
         this.size = size;
         rwidth  = texture.getWidth()/cols;
@@ -109,6 +114,24 @@ public class FilmStrip extends TextureRegion {
         this.delay = delay;
         count = delay;
         setFrame(0);
+    }
+
+    /**
+     * Return a copy of this FilmStrip
+     *
+     * @return a copy of this FilmStrip
+     */
+    public FilmStrip copy() {
+        return new FilmStrip(getTexture(), rows, cols, size, delay);
+    }
+
+    public boolean equals(Object other) {
+        if (!super.equals(other)) return false;
+
+        FilmStrip flother = (FilmStrip) other;
+
+        return size == flother.getSize() && delay == ((FilmStrip) other).getDelay();
+
     }
 
     /**

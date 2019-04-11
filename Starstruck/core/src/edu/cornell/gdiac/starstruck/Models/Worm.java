@@ -107,6 +107,9 @@ public class Worm extends Enemy{
 
     }
 
+    public FilmStrip getTexture() {
+        return texture;
+    }
 
     public void draw(GameCanvas canvas) {
         float effect = isFacingRight() ? -1.0f : 1.0f;
@@ -115,8 +118,13 @@ public class Worm extends Enemy{
 
     public ObstacleType getType() { return ObstacleType.WORM;}
 
+
     /** Sets the place where the worm re-enters to the rightmost bound of the level*/
     public void setRight_bound(float r_bound) {right_bound = r_bound;}
+
+    public String toString(){
+        return "Worm with { velocity " + getVX() + " and position " + getPosition() +"}";
+    }
 
 }
 

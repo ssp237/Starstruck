@@ -1,4 +1,4 @@
-package edu.cornell.gdiac.starstruck.Gravity;
+package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.Input;
 

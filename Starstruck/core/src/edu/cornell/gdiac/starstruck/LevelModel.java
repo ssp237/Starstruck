@@ -306,10 +306,6 @@ public class LevelModel {
         }
     }
 
-
-
-
-
     public void dispose() {
         for(Obstacle obj : objects) {
             obj.deactivatePhysics(world);
@@ -326,6 +322,7 @@ public class LevelModel {
         planets.clear();
         stars.clear();
         anchors.clear();
+        enemies.clear();
         vectorWorld = new VectorWorld();
     }
 
@@ -340,6 +337,7 @@ public class LevelModel {
             case STAR: activate(obj); break;
             case PLAYER: addPlayer((AstronautModel) obj); break;
             case ROPE: objects.add(0, obj); obj.activatePhysics(world); rope = (Rope) obj; break;
+            case WORM: activate(obj); enemies.add((Worm) obj); break;
         }
     }
 
@@ -354,6 +352,7 @@ public class LevelModel {
             case PLANET: obj.deactivatePhysics(world); planets.remove((Planet) obj); break;
             case ANCHOR: deactivate(obj); break;
             case STAR: deactivate(obj); break;
+            case WORM: deactivate(obj); enemies.remove((Worm) obj); break;
         }
     }
 
@@ -499,10 +498,11 @@ public class LevelModel {
         for(Obstacle obj : objects) {
             if (obj.getType() != ObstacleType.PLAYER) obj.draw(canvas);
         }
+        if (player1.isActive()) { player2.draw(canvas); player1.draw(canvas); }
+        else { player1.draw(canvas); player2.draw(canvas); }
         for (Enemy e: enemies) {
             e.draw(canvas);
         }
-        player1.draw(canvas); player2.draw(canvas);
         canvas.end();
 
         if (debug) {
