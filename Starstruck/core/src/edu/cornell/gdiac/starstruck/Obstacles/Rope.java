@@ -511,7 +511,7 @@ public class Rope extends ComplexObstacle {
             joints.insert(0, joint);
 
         Vector2 force = otherPos.cpy().sub(astroCache.getPosition());
-        force.setLength(6);
+        force.setLength(astroCache.getJumpPulse());
 //        if (astroCache.getOnPlanet()) {
 //            astroCache.setPosition(lastPlank.getPosition());
 //            astroCache.setOnPlanet(false);
