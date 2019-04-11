@@ -322,7 +322,7 @@ public class LevelModel {
         planets.clear();
         stars.clear();
         anchors.clear();
-        enemies.clear(); 
+        enemies.clear();
         vectorWorld = new VectorWorld();
     }
 
