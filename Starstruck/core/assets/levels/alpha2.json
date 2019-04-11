@@ -158,19 +158,37 @@
 		{
 			"texture": "green worm",
 			"x": 8,
-			"y": 12,
+			"y": 13,
 			"velocity": -2
 		},
 		{
+			"texture": "yellow worm",
+			"x": 58,
+			"y": 17,
+			"velocity": -2.5
+		},
+		{
 			"texture": "red worm",
-			"x": 12,
-			"y": 8,
-			"velocity": -5
+			"x": 60,
+			"y": 19,
+			"velocity": -2.5
 		},
 		{
 			"texture": "blue worm",
-			"x": 18,
+			"x": 38,
 			"y": 5,
+			"velocity": -3
+		},
+		{
+			"texture": "purple worm",
+			"x": 39,
+			"y": 6,
+			"velocity": -3
+		},
+		{
+			"texture": "pink worm",
+			"x": 40,
+			"y": 4,
 			"velocity": -3
 		}
 	]

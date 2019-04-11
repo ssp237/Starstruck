@@ -800,7 +800,7 @@ public class GameController extends WorldController implements ContactListener {
 //            greenworm.setVX(-greenworm.getVX());
 //        }
         for (int i = 0; i < enemies.size(); i++) {
-            enemies.get(i).update(dt);
+            //enemies.get(i).update(dt);
             if (enemies.get(i).getType() == ObstacleType.WORM) {
                 ((Worm)enemies.get(i)).setRight_bound(canvas.getCamera().position.x/scale.x + bounds.width);
                 System.out.println((Worm)enemies.get(i));
