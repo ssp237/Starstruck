@@ -496,7 +496,7 @@ public class JsonAssetManager extends AssetManager {
 			} else if (type.equals(Texture.class)) {
 				return (T)textures.get(key);
 			} else if (type.equals(FilmStrip.class)) {
-				return (T)filmstrips.get(key);
+				return (T)filmstrips.get(key).copy();
 			} else if (type.equals(BitmapFont.class)) {
 				return (T)fonts.get(key);
 			} else if (type.equals(Sound.class)) {
