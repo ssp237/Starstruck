@@ -805,7 +805,6 @@ public class GameController extends WorldController implements ContactListener {
                 ((Worm)enemies.get(i)).setRight_bound(canvas.getCamera().position.x/scale.x + bounds.width);
                 System.out.println((Worm)enemies.get(i));
             }
-
         }
 
         avatar.setFixedRotation(false);
