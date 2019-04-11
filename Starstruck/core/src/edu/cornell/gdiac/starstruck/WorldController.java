@@ -151,52 +151,6 @@ public abstract class WorldController implements Screen {
     }
 
     /**
-     * Returns a newly loaded filmstrip for the given file.
-     *
-     * This helper methods is used to set texture settings (such as scaling, and
-     * the number of animation frames) after loading.
-     *
-     * @param manager 	Reference to global asset manager.
-     * @param file		The texture (region) file
-     * @param rows 		The number of rows in the filmstrip
-     * @param cols 		The number of columns in the filmstrip
-     * @param size 		The number of frames in the filmstrip
-     *
-     * @return a newly loaded texture region for the given file.
-     */
-    protected FilmStrip createFilmStrip(AssetManager manager, String file, int rows, int cols, int size) {
-        if (manager.isLoaded(file)) {
-            FilmStrip strip = new FilmStrip(manager.get(file, Texture.class),rows,cols,size);
-            strip.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-            return strip;
-        }
-        return null;
-    }
-
-    /**
-     * Returns a newly loaded filmstrip for the given file.
-     *
-     * This helper methods is used to set texture settings (such as scaling, and
-     * the number of animation frames) after loading.
-     *
-     * @param file		The texture (region) file
-     * @param rows 		The number of rows in the filmstrip
-     * @param cols 		The number of columns in the filmstrip
-     * @param size 		The number of frames in the filmstrip
-     *
-     * @return a newly loaded texture region for the given file.
-     */
-    protected FilmStrip createFilmStrip(String file, int rows, int cols, int size) {
-        try {
-            FilmStrip strip = new FilmStrip(JsonAssetManager.getInstance().getEntry(file, Texture.class),rows,cols,size);
-            strip.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-            return strip;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
      * Unloads the assets for this game.
      *
      * This method erases the static variables.  It also deletes the associated textures

@@ -88,6 +88,9 @@ public class Worm extends Enemy{
      * @param texture The filmstrip to set
      */
     public void setTexture(FilmStrip texture) {
+        int i = texture.getSize();
+        //System.out.println((int) Math.random() * i);
+        texture.setFrame((int) (Math.random() * i));
         this.texture = texture;
         origin = new Vector2(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
     }

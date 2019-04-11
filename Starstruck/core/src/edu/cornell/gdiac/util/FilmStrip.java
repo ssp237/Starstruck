@@ -36,6 +36,9 @@ import com.badlogic.gdx.graphics.*;
  */
 public class FilmStrip extends TextureRegion {
 
+    /** The name of this FilmStrip */
+    private String name;
+
     /** The number of rows in this filmstrip */
     private int rows;
 
@@ -66,9 +69,10 @@ public class FilmStrip extends TextureRegion {
      * @param texture The texture image to use
      * @param rows The number of rows in the filmstrip
      * @param cols The number of columns in the filmstrip
+     * @param name The name of this FilmStrip
      */
-    public FilmStrip(Texture texture, int rows, int cols) {
-        this(texture,rows,cols,rows*cols, 0);
+    public FilmStrip(Texture texture, int rows, int cols, String name) {
+        this(texture,rows,cols,rows*cols, name);
     }
 
     /**
@@ -82,9 +86,10 @@ public class FilmStrip extends TextureRegion {
      * @param rows The number of rows in the filmstrip
      * @param cols The number of columns in the filmstrip
      * @param size The number of frames in the filmstrip
+     * @param name The name of this FilmStrip
      */
-    public FilmStrip(Texture texture, int rows, int cols, int size) {
-        this(texture,rows,cols,rows*cols, 0);
+    public FilmStrip(Texture texture, int rows, int cols, int size, String name) {
+        this(texture,rows,cols,size, 0, name);
     }
 
     /**
@@ -99,8 +104,9 @@ public class FilmStrip extends TextureRegion {
      * @param cols The number of columns in the filmstrip
      * @param size The number of frames in the filmstrip
      * @param delay The number of frames to delay between switching frames
+     * @param name The name of this FilmStrip
      */
-    public FilmStrip(Texture texture, int rows, int cols, int size, int delay) {
+    public FilmStrip(Texture texture, int rows, int cols, int size, int delay, String name) {
         super(texture);
         if (size > rows*cols) {
             Gdx.app.error("FilmStrip", "Invalid strip size", new IllegalArgumentException());
@@ -114,6 +120,7 @@ public class FilmStrip extends TextureRegion {
         this.delay = delay;
         count = delay;
         setFrame(0);
+        this.name = name;
     }
 
     /**
@@ -122,7 +129,11 @@ public class FilmStrip extends TextureRegion {
      * @return a copy of this FilmStrip
      */
     public FilmStrip copy() {
-        return new FilmStrip(getTexture(), rows, cols, size, delay);
+        return new FilmStrip(getTexture(), rows, cols, size, delay, name);
+    }
+
+    public String getName() {
+        return name;
     }
 
     public boolean equals(Object other) {

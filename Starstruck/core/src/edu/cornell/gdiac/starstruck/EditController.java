@@ -190,6 +190,7 @@ public class EditController extends WorldController implements ContactListener {
         if (input.didPrimary()){
             Worm wormy = (Worm) current;
             String key = JsonAssetManager.getInstance().getKey(wormy.getTexture());
+            System.out.println(key);
             int i = Arrays.binarySearch(WORM_TEXTURES, key);
             wormy.setTexture(JsonAssetManager.getInstance().getEntry(WORM_TEXTURES[(i + 1) % WORM_TEXTURES.length], FilmStrip.class));
 

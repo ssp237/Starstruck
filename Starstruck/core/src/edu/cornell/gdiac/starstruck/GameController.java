@@ -368,7 +368,7 @@ public class GameController extends WorldController implements ContactListener {
         enemy.setDrawScale(scale);
         enemy.setTexture(enemyTexture, 3, 10);
         enemy.setName("bug");
-        //addObject(enemy);
+        addObject(enemy);
 
         // Create pink worm enemy
         //dwidth  = pinkwormTexture.getRegionWidth()/scale.x;
