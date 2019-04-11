@@ -221,7 +221,7 @@ public class PlanetList {
             dir.setLength(p.getRadius());
             surface = p.getPosition().cpy().add(dir);
             dist = dist(pos, surface);
-            if (dist > minDist) {
+            if (dist < minDist) {
                 minDist = dist;
                 minPlanet = p;
             }

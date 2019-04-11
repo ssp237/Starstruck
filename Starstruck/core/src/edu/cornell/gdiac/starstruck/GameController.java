@@ -585,6 +585,7 @@ public class GameController extends WorldController implements ContactListener {
      * 'a' - compare rope length off of anchors
      * 'c' - compare rope length and circumference when both astronauts are on the same planet
      * 'p' - compare rope length when astronauts are on different planets
+     * 'j' - uses force on rope joint
      *
      * @param avatar1 avatar1
      * @param avatar2 avatar2
@@ -592,7 +593,7 @@ public class GameController extends WorldController implements ContactListener {
      * @param mode Which situation is rope being tested in
      * @return false if there is rope left, true if the rope is at its end
      */
-    private boolean updateRope(AstronautModel avatar1, AstronautModel avatar2, Rope rope, char mode) {
+    private boolean updateRope(AstronautModel avatar1, AstronautModel avatar2, Rope rope, char mode, float dt) {
         float dist = dist(avatar1.getPosition(), avatar2.getPosition());
         float length = rope.getLength();
 
@@ -640,6 +641,14 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
+        //Both are on the same planet, uses force on joint to test when inactive astronaut should move
+        else if (mode == 'j') {
+            if (rope.stretched(dt)) {
+                return true;
+            }
+
+        }
+
         return false;
     }
 
@@ -649,7 +658,7 @@ public class GameController extends WorldController implements ContactListener {
      * @param avatar Active avatar
      * @param avatar2 Other avatar
      */
-    private void updateHelp(AstronautModel avatar, AstronautModel avatar2) {
+    private void updateHelp(AstronautModel avatar, AstronautModel avatar2, float dt) {
         avatar.setGravity(vectorWorld.getForce(avatar.getPosition())); //gravity will be applied no matter what
         avatar2.setGravity(vectorWorld.getForce(avatar2.getPosition()));
 //        print(avatar.gravity);
@@ -668,23 +677,23 @@ public class GameController extends WorldController implements ContactListener {
                 angle = -avatar2.contactDir.angleRad(new Vector2 (0, 1));
                 avatar2.setAngle(angle);
                 if (avatar.curPlanet == avatar2.curPlanet) { //If the two avatars are on the same planet, move inactive avatar
-                    if (updateRope(avatar, avatar2, rope, 'c')) {
+                    if (updateRope(avatar, avatar2, rope, 'j', dt)) {
                         updateMovement(avatar2, avatar2.contactDir, (Planet)avatar2.curPlanet, true);
                     }
                 }
                 else { // Else if inactive is on a different planet, set it's location, restrict mvoement of other avatar
                     avatar2.setPosition(avatar2.lastPoint);
-                    if (updateRope(avatar, avatar2, rope, 'p')) {
+                    if (updateRope(avatar, avatar2, rope, 'p', dt)) {
                         avatar.setPosition(avatar.lastPoint);
                     }
                 }
             }
 
-            else if (avatar2.isAnchored()) { //If inactive avatar is anchored restrict rope length
+//            else if (avatar2.isAnchored()) { //If inactive avatar is anchored restrict rope length
 //                if (updateRope(avatar, avatar2, rope, 'p')) {
 //                    avatar.setPosition(avatar.lastPoint);
 //                }
-            }
+//            }
         }
         else {
             avatar.setRotation(InputController.getInstance().getHorizontal());
@@ -894,7 +903,7 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         if (avatar.isActive()) {
-            updateHelp(avatar, avatar2);
+            updateHelp(avatar, avatar2, dt);
             if (testC) {
                 avatar.setFixedRotation(true);
                 avatar.setMovement(InputController.getInstance().getHorizontal());
@@ -902,7 +911,7 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
         else { //if avatar2 is active
-            updateHelp(avatar2, avatar);
+            updateHelp(avatar2, avatar, dt);
             if (testC) {
                 avatar2.setFixedRotation(true);
                 avatar2.setMovement(InputController.getInstance().getHorizontal());
