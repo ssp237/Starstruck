@@ -25,6 +25,7 @@ import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
+import edu.cornell.gdiac.starstruck.Models.Bug;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
 import edu.cornell.gdiac.starstruck.Models.Worm;
 import edu.cornell.gdiac.util.*;
@@ -269,8 +270,25 @@ public class LevelModel {
 
         JsonValue planet = levelFormat.get("planets").child();
         while(planet != null) {
-            planets.addPlanet(planet, world, vectorWorld);
+            float x = planet.getFloat("x");
+            float y = planet.getFloat("y");
+            int i = planet.getInt("i");
+            Bug buggy = null;
+            try {
+                JsonValue bug = planet.get("bug");
+                float radius = Planet.getRadiusPrePlanet(i, scale);
+                key = bug.get("texture").asString();
+                FilmStrip bugtexture = JsonAssetManager.getInstance().getEntry(key, FilmStrip.class);
+                buggy = new Bug(x, y + radius, bugtexture, scale);
+                activate(buggy);
+                enemies.add(buggy);
+            } catch (Exception e) {
+
+            }
+
+            planets.addPlanet(planet, world, vectorWorld, buggy);
             planet = planet.next();
+
         }
 
         //add stars
@@ -304,6 +322,8 @@ public class LevelModel {
             enemies.add(wormie);
             wormVals = wormVals.next;
         }
+
+
     }
 
     public void dispose() {

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.starstruck.Obstacles.ObstacleType;
+import edu.cornell.gdiac.starstruck.Obstacles.Planet;
 import edu.cornell.gdiac.util.FilmStrip;
 
 public class Bug extends Enemy {
@@ -16,6 +17,16 @@ public class Bug extends Enemy {
     /** Counter for animation delay */
     private int delay;
 
+    /** position */
+    private float x;
+    private float y;
+
+    /**current planet of enemy */
+    private Planet curPlanetEN;
+
+    /** Speed of bug */
+    private static final float BUG_SPEED = 0.01f;
+
     /**
      * Creates a new dude avatar at the given position.
      *
@@ -26,11 +37,13 @@ public class Bug extends Enemy {
      *
      * @param x  		Initial x position of the avatar center
      * @param y  		Initial y position of the avatar center
-     * @param width		The object width in physics units
-     * @param height	The object width in physics units
      */
-    public Bug(float x, float y, float width, float height) {
-        super(x,y,width,height);
+    public Bug(float x, float y, FilmStrip texture, Vector2 scale) {
+        super(x,y,texture.getRegionWidth()/scale.x,texture.getRegionHeight()/scale.y);
+        this.x = x;
+        this.y = y;
+        setTexture(texture);
+        setDrawScale(scale);
     }
 
     /**
@@ -45,6 +58,27 @@ public class Bug extends Enemy {
     public void update(float dt) {
         texture.tick(); //Animation
 
+
+
+        if (getOnPlanet()) {
+            setFixedRotation(true);
+            //enemy.setRotation(1);
+            Vector2 contactPointEN = new Vector2(x, y);
+            Vector2 contactDirEn = contactPointEN.cpy().sub(curPlanetEN.getPosition());
+            float angle = -contactDirEn.angleRad(new Vector2(0, 1));
+            setAngle(angle);
+            //setPosition(contactPointEN);
+            contactDirEn.rotateRad(-(float) Math.PI / 2);
+            setPosition(contactPointEN.add(contactDirEn.setLength(BUG_SPEED)));
+            //setGravity(vectorWorld.getForce(getPosition()));
+            applyForce();
+        }
+
+
+
+
+
+
         super.update(dt);
     }
 
@@ -55,4 +89,7 @@ public class Bug extends Enemy {
     }
 
     public ObstacleType getType() { return ObstacleType.BUG;}
+
+    public void setPlanet (Planet p) { curPlanetEN = p;}
+
 }
