@@ -33,6 +33,7 @@ import com.badlogic.gdx.controllers.ControllerListener;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.math.Vector3;
@@ -225,6 +226,11 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
      * prefer this in lecture.
      */
     private void draw() {
+        OrthographicCamera cam = (OrthographicCamera) canvas.getCamera();
+        if (cam.position.x != canvas.getWidth()/2 || cam.position.y != canvas.getHeight()/2) {
+            cam.position.x = canvas.getWidth()/2; cam.position.y = canvas.getHeight()/2;
+            cam.update();
+        }
         canvas.begin();
         canvas.draw(background, 0, 0, canvas.getWidth(), canvas.getHeight());
         Color tint = (pressState == 1 ? Color.GRAY: Color.WHITE);
