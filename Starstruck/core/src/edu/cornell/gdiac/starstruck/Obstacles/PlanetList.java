@@ -212,13 +212,13 @@ public class PlanetList {
         Planet minPlanet = planets.get(0);
         float minDist;
         Vector2 dir = pos.cpy().sub(minPlanet.getPosition());
-        dir.setLength(minPlanet.grange);
+        dir.setLength(minPlanet.getRadius());
         Vector2 surface = minPlanet.getPosition().cpy().add(dir);
         float dist = dist(pos, surface);
         minDist = dist;
         for (Planet p : planets) {
             dir = pos.cpy().sub(p.getPosition());
-            dir.setLength(p.grange);
+            dir.setLength(p.getRadius());
             surface = p.getPosition().cpy().add(dir);
             dist = dist(pos, surface);
             if (dist > minDist) {
