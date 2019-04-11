@@ -105,6 +105,10 @@
     "background": {
       "file": "platform/background.png",
       "wrap": false
+    },
+    "death screen": {
+      "file": "backgrounds/you_dead_1.png",
+      "wrap": false
     }
   },
   "filmstrips" : {
