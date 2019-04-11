@@ -358,7 +358,7 @@ public class EditController extends WorldController implements ContactListener {
             } else if (input.didW()){
                 Vector2 pos = input.getCrossHair();
                 current = new Worm(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y,
-                        JsonAssetManager.getInstance().getEntry("pink worm", FilmStrip.class), scale, 0, bounds.x);
+                        JsonAssetManager.getInstance().getEntry("pink worm", FilmStrip.class), scale, 0);
                 level.add(current);
             }
             if (input.mouseDragged()) {

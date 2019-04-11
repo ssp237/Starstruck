@@ -22,6 +22,7 @@ import java.util.*;
 //import edu.cornell.gdiac.physics.*;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
+import edu.cornell.gdiac.starstruck.Models.Worm;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -790,7 +791,7 @@ public class GameController extends WorldController implements ContactListener {
         for (int i = 0; i < enemies.size(); i++) {
             enemies.get(i).update(dt);
             if (enemies.get(i).getType() == ObstacleType.WORM) {
-                ((Worm)enemies.get(i)).setRight_bound(canvas.getCamera().position.x + bounds.width);
+                ((Worm)enemies.get(i)).setRight_bound(canvas.getCamera().position.x/scale.x + bounds.width);
                 System.out.println((Worm)enemies.get(i));
             }
 
