@@ -281,7 +281,7 @@ public class GameController extends WorldController implements ContactListener {
         setFailure(false);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
-        loadFile = "test.json";
+        loadFile = "alpha2.json";
         loader = new SaveListener();
     }
 
