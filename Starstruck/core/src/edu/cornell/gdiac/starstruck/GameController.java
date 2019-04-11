@@ -21,6 +21,7 @@ import java.util.*;
 
 //import edu.cornell.gdiac.physics.*;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
+import edu.cornell.gdiac.starstruck.Models.Bug;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
 import edu.cornell.gdiac.starstruck.Models.Worm;
 import edu.cornell.gdiac.util.*;
@@ -576,6 +577,26 @@ public class GameController extends WorldController implements ContactListener {
             avatar.moving = false;
         }
     }
+
+//    private void updateMovementBug(Bug buggy, Vector2 contactDir, Planet curPlanet, boolean auto) {
+//        //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
+//        contactDir.rotateRad(-(float) Math.PI / 2);
+//        //float move = InputController.getInstance().getHorizontal();
+//        //if (InputController.getInstance().didRight() || InputController.getInstance().didLeft()) {
+//            avatar.setPlanetMove(contactDir.scl(1));
+//            //avatar.moving = true;
+//        }
+//
+//        if (InputController.getInstance().didPrimary() && !auto && !testC) {
+//            //print(contactPoint);
+//            avatar.setJumping(true);
+//            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
+//            contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
+//            avatar.setPlanetJump(contactDir);
+//            avatar.setOnPlanet(false);
+//            avatar.moving = false;
+//        }
+//    }
 
     /**
      * Helper method to determine whether the rope is ok
