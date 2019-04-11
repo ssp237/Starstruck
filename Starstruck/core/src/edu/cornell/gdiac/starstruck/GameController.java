@@ -41,6 +41,9 @@ public class GameController extends WorldController implements ContactListener {
 
     int count;
 
+
+    /** Time to delay after dying */
+
     /** The reader to process JSON files */
     private JsonReader jsonReader;
     /** The JSON asset directory */
@@ -62,6 +65,11 @@ public class GameController extends WorldController implements ContactListener {
     private static final String ANCHOR_FILE = "anchor";
     /** Space sounds */
     private static final String SPACE_SOUNDS = "space sounds";
+
+    /** The background for DEATH*/
+    private Texture death;
+    /** Opacity countdown for death screen */
+    private float deathOp = 0f;
 
     /** Texture asset for the enemy */
     private FilmStrip enemyTexture;
@@ -129,6 +137,8 @@ public class GameController extends WorldController implements ContactListener {
         JsonAssetManager.getInstance().allocateDirectory();
 
 
+        death = JsonAssetManager.getInstance().getEntry("death screen", Texture.class);
+
         enemyTexture = JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class);
         pinkwormTexture = JsonAssetManager.getInstance().getEntry("pink worm", FilmStrip.class);
         greenwormTexture = JsonAssetManager.getInstance().getEntry("green worm", FilmStrip.class);
@@ -166,7 +176,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Turns off enemy collisions for testing */
     public static final boolean testE = false;
     /** Allows manual control of astronaut in space for testing */
-    public static final boolean testC = true;
+    public static final boolean testC = false;
     /** Camera zoom */
     private static final float ZOOM_FACTOR = 1f;
     /** Max max extension of rope */
@@ -231,7 +241,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Level to load */
     private String loadFile;
     /** Listener for load data */
-    SaveListener loader;
+    private SaveListener loader;
     /** If avatar was unanchored */
     private boolean avatarShorten;
     /** If avatar2 was unanchored */
@@ -297,6 +307,7 @@ public class GameController extends WorldController implements ContactListener {
         populateLevel(); //Just to add enemies and special lists of objects
 
         count = 5;
+        deathOp = 0f;
     }
 
     /**
@@ -1261,7 +1272,11 @@ public class GameController extends WorldController implements ContactListener {
             displayFont.setColor(Color.RED);
             canvas.begin(); // DO NOT SCALE
             //canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
-            canvas.drawText("u ded :(", displayFont, cam.position.x-140, cam.position.y+30);
+            //canvas.drawText("u ded :(", displayFont, cam.position.x-140, cam.position.y+30);
+            //canvas.draw(background, Color.WHITE, x, y,canvas.getWidth(),canvas.getHeight());
+            deathOp += 0.01f;
+            Color drawColor = new Color(1,1,1, deathOp);
+            canvas.draw(death, drawColor, cam.position.x - canvas.getWidth()/2, cam.position.y - canvas.getHeight()/2, canvas.getWidth(), canvas.getHeight());
             canvas.end();
         }
 
@@ -1271,11 +1286,7 @@ public class GameController extends WorldController implements ContactListener {
             canvas.drawText("Yay! :):)", displayFont, cam.position.x-140, cam.position.y+30);
             canvas.end();
         }
-        canvas.begin();
-//        for (Enemy e: enemies) {
-//            e.draw(canvas);
-//        }
-        canvas.end();
+
 
         if(isDebug()){
             canvas.beginDebug();
