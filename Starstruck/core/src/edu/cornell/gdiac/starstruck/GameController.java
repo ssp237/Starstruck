@@ -250,6 +250,8 @@ public class GameController extends WorldController implements ContactListener {
     private boolean avatar2Shorten;
     /** Timer for extending rope */
     private int ropeCount;
+    /** Time for rope going through anchors,make sure to always reset to 0 when not in use */
+    private int ropeDown = 0;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -887,6 +889,7 @@ public class GameController extends WorldController implements ContactListener {
                 avatar.setLinearVelocity(nearest);
                 avatar2.setLinearVelocity(nearest.cpy().scl(0.5f));
             }
+            ropeDown = 10;
             collection = false;
         }
 
@@ -1192,12 +1195,6 @@ public class GameController extends WorldController implements ContactListener {
             String bd1N = bd1.getName();
             String bd2N = bd2.getName();
 
-//            if (bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) {
-//                print(bd1N);
-//                print(bd2N);
-//                print("________________________");
-//            }
-
             //Disable all collisions for worms
             if (bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) {
                 contact.setEnabled(false);
@@ -1218,9 +1215,14 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(false);
             }
             //Enables collisions between rope and anchor
-            if (bd1.getName().contains("rope") && bd2.getName().contains("anchor")
-                    || bd1.getName().contains("anchor") && bd2.getName().contains("rope")) {
-                contact.setEnabled(true);
+            if (ropeDown <= 0) {
+                if (bd1.getName().contains("rope") && bd2.getName().contains("anchor")
+                        || bd1.getName().contains("anchor") && bd2.getName().contains("rope")) {
+                    contact.setEnabled(true);
+                }
+            }
+            else {
+                ropeDown--;
             }
             //Enables collisions between rope and planet
             if (bd1.getName().contains("rope") && bd2.getName().contains("planet")
