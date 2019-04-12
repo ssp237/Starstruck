@@ -252,6 +252,8 @@ public class GameController extends WorldController implements ContactListener {
     private int ropeCount;
     /** Time for rope going through anchors,make sure to always reset to 0 when not in use */
     private int ropeDown = 0;
+    /** List of the planks in rope, used for presolve */
+    Array<Obstacle> ropeList;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -723,9 +725,9 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         // +/- 1 for a little bit of buffer space because astronaut position is at its center
-        if (!isFailure() && (avatar.getY() < -1 || avatar.getY() > yBound+1 || avatar.getX() < -1 || avatar.getX() > xBound+1)
-                && (avatar2.getY() < -1 || avatar2.getY() > yBound+1 || avatar2.getX() < -1 || avatar2.getX() > xBound+1)
-                && !avatar.getOnPlanet() && !avatar2.getOnPlanet() && !avatar.isAnchored() && !avatar2.isAnchored()){
+        if (!isFailure() && ((avatar.getY() < -1 || avatar.getY() > yBound+1 || avatar.getX() < -1 || avatar.getX() > xBound+1)
+                || (avatar2.getY() < -1 || avatar2.getY() > yBound+1 || avatar2.getX() < -1 || avatar2.getX() > xBound+1))
+                && !avatar.getOnPlanet() && !avatar2.getOnPlanet()){ //&& !avatar.isAnchored() && !avatar2.isAnchored()
             setFailure(true);
             return false;
         }
@@ -919,6 +921,7 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
+        //TODO Switch on jump
 //        if ((avatar.isJumping() || avatar2.isJumping()) && !avatar.isAnchored() && !avatar2.isAnchored() && !testC) {
 //            avatar.setActive(!avatar.isActive());
 //            avatar2.setActive(!avatar2.isActive());
@@ -946,44 +949,7 @@ public class GameController extends WorldController implements ContactListener {
         avatar.lastVel.set(avatar.getLinearVelocity());
         avatar2.lastVel.set(avatar.getLinearVelocity());
 
-        //if (ropeExtend) { //temporarily commented out just to test if rope extends without even being anchored
-
-//            if (progress > 0) {
-//                float span = progress*(width-2*scale*PROGRESS_CAP)/2.0f;
-//                canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP+span, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-//                canvas.draw(statusFrgMiddle, Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, span, scale*PROGRESS_HEIGHT);
-//            } else {
-//                canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-//            }
-
-
-
-//            rope.newPairPlank(world, rope);
-
-
-
-
-
-//            extendInt++;
-//            objects.remove(2);//this is wrong index (it's the pink avatar)
-//            float dwidth  = bridgeTexture.getRegionWidth()/scale.x;
-//            float dheight = bridgeTexture.getRegionHeight()/scale.y;
-//            rope = new Rope (avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH + extendInt, dwidth, dheight, avatar, avatar2);
-//            objects.add(2, rope); //this is also wrong then (match index above)
-            //addObject(rope);
-         //}
-//            float ropeX = rope.getPosition().x;
-//            float ropeY = rope.getPosition().y;
-
-//
-//            rope = new Rope(avatar.getX() + 0.5f, avatar.getY() + 0.5f, BRIDGE_WIDTH, dwidth, dheight, avatar, avatar2);
-//            rope.setTexture(bridgeTexture);
-//            rope.setDrawScale(scale);
-//            rope.setName("rope");
-//            addObject(rope);
-
-
-        //TODO Removed sound stuffs
+        //Removed sound stuffs
 //        if (avatar.isJumping() || avatar2.isJumping()) {
 //            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
 //        }
@@ -1134,7 +1100,6 @@ public class GameController extends WorldController implements ContactListener {
             }
 
             // Check for win condition
-            //Removed win
 //            if ((bd1 == avatar   && bd2 == goalDoor) ||
 //                    (bd1 == goalDoor && bd2 == avatar)) {
 //                setComplete(true);
@@ -1233,6 +1198,20 @@ public class GameController extends WorldController implements ContactListener {
             else {
                 ropeDown--;
             }
+            //Disables collisions between ends of rope and anchors
+            ropeList = rope.getPlanks();
+            BoxObstacle plank0 = (BoxObstacle)ropeList.get(0);
+            BoxObstacle plank1 = (BoxObstacle)ropeList.get(1);
+            BoxObstacle plank2 = (BoxObstacle)ropeList.get(ropeList.size-2);
+            BoxObstacle plank3 = (BoxObstacle)ropeList.get(ropeList.size-1);
+            BoxObstacle plank4 = (BoxObstacle)ropeList.get(2);
+            BoxObstacle plank5 = (BoxObstacle)ropeList.get(ropeList.size-3);
+            if (bd1N.contains("anchor") && (bd2 == plank0 || bd2 == plank1 || bd2 == plank2 || bd2 == plank3 || bd2 == plank4 || bd2 == plank5)
+                    || bd2N.contains("anchor") && (bd1 == plank0 || bd1 == plank1 || bd1 == plank2 || bd1 == plank3 || bd1 == plank4 || bd1 == plank5)) {
+                contact.setEnabled(false);
+            }
+
+
             //Enables collisions between rope and planet
             if (bd1.getName().contains("rope") && bd2.getName().contains("planet")
                     || bd1.getName().contains("planet") && bd2.getName().contains("rope")) {

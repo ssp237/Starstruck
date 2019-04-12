@@ -24,8 +24,9 @@ import java.util.Arrays;
 
 public class EditController extends WorldController implements ContactListener {
 
-    /** Speed of camera pan */
+    /** Speed of camera pan & zoom */
     private static final float PAN_CONST = 4;
+    private static final float ZOOM_FACTOR = 0.02f;
 
     /** Current obstacle */
     private Obstacle current;
@@ -36,6 +37,7 @@ public class EditController extends WorldController implements ContactListener {
     /** Camera offset */
     private float camOffsetX;
     private float camOffsetY;
+    private float camOffsetScale;
     /** Listener for save data */
     private SaveListener save;
     /** Listener for load data */
@@ -147,6 +149,13 @@ public class EditController extends WorldController implements ContactListener {
 
         camOffsetX = 0;
         camOffsetY = 0;
+
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
+        camera.viewportWidth = canvas.getWidth();
+        camera.viewportHeight = canvas.getHeight();
+        camera.position.x = camera.viewportWidth/2;
+        camera.position.y = camera.viewportHeight/2;
+        System.out.println(camera.zoom);
 
         texture = JsonAssetManager.getInstance().getEntry("astronaut 1", TextureRegion.class);
         dwidth = texture.getRegionWidth()/scale.x;
@@ -264,6 +273,18 @@ public class EditController extends WorldController implements ContactListener {
         if (input.heldDown()) {
             camera.position.y = camera.position.y - PAN_CONST;
             camOffsetY = camOffsetY - PAN_CONST;
+        }
+        if (input.shiftHeld() && input.heldUp()) {
+//            camera.viewportWidth = camera.viewportWidth * (1-ZOOM_FACTOR);
+//            camera.viewportHeight = camera.viewportHeight * (1-ZOOM_FACTOR);
+            camera.zoom = camera.zoom - ZOOM_FACTOR;
+            System.out.println(camera.zoom);
+        }
+        if (input.shiftHeld() && input.heldDown()) {
+//            camera.viewportWidth = camera.viewportWidth * (1+ZOOM_FACTOR);
+//            camera.viewportHeight = camera.viewportHeight * (1+ZOOM_FACTOR);
+            camera.zoom = camera.zoom + ZOOM_FACTOR;
+            System.out.println(camera.zoom);
         }
         camera.update();
     }
