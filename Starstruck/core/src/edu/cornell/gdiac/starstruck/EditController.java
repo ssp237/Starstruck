@@ -37,7 +37,6 @@ public class EditController extends WorldController implements ContactListener {
     /** Camera offset */
     private float camOffsetX;
     private float camOffsetY;
-    private float camOffsetScale;
     /** Listener for save data */
     private SaveListener save;
     /** Listener for load data */
@@ -134,12 +133,6 @@ public class EditController extends WorldController implements ContactListener {
         setFailure(false);
         save = new SaveListener();
         load = new SaveListener();
-
-//        canvas.getCamera().position.x -= camOffsetX;
-//        canvas.getCamera().position.y -= camOffsetY;
-//        camOffsetX = camOffsetY = 0;
-//        canvas.getCamera().update();
-
     }
 
     private void createPlayers() {
@@ -218,18 +211,24 @@ public class EditController extends WorldController implements ContactListener {
      * Helper to update current obstacle if it is a planet.
      */
     private void updatePlanet() {
+        OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
         InputController input = InputController.getInstance();
+        float camScaleX = camOffsetX / scale.x;
+        float camScaleY = camOffsetY / scale.y;
+        float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
+        float h = (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y;
+
         if (input.didPrimary()){
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
-            current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, p.getInd() + 1, world, scale);
+            current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, p.getInd() + 1, world, scale);
             level.add(current);
         } else if (input.didDown()) {
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
-            current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, p.getInd() - 1, world, scale);
+            current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, p.getInd() - 1, world, scale);
             level.add(current);
         }
     }
@@ -244,8 +243,11 @@ public class EditController extends WorldController implements ContactListener {
         }
         else {
             for (Obstacle obj : level.getAllObjects()) {
+                OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
                 Vector2 camOffset = new Vector2(camOffsetX/scale.x, camOffsetY/scale.y);
-                if (obj.containsPoint(input.getCrossHair().cpy().add(camOffset))) {
+                Vector2 zoom = new Vector2((input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x,
+                (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y);
+                if (obj.containsPoint(input.getCrossHair().cpy().add(camOffset).add(zoom))) {
                     current = obj;
                 }
             }
@@ -278,13 +280,13 @@ public class EditController extends WorldController implements ContactListener {
 //            camera.viewportWidth = camera.viewportWidth * (1-ZOOM_FACTOR);
 //            camera.viewportHeight = camera.viewportHeight * (1-ZOOM_FACTOR);
             camera.zoom = camera.zoom - ZOOM_FACTOR;
-            System.out.println(camera.zoom);
+            //System.out.println(camera.zoom);
         }
         if (input.shiftHeld() && input.heldDown()) {
 //            camera.viewportWidth = camera.viewportWidth * (1+ZOOM_FACTOR);
 //            camera.viewportHeight = camera.viewportHeight * (1+ZOOM_FACTOR);
             camera.zoom = camera.zoom + ZOOM_FACTOR;
-            System.out.println(camera.zoom);
+            //System.out.println(camera.zoom);
         }
         camera.update();
     }
@@ -308,6 +310,7 @@ public class EditController extends WorldController implements ContactListener {
     }
 
     public void update(float dt) {
+        OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
         //System.out.println(wormListener.worm);
         //System.out.println(current);
         int i = 0;
@@ -318,6 +321,12 @@ public class EditController extends WorldController implements ContactListener {
         //System.out.println(level.getAllObjects());
         //System.out.println(level.getPlayer1().getVX() + "   " + level.getPlayer1().getVY());
         InputController input = InputController.getInstance();
+
+        float camScaleX = camOffsetX / scale.x;
+        float camScaleY = camOffsetY / scale.y;
+
+        float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
+        float h = (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y;
 
         if (current == null)
             updateCamera();
@@ -345,8 +354,8 @@ public class EditController extends WorldController implements ContactListener {
                 level.remove(current);
                 current = null;
             } else {
-                current.setPosition((input.xPos() + camOffsetX) / scale.x,
-                        -((input.yPos() - camOffsetY)/ scale.y) + bounds.height);
+                current.setPosition((input.xPos() + camOffsetX) / scale.x + w,
+                        -((input.yPos() - camOffsetY) / scale.y) + h + bounds.height);
                 switch (current.getType()) {
                     case PLANET:
                         updatePlanet(); break;
@@ -364,21 +373,21 @@ public class EditController extends WorldController implements ContactListener {
                 return;
             } else if (input.didP()) {
                 Vector2 pos = input.getCrossHair();
-                current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, 1, world, scale);
+                current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, 1, world, scale);
                 level.add(current);
             } else if (input.didA()) {
                 Vector2 pos = input.getCrossHair();
-                current = new Anchor(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y,
+                current = new Anchor(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
                 level.add(current);
             } else if (input.didS()) {
                 Vector2 pos = input.getCrossHair();
-                current = new Star(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y,
+                current = new Star(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry("star", TextureRegion.class), scale);
                 level.add(current);
             } else if (input.didW()){
                 Vector2 pos = input.getCrossHair();
-                current = new Worm(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y,
+                current = new Worm(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry("pink worm", FilmStrip.class), scale, 0);
                 level.add(current);
             }

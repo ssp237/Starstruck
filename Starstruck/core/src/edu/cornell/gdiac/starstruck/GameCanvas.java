@@ -140,6 +140,14 @@ public class GameCanvas {
      */
     public Camera getCamera() { return camera; }
 
+    public void resetCamera() {
+        camera.zoom = 1;
+        camera.viewportWidth = getWidth();
+        camera.viewportHeight = getHeight();
+//        camera.position.x = camera.viewportWidth/2;
+//        camera.position.y = camera.viewportHeight/2;
+    }
+
     /**
      * Returns the width of this canvas
      *

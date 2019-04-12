@@ -125,6 +125,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * @param exitCode The state of the screen upon exit
 	 */
 	public void exitScreen(Screen screen, int exitCode) {
+		canvas.resetCamera();
 		if (screen == loading) {
 			for (int ii = 0; ii < controllers.length; ii++) {
 				controllers[ii].loadContent(JsonAssetManager.getInstance());
