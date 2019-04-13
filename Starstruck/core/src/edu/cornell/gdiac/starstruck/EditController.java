@@ -27,6 +27,9 @@ public class EditController extends WorldController implements ContactListener {
     /** Speed of camera pan & zoom */
     private static final float PAN_CONST = 4;
     private static final float ZOOM_FACTOR = 0.02f;
+    /** Bounds of this level */
+    private float xBound = (1280*1.5f) / scale.x;
+    private float yBound = (720*1.5f) / scale.y;
 
     /** Current obstacle */
     private Obstacle current;
@@ -261,19 +264,19 @@ public class EditController extends WorldController implements ContactListener {
     private void updateCamera() {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         InputController input = InputController.getInstance();
-        if (input.didLeft()) {
+        if (input.didLeft() && camera.position.x > camera.viewportWidth/2) {
             camera.position.x = camera.position.x - PAN_CONST;
             camOffsetX = camOffsetX - PAN_CONST;
         }
-        if (input.heldUp()) {
+        if (input.heldUp() && camera.position.y < yBound - camera.viewportHeight/2) {
             camera.position.y = camera.position.y + PAN_CONST;
             camOffsetY = camOffsetY + PAN_CONST;
         }
-        if (input.didRight()) {
+        if (input.didRight() && camera.position.x < xBound - camera.viewportWidth/2) {
             camera.position.x = camera.position.x + PAN_CONST;
             camOffsetX = camOffsetX + PAN_CONST;
         }
-        if (input.heldDown()) {
+        if (input.heldDown() && camera.position.y > camera.viewportHeight/2) {
             camera.position.y = camera.position.y - PAN_CONST;
             camOffsetY = camOffsetY - PAN_CONST;
         }
