@@ -30,6 +30,8 @@ public class EditController extends WorldController implements ContactListener {
     /** Bounds of this level */
     private float xBound = (1280*1.5f) / scale.x;
     private float yBound = (720*1.5f) / scale.y;
+    private float screenX = 1.5f;
+    private float screenY = 1.5f;
 
     /** Current obstacle */
     private Obstacle current;
@@ -118,6 +120,7 @@ public class EditController extends WorldController implements ContactListener {
 
     public void reset() {
         level.dispose();
+        canvas.resetCamera();
 
         if (loadFile != null) {
             levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
@@ -422,7 +425,12 @@ public class EditController extends WorldController implements ContactListener {
     public void draw(float dt) {
         canvas.clear();
 
-        level.draw(canvas);
+        Texture background = JsonAssetManager.getInstance().getEntry("background", Texture.class);
+        canvas.begin();
+        canvas.draw(background, 0, 0, canvas.getWidth()*screenX, canvas.getHeight()*screenY);
+        canvas.end();
+
+        level.draw(canvas, 'e');
 
 //        canvas.begin();
 //        if (current != null) {
