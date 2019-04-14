@@ -173,7 +173,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
         // Load the next two images immediately.
         background = new Texture(BACKGROUND_FILE);
         spin = new Texture(SPIN_FILE);
-        title = new FilmStrip(new Texture(TITLE_FILE), 4, 1, 4, 20);
+        title = new FilmStrip(new Texture(TITLE_FILE), 4, 1, 4, 20, "title");
 
         // No progress so far.
         progress   = 0;
@@ -213,7 +213,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 
         for(String s : manager.getAssetNames()) {
             if (manager.isLoaded(s) && !loaded.contains(s)){
-                System.out.println(s);
+                //System.out.println(s);
                 loaded.add(s);
             }
         }

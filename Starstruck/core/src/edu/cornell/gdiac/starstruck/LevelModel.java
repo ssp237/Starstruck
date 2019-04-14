@@ -299,7 +299,7 @@ public class LevelModel {
         //add worms
        JsonValue wormVals = levelFormat.get("worms").child();
         while (wormVals != null) {
-            Worm wormie = Worm.fromJSON(wormVals, scale, bounds.getWidth());
+            Worm wormie = Worm.fromJSON(wormVals, scale);
             activate(wormie);
             enemies.add(wormie);
             wormVals = wormVals.next;
@@ -322,6 +322,7 @@ public class LevelModel {
         planets.clear();
         stars.clear();
         anchors.clear();
+        enemies.clear();
         vectorWorld = new VectorWorld();
     }
 
@@ -336,6 +337,7 @@ public class LevelModel {
             case STAR: activate(obj); break;
             case PLAYER: addPlayer((AstronautModel) obj); break;
             case ROPE: objects.add(0, obj); obj.activatePhysics(world); rope = (Rope) obj; break;
+            case WORM: activate(obj); enemies.add((Worm) obj); break;
         }
     }
 
@@ -350,6 +352,7 @@ public class LevelModel {
             case PLANET: obj.deactivatePhysics(world); planets.remove((Planet) obj); break;
             case ANCHOR: deactivate(obj); break;
             case STAR: deactivate(obj); break;
+            case WORM: deactivate(obj); enemies.remove((Worm) obj); break;
         }
     }
 

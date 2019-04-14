@@ -360,7 +360,11 @@ public class AstronautModel extends CapsuleObstacle {
      *
      * @param anchor the anchor the astronaut is glued to
      */
-    public void setAnchored(Anchor anchor) { anchorPos = anchor.getPosition(); isAnchored = true;}
+    public void setAnchored(Anchor anchor) {
+        anchorPos = anchor.getPosition();
+        curAnchor = anchor;
+        isAnchored = true;
+    }
 
     /**
      * Sets astronaut to be unanchored

@@ -280,77 +280,7 @@ public class Rope extends ComplexObstacle {
 
     public Array<Joint> getJointList() { return joints; }
 
-
-    public Body getLastPlankBody() {
-        return bodies.get(bodies.size - 1).getBody();
-    }
-
-    public void removeLastJoint (Rope rope) {
-        joints.removeIndex(joints.size - 1);
-    }
-
-
-    public void newPairPlank(World world, Rope rope) {
-//        System.out.println(bodies.size);
-//        System.out.println(planks.size());
-
-        //need to remove last plank and replace it with two new ones
-        removeLastJoint(rope);
-        bodies.removeIndex(bodies.size-1);
-
-        float x0 = rope.getPosition().x;
-        float y0 = rope.getPosition().y;
-
-        // Create the extra plank
-        planksize.x = linksize;
-        Vector2 pos = new Vector2();
-        nlinks++;
-
-        float t = (nlinks - 1) *(linksize+spacing) + linksize/2.0f;
-        // pos.set(norm);
-        pos.scl(t);
-        pos.add(x0,y0);
-        BoxObstacle plank = new BoxObstacle(pos.x, pos.y, planksize.x, planksize.y);
-        plank.setName(PLANK_NAME+(nlinks - 1));
-        plank.setDensity(BASIC_DENSITY);
-        bodies.add(plank);
-
-        t = (nlinks) *(linksize+spacing) + linksize/2.0f;
-        // pos.set(norm);
-        pos.scl(t);
-        pos.add(x0,y0);
-        BoxObstacle plank2 = new BoxObstacle(pos.x, pos.y, planksize.x, planksize.y);
-        plank2.setName(PLANK_NAME+(nlinks));
-        plank2.setDensity(BASIC_DENSITY);
-        bodies.add(plank2);
-
-
-
-        //Create extra plank joints
-        Vector2 anchor1 = new Vector2();
-        Vector2 anchor2 = new Vector2(-linksize / 2, 0);
-        anchor1.x = linksize / 2;
-
-        RevoluteJointDef jointDef = new RevoluteJointDef();
-
-        jointDef.bodyA = bodies.get(bodies.size-2).getBody();
-        jointDef.bodyB = bodies.get(bodies.size-1).getBody();
-        jointDef.localAnchorA.set(anchor1);
-        jointDef.localAnchorB.set(anchor2);
-        Joint joint = world.createJoint(jointDef);
-        joints.add(joint);
-
-
-        anchor2.x = 0;
-        jointDef.bodyA = bodies.get(bodies.size - 1).getBody();
-        jointDef.bodyB = avatar2.getBody();
-        jointDef.localAnchorA.set(anchor1);
-        jointDef.localAnchorB.set(anchor2);
-        joint = world.createJoint(jointDef);
-        joints.add(joint);
-
-        length = nlinks * linksize + nlinks * spacing;
-    }
+    public Array<Obstacle> getPlanks() { return bodies; }
 
     /**
      * Extends the rope
@@ -456,10 +386,11 @@ public class Rope extends ComplexObstacle {
     /**
      * Shortens the rope by n links, applys a force to shortened side
      *
-     * @param isAvatar2 Is avatar2 the side to be shortened
+     * @param astro The side to be shortened
      * @param world The world
      */
-    public void shortenRope(boolean isAvatar2, Vector2 otherPos, World world, int n) {
+    public void shortenRope(AstronautModel astro, Vector2 otherPos, World world, int n) {
+        boolean isAvatar2 = astro == avatar2;
         if (isAvatar2)
             astroCache = avatar2;
         else
@@ -510,7 +441,7 @@ public class Rope extends ComplexObstacle {
             joints.insert(0, joint);
 
         Vector2 force = otherPos.cpy().sub(astroCache.getPosition());
-        force.setLength(6);
+        force.setLength(astroCache.getJumpPulse());
 //        if (astroCache.getOnPlanet()) {
 //            astroCache.setPosition(lastPlank.getPosition());
 //            astroCache.setOnPlanet(false);

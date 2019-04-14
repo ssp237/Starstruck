@@ -433,7 +433,7 @@ public class JsonAssetManager extends AssetManager {
 		int cols = json.getInt("cols");
 		int size = json.getInt("size");
 		int delay = json.getInt("delay");
-		FilmStrip strip = new FilmStrip(get(filename, Texture.class), rows, cols, size, delay);
+		FilmStrip strip = new FilmStrip(get(filename, Texture.class), rows, cols, size, delay, json.name());
 		strip.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 		if (json.getBoolean("wrap")) {
 			strip.getTexture().setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
@@ -496,7 +496,7 @@ public class JsonAssetManager extends AssetManager {
 			} else if (type.equals(Texture.class)) {
 				return (T)textures.get(key);
 			} else if (type.equals(FilmStrip.class)) {
-				return (T)filmstrips.get(key);
+				return (T)filmstrips.get(key).copy();
 			} else if (type.equals(BitmapFont.class)) {
 				return (T)fonts.get(key);
 			} else if (type.equals(Sound.class)) {
@@ -544,10 +544,11 @@ public class JsonAssetManager extends AssetManager {
 	 * @return Key associated with strip; null if not found.
 	 */
 	public String getKey(FilmStrip strip) {
-		for (ObjectMap.Entry<String, FilmStrip> entry : filmstrips) {
-			if (strip.equals(entry.value)) return entry.key;
-		}
-		return null; //Not found
+		return strip.getName();
+//		for (ObjectMap.Entry<String, FilmStrip> entry : filmstrips) {
+//			if (strip.equals(entry.value)) return entry.key;
+//		}
+//		return null; //Not found
 	}
 
 	/**

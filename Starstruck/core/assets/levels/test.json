@@ -177,13 +177,13 @@
     {
       "texture": "pink worm",
       "x": 6.5,
-      "y": 7,
+      "y": 15,
       "velocity": -1.4
     },
     {
       "texture": "green worm",
       "x": 6.5,
-      "y": 9,
+      "y": 12,
       "velocity": -2
     }
   ]
