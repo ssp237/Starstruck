@@ -54,7 +54,7 @@ import java.util.LinkedList;
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
-public class MenuMode extends GameController implements Screen, InputProcessor, ControllerListener {
+public class MenuMode extends WorldController implements Screen, InputProcessor, ControllerListener {
     // Textures necessary to support the loading screen
     private static final String BACKGROUND_FILE = "shared/menu.png";
     private static final String PLAY_BTN_FILE = "buttons/play.png";
