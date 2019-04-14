@@ -264,19 +264,19 @@ public class EditController extends WorldController implements ContactListener {
     private void updateCamera() {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         InputController input = InputController.getInstance();
-        if (input.didLeft() && camera.position.x > camera.viewportWidth/2) {
+        if (input.didLeft()) { //&& camera.position.x > camera.viewportWidth/2) {
             camera.position.x = camera.position.x - PAN_CONST;
             camOffsetX = camOffsetX - PAN_CONST;
         }
-        if (input.heldUp() && camera.position.y < yBound - camera.viewportHeight/2) {
+        if (input.heldUp()) { //&& camera.position.y < yBound - camera.viewportHeight/2) {
             camera.position.y = camera.position.y + PAN_CONST;
             camOffsetY = camOffsetY + PAN_CONST;
         }
-        if (input.didRight() && camera.position.x < xBound - camera.viewportWidth/2) {
+        if (input.didRight()) { //&& camera.position.x < xBound - camera.viewportWidth/2) {
             camera.position.x = camera.position.x + PAN_CONST;
             camOffsetX = camOffsetX + PAN_CONST;
         }
-        if (input.heldDown() && camera.position.y > camera.viewportHeight/2) {
+        if (input.heldDown()) { //&& camera.position.y > camera.viewportHeight/2) {
             camera.position.y = camera.position.y - PAN_CONST;
             camOffsetY = camOffsetY - PAN_CONST;
         }
