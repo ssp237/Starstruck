@@ -25,7 +25,7 @@ import java.util.Arrays;
 public class EditController extends WorldController implements ContactListener {
 
     /** Speed of camera pan & zoom */
-    private static final float PAN_CONST = 4;
+    private static final float PAN_CONST = 8;
     private static final float ZOOM_FACTOR = 0.02f;
     /** Bounds of this level */
     private float xBound = (1280*1.5f) / scale.x;
@@ -198,7 +198,7 @@ public class EditController extends WorldController implements ContactListener {
         if (input.didPrimary()){
             Worm wormy = (Worm) current;
             String key = JsonAssetManager.getInstance().getKey(wormy.getTexture());
-            System.out.println(key);
+            //System.out.println(key);
             int i = Arrays.binarySearch(WORM_TEXTURES, key);
             wormy.setTexture(JsonAssetManager.getInstance().getEntry(WORM_TEXTURES[(i + 1) % WORM_TEXTURES.length], FilmStrip.class));
 
@@ -395,7 +395,7 @@ public class EditController extends WorldController implements ContactListener {
             } else if (input.didW()){
                 Vector2 pos = input.getCrossHair();
                 current = new Worm(pos.x + camScaleX + w, pos.y + camScaleY + h,
-                        JsonAssetManager.getInstance().getEntry("pink worm", FilmStrip.class), scale, 0);
+                        JsonAssetManager.getInstance().getEntry(WORM_TEXTURES[0], FilmStrip.class), scale, 0);
                 level.add(current);
             }
             if (input.mouseDragged()) {

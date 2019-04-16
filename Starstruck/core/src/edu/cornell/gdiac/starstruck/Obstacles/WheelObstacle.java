@@ -133,6 +133,6 @@ public class WheelObstacle extends SimpleObstacle {
 
     public boolean containsPoint(Vector2 point) {
         //System.out.println("dist is " + Obstacle.dist(point, center) + "   and radius is " + getRadius());
-        return Obstacle.dist(point, getPosition()) < getRadius();
+        return dist(point, getPosition()) < getRadius();
     }
 }
