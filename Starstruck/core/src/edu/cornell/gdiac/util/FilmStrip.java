@@ -209,4 +209,12 @@ public class FilmStrip extends TextureRegion {
         }
     }
 
+    /**
+     *  Return if the filmstrip has just reset i.e. frame is 0 and countdown is full.
+     * @return if the filmstrip has just reset i.e. frame is 0 and countdown is full.
+     */
+    public boolean justReset() {
+        return frame == 0 && count == delay;
+    }
+
 }
