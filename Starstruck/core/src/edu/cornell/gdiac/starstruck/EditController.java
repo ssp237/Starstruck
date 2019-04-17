@@ -25,11 +25,13 @@ import java.util.Arrays;
 public class EditController extends WorldController implements ContactListener {
 
     /** Speed of camera pan & zoom */
-    private static final float PAN_CONST = 4;
+    private static final float PAN_CONST = 8;
     private static final float ZOOM_FACTOR = 0.02f;
     /** Bounds of this level */
     private float xBound = (1280*1.5f) / scale.x;
     private float yBound = (720*1.5f) / scale.y;
+    private float screenX = 1.5f;
+    private float screenY = 1.5f;
 
     /** Current obstacle */
     private Obstacle current;
@@ -118,6 +120,7 @@ public class EditController extends WorldController implements ContactListener {
 
     public void reset() {
         level.dispose();
+        canvas.resetCamera();
 
         if (loadFile != null) {
             levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
@@ -195,7 +198,7 @@ public class EditController extends WorldController implements ContactListener {
         if (input.didPrimary()){
             Worm wormy = (Worm) current;
             String key = JsonAssetManager.getInstance().getKey(wormy.getTexture());
-            System.out.println(key);
+            //System.out.println(key);
             int i = Arrays.binarySearch(WORM_TEXTURES, key);
             wormy.setTexture(JsonAssetManager.getInstance().getEntry(WORM_TEXTURES[(i + 1) % WORM_TEXTURES.length], FilmStrip.class));
 
@@ -264,19 +267,19 @@ public class EditController extends WorldController implements ContactListener {
     private void updateCamera() {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         InputController input = InputController.getInstance();
-        if (input.didLeft() && camera.position.x > camera.viewportWidth/2) {
+        if (input.didLeft()) { //&& camera.position.x > camera.viewportWidth/2) {
             camera.position.x = camera.position.x - PAN_CONST;
             camOffsetX = camOffsetX - PAN_CONST;
         }
-        if (input.heldUp() && camera.position.y < yBound - camera.viewportHeight/2) {
+        if (input.heldUp()) { //&& camera.position.y < yBound - camera.viewportHeight/2) {
             camera.position.y = camera.position.y + PAN_CONST;
             camOffsetY = camOffsetY + PAN_CONST;
         }
-        if (input.didRight() && camera.position.x < xBound - camera.viewportWidth/2) {
+        if (input.didRight()) { //&& camera.position.x < xBound - camera.viewportWidth/2) {
             camera.position.x = camera.position.x + PAN_CONST;
             camOffsetX = camOffsetX + PAN_CONST;
         }
-        if (input.heldDown() && camera.position.y > camera.viewportHeight/2) {
+        if (input.heldDown()) { //&& camera.position.y > camera.viewportHeight/2) {
             camera.position.y = camera.position.y - PAN_CONST;
             camOffsetY = camOffsetY - PAN_CONST;
         }
@@ -392,7 +395,7 @@ public class EditController extends WorldController implements ContactListener {
             } else if (input.didW()){
                 Vector2 pos = input.getCrossHair();
                 current = new Worm(pos.x + camScaleX + w, pos.y + camScaleY + h,
-                        JsonAssetManager.getInstance().getEntry("pink worm", FilmStrip.class), scale, 0);
+                        JsonAssetManager.getInstance().getEntry(WORM_TEXTURES[0], FilmStrip.class), scale, 0);
                 level.add(current);
             }
             if (input.mouseDragged()) {
@@ -422,7 +425,12 @@ public class EditController extends WorldController implements ContactListener {
     public void draw(float dt) {
         canvas.clear();
 
-        level.draw(canvas);
+        Texture background = JsonAssetManager.getInstance().getEntry("background", Texture.class);
+        canvas.begin();
+        canvas.draw(background, 0, 0, canvas.getWidth()*screenX, canvas.getHeight()*screenY);
+        canvas.end();
+
+        level.draw(canvas, 'e');
 
 //        canvas.begin();
 //        if (current != null) {

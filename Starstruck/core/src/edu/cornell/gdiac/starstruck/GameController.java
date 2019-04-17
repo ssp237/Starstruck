@@ -725,7 +725,7 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         // +/- 1 for a little bit of buffer space because astronaut position is at its center
-        if (!isFailure() && ((avatar.getY() < -1 || avatar.getY() > yBound+1 || avatar.getX() < -1 || avatar.getX() > xBound+1)
+        if (!isFailure() && !isComplete() && ((avatar.getY() < -1 || avatar.getY() > yBound+1 || avatar.getX() < -1 || avatar.getX() > xBound+1)
                 || (avatar2.getY() < -1 || avatar2.getY() > yBound+1 || avatar2.getX() < -1 || avatar2.getX() > xBound+1))
                 && !avatar.getOnPlanet() && !avatar2.getOnPlanet()){ //&& !avatar.isAnchored() && !avatar2.isAnchored()
             setFailure(true);
@@ -802,7 +802,7 @@ public class GameController extends WorldController implements ContactListener {
             SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
         }
 
-        if ((dist(avatar.getPosition(), enemy.getPosition()) < 1f || dist(avatar2.getPosition(), enemy.getPosition()) < 1f) && !testE)
+        if ((dist(avatar.getPosition(), enemy.getPosition()) < 1f || dist(avatar2.getPosition(), enemy.getPosition()) < 1f) && !isComplete() && !testE)
             setFailure(true);
 
 //        if (pinkworm.getPosition().x > 19 || pinkworm.getPosition().x < 12) {
@@ -998,12 +998,12 @@ public class GameController extends WorldController implements ContactListener {
                 barrier = false;
 
             //If worm and astronaut touch and astronaut is not on planet then lose
-            if (bd1 == avatar && !avatar.getOnPlanet() && bd2.getType() == ObstacleType.WORM
-                    || bd2 == avatar && !avatar.getOnPlanet() && bd1.getType() == ObstacleType.WORM) {
+            if (!isComplete() && (bd1 == avatar && !avatar.getOnPlanet() && bd2.getType() == ObstacleType.WORM
+                    || bd2 == avatar && !avatar.getOnPlanet() && bd1.getType() == ObstacleType.WORM)) {
                 setFailure(true);
             }
-            if (bd1 == avatar2 && !avatar2.getOnPlanet() && bd2.getType() == ObstacleType.WORM
-                    || bd2 == avatar2 && !avatar2.getOnPlanet() && bd1.getType() == ObstacleType.WORM) {
+            if (!isComplete() && (bd1 == avatar2 && !avatar2.getOnPlanet() && bd2.getType() == ObstacleType.WORM
+                    || bd2 == avatar2 && !avatar2.getOnPlanet() && bd1.getType() == ObstacleType.WORM)) {
                 setFailure(true);
             }
 //            if ((bd1.getName().contains("worm") || bd2.getName().contains("worm"))
@@ -1202,12 +1202,12 @@ public class GameController extends WorldController implements ContactListener {
             ropeList = rope.getPlanks();
             BoxObstacle plank0 = (BoxObstacle)ropeList.get(0);
             BoxObstacle plank1 = (BoxObstacle)ropeList.get(1);
+            BoxObstacle plank4 = (BoxObstacle)ropeList.get(2);
             BoxObstacle plank2 = (BoxObstacle)ropeList.get(ropeList.size-2);
             BoxObstacle plank3 = (BoxObstacle)ropeList.get(ropeList.size-1);
-            BoxObstacle plank4 = (BoxObstacle)ropeList.get(2);
             BoxObstacle plank5 = (BoxObstacle)ropeList.get(ropeList.size-3);
-            if (bd1N.contains("anchor") && (bd2 == plank0 || bd2 == plank1 || bd2 == plank2 || bd2 == plank3 || bd2 == plank4 || bd2 == plank5)
-                    || bd2N.contains("anchor") && (bd1 == plank0 || bd1 == plank1 || bd1 == plank2 || bd1 == plank3 || bd1 == plank4 || bd1 == plank5)) {
+            if (bd1N.contains("anchor") && (bd2 == plank0 || bd2 == plank1 || bd2 == plank2 || bd2 == plank3)
+                    || bd2N.contains("anchor") && (bd1 == plank0 || bd1 == plank1 || bd1 == plank2 || bd1 == plank3)) {
                 contact.setEnabled(false);
             }
 

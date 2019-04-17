@@ -519,4 +519,50 @@ public class LevelModel {
             canvas.endDebug();
         }
     }
+
+    /**
+     * Draw method for level editor that doesn't tile background
+     *
+     * @param canvas
+     * @param c
+     */
+    public void draw(GameCanvas canvas, char c) {
+//        canvas.clear();
+        canvas.begin();
+
+        float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
+        float y = (float) Math.floor((canvas.getCamera().position.y - canvas.getHeight()/2)/canvas.getHeight()) * canvas.getHeight();
+
+//        canvas.draw(background, Color.WHITE, x, y,canvas.getWidth(),canvas.getHeight());
+//        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y,canvas.getWidth(),canvas.getHeight());
+//        canvas.draw(background, Color.WHITE, x, y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
+//        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
+
+        for(Planet p : planets.getPlanets()){
+            p.draw(canvas);
+        }
+        for(Obstacle obj : objects) {
+            if (obj.getType() != ObstacleType.PLAYER) obj.draw(canvas);
+        }
+        if (player1.isActive()) { player2.draw(canvas); player1.draw(canvas); }
+        else { player1.draw(canvas); player2.draw(canvas); }
+        for (Enemy e: enemies) {
+            e.draw(canvas);
+        }
+        canvas.end();
+
+        if (debug) {
+            canvas.beginDebug();
+            for(Planet p : planets.getPlanets()){
+                p.drawDebug(canvas);
+            }
+            for(Obstacle obj : objects) {
+                obj.drawDebug(canvas);
+            }
+            for (Enemy e: enemies) {
+                e.drawDebug(canvas);
+            }
+            canvas.endDebug();
+        }
+    }
 }
