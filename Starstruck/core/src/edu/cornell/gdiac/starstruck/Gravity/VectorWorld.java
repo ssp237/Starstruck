@@ -78,7 +78,7 @@ public class VectorWorld {
         //System.out.println(planets);
 //        System.out.println("_______________________________________________________________");
         for (Planet p : planets) {
-            if (dist(pos, p.getPosition()) < p.grange + p.getRadius()) {
+            if (dist(pos, p.getPosition()) < p.grange + p.getRadius() + 1) { //+1 to account for the fact that object is not exactly its position
 //                System.out.println(p);
                 totalForce.add(forceToPlanet(pos, p));
             }

@@ -99,6 +99,10 @@
     "loading": {
       "file": "shared/loading.png",
       "wrap": false
+    },
+    "static portal": {
+      "file": "platform/static_portal_v1.png",
+      "wrap": false
     }
   },
   "textures": {
