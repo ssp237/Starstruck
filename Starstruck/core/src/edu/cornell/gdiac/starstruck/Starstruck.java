@@ -1,5 +1,5 @@
 /*
- * GDXRoot.java
+ * Starstruck.java
  *
  * This is the primary class file for running the game.  It is the "static main" of
  * LibGDX.  In the first lab, we extended ApplicationAdapter.  In previous lab
@@ -26,7 +26,7 @@ import edu.cornell.gdiac.util.ScreenListener;
  * plaforms. In addition, this functions as the root class all intents and purposes,
  * and you would draw it as a root class in an architecture specification.
  */
-public class GDXRoot extends Game implements ScreenListener {
+public class Starstruck extends Game implements ScreenListener {
 	/** Drawing context to display graphics (VIEW CLASS) */
 	private GameCanvas canvas;
 	/** Avatar mode for the asset loading screen (CONTROLLER CLASS) */
@@ -46,7 +46,7 @@ public class GDXRoot extends Game implements ScreenListener {
 	 * This method configures the asset manager, but does not load any assets
 	 * or assign any screen.
 	 */
-	public GDXRoot() {
+	public Starstruck() {
 		// Start loading with the asset manager
 //		manager = new AssetManager();
 //
