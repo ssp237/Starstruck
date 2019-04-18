@@ -459,6 +459,10 @@ public class LevelModel {
         out.addChild("physicsSize", physicsSize);
         out.addChild("graphicSize", graphicsSize);
 
+        //Add Galaxy
+
+        out.addChild("galaxy", new JsonValue(galaxy.fullName()));
+
         //Add background
         out.addChild("background", new JsonValue(JsonAssetManager.getInstance().getKey(background)));
 
@@ -557,7 +561,6 @@ public class LevelModel {
      */
     public void draw(GameCanvas canvas, char c) {
 //        canvas.clear();
-        System.out.println(background);
 
         canvas.begin();
 
