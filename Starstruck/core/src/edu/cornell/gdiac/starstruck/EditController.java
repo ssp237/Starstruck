@@ -112,7 +112,6 @@ public class EditController extends WorldController implements ContactListener {
     public class GalaxyListener implements Input.TextInputListener {
 
         public void input (String text) {
-            System.out.println(text);
             Galaxy gal = Galaxy.fromString(text);
             level.setGalaxy(gal);
             galaxy = gal;
@@ -351,7 +350,6 @@ public class EditController extends WorldController implements ContactListener {
     }
 
     public void update(float dt) {
-        System.out.println(Arrays.toString(FISH_TEXTURES));
         OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
         //System.out.println(wormListener.worm);
         //System.out.println(current);

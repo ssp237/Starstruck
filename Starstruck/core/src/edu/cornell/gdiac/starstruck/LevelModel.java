@@ -209,7 +209,6 @@ public class LevelModel {
         Planet.setGalaxy(galaxy);
         String gal = galaxy.getChars();
         this.background = JsonAssetManager.getInstance().getEntry(gal + " background", Texture.class);
-        System.out.println(gal + this.background);
     }
 
     /**

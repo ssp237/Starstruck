@@ -97,8 +97,6 @@ public class Planet extends WheelObstacle {
 
         String gal = galaxy.getChars();
 
-        System.out.println(gal + " p" + i);
-
         texture = JsonAssetManager.getInstance().getEntry(( gal + " p" + i), TextureRegion.class);
         ringTexture = JsonAssetManager.getInstance().getEntry((gal + " g" + i), TextureRegion.class);
 
