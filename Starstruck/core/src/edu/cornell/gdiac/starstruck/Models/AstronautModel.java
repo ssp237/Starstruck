@@ -758,7 +758,10 @@ public class AstronautModel extends CapsuleObstacle {
 
         if (onPlanet) {
             if (justMoved || !idle.justReset()) idle.tick();
+//            else if (!idle.justReset()) idle.kcit();
         }
+
+        if (!onPlanet && !idle.justReset()) idle.reset();
 
         if (isAnchored){
             //setPosition(anchorPos);

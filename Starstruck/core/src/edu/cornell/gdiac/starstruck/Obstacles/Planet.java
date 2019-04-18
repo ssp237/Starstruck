@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.starstruck.Galaxy;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
@@ -31,6 +32,9 @@ public class Planet extends WheelObstacle {
     private static float mass2 = 800;
     private static float mass3 = 900;
     private static float mass4 = 1000;
+
+    /** Current galaxy for drawing */
+    private static Galaxy galaxy = Galaxy.WHIRLPOOL;
 
     private float grscale;
 
@@ -91,8 +95,12 @@ public class Planet extends WheelObstacle {
             i = ((i - 1) % NUM_PLANETS) + 1 + NUM_PLANETS;
         }
 
-        texture = JsonAssetManager.getInstance().getEntry(("wp p" + i), TextureRegion.class);
-        ringTexture = JsonAssetManager.getInstance().getEntry(("wp g" + i), TextureRegion.class);
+        String gal = galaxy.getChars();
+
+        System.out.println(gal + " p" + i);
+
+        texture = JsonAssetManager.getInstance().getEntry(( gal + " p" + i), TextureRegion.class);
+        ringTexture = JsonAssetManager.getInstance().getEntry((gal + " g" + i), TextureRegion.class);
 
         float radius = texture.getRegionWidth() / (scale.x * 2);
         setRadius(radius);
@@ -146,6 +154,22 @@ public class Planet extends WheelObstacle {
         mass2 = vals[1];
         mass3 = vals[2];
         mass4 = vals[3];
+    }
+
+    /**
+     * Set the galaxy to galaxy.
+     * @param galaxy The galaxy to set as the current galaxy.
+     */
+    public static void setGalaxy(Galaxy galaxy){
+        Planet.galaxy = galaxy;
+    }
+
+    /**
+     *  Set the current galaxy to the galaxy represented by string S.
+     * @param s A string representing the galaxy t set as the new current galaxy.
+     */
+    public static void setGalaxy(String s) {
+        setGalaxy(Galaxy.fromString(s));
     }
 
     /**

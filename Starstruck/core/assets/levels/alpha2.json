@@ -1,6 +1,7 @@
 {
 "physicsSize": [ 38.400001525878906, 21.600000381469727 ],
 "graphicSize": [ 1280, 720 ],
+"galaxy": "whirlpool",
 "background": "background",
 "astronaut 1": {
 	"pos": [ 5.072487831115723, 8.502835273742676 ],
