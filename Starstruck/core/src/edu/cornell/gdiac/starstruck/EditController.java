@@ -54,6 +54,11 @@ public class EditController extends WorldController implements ContactListener {
     private JsonValue  levelFormat;
     /** The reader to process JSON files */
     private JsonReader jsonReader;
+    /** Reader to process galaxy switches */
+    private GalaxyListener galListener;
+
+    /** Current galaxy to source assets from */
+    private Galaxy galaxy;
 
     /** References to players and rope */
     private AstronautModel player1;
@@ -100,6 +105,20 @@ public class EditController extends WorldController implements ContactListener {
         }
     }
 
+    public class GalaxyListener implements Input.TextInputListener {
+
+        public void input (String text) {
+            System.out.println(text);
+            Galaxy gal = Galaxy.fromString(text);
+            level.setGalaxy(gal);
+            galaxy = gal;
+
+        }
+
+        public void canceled () {
+        }
+    }
+
 
     public EditController() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
@@ -113,9 +132,12 @@ public class EditController extends WorldController implements ContactListener {
         vectorWorld = new VectorWorld();
         save = new SaveListener();
         wormListener = new WormListener();
+        galListener = new GalaxyListener();
         jsonReader = new JsonReader();
         loadFile = null;
         levelFormat = null;
+        galaxy = Galaxy.WHIRLPOOL;
+        level.setGalaxy(galaxy);
     }
 
     public void reset() {
@@ -139,6 +161,7 @@ public class EditController extends WorldController implements ContactListener {
         setFailure(false);
         save = new SaveListener();
         load = new SaveListener();
+        galListener = new GalaxyListener();
     }
 
     private void createPlayers() {
@@ -374,6 +397,8 @@ public class EditController extends WorldController implements ContactListener {
                 Gdx.input.getTextInput(save, "Save as...", "level.json", "");
             } else if (input.shiftHeld() && input.didO()) {
                 Gdx.input.getTextInput(load, "Load...", "level.json", "");
+            }else if (input.shiftHeld() && input.didG()) {
+                Gdx.input.getTextInput(galListener, "Switch to what galaxy?", "whirlpool", "");
             } else if (input.shiftHeld() && input.didD()) {
                 loadFile = null;
                 reset();
@@ -425,7 +450,8 @@ public class EditController extends WorldController implements ContactListener {
     public void draw(float dt) {
         canvas.clear();
 
-        Texture background = JsonAssetManager.getInstance().getEntry("background", Texture.class);
+        String gal = galaxy.getChars();
+        Texture background = JsonAssetManager.getInstance().getEntry(gal + " background", Texture.class);
         canvas.begin();
         canvas.draw(background, 0, 0, canvas.getWidth()*screenX, canvas.getHeight()*screenY);
         canvas.end();

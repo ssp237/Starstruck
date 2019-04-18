@@ -557,6 +557,8 @@ public class LevelModel {
      */
     public void draw(GameCanvas canvas, char c) {
 //        canvas.clear();
+        System.out.println(background);
+
         canvas.begin();
 
         float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();

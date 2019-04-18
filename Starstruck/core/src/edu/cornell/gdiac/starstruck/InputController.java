@@ -92,6 +92,8 @@ public class InputController {
     private boolean oPrevious;
     private boolean wPressed;
     private boolean wPrevious;
+    private boolean gPressed;
+    private boolean gPrevious;
     /** Whether space was pressed */
     private boolean spacePressed;
     private boolean spacePrevious;
@@ -325,8 +327,13 @@ public class InputController {
     public boolean didD() {
         return dPressed && !dPrevious;
     }
+
     public boolean didW() {
         return wPressed && !wPrevious;
+    }
+
+    public boolean didG() {
+        return gPressed && !gPrevious;
     }
 
     public float xPos() {return Gdx.input.getX();}
@@ -381,6 +388,7 @@ public class InputController {
         sPrevious = sPressed;
         oPrevious = oPressed;
         wPrevious = wPressed;
+        gPrevious = gPressed;
         spacePrevious = spacePressed;
         shiftPrevious = shiftPressed;
         tertiaryPrevious = tertiaryPressed;
@@ -464,6 +472,7 @@ public class InputController {
         dPressed = Gdx.input.isKeyPressed (Input.Keys.D);
         oPressed = Gdx.input.isKeyPressed (Input.Keys.O);
         wPressed = Gdx.input.isKeyPressed (Input.Keys.W);
+        gPressed = Gdx.input.isKeyPressed (Input.Keys.G);
         resetPressed = Gdx.input.isKeyPressed(Input.Keys.R);
 
         // Directional controls
