@@ -21,15 +21,19 @@ import com.badlogic.gdx.physics.box2d.joints.*;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.util.JsonAssetManager;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.starstruck.GameCanvas;
+import com.badlogic.gdx.graphics.Color;
 
 public class Portal extends BoxObstacle {
 
     /** TODO */
-    private FilmStrip texture;
+    //private FilmStrip texture;
     /** Which portal this is -- 1 or 2*/
     private int portNum;
     /** The name of this portal pair */
     private String portName;
+    /** Color of this portal */
+    private Color color = Color.WHITE;
 
     /**
      * Creates a new spinner at the origin.
@@ -88,17 +92,31 @@ public class Portal extends BoxObstacle {
         return out;
     }
 
+    /**
+     * Set the name of the portalpair this portal belongs to
+     *
+     * @param name Name
+     */
     public void setPortName(String name) { portName = name; }
 
+    /**
+     * Get the name of the portal pair this portal belongs to
+     *
+     * @return String name this portal belongs to
+     */
     public String getPortName() { return portName; }
 
-//    /**
-//     * TODO
-//     * @param texture
-//     */
-//    public void setTexture(FilmStrip texture) {
-//
-//    }
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    /**
+     * TODO
+     * @param texture
+     */
+    public void setTexture(FilmStrip texture) {
+
+    }
 
     /**
      * TODO
@@ -109,4 +127,8 @@ public class Portal extends BoxObstacle {
 //    }
 
     public ObstacleType getType() { return ObstacleType.PORTAL;}
+
+    public void draw(GameCanvas canvas) {
+        canvas.draw(texture,color, origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+    }
 }

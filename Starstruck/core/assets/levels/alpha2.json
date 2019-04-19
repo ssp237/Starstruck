@@ -195,7 +195,7 @@
 	"portalpairs": [
 		{
 			"texture": "static portal",
-			"color": "blue",
+			"color": "0",
 			"name": "portalpair1",
 			"x1": 14,
 			"y1": 14,

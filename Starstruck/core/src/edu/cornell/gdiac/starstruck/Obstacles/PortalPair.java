@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.util.JsonAssetManager;
 import edu.cornell.gdiac.starstruck.Models.*;
+import com.badlogic.gdx.graphics.Color;
 
 public class PortalPair {
 
@@ -28,6 +29,8 @@ public class PortalPair {
     private TextureRegion textureRegion;
     /** Draw scale */
     private Vector2 scale;
+    /** integer code for this color */
+    private int color;
 
     private PortalPair(float width, float height, float p1x, float p1y, float p2x, float p2y) {
         portal1 = new Portal(p1x, p1y, width, height, 1);
@@ -55,10 +58,13 @@ public class PortalPair {
 //        portal2.setTexture(texture);
 //    }
 
-    public PortalPair(float p1x, float p1y, float p2x, float p2y, String name, Vector2 scale, TextureRegion texture) {
+    public PortalPair(float p1x, float p1y, float p2x, float p2y, String name, Vector2 scale, TextureRegion texture, int color) {
         this(texture.getRegionWidth()/scale.x, texture.getRegionHeight()/scale.y, p1x, p1y, p2x, p2y, name, scale);
         portal1.setTexture(texture);
         portal2.setTexture(texture);
+        this.color = color;
+        portal1.setColor(portalColor(color));
+        portal2.setColor(portalColor(color));
         setTexture(texture);
     }
 
@@ -134,6 +140,17 @@ public class PortalPair {
     }
 
     /**
+     * 0: Blue, default
+     *
+     * @param color Number code for color
+     * @return The color
+     */
+    private Color portalColor(int color) {
+        if (color == 0) return Color.BLUE;
+        return Color.BLUE;
+    }
+
+    /**
      * Return a new anchor with parameters specified by the JSON
      * @param json A JSON containing data for one anchor
      * @param scale The scale to convert physics units to drawing units
@@ -143,7 +160,8 @@ public class PortalPair {
         String key = json.get("texture").asString();
         TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
         String name = json.get("name").asString();
-        PortalPair out =  new PortalPair(json.get("x1").asFloat(), json.get("y1").asFloat(), json.get("x2").asFloat(), json.get("y2").asFloat(), name, scale, texture);
+        int color = json.get("color").asInt();
+        PortalPair out =  new PortalPair(json.get("x1").asFloat(), json.get("y1").asFloat(), json.get("x2").asFloat(), json.get("y2").asFloat(), name, scale, texture, color);
         return out;
     }
 
