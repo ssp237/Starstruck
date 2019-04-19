@@ -82,6 +82,8 @@ public class LevelModel {
     //protected TextureRegion ropeTexture;
     /** List of enemies in the world */
     protected PooledList<Enemy> enemies = new PooledList<Enemy>();
+    /** List of portal pairs */
+    protected ArrayList<PortalPair> portalpairs = new ArrayList<PortalPair>();
 
     /**
      * Returns the bounding rectangle for the physics world
@@ -322,6 +324,17 @@ public class LevelModel {
             anchorVals = anchorVals.next;
         }
 
+        //add portals
+        i = 0;
+        JsonValue portalVals = levelFormat.get("portalpairs").child();
+        while (portalVals != null) {
+            PortalPair portalpair = PortalPair.fromJSON(portalVals, scale);
+            activate(portalpair.getPortal1());
+            activate(portalpair.getPortal2());
+            portalpairs.add(portalpair);
+            portalVals = portalVals.next;
+        }
+
 
         //add worms
        JsonValue wormVals = levelFormat.get("worms").child();
@@ -350,6 +363,7 @@ public class LevelModel {
         stars.clear();
         anchors.clear();
         enemies.clear();
+        portalpairs.clear();
         vectorWorld = new VectorWorld();
     }
 

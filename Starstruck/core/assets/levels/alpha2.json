@@ -192,5 +192,16 @@
 			"y": 4,
 			"velocity": -3
 		}
+	],
+	"portalpairs": [
+		{
+			"texture": "static portal",
+			"color": "0",
+			"name": "portalpair1",
+			"x1": 14,
+			"y1": 14,
+			"x2": 20,
+			"y2": 20
+		}
 	]
 }
