@@ -906,6 +906,7 @@ public class GameController extends WorldController implements ContactListener {
         }
         if (portalpairCache != null && portalpairCache.isActive()) {
             if (avatarCache == avatar) {
+                avatar2.setOnPlanet(false);
                 Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar2.getPosition());
                 dir.setLength(avatar.portalVel.len()*2);
                 avatar2.setLinearVelocity(dir);
@@ -913,6 +914,7 @@ public class GameController extends WorldController implements ContactListener {
                 //avatar.getBody().applyForce(avatar.portalVel, avatar.getPosition(), true);
             }
             else {
+                avatar.setOnPlanet(false);
                 Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar.getPosition());
                 dir.setLength(avatar2.portalVel.len()*2);
                 avatar.setLinearVelocity(dir);
