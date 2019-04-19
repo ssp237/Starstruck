@@ -184,7 +184,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Rope timer reset */
     private static final int ROPE_RESET = 9;
     /** Speed of camera in screen coordinates */
-    private static final float CAMERA_SPEED = 1f;
+    private static final float CAMERA_SPEED = 10f;
 
     // Other game objects
     /** The position of the spinning barrier */
@@ -556,7 +556,8 @@ public class GameController extends WorldController implements ContactListener {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         camTarget.set(xCam, yCam, 0);
         Vector3 dir = camTarget.sub(camera.position);
-        dir.setLength(CAMERA_SPEED);
+        if (dir.len() >= CAMERA_SPEED)
+            dir.setLength(CAMERA_SPEED);
         canvas.getCamera().position.add(dir);
         camera.update();
     }
