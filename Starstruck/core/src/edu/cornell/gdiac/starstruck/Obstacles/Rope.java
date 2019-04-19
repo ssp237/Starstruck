@@ -480,6 +480,15 @@ public class Rope extends ComplexObstacle {
         if (!joints.remove(lastJoint)) { System.out.println("lastJoint wasn't removed from joints in split"); }
         world.destroyJoint(lastJoint);
 
+        if (isAvatar2) {
+            for (int i = index; i < bodies.size(); i++)
+                bodies.get(i).setPosition(portal2.getPosition());
+        }
+        else {
+            for (int i = 0; i < index; i++)
+                bodies.get(i).setPosition(portal2.getPosition());
+        }
+
         //Make two new joints
         RevoluteJointDef jointDef = new RevoluteJointDef();
         Vector2 anchor1;
@@ -544,7 +553,7 @@ public class Rope extends ComplexObstacle {
 
     }
 
-    public void reconnect(World world, boolean isAvatar2, Joint joint1, Joint joint2) {
+    public void reconnect(World world, boolean isAvatar2, Joint joint1, Joint joint2, Vector2 portalPos) {
         int connect = joints.indexOf(joint1);
         if (connect < 0) System.out.println("reconnect method, joint could not be found");
 
@@ -556,6 +565,17 @@ public class Rope extends ComplexObstacle {
         world.destroyJoint(joint1);
         if (!joints.remove(joint2)) { System.out.println("joint2 wasn't removed from joints in reconnect"); }
         world.destroyJoint(joint2);
+
+        if (isAvatar2) {
+            for (int i = connect; i < bodies.size(); i++)
+                bodies.get(i).setPosition(portalPos);
+        }
+        else {
+            for (int i = 0; i < connect; i++) {
+                bodies.get(i).setPosition(portalPos);
+            }
+
+        }
 
         //Make new joint & reconnect rope
         RevoluteJointDef jointDef = new RevoluteJointDef();

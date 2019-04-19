@@ -125,7 +125,7 @@ public class PortalPair {
         }
         if (!active) { //Joint should be set by now
             //reconnect rope
-            rope.reconnect(world, avatar.getName().contains("avatar2"), joint1, joint2);
+            rope.reconnect(world, avatar.getName().contains("avatar2"), joint1, joint2, otherPortal.getPosition());
             avatar.setPosition(otherPortal.getPosition().cpy().add(dir));
             avatar.setLinearVelocity(avatar.portalVel.scl(0.5f));
         }
