@@ -815,8 +815,6 @@ public class GameController extends WorldController implements ContactListener {
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
-
-        //print(rope.nLinks());
         updateCamera();
 
         if (isFailure()) return;
@@ -831,8 +829,8 @@ public class GameController extends WorldController implements ContactListener {
             Gdx.input.getTextInput(loader, "Load...", "level.json", "");
         }
 
-        if (avatar.getOnPlanet()) avatar.setLinearVelocity(reset);
-        if (avatar2.getOnPlanet()) avatar2.setLinearVelocity(reset);
+//        if (avatar.getOnPlanet()) avatar.setLinearVelocity(reset);
+//        if (avatar2.getOnPlanet()) avatar2.setLinearVelocity(reset);
 
         if (switched()) {
             avatar.setActive(!avatar.isActive());

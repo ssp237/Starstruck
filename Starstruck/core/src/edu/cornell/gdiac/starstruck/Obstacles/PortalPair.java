@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.Color;
 
 public class PortalPair {
 
+    private static final float PORTAL_SPEED = 10f;
+
     /** The connected portals, should not change */
     private Portal portal1;
     private Portal portal2;
@@ -112,8 +114,7 @@ public class PortalPair {
         //dir.setLength(getTexture().getRegionWidth()/2/scale.x + 1);
         dir.setLength(getTexture().getRegionWidth()/2/scale.x);
         avatar.setPosition(otherPortal.getPosition().cpy().add(dir));
-        avatar.portalVel.set(avatar.lastVel);
-        System.out.println(avatar.lastVel);
+        avatar.portalVel.set(avatar.lastVel.cpy().setLength(PORTAL_SPEED));
         if (active) { //This case should always happen before !active
             //Split rope
             joints = rope.split(world, avatar.getName().equals("avatar2"), thisPortal, otherPortal);
