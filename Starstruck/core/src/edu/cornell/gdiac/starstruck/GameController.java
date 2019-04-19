@@ -183,8 +183,8 @@ public class GameController extends WorldController implements ContactListener {
     private static final int MAX_EXTEND = 50;
     /** Rope timer reset */
     private static final int ROPE_RESET = 9;
-    /** True when the rope can be extended (astronaut is anchored and other astronaut is far enough away) */
-    public static boolean ropeExtend = false;
+    /** Speed of camera in screen coordinates */
+    private static final float CAMERA_SPEED = 1f;
 
     // Other game objects
     /** The position of the spinning barrier */
@@ -263,6 +263,8 @@ public class GameController extends WorldController implements ContactListener {
     private boolean portal;
     /** Countdown timer for portal */
     private int portalCount;
+    /** Target for camera position */
+    private Vector3 camTarget = new Vector3();
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -356,6 +358,7 @@ public class GameController extends WorldController implements ContactListener {
         camHeight = 720*ZOOM_FACTOR;
         camera.viewportWidth = camWidth;
         camera.viewportHeight = camHeight;
+        camera.position.set(camera.viewportWidth/2, camera.viewportHeight/2, 0);
 
         xBound = (1280*1.5f) / scale.x;
         yBound = (720*1.5f) / scale.y;
@@ -522,9 +525,46 @@ public class GameController extends WorldController implements ContactListener {
     }
 
     /**
-     * Helper method to move the camera with the astronauts
+     * Helper method to update camera
      */
     private void updateCamera() {
+        float a1x = avatar.getPosition().x * avatar.drawScale.x;
+        float a2x = avatar2.getPosition().x * avatar2.drawScale.x;
+        float xCam = (a1x + a2x) / 2;
+        float a1y = avatar.getPosition().y * avatar.drawScale.y;
+        float a2y = avatar2.getPosition().y * avatar2.drawScale.y;
+        float yCam = (a1y + a2y) / 2;
+
+        if (portalpairCache != null && portalpairCache.isActive()) {
+            a1x = portalpairCache.getPortal1().getPosition().x * scale.x;
+            a2x = portalpairCache.getPortal2().getPosition().x * scale.x;
+            xCam = (a1x + a2x) / 2;
+            a1y = portalpairCache.getPortal1().getPosition().y * scale.y;
+            a2y = portalpairCache.getPortal2().getPosition().y * scale.y;
+            yCam = (a1y + a2y) / 2;
+        }
+
+        if (xCam < camWidth/2)
+            xCam = camWidth/2;
+        else if (xCam > xBound*scale.x - camWidth/2)
+            xCam = xBound*scale.x - camWidth/2;
+        if (yCam < camHeight/2)
+            yCam = camHeight/2;
+        else if (yCam > yBound*scale.y - camHeight/2)
+            yCam = yBound*scale.y - camHeight/2;
+
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
+        camTarget.set(xCam, yCam, 0);
+        Vector3 dir = camTarget.sub(camera.position);
+        dir.setLength(CAMERA_SPEED);
+        canvas.getCamera().position.add(dir);
+        camera.update();
+    }
+
+    /**
+     * Helper method to move the camera with the astronauts, old camera method
+     */
+    private void updateCam() {
         float a1x = avatar.getPosition().x * avatar.drawScale.x;
         float a2x = avatar2.getPosition().x * avatar2.drawScale.x;
         float xCam = (a1x + a2x) / 2;
@@ -620,11 +660,6 @@ public class GameController extends WorldController implements ContactListener {
 //                    avatar2.setLinearVelocity(reset);
                     avatar1.setPosition(avatar1.lastPoint);
                     return true;
-                }
-            }
-            if ((avatar1.isAnchored()) || (avatar2.isAnchored())) { //TODO Not doing anything at the moment?
-                if (dist >= length) {
-                    ropeExtend = true;
                 }
             }
         }
