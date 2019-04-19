@@ -336,6 +336,7 @@ public class LevelModel {
         stars.clear();
         anchors.clear();
         enemies.clear();
+        portalpairs.clear();
         vectorWorld = new VectorWorld();
     }
 

@@ -451,17 +451,30 @@ public class Rope extends ComplexObstacle {
         Joint lastJoint;
         BoxObstacle plank1;
         BoxObstacle plank2;
+//        if (isAvatar2) {
+//            lastJoint = joints.get(joints.size()-5);
+//            plank1 = (BoxObstacle)bodies.get(bodies.size()-5);
+//            plank2 = (BoxObstacle)bodies.get(bodies.size()-4);
+//        }
+//        else {
+//            lastJoint = joints.get(4);
+//            plank1 = (BoxObstacle)bodies.get(4);
+//            plank2 = (BoxObstacle)bodies.get(3);
+//        }
+        int index = joints.size()/2;
+        lastJoint = joints.get(index);
         if (isAvatar2) {
-            lastJoint = joints.get(joints.size()-3);
-            plank1 = (BoxObstacle)bodies.get(bodies.size()-3);
-            plank2 = (BoxObstacle)bodies.get(bodies.size()-2);
+            plank1 = (BoxObstacle)bodies.get(index-1);
+            plank2 = (BoxObstacle)bodies.get(index);
         }
         else {
-            lastJoint = joints.get(2);
-            plank1 = (BoxObstacle)bodies.get(2);
-            plank2 = (BoxObstacle)bodies.get(1);
+            plank1 = (BoxObstacle)bodies.get(index);
+            plank2 = (BoxObstacle)bodies.get(index-1);
         }
 
+        Array<Joint> result = new Array<Joint>(2);
+//        result.add(lastJoint);
+//        result.add(lastJoint);
 
         //Destroy joint
         if (!joints.remove(lastJoint)) { System.out.println("lastJoint wasn't removed from joints in split"); }
@@ -483,10 +496,18 @@ public class Rope extends ComplexObstacle {
         jointDef.localAnchorB.set(anchor2);
         jointDef.collideConnected = false;
         Joint joint = world.createJoint(jointDef);
-        if (isAvatar2)
-            joints.add(joints.size()-2, joint);
-        else
-            joints.add(2, joint);
+//        if (isAvatar2)
+//            joints.add(joints.size()-4, joint);
+//        else
+//            joints.add(4, joint);
+        if (isAvatar2) {
+            joints.add(index, joint);
+            //result.insert(0, joint);
+        }
+        else {
+            joints.add(index, joint);
+            //result.insert(1, joint);
+        }
 
         //Connect to portal 2 (leading end)
         anchor1.x = -anchor1.x;
@@ -495,20 +516,30 @@ public class Rope extends ComplexObstacle {
         jointDef.localAnchorA.set(anchor2);
         jointDef.localAnchorB.set(anchor1);
         joint = world.createJoint(jointDef);
-        if (isAvatar2)
-            joints.add(joints.size()-2, joint);
-        else
-            joints.add(3, joint);
-
-        Array<Joint> result = new Array<Joint>(2);
+//        if (isAvatar2)
+//            joints.add(joints.size()-4, joint);
+//        else
+//            joints.add(4, joint);
         if (isAvatar2) {
-            result.add(joints.get(joints.size()-4));
-            result.add(joints.get(joints.size()-3));
+            joints.add(index + 1, joint);
+            //result.insert(1, joint);
+
         }
         else {
-            result.add(joints.get(2));
-            result.add(joints.get(3));
+            joints.add(index, joint);
+            //result.insert(0, joint);
         }
+
+//        if (isAvatar2) {
+//            result.add(joints.get(joints.size()-6));
+//            result.add(joints.get(joints.size()-5));
+//        }
+//        else {
+//            result.add(joints.get(4));
+//            result.add(joints.get(5));
+//        }
+        result.add(joints.get(index));
+        result.add(joints.get(index+1));
         return result;
 
     }

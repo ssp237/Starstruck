@@ -197,8 +197,8 @@
 			"texture": "static portal",
 			"color": "blue",
 			"name": "portalpair1",
-			"x1": 10,
-			"y1": 5,
+			"x1": 14,
+			"y1": 14,
 			"x2": 20,
 			"y2": 20
 		}

@@ -129,7 +129,8 @@ public class AstronautModel extends CapsuleObstacle {
     public Vector2 contactDir;
     /** The previous linear velocity of this astronaut */
     public Vector2 lastVel;
-
+    /** Velocity of astronaut to perserve when using portal */
+    public Vector2 portalVel = new Vector2();
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();

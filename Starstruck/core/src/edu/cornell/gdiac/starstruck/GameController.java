@@ -258,8 +258,11 @@ public class GameController extends WorldController implements ContactListener {
     ArrayList<Obstacle> ropeList;
     /** Portal cache */
     private Portal portalCache;
+    private PortalPair portalpairCache;
     /** Whether astronaut hit a portal */
     private boolean portal;
+    /** Countdown timer for portal */
+    private int portalCount;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -320,6 +323,7 @@ public class GameController extends WorldController implements ContactListener {
 
         count = 5;
         deathOp = 0f;
+        portalpairCache = null;
     }
 
     /**
@@ -366,6 +370,7 @@ public class GameController extends WorldController implements ContactListener {
         ropeCount = ROPE_RESET;
 
         portal = false;
+        portalCount = 0;
 
         // Add level goal
         float dwidth;
@@ -519,13 +524,22 @@ public class GameController extends WorldController implements ContactListener {
     /**
      * Helper method to move the camera with the astronauts
      */
-    private void updateCam() {
+    private void updateCamera() {
         float a1x = avatar.getPosition().x * avatar.drawScale.x;
         float a2x = avatar2.getPosition().x * avatar2.drawScale.x;
         float xCam = (a1x + a2x) / 2;
         float a1y = avatar.getPosition().y * avatar.drawScale.y;
         float a2y = avatar2.getPosition().y * avatar2.drawScale.y;
         float yCam = (a1y + a2y) / 2;
+
+//        if (portalpairCache != null && portalpairCache.isActive()) {
+//            a1x = portalpairCache.getPortal1().getPosition().x * scale.x;
+//            a2x = portalpairCache.getPortal2().getPosition().x * scale.x;
+//            xCam = (a1x + a2x) / 2;
+//            a1y = portalpairCache.getPortal1().getPosition().y * scale.y;
+//            a2y = portalpairCache.getPortal2().getPosition().y * scale.y;
+//            yCam = (a1y + a2y) / 2;
+//        }
 
         if (xCam < camWidth/2)
             xCam = camWidth/2;
@@ -767,7 +781,7 @@ public class GameController extends WorldController implements ContactListener {
     public void update(float dt) {
 
         //print(rope.nLinks());
-        updateCam();
+        updateCamera();
 
         if (isFailure()) return;
 
@@ -780,6 +794,9 @@ public class GameController extends WorldController implements ContactListener {
         if (InputController.getInstance().shiftHeld() && InputController.getInstance().didO()) {
             Gdx.input.getTextInput(loader, "Load...", "level.json", "");
         }
+
+        if (avatar.getOnPlanet()) avatar.setLinearVelocity(reset);
+        if (avatar2.getOnPlanet()) avatar2.setLinearVelocity(reset);
 
         if (switched()) {
             avatar.setActive(!avatar.isActive());
@@ -882,11 +899,29 @@ public class GameController extends WorldController implements ContactListener {
             collection = false;
         }
 
-        if (portal) {
-            PortalPair port = findPortalPair(portalCache);
-            port.teleport(world, avatarCache, rope);
-
+        if (portal && portalCount <= 0) {
+            portalpairCache = findPortalPair(portalCache);
+            portalpairCache.teleport(world, avatarCache, rope);
+            portalCount = 5;
         }
+        if (portalpairCache != null && portalpairCache.isActive()) {
+            if (avatarCache == avatar) {
+                Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar2.getPosition());
+                dir.setLength(avatar.portalVel.len()*2);
+                avatar2.setLinearVelocity(dir);
+                avatar.setLinearVelocity(avatar.portalVel);
+                //avatar.getBody().applyForce(avatar.portalVel, avatar.getPosition(), true);
+            }
+            else {
+                Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar.getPosition());
+                dir.setLength(avatar2.portalVel.len()*2);
+                avatar.setLinearVelocity(dir);
+                avatar2.setLinearVelocity(avatar2.portalVel);
+                //avatar2.getBody().applyForce(avatar2.portalVel, avatar2.getPosition(), true);
+            }
+        }
+
+        portalCount--;
         portal = false;
 
         if (avatar.isActive()) {
@@ -932,7 +967,7 @@ public class GameController extends WorldController implements ContactListener {
         avatar.lastPoint.set(avatar.getPosition());
         avatar2.lastPoint.set(avatar2.getPosition());
         avatar.lastVel.set(avatar.getLinearVelocity());
-        avatar2.lastVel.set(avatar.getLinearVelocity());
+        avatar2.lastVel.set(avatar2.getLinearVelocity());
 
         //Removed sound stuffs
 //        if (avatar.isJumping() || avatar2.isJumping()) {

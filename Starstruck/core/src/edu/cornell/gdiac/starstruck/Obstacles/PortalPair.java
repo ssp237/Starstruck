@@ -11,9 +11,12 @@ import edu.cornell.gdiac.starstruck.Models.*;
 
 public class PortalPair {
 
-    /** The connected portals */
+    /** The connected portals, should not change */
     private Portal portal1;
     private Portal portal2;
+    /** The current leading and trailing portals, should change */
+    public Portal leadPortal;
+    public Portal trailPortal;
     /** The joints connecting each end of rope to portal */
     private Joint joint1;
     private Joint joint2;
@@ -23,6 +26,8 @@ public class PortalPair {
     /** Name of this portal pair */
     private String portalName;
     private TextureRegion textureRegion;
+    /** Draw scale */
+    private Vector2 scale;
 
     private PortalPair(float width, float height, float p1x, float p1y, float p2x, float p2y) {
         portal1 = new Portal(p1x, p1y, width, height, 1);
@@ -41,6 +46,7 @@ public class PortalPair {
         portal1.setDrawScale(scale);
         portal2.setDrawScale(scale);
         portalName = name;
+        this.scale = scale;
     }
 
 //    public PortalPair(float width, float height, float p1x, float p1y, float p2x, float p2y, String name, Vector2 scale, TextureRegion texture) {
@@ -61,6 +67,8 @@ public class PortalPair {
     public Portal getPortal1() { return portal1; }
 
     public Portal getPortal2() { return portal2; }
+
+    public boolean isActive() { return active; }
 
 
     /**
@@ -92,19 +100,29 @@ public class PortalPair {
     }
 
     public void teleportHelper (World world, AstronautModel avatar, Rope rope, Portal thisPortal, Portal otherPortal) {
-        avatar.setPosition(otherPortal.getPosition().cpy().add(new Vector2(3, 0)));
-        avatar.setLinearVelocity(avatar.lastVel);
+        leadPortal = otherPortal;
+        trailPortal = thisPortal;
+        Vector2 dir = new Vector2(avatar.lastVel);
+        //dir.setLength(getTexture().getRegionWidth()/2/scale.x + 1);
+        dir.setLength(getTexture().getRegionWidth()/2/scale.x);
+        avatar.setPosition(otherPortal.getPosition().cpy().add(dir));
+        avatar.portalVel.set(avatar.lastVel);
+        System.out.println(avatar.lastVel);
         if (active) { //This case should always happen before !active
             //Split rope
             joints = rope.split(world, avatar.getName().equals("avatar2"), thisPortal, otherPortal);
             joint1 = joints.get(0);
             joint2 = joints.get(1);
-
+            avatar.setPosition(otherPortal.getPosition().cpy().add(dir));
+            avatar.setLinearVelocity(avatar.portalVel);
         }
         if (!active) { //Joint should be set by now
             //reconnect rope
             rope.reconnect(world, avatar.getName().contains("avatar2"), joint1, joint2);
+            avatar.setPosition(otherPortal.getPosition().cpy().add(dir));
+            avatar.setLinearVelocity(avatar.portalVel.scl(0.5f));
         }
+
     }
 
     private TextureRegion getTexture() {
