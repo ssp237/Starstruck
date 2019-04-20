@@ -141,7 +141,7 @@ public class PortalPair {
     }
 
     /**
-     * 0: Blue, default
+     * 0: White, default
      *
      * @param color Number code for color
      * @return The color
@@ -184,8 +184,8 @@ public class PortalPair {
         //Write name
         json.addChild("name", new JsonValue(getPortalName()));
 
-        //Write color TODO
-        json.addChild("color", new JsonValue("blue"));
+        //Write color
+        json.addChild("color", new JsonValue(color + ""));
 
         //Add textures
         json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));
