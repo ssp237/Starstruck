@@ -314,15 +314,15 @@ public class LevelModel {
         }
 
         //add anchors
-//        i = 0;
-//        JsonValue anchorVals = levelFormat.get("anchors").child();
-//        while(anchorVals != null) {
-//            Anchor anchor = Anchor.fromJSON(anchorVals, scale);
-//            anchor.setName("anchor" + i);
-//            activate(anchor);
-//            anchors.add(anchor);
-//            anchorVals = anchorVals.next;
-//        }
+        i = 0;
+        JsonValue anchorVals = levelFormat.get("anchors").child();
+        while(anchorVals != null) {
+            Anchor anchor = Anchor.fromJSON(anchorVals, scale);
+            anchor.setName("anchor" + i);
+            activate(anchor);
+            anchors.add(anchor);
+            anchorVals = anchorVals.next;
+        }
 
         //add portals
         i = 0;
