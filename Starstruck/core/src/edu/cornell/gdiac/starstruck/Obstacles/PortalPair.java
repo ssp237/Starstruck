@@ -147,8 +147,8 @@ public class PortalPair {
      * @return The color
      */
     private Color portalColor(int color) {
-        if (color == 0) return Color.BLUE;
-        return Color.BLUE;
+        if (color == 0) return Color.WHITE;
+        return Color.WHITE;
     }
 
     /**
