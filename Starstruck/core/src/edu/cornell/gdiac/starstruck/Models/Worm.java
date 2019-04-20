@@ -21,7 +21,7 @@ public class Worm extends Enemy{
     /** y position of the enemy */
     private float y_pos;
     /** right bound of the screen */
-    private float right_bound;
+    private float right_bound = 57.60002f;
     /** Counter for names */
     private static int worm_count = 1;
     /** Delay for wormie to come back on screen */
@@ -104,6 +104,8 @@ public class Worm extends Enemy{
                 this.setPosition(right_bound, y_pos);
             }
         }
+        //System.out.println(this);
+        //System.out.println(this);
 
     }
 
@@ -123,7 +125,14 @@ public class Worm extends Enemy{
     public void setRight_bound(float r_bound) {right_bound = r_bound;}
 
     public String toString(){
-        return "Worm with { velocity " + getVX() + " and position " + getPosition() +"}";
+        String out = "{texture: ";
+        //System.out.println(texture);
+        out += JsonAssetManager.getInstance().getKey(texture) + ", ";
+        out += "rightbound: " + right_bound +"}";
+
+
+        //"Worm with { velocity " + getVX() + " and position " + getPosition() +"}";
+        return out;
     }
 
 }

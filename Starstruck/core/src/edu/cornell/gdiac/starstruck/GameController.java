@@ -296,14 +296,12 @@ public class GameController extends WorldController implements ContactListener {
      */
     public void reset() {
         level.dispose();
+        //enemies.clear();
 
         //levelFormat = jsonReader.parse(Gdx.files.internal("levels/alpha2.json"));
         levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
-
-        enemies.clear();
-
 
         setComplete(false);
         setFailure(false);
@@ -323,6 +321,10 @@ public class GameController extends WorldController implements ContactListener {
         objects = level.objects; planets = level.getPlanets();
         world = level.getWorld(); vectorWorld = level.getVectorWorld();
         enemies = level.getEnemies();
+        System.out.println("here ye here ye");
+        System.out.println(enemies);
+        System.out.println(enemies.size());
+        //System.out.println(level.getEnemies());
     }
 
     /**
@@ -801,10 +803,12 @@ public class GameController extends WorldController implements ContactListener {
 //        if (greenworm.getPosition().x > 19 || greenworm.getPosition().x < 10) {
 //            greenworm.setVX(-greenworm.getVX());
 //        }
-        for (int i = 0; i < enemies.size(); i++) {
+        //System.out.println("in here update");
+        for (Enemy e : enemies) {
             //enemies.get(i).update(dt);
-            if (enemies.get(i).getType() == ObstacleType.WORM) {
-                ((Worm)enemies.get(i)).setRight_bound(canvas.getCamera().position.x/scale.x + bounds.width);
+            //System.out.println(e);
+            if (e.getType() == ObstacleType.WORM) {
+                ((Worm)e).setRight_bound(canvas.getCamera().position.x/scale.x + 640/scale.x);
                 //System.out.println((Worm)enemies.get(i));
             }
         }

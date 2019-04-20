@@ -124,7 +124,10 @@ public class LevelModel {
      * @return a reference to the enemy list
      */
     public PooledList<Enemy> getEnemies() {
+        System.out.println("in getEnemies");
+        System.out.println(enemies);
         return enemies;
+
     }
 
     /**
@@ -233,11 +236,11 @@ public class LevelModel {
         String key = levelFormat.get("background").asString();
         background = JsonAssetManager.getInstance().getEntry(key, Texture.class);
 
-        bounds = new Rectangle(0,0,pSize[0],pSize[1]);
-        scale.x = gSize[0]/pSize[0];
-        scale.y = gSize[1]/pSize[1];
+        bounds = new Rectangle(0, 0, pSize[0], pSize[1]);
+        scale.x = gSize[0] / pSize[0];
+        scale.y = gSize[1] / pSize[1];
 
-        player1 = AstronautModel.fromJson(levelFormat.get("astronaut 1"), scale,true);
+        player1 = AstronautModel.fromJson(levelFormat.get("astronaut 1"), scale, true);
         player1.setName("avatar");
         player1.activatePhysics(world);
         //addObject(player1);
@@ -253,8 +256,8 @@ public class LevelModel {
         key = ropeVal.get("texture").asString();
         TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
         //ropeTexture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        float dwidth  = texture.getRegionWidth()/scale.x;
-        float dheight = texture.getRegionHeight()/scale.y;
+        float dwidth = texture.getRegionWidth() / scale.x;
+        float dheight = texture.getRegionHeight() / scale.y;
         rope = new Rope(player1.getX() + 0.5f, player1.getY() + 0.5f,
                 ropeVal.get("rope width").asFloat(), dwidth, dheight, player1, player2);
         rope.setTexture(texture);
@@ -262,13 +265,14 @@ public class LevelModel {
         rope.setName("rope");
         activate(rope);
 
-        objects.add(player1); objects.add(player2);
+        objects.add(player1);
+        objects.add(player2);
 
         Planet.setPresets(levelFormat.get("planet specs"));
         planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
 
         JsonValue planet = levelFormat.get("planets").child();
-        while(planet != null) {
+        while (planet != null) {
             planets.addPlanet(planet, world, vectorWorld);
             planet = planet.next();
         }
@@ -276,7 +280,7 @@ public class LevelModel {
         //add stars
         int i = 0;
         JsonValue starVals = levelFormat.get("stars").child();
-        while(starVals != null) {
+        while (starVals != null) {
             Star star = Star.fromJSON(starVals, scale);
             star.setName("star" + i);
             activate(star);
@@ -287,7 +291,7 @@ public class LevelModel {
         //add anchors
         i = 0;
         JsonValue anchorVals = levelFormat.get("anchors").child();
-        while(anchorVals != null) {
+        while (anchorVals != null) {
             Anchor anchor = Anchor.fromJSON(anchorVals, scale);
             anchor.setName("anchor" + i);
             activate(anchor);
@@ -297,13 +301,16 @@ public class LevelModel {
 
 
         //add worms
-       JsonValue wormVals = levelFormat.get("worms").child();
+        JsonValue wormVals = levelFormat.get("worms").child();
         while (wormVals != null) {
             Worm wormie = Worm.fromJSON(wormVals, scale);
             activate(wormie);
             enemies.add(wormie);
             wormVals = wormVals.next;
         }
+        System.out.println("here i am enemy list");
+        System.out.println(enemies);
+        System.out.println(enemies.size());
     }
 
     public void dispose() {
