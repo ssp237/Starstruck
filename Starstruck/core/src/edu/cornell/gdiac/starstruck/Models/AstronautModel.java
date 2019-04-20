@@ -129,7 +129,10 @@ public class AstronautModel extends CapsuleObstacle {
     public Vector2 contactDir;
     /** The previous linear velocity of this astronaut */
     public Vector2 lastVel;
-
+    /** Did we just move? */
+    private boolean justMoved;
+    /** Velocity of astronaut to perserve when using portal */
+    public Vector2 portalVel = new Vector2();
 
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
@@ -524,6 +527,7 @@ public class AstronautModel extends CapsuleObstacle {
 
         String film = playerOne ? "astronaut 1 idle" : "astronaut 2 idle";
         idle = JsonAssetManager.getInstance().getEntry(film, FilmStrip.class);
+        justMoved = false;
     }
 
     /**
@@ -720,6 +724,7 @@ public class AstronautModel extends CapsuleObstacle {
             body.applyLinearImpulse(gravity, getPosition(), true);
             body.setLinearVelocity(forceCache);
         }
+        justMoved = moving;
         moving = false;
 
         // Jump!
@@ -752,7 +757,12 @@ public class AstronautModel extends CapsuleObstacle {
     public void update(float dt) {
         // Apply cooldowns
 
-        if (onPlanet) idle.tick();
+        if (onPlanet) {
+            if (justMoved || !idle.justReset()) idle.tick();
+//            else if (!idle.justReset()) idle.kcit();
+        }
+
+        if (!onPlanet && !idle.justReset()) idle.reset();
 
         if (isAnchored){
             //setPosition(anchorPos);

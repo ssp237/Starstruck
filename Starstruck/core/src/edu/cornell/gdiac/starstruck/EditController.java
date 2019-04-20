@@ -54,6 +54,11 @@ public class EditController extends WorldController implements ContactListener {
     private JsonValue  levelFormat;
     /** The reader to process JSON files */
     private JsonReader jsonReader;
+    /** Reader to process galaxy switches */
+    private GalaxyListener galListener;
+
+    /** Current galaxy to source assets from */
+    private Galaxy galaxy;
 
     /** References to players and rope */
     private AstronautModel player1;
@@ -62,6 +67,10 @@ public class EditController extends WorldController implements ContactListener {
 
     /** Possible worm textures */
     private static final String[] WORM_TEXTURES = { "blue worm", "green worm", "pink worm", "purple worm", "red worm", "yellow worm"};
+    /** Possible berry textures */
+    private static final String[] BERRY_TEXTURES = { "pink berry"};
+    /** Current horizontally moving enemy textures */
+    private String[] FISH_TEXTURES;
 
     /** Initial position of player 1*/
     private static Vector2 P1_POS = new Vector2(2.5f, 5.0f);
@@ -100,6 +109,25 @@ public class EditController extends WorldController implements ContactListener {
         }
     }
 
+    public class GalaxyListener implements Input.TextInputListener {
+
+        public void input (String text) {
+            Galaxy gal = Galaxy.fromString(text);
+            level.setGalaxy(gal);
+            galaxy = gal;
+
+            switch (gal) {
+                case WHIRLPOOL: FISH_TEXTURES = WORM_TEXTURES; break;
+                case MILKYWAY: FISH_TEXTURES = BERRY_TEXTURES; break;
+                default: FISH_TEXTURES = WORM_TEXTURES;
+            }
+
+        }
+
+        public void canceled () {
+        }
+    }
+
 
     public EditController() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
@@ -113,9 +141,13 @@ public class EditController extends WorldController implements ContactListener {
         vectorWorld = new VectorWorld();
         save = new SaveListener();
         wormListener = new WormListener();
+        galListener = new GalaxyListener();
         jsonReader = new JsonReader();
         loadFile = null;
         levelFormat = null;
+        galaxy = Galaxy.WHIRLPOOL;
+        level.setGalaxy(galaxy);
+        FISH_TEXTURES = WORM_TEXTURES;
     }
 
     public void reset() {
@@ -139,6 +171,7 @@ public class EditController extends WorldController implements ContactListener {
         setFailure(false);
         save = new SaveListener();
         load = new SaveListener();
+        galListener = new GalaxyListener();
     }
 
     private void createPlayers() {
@@ -199,14 +232,14 @@ public class EditController extends WorldController implements ContactListener {
             Worm wormy = (Worm) current;
             String key = JsonAssetManager.getInstance().getKey(wormy.getTexture());
             //System.out.println(key);
-            int i = Arrays.binarySearch(WORM_TEXTURES, key);
-            wormy.setTexture(JsonAssetManager.getInstance().getEntry(WORM_TEXTURES[(i + 1) % WORM_TEXTURES.length], FilmStrip.class));
+            int i = Arrays.binarySearch(FISH_TEXTURES, key);
+            wormy.setTexture(JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[(i + 1) % FISH_TEXTURES.length], FilmStrip.class));
 
         } else if (input.didDown()) {
             Worm wormy = (Worm) current;
             String key = JsonAssetManager.getInstance().getKey(wormy.getTexture());
-            int i = Arrays.binarySearch(WORM_TEXTURES, key);
-            wormy.setTexture(JsonAssetManager.getInstance().getEntry(WORM_TEXTURES[i == 0 ? WORM_TEXTURES.length - 1 : (i - 1) % WORM_TEXTURES.length], FilmStrip.class));
+            int i = Arrays.binarySearch(FISH_TEXTURES, key);
+            wormy.setTexture(JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[i == 0 ? FISH_TEXTURES.length - 1 : (i - 1) % FISH_TEXTURES.length], FilmStrip.class));
         } else if (input.shiftHeld() && input.didTertiary()){
             wormListener.worm = (Worm) current;
             Gdx.input.getTextInput(wormListener, "Set velocity to...", Float.toString(current.getVX()), "");
@@ -374,6 +407,8 @@ public class EditController extends WorldController implements ContactListener {
                 Gdx.input.getTextInput(save, "Save as...", "level.json", "");
             } else if (input.shiftHeld() && input.didO()) {
                 Gdx.input.getTextInput(load, "Load...", "level.json", "");
+            }else if (input.shiftHeld() && input.didG()) {
+                Gdx.input.getTextInput(galListener, "Switch to what galaxy?", "whirlpool", "");
             } else if (input.shiftHeld() && input.didD()) {
                 loadFile = null;
                 reset();
@@ -395,7 +430,7 @@ public class EditController extends WorldController implements ContactListener {
             } else if (input.didW()){
                 Vector2 pos = input.getCrossHair();
                 current = new Worm(pos.x + camScaleX + w, pos.y + camScaleY + h,
-                        JsonAssetManager.getInstance().getEntry(WORM_TEXTURES[0], FilmStrip.class), scale, 0);
+                        JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[0], FilmStrip.class), scale, 0);
                 level.add(current);
             }
             if (input.mouseDragged()) {
@@ -425,7 +460,8 @@ public class EditController extends WorldController implements ContactListener {
     public void draw(float dt) {
         canvas.clear();
 
-        Texture background = JsonAssetManager.getInstance().getEntry("background", Texture.class);
+        String gal = galaxy.getChars();
+        Texture background = JsonAssetManager.getInstance().getEntry(gal + " background", Texture.class);
         canvas.begin();
         canvas.draw(background, 0, 0, canvas.getWidth()*screenX, canvas.getHeight()*screenY);
         canvas.end();

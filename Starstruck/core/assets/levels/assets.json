@@ -72,6 +72,38 @@
       "file": "whirlpool/planets/static_gravity.ring4_v0.png",
       "wrap": false
     },
+    "mw p1": {
+      "file": "milky way/planets/static_planet1_v1.png",
+      "wrap": false
+    },
+    "mw g1": {
+      "file": "milky way/planets/static_gravity.ring1_v1.png",
+      "wrap": false
+    },
+    "mw p2": {
+      "file": "milky way/planets/static_planet2_v1.png",
+      "wrap": false
+    },
+    "mw g2": {
+      "file": "milky way/planets/static_gravity.ring2_v1.png",
+      "wrap": false
+    },
+    "mw p3": {
+      "file": "milky way/planets/static_planet3_v1.png",
+      "wrap": false
+    },
+    "mw g3": {
+      "file": "milky way/planets/static_gravity.ring3_v1.png",
+      "wrap": false
+    },
+    "mw p4": {
+      "file": "milky way/planets/static_planet4_v1.png",
+      "wrap": false
+    },
+    "mw g4": {
+      "file": "milky way/planets/static_gravity.ring4_v1.png",
+      "wrap": false
+    },
     "rope": {
       "file": "platform/ropebridge.png",
       "wrap": false
@@ -99,11 +131,23 @@
     "loading": {
       "file": "shared/loading.png",
       "wrap": false
+    },
+    "static portal": {
+      "file": "platform/static_portal_v1.png",
+      "wrap": false
     }
   },
   "textures": {
+    "wp background": {
+      "file": "platform/background.png",
+      "wrap": false
+    },
     "background": {
       "file": "platform/background.png",
+      "wrap": false
+    },
+    "mw background": {
+      "file": "milky way/background_milkyway_v1.png",
       "wrap": false
     },
     "death screen": {
@@ -183,6 +227,14 @@
       "cols": 3,
       "size": 3,
       "delay": 10
+    },
+    "pink berry": {
+      "file": "milky way/enemies/berries/animated_mwenemy(sberry)_biting.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 12,
+      "size": 12,
+      "delay": 3
     }
   },
   "fonts": {

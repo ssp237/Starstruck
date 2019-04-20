@@ -55,6 +55,9 @@ public class LevelModel {
     protected Vector2 scale;
     /** The background texture*/
     private Texture background;
+    /** Galaxy to source textures from */
+    private Galaxy galaxy;
+
 
     // Physics objects for the game
     /** Reference to the first character avatar */
@@ -79,6 +82,8 @@ public class LevelModel {
     //protected TextureRegion ropeTexture;
     /** List of enemies in the world */
     protected PooledList<Enemy> enemies = new PooledList<Enemy>();
+    /** List of portal pairs */
+    protected ArrayList<PortalPair> portalpairs = new ArrayList<PortalPair>();
 
     /**
      * Returns the bounding rectangle for the physics world
@@ -164,6 +169,15 @@ public class LevelModel {
     }
 
     /**
+     * Returns the current galaxy
+     *
+     * @return the current galaxy
+     */
+    public Galaxy getGalaxy() {
+        return galaxy;
+    }
+
+    /**
      * Returns whether this level is currently in debug node
      *
      * If the level is in debug mode, then the physics bodies will all be drawn as
@@ -188,6 +202,18 @@ public class LevelModel {
     }
 
     /**
+     * Sets the current galaxy: tells all relevant classes to use assets from the selected Galaxy.
+     *
+     * @param galaxy The galaxy to be set
+     */
+    public void setGalaxy(Galaxy galaxy) {
+        this.galaxy = galaxy;
+        Planet.setGalaxy(galaxy);
+        String gal = galaxy.getChars();
+        this.background = JsonAssetManager.getInstance().getEntry(gal + " background", Texture.class);
+    }
+
+    /**
      * Creates a new LevelModel
      *
      * The level is empty and there is no active physics world.  You must read
@@ -208,7 +234,7 @@ public class LevelModel {
         this.bounds = bounds;
         this.scale = scale;
         debug  = false;
-        planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
+        planets = new PlanetList(scale);
     }
 
 
@@ -232,6 +258,9 @@ public class LevelModel {
 
         String key = levelFormat.get("background").asString();
         background = JsonAssetManager.getInstance().getEntry(key, Texture.class);
+
+        String gal = levelFormat.get("galaxy").asString();
+        setGalaxy(Galaxy.fromString(gal));
 
         bounds = new Rectangle(0,0,pSize[0],pSize[1]);
         scale.x = gSize[0]/pSize[0];
@@ -265,7 +294,7 @@ public class LevelModel {
         objects.add(player1); objects.add(player2);
 
         Planet.setPresets(levelFormat.get("planet specs"));
-        planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
+        planets = new PlanetList(scale);
 
         JsonValue planet = levelFormat.get("planets").child();
         while(planet != null) {
@@ -285,14 +314,25 @@ public class LevelModel {
         }
 
         //add anchors
+//        i = 0;
+//        JsonValue anchorVals = levelFormat.get("anchors").child();
+//        while(anchorVals != null) {
+//            Anchor anchor = Anchor.fromJSON(anchorVals, scale);
+//            anchor.setName("anchor" + i);
+//            activate(anchor);
+//            anchors.add(anchor);
+//            anchorVals = anchorVals.next;
+//        }
+
+        //add portals
         i = 0;
-        JsonValue anchorVals = levelFormat.get("anchors").child();
-        while(anchorVals != null) {
-            Anchor anchor = Anchor.fromJSON(anchorVals, scale);
-            anchor.setName("anchor" + i);
-            activate(anchor);
-            anchors.add(anchor);
-            anchorVals = anchorVals.next;
+        JsonValue portalVals = levelFormat.get("portalpairs").child();
+        while (portalVals != null) {
+            PortalPair portalpair = PortalPair.fromJSON(portalVals, scale);
+            activate(portalpair.getPortal1());
+            activate(portalpair.getPortal2());
+            portalpairs.add(portalpair);
+            portalVals = portalVals.next;
         }
 
 
@@ -323,6 +363,7 @@ public class LevelModel {
         stars.clear();
         anchors.clear();
         enemies.clear();
+        portalpairs.clear();
         vectorWorld = new VectorWorld();
     }
 
@@ -431,6 +472,10 @@ public class LevelModel {
         out.addChild("physicsSize", physicsSize);
         out.addChild("graphicSize", graphicsSize);
 
+        //Add Galaxy
+
+        out.addChild("galaxy", new JsonValue(galaxy.fullName()));
+
         //Add background
         out.addChild("background", new JsonValue(JsonAssetManager.getInstance().getKey(background)));
 
@@ -480,6 +525,7 @@ public class LevelModel {
      * @param canvas	the drawing context
      */
     public void draw(GameCanvas canvas) {
+
         canvas.clear();
 
         canvas.begin();
@@ -528,6 +574,7 @@ public class LevelModel {
      */
     public void draw(GameCanvas canvas, char c) {
 //        canvas.clear();
+
         canvas.begin();
 
         float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
