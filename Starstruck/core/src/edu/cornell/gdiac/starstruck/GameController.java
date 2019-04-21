@@ -404,7 +404,7 @@ public class GameController extends WorldController implements ContactListener {
         avatar1.setPosition(SPIN_POS.x, SPIN_POS.y);
         //avatar1.setLinearVelocity(reset);
         avatar1.setAngularVelocity(0);
-        avatar2.setUnAnchored();
+        //avatar2.setUnAnchored();
         //avatar2.setActive(true);
         SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
     }
@@ -450,43 +450,16 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         //If avatar1 is already anchored, check if anchor or switch was hit
-        else if (avatar1.isAnchored()) {
-            if (anchord()) {
-                avatar.setUnAnchored();
+        else if (avatar1.isAnchored() && avatar1.isActive()) {
+            if (anchord()) { //If anchored was hit unanchor
+                avatar1.setUnAnchored();
             }
-//            if (anchord() && !avatar2.getOnPlanet()) { //If anchor was hit and avatar2 is not on planet -- could be anchored
-//                for (Anchor a : anchors) {
-//                    SPIN_POS.set(a.getPosition());
-//                    if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-//                        anchorHelp(avatar2, avatar1, a);
-//                        return;
-//                    }
-//                }
-//            }
-//            else if (switched()) { //If switch was hit unanchor avatar1 and make active
-//                SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
-//                avatar1.setUnAnchored();
-//                avatar1.setActive(true);
-//                return;
-//            }
         }
 
         //If avatar2 is already anchored, check if anchor or switch was hit
-        else if (avatar2.isAnchored()) {
-            if (anchord() && !avatar1.getOnPlanet()) { //If anchor was hit and avatar1 is not on planet -- could be anchored
-                for (Anchor a : anchors) {
-                    SPIN_POS.set(a.getPosition());
-                    if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar1, avatar2, a);
-                        return;
-                    }
-                }
-            }
-            else if (switched()) { //If switch was hit unanchor avatar2 and make active
-                SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
+        else if (avatar2.isAnchored() && avatar2.isActive()) {
+            if (anchord()) {
                 avatar2.setUnAnchored();
-                avatar2.setActive(true);
-                return;
             }
         }
     }
@@ -616,7 +589,7 @@ public class GameController extends WorldController implements ContactListener {
 
         //Both are on the same planet, uses force on joint to test when inactive astronaut should move
         else if (mode == 'j') {
-            if (rope.stretched(dt)) {
+            if (rope.stretched(dt, 3)) {
                 return true;
             }
 
@@ -662,8 +635,13 @@ public class GameController extends WorldController implements ContactListener {
                 avatar2.setAngle(angle);
                 if (avatar.curPlanet == avatar2.curPlanet) { //If the two avatars are on the same planet, move inactive avatar
                     if (updateRope(avatar, avatar2, rope, 'j', dt)) {
+                        avatar2.auto = true;
                         updateMovement(avatar2, avatar2.contactDir, (Planet)avatar2.curPlanet, true);
+                        //avatar2.setLinearVelocity((avatar2.contactDir.cpy().rotateRad(-(float) Math.PI / 2)).setLength(avatar2.getMaxSpeed()));
                     }
+//                    else {
+//                        avatar2.setLinearVelocity(reset);
+//                    }
                 }
                 else { // Else if inactive is on a different planet, set it's location, restrict mvoement of other avatar
                     avatar2.setPosition(avatar2.lastPoint);
@@ -776,7 +754,34 @@ public class GameController extends WorldController implements ContactListener {
 
         avatar.setFixedRotation(false);
         avatar2.setFixedRotation(false);
+
         updateAnchor(avatar, avatar2);
+
+        float angVel = 0.1f;
+        if (avatar.isAnchored() && !avatar.isActive()) {
+            if (avatar.getAngularVelocity() > 0) {
+                if (avatar.getAngularVelocity() < angVel)
+                    angVel = avatar.getAngularVelocity();
+                avatar.setAngularVelocity(avatar.getAngularVelocity() - angVel);
+            }
+            else if (avatar.getAngularVelocity() < 0) {
+                if (avatar.getAngularVelocity() > -angVel)
+                    angVel = -avatar.getAngularVelocity();
+                avatar.setAngularVelocity(avatar.getAngularVelocity() + angVel);
+            }
+        }
+
+        if (avatar2.isAnchored() && !avatar2.isActive()) {
+            if (avatar2.getAngularVelocity() > 0) {
+                if (avatar2.getAngularVelocity() < angVel)
+                    angVel = avatar2.getAngularVelocity();
+                avatar2.setAngularVelocity(avatar2.getAngularVelocity() - angVel);
+            } else if (avatar2.getAngularVelocity() < 0) {
+                if (avatar2.getAngularVelocity() > -angVel)
+                    angVel = -avatar2.getAngularVelocity();
+                avatar2.setAngularVelocity(avatar2.getAngularVelocity() + angVel);
+            }
+        }
 
         //TODO win condition
         if (stars.isEmpty()) {

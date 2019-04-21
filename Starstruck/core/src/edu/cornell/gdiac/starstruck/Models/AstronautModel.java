@@ -133,7 +133,10 @@ public class AstronautModel extends CapsuleObstacle {
     private boolean justMoved;
     /** Velocity of astronaut to perserve when using portal */
     public Vector2 portalVel = new Vector2();
-
+    /** Whether this astronaut is moving on its own */
+    public boolean auto;
+    /** last planet speed */
+    public Vector2 planetVel = new Vector2();
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
 
@@ -702,9 +705,15 @@ public class AstronautModel extends CapsuleObstacle {
 
         if (!getOnPlanet()) {
             if (Math.abs(getAngularVelocity()) >= DUDE_MAXROT) {
-                setAngularVelocity(Math.signum(getAngle()) * getMaxSpeed());
-            } else {
-                body.applyTorque(-getRotation(), true);
+                float direction = Math.abs(getAngularVelocity())/getAngularVelocity();
+                //setAngularVelocity(Math.signum(getAngle()) * getMaxSpeed());
+                float angular = direction * DUDE_MAXROT;
+                body.setAngularVelocity(Math.abs(getAngularVelocity())*angular);
+            }
+            else {
+                float direction = Math.abs(getAngularVelocity())/getAngularVelocity();
+                //body.applyTorque(-getRotation(), true);
+                body.setAngularVelocity(getAngularVelocity() + direction*getRotation());
             }
         }
 
@@ -714,18 +723,33 @@ public class AstronautModel extends CapsuleObstacle {
                 System.out.println("speed is less than 0 in apply force");
 
             // Don't want to be moving. Damp out player motion
-            if (!moving)
-                forceCache.set(0, 0);
-//            else if (speed >= DUDE_MAXSPEED)
+            if (!moving) {
+                body.setLinearVelocity(new Vector2());
+            }
+            //forceCache.set(0, 0);
+//            else if (speed >= DUDE_MAXSPEED) {
 //                forceCache.set(planetMove.setLength(DUDE_MAXSPEED));
-
-            else
+//            }
+            else {
+                int force = 4;
                 forceCache.set(planetMove.setLength(DUDE_MAXSPEED));
+                if (auto) {
+                    body.setLinearVelocity(forceCache.scl(2));
+                }
+                else {
+                    if (getLinearVelocity().len() >= DUDE_MAXSPEED) {
+                        forceCache.set(new Vector2());
+                    }
+                    body.applyForce(forceCache.scl(force), getPosition(), true);
+                }
+            }
             body.applyLinearImpulse(gravity, getPosition(), true);
-            body.setLinearVelocity(forceCache);
+            //body.applyForce(gravity, getPosition(), true);
+            //body.setLinearVelocity(forceCache);
         }
         justMoved = moving;
         moving = false;
+        auto = false;
 
         // Jump!
         if (isJumping()) {
@@ -765,8 +789,10 @@ public class AstronautModel extends CapsuleObstacle {
         if (!onPlanet && !idle.justReset()) idle.reset();
 
         if (isAnchored){
-            //setPosition(anchorPos);
-            setBodyType(BodyDef.BodyType.StaticBody);
+            setLinearVelocity(new Vector2());
+            setPosition(anchorPos);
+            //setBodyType(BodyDef.BodyType.StaticBody);
+            setBodyType(BodyDef.BodyType.KinematicBody);
         } else {
             setBodyType(BodyDef.BodyType.DynamicBody);
         }
