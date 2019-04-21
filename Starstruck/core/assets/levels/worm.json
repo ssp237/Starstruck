@@ -1,0 +1,179 @@
+{
+  "physicsSize": [ 38.400001525878906, 21.600000381469727 ],
+  "graphicSize": [ 1280, 720 ],
+  "galaxy": "milky way",
+  "background": "background",
+  "astronaut 1": {
+    "pos": [ 3.801970481872559, 3.554555892944336 ],
+    "size": [ 0.699999988079071, 0.949999988079071 ],
+    "texture": "astronaut 1",
+    "glow texture": "glow"
+  },
+  "astronaut 2": {
+    "pos": [ 3.473067760467529, 3.19796371459961 ],
+    "size": [ 0.9381107687950134, 1.3441389799118042 ],
+    "texture": "astronaut 2",
+    "glow texture": "glow"
+  },
+  "rope": {
+    "texture": "rope",
+    "rope width": 12.0
+  },
+  "planet specs": [ 700.0, 800.0, 900.0, 1000.0 ],
+  "planets": [],
+  "anchors": [],
+  "stars": [
+    {
+      "x": 11.695114135742188,
+      "y": 10.03415298461914,
+      "texture": "star"
+    }
+  ],
+  "worms": [
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    },
+    {
+      "texture": "pink berry",
+      "x": 15,
+      "y": 15,
+      "velocity": 0
+    }
+  ],
+  "portalpairs": []
+}
