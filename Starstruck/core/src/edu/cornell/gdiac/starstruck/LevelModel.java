@@ -129,8 +129,8 @@ public class LevelModel {
      * @return a reference to the enemy list
      */
     public PooledList<Enemy> getEnemies() {
-        System.out.println("in getEnemies");
-        System.out.println(enemies);
+//        System.out.println("in getEnemies");
+//        System.out.println(enemies);
         return enemies;
 
     }
@@ -350,9 +350,9 @@ public class LevelModel {
             enemies.add(wormie);
             wormVals = wormVals.next;
         }
-        System.out.println("here i am enemy list");
-        System.out.println(enemies);
-        System.out.println(enemies.size());
+//        System.out.println("here i am enemy list");
+//        System.out.println(enemies);
+//        System.out.println(enemies.size());
     }
 
     public void dispose() {

@@ -111,10 +111,10 @@ public class PortalPair {
         leadPortal = otherPortal;
         trailPortal = thisPortal;
         Vector2 dir = new Vector2(avatar.lastVel);
-        //dir.setLength(getTexture().getRegionWidth()/2/scale.x + 1);
         dir.setLength(getTexture().getRegionWidth()/2/scale.x);
         avatar.setPosition(otherPortal.getPosition().cpy().add(dir));
-        avatar.portalVel.set(avatar.lastVel.cpy().setLength(PORTAL_SPEED));
+        avatar.portalVel.set(avatar.lastVel);
+        //avatar.portalVel.setLength(PORTAL_SPEED);
         if (active) { //This case should always happen before !active
             //Split rope
             joints = rope.split(world, avatar.getName().equals("avatar2"), thisPortal, otherPortal);

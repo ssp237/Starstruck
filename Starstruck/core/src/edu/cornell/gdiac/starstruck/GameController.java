@@ -315,9 +315,9 @@ public class GameController extends WorldController implements ContactListener {
         objects = level.objects; planets = level.getPlanets();
         world = level.getWorld(); vectorWorld = level.getVectorWorld();
         enemies = level.getEnemies();
-        System.out.println("here ye here ye");
-        System.out.println(enemies);
-        System.out.println(enemies.size());
+        //System.out.println("here ye here ye");
+        //System.out.println(enemies);
+        //System.out.println(enemies.size());
         //System.out.println(level.getEnemies());
     }
 
