@@ -468,7 +468,8 @@ public class GameController extends WorldController implements ContactListener {
                 else if (avatar2.getOnPlanet()) { // Apply a gentle force on avatar1 to planet
                     //setlinearvelocity(0)
                     //dir = avatar.curplanet -getposition, apply a gentle force
-                    avatar1.toplanet = true;
+                    //avatar1.toplanet = true;
+                    avatar1.anchorhop = true;
                 }
 
                 else if (avatar2.isAnchored()) { //If avatar2 is anchored Anchor hop
@@ -502,7 +503,8 @@ public class GameController extends WorldController implements ContactListener {
                 else if (avatar1.getOnPlanet()) { // Apply a gentle force on avatar2 to planet
                     //setlinearvelocity(0)
                     //dir = avatar.curplanet -getposition, apply a gentle force
-                    avatar2.toplanet = true;
+                    //avatar2.toplanet = true;
+                    avatar2.anchorhop = true;
                 }
 
                 else if (avatar1.isAnchored()) { //If avatar1 is anchored Anchor hop
@@ -604,11 +606,13 @@ public class GameController extends WorldController implements ContactListener {
      * @param auto Whether this astronaut is being controlled or acting on its own
      */
     private void updateMovement(AstronautModel avatar, Vector2 contactDir, Planet curPlanet, boolean auto) {
+        InputController input = InputController.getInstance();
         //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
         contactDir.rotateRad(-(float) Math.PI / 2);
         float move = InputController.getInstance().getHorizontal();
         if (InputController.getInstance().didRight() || InputController.getInstance().didLeft()) {
             avatar.setPlanetMove(contactDir.scl(move));
+            if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
             avatar.moving = true;
         }
 
@@ -719,7 +723,10 @@ public class GameController extends WorldController implements ContactListener {
             avatar.contactDir.set(avatar.getPosition().cpy().sub(avatar.curPlanet.getPosition()));
             angle = -avatar.contactDir.angleRad(new Vector2 (0, 1));
             avatar.setAngle(angle);
-            updateMovement(avatar, avatar.contactDir, (Planet)avatar.curPlanet, false);
+            if (!(rope.stretched(dt, 3) && (!avatar2.getOnPlanet() || avatar2.curPlanet != avatar.curPlanet))) { //TODO player model would be great here
+                //avatar.only = true;
+                updateMovement(avatar, avatar.contactDir, (Planet) avatar.curPlanet, false);
+            }
 
             if (avatar2.getOnPlanet()) { //Inactive astronaut
                 avatar2.setFixedRotation(true);
@@ -732,9 +739,9 @@ public class GameController extends WorldController implements ContactListener {
                         updateMovement(avatar2, avatar2.contactDir, (Planet)avatar2.curPlanet, true);
                         //avatar2.setLinearVelocity((avatar2.contactDir.cpy().rotateRad(-(float) Math.PI / 2)).setLength(avatar2.getMaxSpeed()));
                     }
-//                    else {
-//                        avatar2.setLinearVelocity(reset);
-//                    }
+                    else {
+                        avatar2.setLinearVelocity(reset);
+                    }
                 }
                 else { // Else if inactive is on a different planet, set it's location, restrict mvoement of other avatar
                     avatar2.setPosition(avatar2.lastPoint);

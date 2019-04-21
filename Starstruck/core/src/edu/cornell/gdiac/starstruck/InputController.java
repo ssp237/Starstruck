@@ -302,9 +302,13 @@ public class InputController {
         return rightPressed;
     }
 
+    public boolean rightPrevious() { return rightPrevious; }
+
     public boolean didLeft() {
         return leftPressed;
     }
+
+    public boolean leftPrevious() { return leftPrevious; }
 
     public boolean heldUp() { return upHeld; }
 

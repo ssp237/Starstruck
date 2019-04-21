@@ -135,8 +135,10 @@ public class AstronautModel extends CapsuleObstacle {
     public Vector2 portalVel = new Vector2();
     /** Whether this astronaut is moving on its own */
     public boolean auto;
+    /** Whether only to apply gravity */
+    public boolean only;
     /** last planet speed */
-    public Vector2 planetVel = new Vector2();
+    public float planetVel;
     /** Whether the astronaut is swinging off an anchor */
     public boolean swing;
     /** Whether the astronaut should go w the other one coming off an anchor */
@@ -722,13 +724,20 @@ public class AstronautModel extends CapsuleObstacle {
         }
 
         if (getOnPlanet()) {
+//            Vector2 dir = curPlanet.getPosition().cpy().sub(getPosition());
+//            float angle = getLinearVelocity().angleRad(dir);
+//            System.out.println(getName() + ": " + (angle * (180/Math.PI)));
+//            float speed = getLinearVelocity().len() * (float)Math.sin(angle);
+//            System.out.println(speed);
             float speed = getLinearVelocity().len();
+            Vector2 reset = new Vector2();
             if (speed < 0)
                 System.out.println("speed is less than 0 in apply force");
 
             // Don't want to be moving. Damp out player motion
             if (!moving) {
-                body.setLinearVelocity(new Vector2());
+                body.setLinearVelocity(reset);
+                body.applyLinearImpulse(gravity, getPosition(), true);
             }
             //forceCache.set(0, 0);
 //            else if (speed >= DUDE_MAXSPEED) {
@@ -738,12 +747,14 @@ public class AstronautModel extends CapsuleObstacle {
                 int force = 4;
                 forceCache.set(planetMove.setLength(DUDE_MAXSPEED));
                 if (auto) {
+                    //body.applyLinearImpulse(gravity, getPosition(), true);
                     body.setLinearVelocity(forceCache.scl(2));
                 }
-                else {
-                    if (getLinearVelocity().len() >= DUDE_MAXSPEED) {
-                        forceCache.set(new Vector2());
+                else { //if (!only) {
+                    if (speed >= DUDE_MAXSPEED) {
+                        forceCache.set(reset);
                     }
+                    //body.applyLinearImpulse(gravity, getPosition(), true);
                     body.applyForce(forceCache.scl(force), getPosition(), true);
                 }
             }
@@ -754,6 +765,7 @@ public class AstronautModel extends CapsuleObstacle {
         justMoved = moving;
         moving = false;
         auto = false;
+        only = false;
 
         // Jump!
         if (isJumping()) {
