@@ -204,6 +204,8 @@ public class GameController extends WorldController implements ContactListener {
     private AstronautModel avatar;
     /** Reference to the second character avatar*/
     private AstronautModel avatar2;
+    /** End black hole */
+    private PortalPair goal;
     /** List of anchors, temporary quick solution */
     private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
     /** List of Rope */
@@ -224,6 +226,10 @@ public class GameController extends WorldController implements ContactListener {
     private boolean collection;
     /** List of stars */
     public ArrayList<Star> stars = new ArrayList<Star>();
+    /** Number of stars needed to open portal */
+    private int winCount;
+    /** Whether the goal is open */
+    private boolean openGoal;
     /** Viewport width and height */
     private float camWidth;
     private float camHeight;
@@ -304,8 +310,8 @@ public class GameController extends WorldController implements ContactListener {
         level.dispose();
         //enemies.clear();
 
-        //levelFormat = jsonReader.parse(Gdx.files.internal("levels/alpha2.json"));
-        levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
+        levelFormat = jsonReader.parse(Gdx.files.internal("levels/alpha2.json"));
+        //levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
 
@@ -328,6 +334,7 @@ public class GameController extends WorldController implements ContactListener {
         objects = level.objects; planets = level.getPlanets();
         world = level.getWorld(); vectorWorld = level.getVectorWorld();
         enemies = level.getEnemies();
+        goal = level.getGoal();
         //System.out.println("here ye here ye");
         //System.out.println(enemies);
         //System.out.println(enemies.size());
@@ -361,6 +368,9 @@ public class GameController extends WorldController implements ContactListener {
         stars = level.stars;
         anchors = level.anchors;
         portalpairs = level.portalpairs;
+
+        winCount = level.winCount;
+        openGoal = false;
 
         portal = false;
         portalCount = 0;
@@ -592,6 +602,7 @@ public class GameController extends WorldController implements ContactListener {
      * Helper method to update camera
      */
     private void updateCamera() {
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         float a1x = avatar.getPosition().x * avatar.drawScale.x;
         float a2x = avatar2.getPosition().x * avatar2.drawScale.x;
         float xCam = (a1x + a2x) / 2;
@@ -600,12 +611,24 @@ public class GameController extends WorldController implements ContactListener {
         float yCam = (a1y + a2y) / 2;
 
         if (portalpairCache != null && portalpairCache.isActive()) {
-            a1x = portalpairCache.getPortal1().getPosition().x * scale.x;
-            a2x = portalpairCache.getPortal2().getPosition().x * scale.x;
-            xCam = (a1x + a2x) / 2;
-            a1y = portalpairCache.getPortal1().getPosition().y * scale.y;
-            a2y = portalpairCache.getPortal2().getPosition().y * scale.y;
-            yCam = (a1y + a2y) / 2;
+            boolean update = true;
+            if (portalpairCache.isGoal()) {
+                xCam = camera.position.x;
+                yCam = camera.position.y;
+            }
+            else {
+                a1x = portalpairCache.getPortal1().getPosition().x * scale.x;
+                a2x = portalpairCache.getPortal2().getPosition().x * scale.x;
+                xCam = (a1x + a2x) / 2;
+                a1y = portalpairCache.getPortal1().getPosition().y * scale.y;
+                a2y = portalpairCache.getPortal2().getPosition().y * scale.y;
+                yCam = (a1y + a2y) / 2;
+            }
+        }
+
+        if (isComplete()) {
+            xCam = camera.position.x;
+            yCam = camera.position.y;
         }
 
         if (xCam < camWidth/2)
@@ -617,7 +640,6 @@ public class GameController extends WorldController implements ContactListener {
         else if (yCam > yBound*scale.y - camHeight/2)
             yCam = yBound*scale.y - camHeight/2;
 
-        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         camTarget.set(xCam, yCam, 0);
         Vector3 dir = camTarget.sub(camera.position);
         if (dir.len() >= CAMERA_SPEED)
@@ -811,8 +833,10 @@ public class GameController extends WorldController implements ContactListener {
         if (!isFailure() && !isComplete() && ((avatar.getY() < -1 || avatar.getY() > yBound+1 || avatar.getX() < -1 || avatar.getX() > xBound+1)
                 || (avatar2.getY() < -1 || avatar2.getY() > yBound+1 || avatar2.getX() < -1 || avatar2.getX() > xBound+1))
                 && !avatar.getOnPlanet() && !avatar2.getOnPlanet()){ //&& !avatar.isAnchored() && !avatar2.isAnchored()
-            setFailure(true);
-            return false;
+            if (portalpairCache != null && !portalpairCache.isGoal() || portalpairCache == null) {
+                setFailure(true);
+                return false;
+            }
         }
 
         return true;
@@ -924,21 +948,28 @@ public class GameController extends WorldController implements ContactListener {
             if (!stars.remove(starCache)) print("star collection error in game controller");
             if (!objects.remove(starCache)) print("star collection error in game controller");
             starCount++;
+            if (starCount >= winCount && !openGoal)
+                openGoal = true;
             collection = false;
         }
 
 
         //TODO win condition
-        if (stars.isEmpty()) {
-            setComplete(true);
-        }
+//        if (stars.isEmpty()) {
+//            setComplete(true);
+//        }
 
         if (portal && portalCount <= 0) {
             portalpairCache = findPortalPair(portalCache);
-            portalpairCache.teleport(world, avatarCache, rope);
-            portalCount = 5;
+            if (!portalpairCache.isGoal() || portalpairCache.isGoal() && openGoal) {
+                portalpairCache.teleport(world, avatarCache, rope);
+                portalCount = 5;
+            }
         }
         if (portalpairCache != null && portalpairCache.isActive()) {
+            if (portalpairCache.isGoal() && !isFailure()) { //By this point we have already confirmed that goal is open
+                setComplete(true);
+            }
             if (avatarCache == avatar) {
                 avatar2.setOnPlanet(false);
                 avatar2.setUnAnchored();
@@ -1099,7 +1130,6 @@ public class GameController extends WorldController implements ContactListener {
             //Portal stuff
             if (bd1 == avatar && bd2.getType() == ObstacleType.PORTAL) {
                 portal = true;
-                portalCache = (Portal)bd2;
                 avatarCache = avatar;
             }
             if (bd1.getType() == ObstacleType.PORTAL && bd2 == avatar) {
