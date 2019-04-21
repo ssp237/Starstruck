@@ -355,7 +355,7 @@ public class AstronautModel extends CapsuleObstacle {
 
     public void setOnPlanet(boolean value) {
         onPlanet = value;
-        if (!onPlanet)
+        if (!value)
             setFixedRotation(false);
     }
 
