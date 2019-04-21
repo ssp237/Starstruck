@@ -64,6 +64,8 @@ public class LevelModel {
     private AstronautModel player1;
     /** Reference to the second character avatar */
     private AstronautModel player2;
+    /** End goal */
+    private PortalPair goal;
     /** Reference to the list of planets */
     private PlanetList planets;
     /** Rope */
@@ -84,6 +86,10 @@ public class LevelModel {
     protected PooledList<Enemy> enemies = new PooledList<Enemy>();
     /** List of portal pairs */
     protected ArrayList<PortalPair> portalpairs = new ArrayList<PortalPair>();
+    /** Fraction of total stars needed to win */
+    private float winPercent;
+    /** Numbher of stars needed to open portal */
+    protected int winCount;
 
     /**
      * Returns the bounding rectangle for the physics world
@@ -169,6 +175,15 @@ public class LevelModel {
      */
     public Rope getRope() {
         return rope;
+    }
+
+    /**
+     * Returns a reference to the goal
+     *
+     * @return a reference to the goal
+     */
+    public PortalPair getGoal() {
+        return goal;
     }
 
     /**
@@ -262,7 +277,6 @@ public class LevelModel {
         String key = levelFormat.get("background").asString();
         background = JsonAssetManager.getInstance().getEntry(key, Texture.class);
 
-
         String gal = levelFormat.get("galaxy").asString();
         setGalaxy(Galaxy.fromString(gal));
 
@@ -298,6 +312,10 @@ public class LevelModel {
         objects.add(player1);
         objects.add(player2);
 
+//        goal = BlackHole.fromJson(levelFormat.get("goal"), scale);
+//        goal.setName("goal");
+//        activate(goal);
+
         Planet.setPresets(levelFormat.get("planet specs"));
         planets = new PlanetList(scale);
 
@@ -318,6 +336,11 @@ public class LevelModel {
             starVals = starVals.next;
         }
 
+        winPercent = levelFormat.get("win").asFloat();
+        int numStars = stars.size();
+        winCount = (int)(numStars * winPercent);
+
+
         //add anchors
         i = 0;
         JsonValue anchorVals = levelFormat.get("anchors").child();
@@ -337,10 +360,10 @@ public class LevelModel {
             activate(portalpair.getPortal1());
             activate(portalpair.getPortal2());
             portalpairs.add(portalpair);
+            if (portalpair.isGoal())
+                goal = portalpair;
             portalVals = portalVals.next;
-
         }
-
 
         //add worms
         JsonValue wormVals = levelFormat.get("worms").child();
@@ -480,6 +503,7 @@ public class LevelModel {
 
         out.addChild("physicsSize", physicsSize);
         out.addChild("graphicSize", graphicsSize);
+        out.addChild("win", new JsonValue(winPercent));
 
         //Add Galaxy
 

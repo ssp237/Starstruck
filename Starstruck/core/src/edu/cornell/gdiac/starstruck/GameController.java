@@ -83,9 +83,6 @@ public class GameController extends WorldController implements ContactListener {
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
 
-    /** Cache variable to store current planet being drawn*/
-    private WheelObstacle planetCache;
-
     /** Location and animation information for enemy */
     private Enemy enemy;
     private Enemy pinkworm;
@@ -182,6 +179,10 @@ public class GameController extends WorldController implements ContactListener {
     private static final int ROPE_RESET = 9;
     /** Speed of camera in screen coordinates */
     private static final float CAMERA_SPEED = 10f;
+    /** Gentle force to send avatar to planet cmoing off anchor */
+    private static final float TO_PLANET = 100f;
+    /** Reel force */
+    private static final float REEL_FORCE = 2f;
 
     // Other game objects
     /** The position of the spinning barrier */
@@ -194,18 +195,19 @@ public class GameController extends WorldController implements ContactListener {
     private Vector2 contactPointEN = new Vector2();
     private Vector2 contactDirEn = new Vector2();
 
-    /** Astronaut cache for portals*/
-    private AstronautModel avatarCache;
+    /** Settings of the game */
+    private boolean switchOnJump = false;
+    private boolean switchOnAnchor = false;
 
     // Physics objects for the game
     /** Reference to the character avatar */
     private AstronautModel avatar;
     /** Reference to the second character avatar*/
     private AstronautModel avatar2;
+    /** End black hole */
+    private PortalPair goal;
     /** List of anchors, temporary quick solution */
     private ArrayList<Anchor> anchors = new ArrayList<Anchor>();
-    /** List of stars */
-    public ArrayList<Star> stars = new ArrayList<Star>();
     /** List of Rope */
     private ArrayList<Rope> ropes = new ArrayList<Rope>();
     /** List of PortalPairs */
@@ -220,8 +222,14 @@ public class GameController extends WorldController implements ContactListener {
     private Rope rope;
     /** Star collection count */
     private int starCount;
-    /** List of stars to be removed */
-    private ArrayList<Star> removeStar = new ArrayList<Star>();
+    /** Whether a star should be collected */
+    private boolean collection;
+    /** List of stars */
+    public ArrayList<Star> stars = new ArrayList<Star>();
+    /** Number of stars needed to open portal */
+    private int winCount;
+    /** Whether the goal is open */
+    private boolean openGoal;
     /** Viewport width and height */
     private float camWidth;
     private float camHeight;
@@ -236,15 +244,26 @@ public class GameController extends WorldController implements ContactListener {
     private SaveListener loader;
     /** List of the planks in rope, used for presolve */
     ArrayList<Obstacle> ropeList;
-    /** Portal cache */
-    private Portal portalCache;
-    private PortalPair portalpairCache;
     /** Whether astronaut hit a portal */
     private boolean portal;
     /** Countdown timer for portal */
     private int portalCount;
     /** Target for camera position */
     private Vector3 camTarget = new Vector3();
+
+    /** Cache variable to store current planet being drawn*/
+    private WheelObstacle planetCache;
+    /** Portal cache */
+    private Portal portalCache;
+    private PortalPair portalpairCache;
+    /** cache for stars */
+    private Star starCache;
+    /** Astronaut cache for portals*/
+    private AstronautModel avatarCache;
+    /** cache for reel directrion */
+    private Vector2 reelCache;
+    /** Obstacle cache */
+    private Obstacle obstacleCache;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -291,8 +310,8 @@ public class GameController extends WorldController implements ContactListener {
         level.dispose();
         //enemies.clear();
 
-        //levelFormat = jsonReader.parse(Gdx.files.internal("levels/alpha2.json"));
-        levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
+        levelFormat = jsonReader.parse(Gdx.files.internal("levels/alpha2.json"));
+        //levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
 
@@ -315,6 +334,7 @@ public class GameController extends WorldController implements ContactListener {
         objects = level.objects; planets = level.getPlanets();
         world = level.getWorld(); vectorWorld = level.getVectorWorld();
         enemies = level.getEnemies();
+        goal = level.getGoal();
         //System.out.println("here ye here ye");
         //System.out.println(enemies);
         //System.out.println(enemies.size());
@@ -349,6 +369,9 @@ public class GameController extends WorldController implements ContactListener {
         anchors = level.anchors;
         portalpairs = level.portalpairs;
 
+        winCount = level.winCount;
+        openGoal = false;
+
         portal = false;
         portalCount = 0;
 
@@ -356,6 +379,7 @@ public class GameController extends WorldController implements ContactListener {
         float dwidth;
         float dheight;
         starCount = 0;
+        collection = false;
 
         // Create enemy
         dwidth  = enemyTexture.getRegionWidth()/scale.x;
@@ -373,7 +397,7 @@ public class GameController extends WorldController implements ContactListener {
      * @return true if space was pressed
      */
     private boolean anchord() {
-        return InputController.getInstance().didDown();
+        return InputController.getInstance().didSpace();
     }
 
     /**
@@ -382,8 +406,15 @@ public class GameController extends WorldController implements ContactListener {
      * @return true if switch was pressed
      */
     private boolean switched() {
-        return InputController.getInstance().didSpace();
+        return InputController.getInstance().didS();
     }
+
+    /**
+     * Is the reel button being pressed
+     *
+     * @return true if down is being pressed
+     */
+    private boolean reeled() { return InputController.getInstance().heldDown(); }
 
     /**
      * print method
@@ -400,12 +431,12 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void anchorHelp(AstronautModel avatar1, AstronautModel avatar2, Anchor anchor) {  //Anchor astronaut 1 & set inactive, unanchor astronaut 2 & set active
         avatar1.setAnchored(anchor);
-        avatar1.setActive(false);
+        //avatar1.setActive(false);
         avatar1.setPosition(SPIN_POS.x, SPIN_POS.y);
-        avatar1.setLinearVelocity(reset);
+        //avatar1.setLinearVelocity(reset);
         avatar1.setAngularVelocity(0);
-        avatar2.setUnAnchored();
-        avatar2.setActive(true);
+        //avatar2.setUnAnchored();
+        //avatar2.setActive(true);
         SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
     }
 
@@ -426,65 +457,144 @@ public class GameController extends WorldController implements ContactListener {
      * @param avatar1 avatar 1
      * @param avatar2 avatar 2
      */
-    private void updateAnchor(AstronautModel avatar1, AstronautModel avatar2) {
-        //If both are unanchored and anchor is hit
-        if (!avatar1.isAnchored() && !avatar2.isAnchored() && anchord()) {
-            if (avatar1.isActive() && !avatar1.getOnPlanet()) {
-                for (Anchor a : anchors) {
-                    SPIN_POS.set(a.getPosition());
-                    if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar1, avatar2, a);
-                        return;
+    private void updateAnchor(AstronautModel avatar1, AstronautModel avatar2, float dt) {
+        //If unanchored and anchor is hit
+        if (avatar1.isActive() && !avatar1.getOnPlanet() && !avatar1.isAnchored() && anchord()) {
+            for (Anchor a : anchors) {
+                SPIN_POS.set(a.getPosition());
+                if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
+                    anchorHelp(avatar1, avatar2, a);
+                    if (switchOnAnchor) {
+                        avatar1.setActive(false);
+                        avatar2.setActive(true);
                     }
-                }
-            }
-            else if (avatar2.isActive() && !avatar2.getOnPlanet()) {
-                for (Anchor a : anchors) {
-                    SPIN_POS.set(a.getPosition());
-                    if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar2, avatar1, a);
-                        return;
-                    }
+                    return;
                 }
             }
         }
 
-        //If avatar1 is already anchored, check if anchor or switch was hit
-        else if (avatar1.isAnchored()) {
-            if (anchord() && !avatar2.getOnPlanet()) { //If anchor was hit and avatar2 is not on planet -- could be anchored
-                for (Anchor a : anchors) {
-                    SPIN_POS.set(a.getPosition());
-                    if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar2, avatar1, a);
-                        return;
+        if (avatar2.isActive() && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord()) {
+            for (Anchor a : anchors) {
+                SPIN_POS.set(a.getPosition());
+                if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
+                    anchorHelp(avatar2, avatar1, a);
+                    if (switchOnAnchor) {
+                        avatar1.setActive(true);
+                        avatar2.setActive(false);
                     }
+                    return;
                 }
-            }
-            else if (switched()) { //If switch was hit unanchor avatar1 and make active
-                SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
-                avatar1.setUnAnchored();
-                avatar1.setActive(true);
-                return;
             }
         }
 
-        //If avatar2 is already anchored, check if anchor or switch was hit
-        else if (avatar2.isAnchored()) {
-            if (anchord() && !avatar1.getOnPlanet()) { //If anchor was hit and avatar1 is not on planet -- could be anchored
-                for (Anchor a : anchors) {
-                    SPIN_POS.set(a.getPosition());
-                    if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar1, avatar2, a);
-                        return;
-                    }
+        //If avatar1 is already anchored check if anchored was hit
+        if (avatar1.isAnchored()) {
+            if (!avatar2.getOnPlanet() && !avatar2.isAnchored()) { //If avatar2 is in space, swing avatarw
+                if (rope.stretched(dt, 3)) {
+                    avatar2.swing = true;
+                    if (!avatar2.isActive())
+                        avatar2.setFixedRotation(true);
                 }
             }
-            else if (switched()) { //If switch was hit unanchor avatar2 and make active
-                SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
-                avatar2.setUnAnchored();
-                avatar2.setActive(true);
-                return;
+            if (anchord() && avatar1.isActive()) { //If anchored was hit unanchor, uananchor and move
+                //avatar1.setUnAnchored();
+                //avatar2.swing = false;
+                avatar2.setFixedRotation(false);
+                if (!avatar2.getOnPlanet() && !avatar2.isAnchored()) { //set avatar1 to follow avatar2
+                    //avatar.setVelocity(avatar2.getVelocity)
+                    avatar1.follow = true;
+                }
+
+                else if (avatar2.getOnPlanet()) { // Apply a gentle force on avatar1 to planet
+                    //setlinearvelocity(0)
+                    //dir = avatar.curplanet -getposition, apply a gentle force
+                    //avatar1.toplanet = true;
+                    avatar1.anchorhop = true;
+                }
+
+                else if (avatar2.isAnchored()) { //If avatar2 is anchored Anchor hop
+                    avatar1.anchorhop = true;
+                }
+
+                //if avatar.isanchored
+                //vector2 dir = new Vector2(0, 1)
+                //angle = avatar.getanchor
+                //dir.rotaterad(angle)
+                //dir.setlength(avatar.dude_jump)
+                //avatar.setLinearVelocity(dir)
             }
+        }
+
+        //If avatar2 is already anchored check if anchored was hit
+        if (avatar2.isAnchored()) {
+            if (!avatar1.getOnPlanet() && !avatar1.isAnchored()) { //If avatar1 is in space, swing avatar1
+                if (rope.stretched(dt, 3)) {
+                    avatar1.swing = true;
+                    if (!avatar1.isActive())
+                        avatar1.setFixedRotation(true);
+                }
+            }
+            if (anchord() && avatar2.isActive()) { //If anchored was hit unanchor, uananchor and move
+                //avatar2.setUnAnchored();
+                //avatar1.swing = false;
+                avatar1.setFixedRotation(false);
+                if (!avatar1.getOnPlanet() && !avatar1.isAnchored()) { //set avatar2 to follow avatar1
+                    //avatar.setVelocity(avatar2.getVelocity)
+                    avatar2.follow = true;
+                }
+
+                else if (avatar1.getOnPlanet()) { // Apply a gentle force on avatar2 to planet
+                    //setlinearvelocity(0)
+                    //dir = avatar.curplanet -getposition, apply a gentle force
+                    //avatar2.toplanet = true;
+                    avatar2.anchorhop = true;
+                }
+
+                else if (avatar1.isAnchored()) { //If avatar1 is anchored Anchor hop
+                    avatar2.anchorhop = true;
+                }
+            }
+        }
+    }
+
+    /**
+     * Helper method for movement off the anchors
+     *
+     * @param avatarAnchor
+     * @param avatar
+     * @param dt
+     */
+    private void anchorMove(AstronautModel avatarAnchor, AstronautModel avatar, float dt) {
+        float speed = avatar.lastVel.len();
+        if (avatar.swing) {
+            Vector2 dir = avatar.getPosition().cpy().sub(avatarAnchor.getPosition());
+            if (avatar.lastVel.angle(dir) > 0)
+                dir.rotate90(-1);
+            else
+                dir.rotate90(1);
+            avatar.setLinearVelocity(dir.setLength(speed));
+            avatar.swing = false;
+        }
+        if (avatarAnchor.follow) {
+            avatarAnchor.setUnAnchored();
+            avatarAnchor.setLinearVelocity(avatar.getLinearVelocity());
+            avatarAnchor.follow = false;
+        }
+        if (avatarAnchor.toplanet) {
+            avatarAnchor.setUnAnchored();
+            avatarAnchor.setLinearVelocity(reset);
+            Vector2 dir = avatar.curPlanet.getPosition().cpy().sub(avatarAnchor.getPosition());
+            avatarAnchor.getBody().applyForce(dir.setLength(TO_PLANET), avatarAnchor.getPosition(), true);
+            avatarAnchor.toplanet = false;
+        }
+        if (avatarAnchor.anchorhop) {
+            avatarAnchor.setUnAnchored();
+            Vector2 dir = new Vector2(0, 1);
+            float angle = avatarAnchor.getAngle();
+            dir.rotateRad(angle);
+            dir.setLength(avatarAnchor.getJumpPulse());
+            avatarAnchor.setLinearVelocity(dir);
+            avatarAnchor.anchorhop = false;
         }
     }
 
@@ -492,6 +602,7 @@ public class GameController extends WorldController implements ContactListener {
      * Helper method to update camera
      */
     private void updateCamera() {
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         float a1x = avatar.getPosition().x * avatar.drawScale.x;
         float a2x = avatar2.getPosition().x * avatar2.drawScale.x;
         float xCam = (a1x + a2x) / 2;
@@ -500,12 +611,24 @@ public class GameController extends WorldController implements ContactListener {
         float yCam = (a1y + a2y) / 2;
 
         if (portalpairCache != null && portalpairCache.isActive()) {
-            a1x = portalpairCache.getPortal1().getPosition().x * scale.x;
-            a2x = portalpairCache.getPortal2().getPosition().x * scale.x;
-            xCam = (a1x + a2x) / 2;
-            a1y = portalpairCache.getPortal1().getPosition().y * scale.y;
-            a2y = portalpairCache.getPortal2().getPosition().y * scale.y;
-            yCam = (a1y + a2y) / 2;
+            boolean update = true;
+            if (portalpairCache.isGoal()) {
+                xCam = camera.position.x;
+                yCam = camera.position.y;
+            }
+            else {
+                a1x = portalpairCache.getPortal1().getPosition().x * scale.x;
+                a2x = portalpairCache.getPortal2().getPosition().x * scale.x;
+                xCam = (a1x + a2x) / 2;
+                a1y = portalpairCache.getPortal1().getPosition().y * scale.y;
+                a2y = portalpairCache.getPortal2().getPosition().y * scale.y;
+                yCam = (a1y + a2y) / 2;
+            }
+        }
+
+        if (isComplete()) {
+            xCam = camera.position.x;
+            yCam = camera.position.y;
         }
 
         if (xCam < camWidth/2)
@@ -517,7 +640,6 @@ public class GameController extends WorldController implements ContactListener {
         else if (yCam > yBound*scale.y - camHeight/2)
             yCam = yBound*scale.y - camHeight/2;
 
-        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         camTarget.set(xCam, yCam, 0);
         Vector3 dir = camTarget.sub(camera.position);
         if (dir.len() >= CAMERA_SPEED)
@@ -535,11 +657,13 @@ public class GameController extends WorldController implements ContactListener {
      * @param auto Whether this astronaut is being controlled or acting on its own
      */
     private void updateMovement(AstronautModel avatar, Vector2 contactDir, Planet curPlanet, boolean auto) {
+        InputController input = InputController.getInstance();
         //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
         contactDir.rotateRad(-(float) Math.PI / 2);
         float move = InputController.getInstance().getHorizontal();
         if (InputController.getInstance().didRight() || InputController.getInstance().didLeft()) {
             avatar.setPlanetMove(contactDir.scl(move));
+            if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
             avatar.moving = true;
         }
 
@@ -613,7 +737,7 @@ public class GameController extends WorldController implements ContactListener {
 
         //Both are on the same planet, uses force on joint to test when inactive astronaut should move
         else if (mode == 'j') {
-            if (rope.stretched(dt)) {
+            if (rope.stretched(dt, 3)) {
                 return true;
             }
 
@@ -650,7 +774,10 @@ public class GameController extends WorldController implements ContactListener {
             avatar.contactDir.set(avatar.getPosition().cpy().sub(avatar.curPlanet.getPosition()));
             angle = -avatar.contactDir.angleRad(new Vector2 (0, 1));
             avatar.setAngle(angle);
-            updateMovement(avatar, avatar.contactDir, (Planet)avatar.curPlanet, false);
+            if ((rope.stretched(dt, 3) && (!avatar2.getOnPlanet() || avatar2.curPlanet != avatar.curPlanet))) { //TODO player model would be great here
+                avatar.only = true;
+            }
+            updateMovement(avatar, avatar.contactDir, (Planet) avatar.curPlanet, false);
 
             if (avatar2.getOnPlanet()) { //Inactive astronaut
                 avatar2.setFixedRotation(true);
@@ -659,7 +786,12 @@ public class GameController extends WorldController implements ContactListener {
                 avatar2.setAngle(angle);
                 if (avatar.curPlanet == avatar2.curPlanet) { //If the two avatars are on the same planet, move inactive avatar
                     if (updateRope(avatar, avatar2, rope, 'j', dt)) {
+                        avatar2.auto = true;
                         updateMovement(avatar2, avatar2.contactDir, (Planet)avatar2.curPlanet, true);
+                        //avatar2.setLinearVelocity((avatar2.contactDir.cpy().rotateRad(-(float) Math.PI / 2)).setLength(avatar2.getMaxSpeed()));
+                    }
+                    else {
+                        avatar2.setLinearVelocity(reset);
                     }
                 }
                 else { // Else if inactive is on a different planet, set it's location, restrict mvoement of other avatar
@@ -701,8 +833,10 @@ public class GameController extends WorldController implements ContactListener {
         if (!isFailure() && !isComplete() && ((avatar.getY() < -1 || avatar.getY() > yBound+1 || avatar.getX() < -1 || avatar.getX() > xBound+1)
                 || (avatar2.getY() < -1 || avatar2.getY() > yBound+1 || avatar2.getX() < -1 || avatar2.getX() > xBound+1))
                 && !avatar.getOnPlanet() && !avatar2.getOnPlanet()){ //&& !avatar.isAnchored() && !avatar2.isAnchored()
-            setFailure(true);
-            return false;
+            if (portalpairCache != null && !portalpairCache.isGoal() || portalpairCache == null) {
+                setFailure(true);
+                return false;
+            }
         }
 
         return true;
@@ -760,10 +894,9 @@ public class GameController extends WorldController implements ContactListener {
             SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
         }
 
-        if ((dist(avatar.getPosition(), enemy.getPosition()) < 1f || dist(avatar2.getPosition(), enemy.getPosition()) < 1f) && !isComplete() && !testE)
+        if ((dist(avatar.getPosition(), enemy.getPosition()) < 1f && avatar.getOnPlanet()
+                || dist(avatar2.getPosition(), enemy.getPosition()) < 1f && avatar2.getOnPlanet()) && !isComplete() && !testE)
             setFailure(true);
-
-
 
         for (Enemy e : enemies) {
             if (e.getType() == ObstacleType.WORM) {
@@ -771,23 +904,75 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
-        avatar.setFixedRotation(false);
-        avatar2.setFixedRotation(false);
-        updateAnchor(avatar, avatar2);
+//        avatar.setFixedRotation(false);
+//        avatar2.setFixedRotation(false);
+
+        updateAnchor(avatar, avatar2, dt);
+
+        float angVel = 0.1f;
+        if (avatar.isAnchored()) {
+            if (!avatar.isActive() || avatar.getRotation() == 0) { //Dampen rotation
+                if (avatar.getAngularVelocity() > 0) {
+                    if (avatar.getAngularVelocity() < angVel)
+                        angVel = avatar.getAngularVelocity();
+                    avatar.setAngularVelocity(avatar.getAngularVelocity() - angVel);
+                }
+                else if (avatar.getAngularVelocity() < 0) {
+                    if (avatar.getAngularVelocity() > -angVel)
+                        angVel = -avatar.getAngularVelocity();
+                    avatar.setAngularVelocity(avatar.getAngularVelocity() + angVel);
+                }
+            }
+            anchorMove(avatar, avatar2, dt);
+        }
+
+        if (avatar2.isAnchored()) {
+            if (!avatar2.isActive() || avatar2.getRotation() == 0) { //Dampen
+                if (avatar2.getAngularVelocity() > 0) {
+                    if (avatar2.getAngularVelocity() < angVel)
+                        angVel = avatar2.getAngularVelocity();
+                    avatar2.setAngularVelocity(avatar2.getAngularVelocity() - angVel);
+                }
+                else if (avatar2.getAngularVelocity() < 0) {
+                    if (avatar2.getAngularVelocity() > -angVel)
+                        angVel = -avatar2.getAngularVelocity();
+                    avatar2.setAngularVelocity(avatar2.getAngularVelocity() + angVel);
+                }
+            }
+            anchorMove(avatar2, avatar, dt);
+        }
+
+        //Collect star
+        if (collection) {
+            starCache.deactivatePhysics(world);
+            if (!stars.remove(starCache)) print("star collection error in game controller");
+            if (!objects.remove(starCache)) print("star collection error in game controller");
+            starCount++;
+            if (starCount >= winCount && !openGoal)
+                openGoal = true;
+            collection = false;
+        }
+
 
         //TODO win condition
-        if (stars.isEmpty()) {
-            setComplete(true);
-        }
+//        if (stars.isEmpty()) {
+//            setComplete(true);
+//        }
 
         if (portal && portalCount <= 0) {
             portalpairCache = findPortalPair(portalCache);
-            portalpairCache.teleport(world, avatarCache, rope);
-            portalCount = 5;
+            if (!portalpairCache.isGoal() || portalpairCache.isGoal() && openGoal) {
+                portalpairCache.teleport(world, avatarCache, rope);
+                portalCount = 5;
+            }
         }
         if (portalpairCache != null && portalpairCache.isActive()) {
+            if (portalpairCache.isGoal() && !isFailure()) { //By this point we have already confirmed that goal is open
+                setComplete(true);
+            }
             if (avatarCache == avatar) {
                 avatar2.setOnPlanet(false);
+                avatar2.setUnAnchored();
                 Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar2.getPosition());
                 dir.setLength(avatar.portalVel.len()*2);
                 avatar2.setLinearVelocity(dir);
@@ -796,6 +981,7 @@ public class GameController extends WorldController implements ContactListener {
             }
             else {
                 avatar.setOnPlanet(false);
+                avatar.setUnAnchored();
                 Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar.getPosition());
                 dir.setLength(avatar2.portalVel.len()*2);
                 avatar.setLinearVelocity(dir);
@@ -808,6 +994,11 @@ public class GameController extends WorldController implements ContactListener {
         portal = false;
 
         if (avatar.isActive()) {
+            if (reeled() && !avatar2.getOnPlanet() && !avatar2.isAnchored()) {
+                reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
+                reelCache.setLength(REEL_FORCE);
+                avatar2.getBody().applyForceToCenter(reelCache, true);
+            }
             updateHelp(avatar, avatar2, dt);
             if (testC) {
                 avatar.setFixedRotation(true);
@@ -816,6 +1007,11 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
         else { //if avatar2 is active
+            if (reeled() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
+                reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
+                reelCache.setLength(REEL_FORCE);
+                avatar.getBody().applyForceToCenter(reelCache, true);
+            }
             updateHelp(avatar2, avatar, dt);
             if (testC) {
                 avatar2.setFixedRotation(true);
@@ -824,11 +1020,10 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
-        //TODO Switch on jump
-//        if ((avatar.isJumping() || avatar2.isJumping()) && !avatar.isAnchored() && !avatar2.isAnchored() && !testC) {
-//            avatar.setActive(!avatar.isActive());
-//            avatar2.setActive(!avatar2.isActive());
-//        }
+        if (switchOnJump && (avatar.isJumping() || avatar2.isJumping()) && !avatar.isAnchored() && !avatar2.isAnchored() && !testC) {
+            avatar.setActive(!avatar.isActive());
+            avatar2.setActive(!avatar2.isActive());
+        }
 
         avatar.applyForce();
         avatar2.applyForce();
@@ -910,10 +1105,31 @@ public class GameController extends WorldController implements ContactListener {
                 setFailure(true);
             }
 
+            //Star collection
+            if ((bd1.getType() == ObstacleType.STAR || bd2.getType() == ObstacleType.STAR) && count < 0) {
+                if (bd1.getType() == ObstacleType.STAR) {
+                    starCache = (Star)bd1;
+                    obstacleCache = bd2;
+                }
+                else {
+                    starCache = (Star)bd2;
+                    obstacleCache = bd1;
+                }
+                if (starCache.getLoc().equals("space")) {
+                    if (obstacleCache.getName().contains("avatar") || obstacleCache.getName().contains("rope")) {
+                        collection = true;
+                    }
+                }
+                else {
+                    if (obstacleCache == avatar && avatar.getOnPlanet() || obstacleCache == avatar2 && avatar2.getOnPlanet()) {
+                        collection = true;
+                    }
+                }
+            }
+
             //Portal stuff
             if (bd1 == avatar && bd2.getType() == ObstacleType.PORTAL) {
                 portal = true;
-                portalCache = (Portal)bd2;
                 avatarCache = avatar;
             }
             if (bd1.getType() == ObstacleType.PORTAL && bd2 == avatar) {
@@ -1060,24 +1276,23 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(false);
             }
             //Enables collisions between rope and anchor
-            if (bd1.getName().contains("rope") && bd2.getName().contains("anchor")
-                    || bd1.getName().contains("anchor") && bd2.getName().contains("rope")) {
-                contact.setEnabled(true);
-            }
-
+//            if (bd1.getName().contains("rope") && bd2.getName().contains("anchor")
+//                    || bd1.getName().contains("anchor") && bd2.getName().contains("rope")) {
+//                contact.setEnabled(true);
+//            }
 
             //Disables collisions between ends of rope and anchors
-            ropeList = rope.getPlanks();
-            BoxObstacle plank0 = (BoxObstacle)ropeList.get(0);
-            BoxObstacle plank1 = (BoxObstacle)ropeList.get(1);
-            BoxObstacle plank4 = (BoxObstacle)ropeList.get(2);
-            BoxObstacle plank2 = (BoxObstacle)ropeList.get(ropeList.size()-2);
-            BoxObstacle plank3 = (BoxObstacle)ropeList.get(ropeList.size()-1);
-            BoxObstacle plank5 = (BoxObstacle)ropeList.get(ropeList.size()-3);
-            if (bd1N.contains("anchor") && (bd2 == plank0 || bd2 == plank1 || bd2 == plank2 || bd2 == plank3)
-                    || bd2N.contains("anchor") && (bd1 == plank0 || bd1 == plank1 || bd1 == plank2 || bd1 == plank3)) {
-                contact.setEnabled(false);
-            }
+//            ropeList = rope.getPlanks();
+//            BoxObstacle plank0 = (BoxObstacle)ropeList.get(0);
+//            BoxObstacle plank1 = (BoxObstacle)ropeList.get(1);
+//            BoxObstacle plank4 = (BoxObstacle)ropeList.get(2);
+//            BoxObstacle plank2 = (BoxObstacle)ropeList.get(ropeList.size()-2);
+//            BoxObstacle plank3 = (BoxObstacle)ropeList.get(ropeList.size()-1);
+//            BoxObstacle plank5 = (BoxObstacle)ropeList.get(ropeList.size()-3);
+//            if (bd1N.contains("anchor") && (bd2 == plank0 || bd2 == plank1 || bd2 == plank2 || bd2 == plank3)
+//                    || bd2N.contains("anchor") && (bd1 == plank0 || bd1 == plank1 || bd1 == plank2 || bd1 == plank3)) {
+//                contact.setEnabled(false);
+//            }
 
             //Enables collisions between rope and planet
             if (bd1.getName().contains("rope") && bd2.getName().contains("planet")
