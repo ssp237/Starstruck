@@ -705,15 +705,11 @@ public class AstronautModel extends CapsuleObstacle {
 
         if (!getOnPlanet()) {
             if (Math.abs(getAngularVelocity()) >= DUDE_MAXROT) {
-                float direction = Math.abs(getAngularVelocity())/getAngularVelocity();
-                //setAngularVelocity(Math.signum(getAngle()) * getMaxSpeed());
-                float angular = direction * DUDE_MAXROT;
-                body.setAngularVelocity(Math.abs(getAngularVelocity())*angular);
+                body.setAngularVelocity(Math.signum(getAngularVelocity()) * DUDE_MAXROT);
             }
             else {
-                float direction = Math.abs(getAngularVelocity())/getAngularVelocity();
                 //body.applyTorque(-getRotation(), true);
-                body.setAngularVelocity(getAngularVelocity() + direction*getRotation());
+                body.setAngularVelocity(getAngularVelocity() - 0.1f * getRotation());
             }
         }
 
