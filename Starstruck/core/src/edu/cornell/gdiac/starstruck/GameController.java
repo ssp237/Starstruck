@@ -1176,24 +1176,23 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(false);
             }
             //Enables collisions between rope and anchor
-            if (bd1.getName().contains("rope") && bd2.getName().contains("anchor")
-                    || bd1.getName().contains("anchor") && bd2.getName().contains("rope")) {
-                contact.setEnabled(true);
-            }
-
+//            if (bd1.getName().contains("rope") && bd2.getName().contains("anchor")
+//                    || bd1.getName().contains("anchor") && bd2.getName().contains("rope")) {
+//                contact.setEnabled(true);
+//            }
 
             //Disables collisions between ends of rope and anchors
-            ropeList = rope.getPlanks();
-            BoxObstacle plank0 = (BoxObstacle)ropeList.get(0);
-            BoxObstacle plank1 = (BoxObstacle)ropeList.get(1);
-            BoxObstacle plank4 = (BoxObstacle)ropeList.get(2);
-            BoxObstacle plank2 = (BoxObstacle)ropeList.get(ropeList.size()-2);
-            BoxObstacle plank3 = (BoxObstacle)ropeList.get(ropeList.size()-1);
-            BoxObstacle plank5 = (BoxObstacle)ropeList.get(ropeList.size()-3);
-            if (bd1N.contains("anchor") && (bd2 == plank0 || bd2 == plank1 || bd2 == plank2 || bd2 == plank3)
-                    || bd2N.contains("anchor") && (bd1 == plank0 || bd1 == plank1 || bd1 == plank2 || bd1 == plank3)) {
-                contact.setEnabled(false);
-            }
+//            ropeList = rope.getPlanks();
+//            BoxObstacle plank0 = (BoxObstacle)ropeList.get(0);
+//            BoxObstacle plank1 = (BoxObstacle)ropeList.get(1);
+//            BoxObstacle plank4 = (BoxObstacle)ropeList.get(2);
+//            BoxObstacle plank2 = (BoxObstacle)ropeList.get(ropeList.size()-2);
+//            BoxObstacle plank3 = (BoxObstacle)ropeList.get(ropeList.size()-1);
+//            BoxObstacle plank5 = (BoxObstacle)ropeList.get(ropeList.size()-3);
+//            if (bd1N.contains("anchor") && (bd2 == plank0 || bd2 == plank1 || bd2 == plank2 || bd2 == plank3)
+//                    || bd2N.contains("anchor") && (bd1 == plank0 || bd1 == plank1 || bd1 == plank2 || bd1 == plank3)) {
+//                contact.setEnabled(false);
+//            }
 
             //Enables collisions between rope and planet
             if (bd1.getName().contains("rope") && bd2.getName().contains("planet")
