@@ -111,10 +111,10 @@ public class PortalPair {
         leadPortal = otherPortal;
         trailPortal = thisPortal;
         Vector2 dir = new Vector2(avatar.lastVel);
-        //dir.setLength(getTexture().getRegionWidth()/2/scale.x + 1);
         dir.setLength(getTexture().getRegionWidth()/2/scale.x);
         avatar.setPosition(otherPortal.getPosition().cpy().add(dir));
-        avatar.portalVel.set(avatar.lastVel.cpy().setLength(PORTAL_SPEED));
+        avatar.portalVel.set(avatar.lastVel);
+        //avatar.portalVel.setLength(PORTAL_SPEED);
         if (active) { //This case should always happen before !active
             //Split rope
             joints = rope.split(world, avatar.getName().equals("avatar2"), thisPortal, otherPortal);
@@ -141,14 +141,14 @@ public class PortalPair {
     }
 
     /**
-     * 0: Blue, default
+     * 0: White, default
      *
      * @param color Number code for color
      * @return The color
      */
     private Color portalColor(int color) {
-        if (color == 0) return Color.BLUE;
-        return Color.BLUE;
+        if (color == 0) return Color.WHITE;
+        return Color.WHITE;
     }
 
     /**
@@ -184,8 +184,8 @@ public class PortalPair {
         //Write name
         json.addChild("name", new JsonValue(getPortalName()));
 
-        //Write color TODO
-        json.addChild("color", new JsonValue("blue"));
+        //Write color
+        json.addChild("color", new JsonValue(color + ""));
 
         //Add textures
         json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));

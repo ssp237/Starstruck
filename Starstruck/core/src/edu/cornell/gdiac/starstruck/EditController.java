@@ -188,7 +188,7 @@ public class EditController extends WorldController implements ContactListener {
         camera.viewportHeight = canvas.getHeight();
         camera.position.x = camera.viewportWidth/2;
         camera.position.y = camera.viewportHeight/2;
-        System.out.println(camera.zoom);
+        //System.out.println(camera.zoom);
 
         texture = JsonAssetManager.getInstance().getEntry("astronaut 1", TextureRegion.class);
         dwidth = texture.getRegionWidth()/scale.x;
