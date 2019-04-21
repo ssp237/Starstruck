@@ -373,7 +373,7 @@ public class GameController extends WorldController implements ContactListener {
      * @return true if space was pressed
      */
     private boolean anchord() {
-        return InputController.getInstance().didDown();
+        return InputController.getInstance().didSpace();
     }
 
     /**
@@ -382,7 +382,7 @@ public class GameController extends WorldController implements ContactListener {
      * @return true if switch was pressed
      */
     private boolean switched() {
-        return InputController.getInstance().didSpace();
+        return InputController.getInstance().didS();
     }
 
     /**
@@ -400,12 +400,12 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void anchorHelp(AstronautModel avatar1, AstronautModel avatar2, Anchor anchor) {  //Anchor astronaut 1 & set inactive, unanchor astronaut 2 & set active
         avatar1.setAnchored(anchor);
-        avatar1.setActive(false);
+        //avatar1.setActive(false);
         avatar1.setPosition(SPIN_POS.x, SPIN_POS.y);
-        avatar1.setLinearVelocity(reset);
+        //avatar1.setLinearVelocity(reset);
         avatar1.setAngularVelocity(0);
         avatar2.setUnAnchored();
-        avatar2.setActive(true);
+        //avatar2.setActive(true);
         SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
     }
 
@@ -451,21 +451,24 @@ public class GameController extends WorldController implements ContactListener {
 
         //If avatar1 is already anchored, check if anchor or switch was hit
         else if (avatar1.isAnchored()) {
-            if (anchord() && !avatar2.getOnPlanet()) { //If anchor was hit and avatar2 is not on planet -- could be anchored
-                for (Anchor a : anchors) {
-                    SPIN_POS.set(a.getPosition());
-                    if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                        anchorHelp(avatar2, avatar1, a);
-                        return;
-                    }
-                }
+            if (anchord()) {
+                avatar.setUnAnchored();
             }
-            else if (switched()) { //If switch was hit unanchor avatar1 and make active
-                SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
-                avatar1.setUnAnchored();
-                avatar1.setActive(true);
-                return;
-            }
+//            if (anchord() && !avatar2.getOnPlanet()) { //If anchor was hit and avatar2 is not on planet -- could be anchored
+//                for (Anchor a : anchors) {
+//                    SPIN_POS.set(a.getPosition());
+//                    if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
+//                        anchorHelp(avatar2, avatar1, a);
+//                        return;
+//                    }
+//                }
+//            }
+//            else if (switched()) { //If switch was hit unanchor avatar1 and make active
+//                SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
+//                avatar1.setUnAnchored();
+//                avatar1.setActive(true);
+//                return;
+//            }
         }
 
         //If avatar2 is already anchored, check if anchor or switch was hit
