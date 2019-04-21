@@ -450,9 +450,30 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         //If avatar1 is already anchored, check if anchor or switch was hit
-        else if (avatar1.isAnchored() && avatar1.isActive()) {
-            if (anchord()) { //If anchored was hit unanchor
+        else if (avatar1.isAnchored()) {
+            if (!avatar2.getOnPlanet() && !avatar2.isAnchored()) {
+                //if rope is stretched
+                //speed = last velocity
+                //dir = avatar2 - avatar1  -> maybe new field
+                //if lastvel.angle(dir) > 0 dir.rotate90(1)
+                // else dir.rorate90(-1)
+                //avatar2.setVelocity(dir.setLength(speed))
+            }
+            if (anchord() && avatar1.isActive()) { //If anchored was hit unanchor
                 avatar1.setUnAnchored();
+                //if !avatar.onPlanet && !anchored
+                //avatar.setVelocity(avatar2.getVelocity)
+
+                //if avatar is on planet
+                //setlinearvelocity(0)
+                //dir = avatar.curplanet -getposition, apply a gentle force
+
+                //if avatar.isanchored
+                //vector2 dir = new Vector2(0, 1)
+                //angle = avatar.getanchor
+                //dir.rotaterad(angle)
+                //dir.setlength(avatar.dude_jump)
+                //avatar.setLinearVelocity(dir)
             }
         }
 
