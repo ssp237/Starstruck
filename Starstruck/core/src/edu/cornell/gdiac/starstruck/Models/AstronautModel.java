@@ -750,7 +750,7 @@ public class AstronautModel extends CapsuleObstacle {
                     //body.applyLinearImpulse(gravity, getPosition(), true);
                     body.setLinearVelocity(forceCache.scl(2));
                 }
-                else { //if (!only) {
+                else if (!only) {
                     if (speed >= DUDE_MAXSPEED) {
                         forceCache.set(reset);
                     }
@@ -765,7 +765,6 @@ public class AstronautModel extends CapsuleObstacle {
         justMoved = moving;
         moving = false;
         auto = false;
-        only = false;
 
         // Jump!
         if (isJumping()) {
@@ -776,9 +775,10 @@ public class AstronautModel extends CapsuleObstacle {
         }
 
         // Gravity from planets
-        if (!GameController.testC ) {
+        if (!GameController.testC && !only) {
             body.applyForce(gravity, getPosition(), true);
         }
+        only = false;
 
         if (GameController.testC) {
             forceCache.set(getMovement(), getMovementV());

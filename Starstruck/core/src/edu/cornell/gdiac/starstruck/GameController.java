@@ -198,6 +198,10 @@ public class GameController extends WorldController implements ContactListener {
     private Vector2 contactPointEN = new Vector2();
     private Vector2 contactDirEn = new Vector2();
 
+    /** Settings of the game */
+    private boolean switchOnJump = false;
+    private boolean switchOnAnchor = false;
+
     /** Astronaut cache for portals*/
     private AstronautModel avatarCache;
     /** cache for reel directrion */
@@ -446,6 +450,10 @@ public class GameController extends WorldController implements ContactListener {
                 SPIN_POS.set(a.getPosition());
                 if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
                     anchorHelp(avatar1, avatar2, a);
+                    if (switchOnAnchor) {
+                        avatar1.setActive(false);
+                        avatar2.setActive(true);
+                    }
                     return;
                 }
             }
@@ -456,6 +464,10 @@ public class GameController extends WorldController implements ContactListener {
                 SPIN_POS.set(a.getPosition());
                 if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
                     anchorHelp(avatar2, avatar1, a);
+                    if (switchOnAnchor) {
+                        avatar1.setActive(true);
+                        avatar2.setActive(false);
+                    }
                     return;
                 }
             }
@@ -553,20 +565,16 @@ public class GameController extends WorldController implements ContactListener {
             avatarAnchor.setLinearVelocity(reset);
             Vector2 dir = avatar.curPlanet.getPosition().cpy().sub(avatarAnchor.getPosition());
             avatarAnchor.getBody().applyForce(dir.setLength(TO_PLANET), avatarAnchor.getPosition(), true);
+            avatarAnchor.toplanet = false;
         }
         if (avatarAnchor.anchorhop) {
-            //if avatar.isanchored
-            //vector2 dir = new Vector2(0, 1)
-            //angle = avatar.getanchor
-            //dir.rotaterad(angle)
-            //dir.setlength(avatar.dude_jump)
-            //avatar.setLinearVelocity(dir)
             avatarAnchor.setUnAnchored();
             Vector2 dir = new Vector2(0, 1);
             float angle = avatarAnchor.getAngle();
             dir.rotateRad(angle);
             dir.setLength(avatarAnchor.getJumpPulse());
             avatarAnchor.setLinearVelocity(dir);
+            avatarAnchor.anchorhop = false;
         }
     }
 
@@ -734,10 +742,10 @@ public class GameController extends WorldController implements ContactListener {
             avatar.contactDir.set(avatar.getPosition().cpy().sub(avatar.curPlanet.getPosition()));
             angle = -avatar.contactDir.angleRad(new Vector2 (0, 1));
             avatar.setAngle(angle);
-            if (!(rope.stretched(dt, 3) && (!avatar2.getOnPlanet() || avatar2.curPlanet != avatar.curPlanet))) { //TODO player model would be great here
-                //avatar.only = true;
-                updateMovement(avatar, avatar.contactDir, (Planet) avatar.curPlanet, false);
+            if ((rope.stretched(dt, 3) && (!avatar2.getOnPlanet() || avatar2.curPlanet != avatar.curPlanet))) { //TODO player model would be great here
+                avatar.only = true;
             }
+            updateMovement(avatar, avatar.contactDir, (Planet) avatar.curPlanet, false);
 
             if (avatar2.getOnPlanet()) { //Inactive astronaut
                 avatar2.setFixedRotation(true);
@@ -961,11 +969,10 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
-        //TODO Switch on jump
-//        if ((avatar.isJumping() || avatar2.isJumping()) && !avatar.isAnchored() && !avatar2.isAnchored() && !testC) {
-//            avatar.setActive(!avatar.isActive());
-//            avatar2.setActive(!avatar2.isActive());
-//        }
+        if (switchOnJump && (avatar.isJumping() || avatar2.isJumping()) && !avatar.isAnchored() && !avatar2.isAnchored() && !testC) {
+            avatar.setActive(!avatar.isActive());
+            avatar2.setActive(!avatar2.isActive());
+        }
 
         avatar.applyForce();
         avatar2.applyForce();
