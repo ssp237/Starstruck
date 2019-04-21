@@ -137,6 +137,14 @@ public class AstronautModel extends CapsuleObstacle {
     public boolean auto;
     /** last planet speed */
     public Vector2 planetVel = new Vector2();
+    /** Whether the astronaut is swinging off an anchor */
+    public boolean swing;
+    /** Whether the astronaut should go w the other one coming off an anchor */
+    public boolean follow;
+    /** Whether the astronaut should go to the planet coming off an anchor */
+    public boolean toplanet;
+    /** Whether the astronaut should "jump" off anchor */
+    public boolean anchorhop;
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
 
