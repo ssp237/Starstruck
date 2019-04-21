@@ -184,6 +184,8 @@ public class GameController extends WorldController implements ContactListener {
     private static final float CAMERA_SPEED = 10f;
     /** Gentle force to send avatar to planet cmoing off anchor */
     private static final float TO_PLANET = 100f;
+    /** Reel force */
+    private static final float REEL_FORCE = 2f;
 
     // Other game objects
     /** The position of the spinning barrier */
@@ -198,6 +200,8 @@ public class GameController extends WorldController implements ContactListener {
 
     /** Astronaut cache for portals*/
     private AstronautModel avatarCache;
+    /** cache for reel directrion */
+    private Vector2 reelCache;
 
     // Physics objects for the game
     /** Reference to the character avatar */
@@ -386,6 +390,13 @@ public class GameController extends WorldController implements ContactListener {
     private boolean switched() {
         return InputController.getInstance().didS();
     }
+
+    /**
+     * Is the reel button being pressed
+     *
+     * @return true if down is being pressed
+     */
+    private boolean reeled() { return InputController.getInstance().heldDown(); }
 
     /**
      * print method
@@ -924,6 +935,11 @@ public class GameController extends WorldController implements ContactListener {
         portal = false;
 
         if (avatar.isActive()) {
+            if (reeled() && !avatar2.getOnPlanet() && !avatar2.isAnchored()) {
+                reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
+                reelCache.setLength(REEL_FORCE);
+                avatar2.getBody().applyForceToCenter(reelCache, true);
+            }
             updateHelp(avatar, avatar2, dt);
             if (testC) {
                 avatar.setFixedRotation(true);
@@ -932,6 +948,11 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
         else { //if avatar2 is active
+            if (reeled() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
+                reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
+                reelCache.setLength(REEL_FORCE);
+                avatar.getBody().applyForceToCenter(reelCache, true);
+            }
             updateHelp(avatar2, avatar, dt);
             if (testC) {
                 avatar2.setFixedRotation(true);
