@@ -22,26 +22,28 @@ import com.badlogic.gdx.math.collision.*;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
-public class Star extends ComplexObstacle {
-    /** The debug name for the entire obstacle */
-    private static final String SPINNER_NAME = "star_spinner";
-    /** The debug name for the spinning barrier */
-    private static final String BARRIER_NAME = "star_barrier";
-    /** The debug name for the central pin */
-    private static final String SPIN_PIN_NAME = "star_pin";
-    /** The density for most physics objects */
-    private static final float LIGHT_DENSITY = 0.0f;
-    /** The density for a bullet */
-    private static final float HEAVY_DENSITY = 10.0f;
-    /** The radius of the central pin */
-    private static final float SPIN_PIN_RADIUS = 0.1f;
-
-    /** The primary spinner obstacle */
-    private BoxObstacle barrier;
-    private WheelObstacle pivot;
+public class Star extends BoxObstacle {
+//    /** The debug name for the entire obstacle */
+//    private static final String SPINNER_NAME = "star_spinner";
+//    /** The debug name for the spinning barrier */
+//    private static final String BARRIER_NAME = "star_barrier";
+//    /** The debug name for the central pin */
+//    private static final String SPIN_PIN_NAME = "star_pin";
+//    /** The density for most physics objects */
+//    private static final float LIGHT_DENSITY = 0.0f;
+//    /** The density for a bullet */
+//    private static final float HEAVY_DENSITY = 10.0f;
+//    /** The radius of the central pin */
+//    private static final float SPIN_PIN_RADIUS = 0.1f;
+//
+//    /** The primary spinner obstacle */
+//    private BoxObstacle barrier;
+//    private WheelObstacle pivot;
 
     /** To be removed */
     protected boolean remove = false;
+    /** Location of this star */
+    private String location;
 
     /** Ray cache for calculating intersection */
     private Ray rayCache;
@@ -73,23 +75,23 @@ public class Star extends ComplexObstacle {
      * @param height	The object width in physics units
      */
     public Star(float x, float y, float width, float height) {
-        super(x,y);
-        setName(SPINNER_NAME);
-
-        // Create the barrier
-        barrier = new BoxObstacle(x,y,width,height);
-        barrier.setName(BARRIER_NAME);
-        barrier.setDensity(HEAVY_DENSITY);
-        bodies.add(barrier);
-
-        //#region INSERT CODE HERE
-        // Create a pin to anchor the barrier
-        pivot = new WheelObstacle(x,y,SPIN_PIN_RADIUS);
-        pivot.setName(SPIN_PIN_NAME);
-        pivot.setDensity(LIGHT_DENSITY);
-        pivot.setBodyType(BodyDef.BodyType.StaticBody);
-        bodies.add(pivot);
-
+        super(x,y,width,height);
+        setName("star");
+//        setName(SPINNER_NAME);
+//
+//        // Create the barrier
+//        barrier = new BoxObstacle(x,y,width,height);
+//        barrier.setName(BARRIER_NAME);
+//        barrier.setDensity(HEAVY_DENSITY);
+//        bodies.add(barrier);
+//
+//        //#region INSERT CODE HERE
+//        // Create a pin to anchor the barrier
+//        pivot = new WheelObstacle(x,y,SPIN_PIN_RADIUS);
+//        pivot.setName(SPIN_PIN_NAME);
+//        pivot.setDensity(LIGHT_DENSITY);
+//        pivot.setBodyType(BodyDef.BodyType.StaticBody);
+//        bodies.add(pivot);
 
         // Radius: SPIN_PIN_RADIUS
         // Density: LIGHT_DENSITY
@@ -111,6 +113,21 @@ public class Star extends ComplexObstacle {
     }
 
     /**
+     *
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @param location Whether this star is in space or on planet
+     */
+    public Star(float x, float y, float width, float height, String location) {
+        this(x, y, width, height);
+        this.location = location;
+    }
+
+    public String getLoc() { return location; }
+
+    /**
      * Return a new star with parameters specified by the JSON
      * @param json A JSON containing data for one star
      * @param scale The scale to convert physics units to drawing units
@@ -119,8 +136,9 @@ public class Star extends ComplexObstacle {
     public static Star fromJSON(JsonValue json, Vector2 scale) {
         String key = json.get("texture").asString();
         TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        String location = json.get("location").asString();
         Star out =  new Star(json.get("x").asFloat(), json.get("y").asFloat(),
-                texture.getRegionWidth()/scale.x, texture.getRegionHeight()/scale.y);
+                texture.getRegionWidth()/scale.x, texture.getRegionHeight()/scale.y, location);
         out.setDrawScale(scale);
         out.setTexture(texture);
         return out;
@@ -142,6 +160,9 @@ public class Star extends ComplexObstacle {
         //Add textures
         json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));
 
+        //Add location
+        json.addChild("location", new JsonValue(location));
+
         //System.out.println(json);
 
         return json;
@@ -153,28 +174,28 @@ public class Star extends ComplexObstacle {
      *
      * We implement our custom logic here.
      *
-     * @param world Box2D world to store joints
+     * world Box2D world to store joints
      *
      * @return true if object allocation succeeded
      */
-    protected boolean createJoints(World world) {
-        assert bodies.size() > 0;
-
-        //#region INSERT CODE HERE
-        // Attach the barrier to the pin here
-
-        RevoluteJointDef jointDef = new RevoluteJointDef();
-
-        jointDef.bodyA = barrier.getBody();
-        jointDef.bodyB = pivot.getBody();
-        jointDef.collideConnected = false;
-        Joint joint = world.createJoint(jointDef);
-        joints.add(joint);
-
-        //#endregion
-
-        return true;
-    }
+//    protected boolean createJoints(World world) {
+//        assert bodies.size() > 0;
+//
+//        //#region INSERT CODE HERE
+//        // Attach the barrier to the pin here
+//
+//        RevoluteJointDef jointDef = new RevoluteJointDef();
+//
+//        jointDef.bodyA = barrier.getBody();
+//        jointDef.bodyB = pivot.getBody();
+//        jointDef.collideConnected = false;
+//        Joint joint = world.createJoint(jointDef);
+//        joints.add(joint);
+//
+//        //#endregion
+//
+//        return true;
+//    }
 
     public String toString() {
         String out = "Star with {";
@@ -185,13 +206,13 @@ public class Star extends ComplexObstacle {
         return out;
     }
 
-    public void setTexture(TextureRegion texture) {
-        barrier.setTexture(texture);
-    }
-
-    public TextureRegion getTexture() {
-        return barrier.getTexture();
-    }
+//    public void setTexture(TextureRegion texture) {
+//        setTexture(texture);
+//    }
+//
+//    public TextureRegion getTexture() {
+//        return getTexture();
+//    }
 
     public boolean getRemove() { return remove; }
 
@@ -248,6 +269,7 @@ public class Star extends ComplexObstacle {
     public ObstacleType getType() { return ObstacleType.STAR;}
 
     public boolean containsPoint(Vector2 point) {
-        return barrier.containsPoint(point) || pivot.containsPoint(point);
+        return containsPoint(point);
+        //return barrier.containsPoint(point) || pivot.containsPoint(point);
     }
 }
