@@ -499,5 +499,91 @@ public class EditController extends WorldController implements ContactListener {
     /** Unused ContactListener method */
     public void postSolve(Contact contact, ContactImpulse impulse) {}
     /** Unused ContactListener method */
-    public void preSolve(Contact contact, Manifold oldManifold) {}
+    public void preSolve(Contact contact, Manifold oldManifold) {
+        Fixture fix1 = contact.getFixtureA();
+        Fixture fix2 = contact.getFixtureB();
+
+        Body body1 = fix1.getBody();
+        Body body2 = fix2.getBody();
+
+        Object fd1 = fix1.getUserData();
+        Object fd2 = fix2.getUserData();
+
+        try {
+            Obstacle bd1 = (Obstacle)body1.getUserData();
+            Obstacle bd2 = (Obstacle)body2.getUserData();
+
+            String bd1N = bd1.getName();
+            String bd2N = bd2.getName();
+
+            //Disable all collisions for worms
+            if (bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) {
+                contact.setEnabled(false);
+            }
+
+            //Disable all collisions with portal
+            if (bd1.getType() == ObstacleType.PORTAL || bd2.getType() == ObstacleType.PORTAL) {
+                contact.setEnabled(false);
+            }
+
+            //Disables all collisions w rope
+            if (bd1.getName().contains("rope") || bd2.getName().contains("rope")) {
+                contact.setEnabled(false);
+            }
+            //Disables all anchor and star collisions
+            if(bd1N.contains("anchor") || bd2N.contains("anchor") || bd1N.contains("star") || bd2N.contains("star")){
+                contact.setEnabled(false);
+            }
+            //Enables collisions between rope and anchor
+//            if (bd1.getName().contains("rope") && bd2.getName().contains("anchor")
+//                    || bd1.getName().contains("anchor") && bd2.getName().contains("rope")) {
+//                contact.setEnabled(true);
+//            }
+
+            //Disables collisions between ends of rope and anchors
+//            ropeList = rope.getPlanks();
+//            BoxObstacle plank0 = (BoxObstacle)ropeList.get(0);
+//            BoxObstacle plank1 = (BoxObstacle)ropeList.get(1);
+//            BoxObstacle plank4 = (BoxObstacle)ropeList.get(2);
+//            BoxObstacle plank2 = (BoxObstacle)ropeList.get(ropeList.size()-2);
+//            BoxObstacle plank3 = (BoxObstacle)ropeList.get(ropeList.size()-1);
+//            BoxObstacle plank5 = (BoxObstacle)ropeList.get(ropeList.size()-3);
+//            if (bd1N.contains("anchor") && (bd2 == plank0 || bd2 == plank1 || bd2 == plank2 || bd2 == plank3)
+//                    || bd2N.contains("anchor") && (bd1 == plank0 || bd1 == plank1 || bd1 == plank2 || bd1 == plank3)) {
+//                contact.setEnabled(false);
+//            }
+
+            //Enables collisions between rope and planet
+            if (bd1.getName().contains("rope") && bd2.getName().contains("planet")
+                    || bd1.getName().contains("planet") && bd2.getName().contains("rope")) {
+                contact.setEnabled(true);
+            }
+            //Disable collisions between astronauts
+            if (bd1.getName().contains("avatar") && bd2.getName().contains("avatar")) {
+                contact.setEnabled(false);
+            }
+            //Disables collisions between astronauts and anchors
+            if (bd1.getName().contains("avatar") && bd2.getName().contains("anchor")
+                    || bd1.getName().contains("anchor") && bd2.getName().contains("avatar")) {
+                contact.setEnabled(false);
+            }
+            //Disables collisions between astronauts and stars
+            if (bd1.getName().contains("avatar") && bd2.getName().contains("star")
+                    || bd1.getName().contains("star") && bd2.getName().contains("avatar")) {
+                contact.setEnabled(false);
+            }
+
+
+            //Disable the collision between anchors and rope on avatar
+            int n = rope.nLinks() - 1 ;//(int) BRIDGE_WIDTH*2-1;
+            if ((bd1N.contains("anchor") || bd2N.contains("anchor")) && (
+                    bd1N.equals("rope_plank0") || bd2N.equals("rope_plank0") ||
+                            bd1N.equals("rope_plank"+n) || bd2N.equals("rope_plank"+n))) {
+                contact.setEnabled(false);
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

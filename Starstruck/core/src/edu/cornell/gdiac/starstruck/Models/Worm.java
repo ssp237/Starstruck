@@ -84,6 +84,30 @@ public class Worm extends Enemy{
     }
 
     /**
+     * Write this astronaut to a JsonValue. When parsed, this JsonValue should return the same astronaut.
+     * @return A JsonValue representing this AstronautModel.
+     */
+    public JsonValue toJson() {
+        JsonValue json = new JsonValue(JsonValue.ValueType.object);
+
+        //Add textures
+        json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));
+
+        //Write position
+        Vector2 pos = getPosition();
+
+        json.addChild("x", new JsonValue(pos.x));
+        json.addChild("y", new JsonValue(pos.y));
+
+        //Write velocity
+        json.addChild("velocity", new JsonValue(getVX()));
+
+        //System.out.println(json);
+
+        return json;
+    }
+
+    /**
      * Sets the texture to the given filmstrip with size size and delay animDelay between frames.
      * @param texture The filmstrip to set
      */

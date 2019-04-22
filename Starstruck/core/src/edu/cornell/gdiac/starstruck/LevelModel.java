@@ -529,11 +529,13 @@ public class LevelModel {
         JsonValue anchors = new JsonValue(JsonValue.ValueType.array);
         JsonValue stars = new JsonValue(JsonValue.ValueType.array);
         JsonValue worms = new JsonValue(JsonValue.ValueType.array);
+        JsonValue portalPairs = new JsonValue(JsonValue.ValueType.array);
 
         for (Obstacle obj : objects) {
             switch (obj.getType()) {
                 case STAR: stars.addChild(((Star) obj).toJson()); break;
                 case ANCHOR: anchors.addChild(((Anchor) obj).toJson()); break;
+                case WORM: worms.addChild(((Worm) obj).toJson()); break;
             }
         }
 
@@ -543,7 +545,10 @@ public class LevelModel {
 
         //Add enemies
 
-        out.addChild("worm", worms);
+        out.addChild("worms", worms);
+
+        //Add portals
+        out.addChild("portalpairs", portalPairs);
 
 
         return out;

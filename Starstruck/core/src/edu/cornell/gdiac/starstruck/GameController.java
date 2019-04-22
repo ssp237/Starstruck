@@ -310,7 +310,7 @@ public class GameController extends WorldController implements ContactListener {
         level.dispose();
         //enemies.clear();
 
-        levelFormat = jsonReader.parse(Gdx.files.internal("levels/alpha2.json"));
+        levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
         //levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
@@ -851,11 +851,13 @@ public class GameController extends WorldController implements ContactListener {
             levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loader.file));
             level.populate(levelFormat);
             loadFile = loader.file;
+            print(loadFile);
             loader.file = null;
 
             return true;
         } catch (Exception e) {
             loader.file = null;
+            e.printStackTrace();
             return false;
         }
     }
