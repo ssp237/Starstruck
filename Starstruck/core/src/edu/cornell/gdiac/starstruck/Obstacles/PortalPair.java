@@ -6,6 +6,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.*;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
 import edu.cornell.gdiac.starstruck.Models.*;
 import com.badlogic.gdx.graphics.Color;
@@ -65,7 +66,7 @@ public class PortalPair {
 //        portal2.setTexture(texture);
 //    }
 
-    public PortalPair(float p1x, float p1y, float p2x, float p2y, String name, Vector2 scale, TextureRegion texture, int color, boolean goal) {
+    public PortalPair(float p1x, float p1y, float p2x, float p2y, String name, Vector2 scale, FilmStrip texture, int color, boolean goal) {
         this(texture.getRegionWidth()/scale.x, texture.getRegionHeight()/scale.y, p1x, p1y, p2x, p2y, name, scale, goal);
         portal1.setTexture(texture);
         portal2.setTexture(texture);
@@ -168,7 +169,7 @@ public class PortalPair {
      */
     public static PortalPair fromJSON(JsonValue json, Vector2 scale) {
         String key = json.get("texture").asString();
-        TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
+        FilmStrip texture = JsonAssetManager.getInstance().getEntry(key, FilmStrip.class);
         String name = json.get("name").asString();
         int color = json.get("color").asInt();
         String goal = json.get("goal").asString();
