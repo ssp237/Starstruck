@@ -30,7 +30,7 @@ public class PortalPair {
     private boolean active;
     /** Name of this portal pair */
     private String portalName;
-    private TextureRegion textureRegion;
+    private FilmStrip texture;
     /** Draw scale */
     private Vector2 scale;
     /** integer code for this color */
@@ -141,12 +141,12 @@ public class PortalPair {
         }
     }
 
-    private TextureRegion getTexture() {
-        return textureRegion;
+    private FilmStrip getTexture() {
+        return texture;
     }
 
-    private void setTexture(TextureRegion texture) {
-        textureRegion = texture;
+    private void setTexture(FilmStrip texture) {
+        this.texture = texture;
     }
 
     /**
