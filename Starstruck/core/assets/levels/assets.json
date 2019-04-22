@@ -140,6 +140,10 @@
       "file": "platform/static_portal_v1.png",
       "wrap": false
     },
+    "goal": {
+      "file": "shared/static_end.portal_v1.png",
+      "wrap": false
+    },
     "spike single": {
       "file": "enemies/static_spike_circle.png",
       "wrap": false

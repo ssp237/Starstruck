@@ -434,6 +434,7 @@ public class EditController extends WorldController implements ContactListener {
                 current = new Worm(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[0], FilmStrip.class), scale, 0);
                 level.add(current);
+            } else if (input.didD()) {
             }
             if (input.mouseDragged()) {
                 updateCamera();
