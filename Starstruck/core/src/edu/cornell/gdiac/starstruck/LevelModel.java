@@ -505,7 +505,7 @@ public class LevelModel {
 
         out.addChild("physicsSize", physicsSize);
         out.addChild("graphicSize", graphicsSize);
-        out.addChild("win", new JsonValue(winPercent));
+        out.addChild("win", new JsonValue("0.5"));
 
         //Add Galaxy
 
@@ -539,6 +539,10 @@ public class LevelModel {
                 case ANCHOR: anchors.addChild(((Anchor) obj).toJson()); break;
                 case WORM: worms.addChild(((Worm) obj).toJson()); break;
             }
+        }
+
+        for (PortalPair port : portalpairs) {
+            portalPairs.addChild(port.toJson());
         }
 
 
