@@ -258,24 +258,19 @@ public class EditController extends WorldController implements ContactListener {
      * Helper to update current obstacle if it is a planet.
      */
     private void updatePlanet() {
-        OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
         InputController input = InputController.getInstance();
-        float camScaleX = camOffsetX / scale.x;
-        float camScaleY = camOffsetY / scale.y;
-        float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
-        float h = (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y;
 
         if (input.didPrimary()){
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
-            current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, p.getInd() + 1, world, scale);
+            current = new Planet(pos.x, pos.y, p.getInd() + 1, world, scale);
             level.add(current);
         } else if (input.didDown()) {
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
-            current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, p.getInd() - 1, world, scale);
+            current = new Planet(pos.x, pos.y, p.getInd() - 1, world, scale);
             level.add(current);
         }
     }
@@ -284,31 +279,26 @@ public class EditController extends WorldController implements ContactListener {
      * Helper to update current obstacle if it is an Urchin.
      */
     private void updateUrchin() {
-        OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
         InputController input = InputController.getInstance();
-        float camScaleX = camOffsetX / scale.x;
-        float camScaleY = camOffsetY / scale.y;
-        float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
-        float h = (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y;
 
         if (input.didPrimary()){
             Urchin u = (Urchin) current;
             level.remove(u);
             Vector2 pos = u.getPosition();
-            current = new Urchin(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, u.getLength() + 1, u.getOrientation());
+            current = new Urchin(pos.x , pos.y , scale, u.getLength() + 1, u.getOrientation());
             level.add(current);
         } else if (input.didDown()) {
             Urchin u = (Urchin) current;
             level.remove(u);
             Vector2 pos = u.getPosition();
-            current = new Urchin(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, Math.max(u.getLength() - 1,1), u.getOrientation());
+            current = new Urchin(pos.x, pos.y, scale, Math.max(u.getLength() - 1,1), u.getOrientation());
             level.add(current);
         } else if ((input.didLeft() && !input.leftPrevious()) || (input.didRight() && !input.rightPrevious())) {
             Urchin u = (Urchin) current;
             level.remove(u);
             Vector2 pos = u.getPosition();
             CapsuleObstacle.Orientation orie = u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL ? CapsuleObstacle.Orientation.HORIZONTAL : CapsuleObstacle.Orientation.VERTICAL;
-            current = new Urchin(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, u.getLength(), orie);
+            current = new Urchin(pos.x, pos.y, scale, u.getLength(), orie);
             level.add(current);
         }
     }
