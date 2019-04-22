@@ -91,5 +91,7 @@
 		"texture": "goal",
 		"goal": "yes"
 	}
-]
+],
+"urchin texture": "spike",
+"urchins": []
 }

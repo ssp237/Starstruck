@@ -175,5 +175,7 @@
       "velocity": 0
     }
   ],
-  "portalpairs": []
+  "portalpairs": [],
+  "urchin texture": "spike",
+  "urchins": []
 }
