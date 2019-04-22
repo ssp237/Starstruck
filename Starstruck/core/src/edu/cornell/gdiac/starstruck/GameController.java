@@ -67,6 +67,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Space sounds */
     private static final String SPACE_SOUNDS = "space sounds";
 
+
     /** The background for DEATH*/
     private Texture death;
     /** Opacity countdown for death screen */
@@ -89,16 +90,76 @@ public class GameController extends WorldController implements ContactListener {
     private Enemy pinkworm;
     private Enemy greenworm;
 
-    /**
-     * Preloads the assets for this controller.
-     *
-     * To make the game modes more for-loop friendly, we opted for nonstatic loaders
-     * this time.  However, we still want the assets themselves to be static.  So
-     * we have an AssetState that determines the current loading state.  If the
-     * assets are already loaded, this method will do nothing.
-     *
-     * @param manager Reference to global asset manager.
-     */
+    /** Texture file for star bar*/
+    private static final String PROGRESS_FILE = "default/starbar.png";
+
+    /** Height of the star bar */
+    private static int PROGRESS_HEIGHT = 54;
+    /** Width of the rounded cap on left*/
+    private static int PROGRESS_CAP_LEFT = 80;
+    /** Width of the rounded cap on right*/
+    private static int PROGRESS_CAP_RIGHT = 10;
+    /** Width of the middle portion in texture atlas */
+    private static int PROGRESS_MIDDLE = 338;
+
+
+    /** Texture atlas to support a progress bar */
+    private Texture statusBar;
+
+
+
+    /** Left cap to the status background (grey region) */
+    private TextureRegion statusBkgLeft;
+    /** Middle portion of the status background (grey region) */
+    private TextureRegion statusBkgMiddle;
+    /** Right cap to the status background (grey region) */
+    private TextureRegion statusBkgRight;
+    /** Left cap to the status forground (colored region) */
+    private TextureRegion statusFrgLeft;
+    /** Middle portion of the status forground (colored region) */
+    private TextureRegion statusFrgMiddle;
+    /** Right cap to the status forground (colored region) */
+    private TextureRegion statusFrgRight;
+
+    /** The width of the progress bar */
+    private int widthBar = 448;
+    /** The y-coordinate of the center of the progress bar */
+    private int centerY = 2;
+    /** The x-coordinate of the center of the progress bar */
+    private int centerX = 10;
+    /** The height of the canvas window (necessary since sprite origin != screen origin) */
+    private int heightY;
+
+
+    /**StarCount bar */
+
+    private void drawStarBar(GameCanvas canvas) {
+        canvas.draw(statusBkgLeft, Color.WHITE, centerX - widthBar / 2, centerY, scale.x * PROGRESS_CAP_LEFT, scale.y * PROGRESS_HEIGHT);
+        canvas.draw(statusBkgRight, Color.WHITE, centerX + widthBar / 2 - scale.x * PROGRESS_CAP_RIGHT, centerY, scale.x * PROGRESS_CAP_RIGHT, scale.y * PROGRESS_HEIGHT);
+        canvas.draw(statusBkgMiddle, Color.WHITE, centerX - widthBar / 2 + scale.x * PROGRESS_CAP_LEFT, centerY, widthBar - 2 * scale.x * PROGRESS_CAP_LEFT, scale.y * PROGRESS_HEIGHT);
+
+        canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / 2, centerY, scale.x * PROGRESS_CAP_LEFT, scale.y * PROGRESS_HEIGHT);
+        if (starCount > 0) {
+            float span = starCount * (widthBar - 2 * scale.x * PROGRESS_CAP_RIGHT) / 2.0f;
+            canvas.draw(statusFrgRight, Color.WHITE, centerX - widthBar / 2 + scale.x * PROGRESS_CAP_RIGHT + span, centerY, scale.x * PROGRESS_CAP_RIGHT, scale.y * PROGRESS_HEIGHT);
+            canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / 2 + scale.x * PROGRESS_CAP_LEFT, centerY, span, scale.y * PROGRESS_HEIGHT);
+        } else {
+            canvas.draw(statusFrgRight, Color.WHITE, centerX - widthBar / 2 + scale.x * PROGRESS_CAP_RIGHT, centerY, scale.x * PROGRESS_CAP_RIGHT, scale.y * PROGRESS_HEIGHT);
+        }
+    }
+
+
+
+        /**
+         * Preloads the assets for this controller.
+         *
+         * To make the game modes more for-loop friendly, we opted for nonstatic loaders
+         * this time.  However, we still want the assets themselves to be static.  So
+         * we have an AssetState that determines the current loading state.  If the
+         * assets are already loaded, this method will do nothing.
+         *
+         * @param manager Reference to global asset manager.
+         */
     public void preLoadContent(AssetManager manager) {
         if (platformAssetState != AssetState.EMPTY) {
             return;
@@ -153,7 +214,17 @@ public class GameController extends WorldController implements ContactListener {
 
         planets = new PlanetList(scale);
 
-       // statusBar  = new Texture(PROGRESS_FILE);
+        statusBar  = new Texture(PROGRESS_FILE);
+        // Break up the status bar texture into regions
+        statusBkgLeft   = new TextureRegion(statusBar,0,0,PROGRESS_CAP_LEFT,PROGRESS_HEIGHT);
+        statusBkgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP_RIGHT,0,PROGRESS_CAP_RIGHT,PROGRESS_HEIGHT);
+        statusBkgMiddle = new TextureRegion(statusBar,PROGRESS_CAP_LEFT,0,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
+
+        int offset = statusBar.getHeight()-PROGRESS_HEIGHT;
+        statusFrgLeft   = new TextureRegion(statusBar,0,offset,PROGRESS_CAP_LEFT,PROGRESS_HEIGHT);
+        statusFrgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP_RIGHT,offset,PROGRESS_CAP_RIGHT,PROGRESS_HEIGHT);
+        statusFrgMiddle = new TextureRegion(statusBar,PROGRESS_CAP_LEFT,offset,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
+
 
     }
 
@@ -394,6 +465,8 @@ public class GameController extends WorldController implements ContactListener {
         enemy.setTexture(enemyTexture, 3, 10);
         enemy.setName("bug");
         addObject(enemy);
+
+        drawStarBar(canvas);
     }
 
     /**
@@ -1397,49 +1470,6 @@ public class GameController extends WorldController implements ContactListener {
     }
 
 
-//    /** Texture atlas to support a progress bar */
-//    private Texture statusBar;
-//
-//    private static final String PROGRESS_FILE = "shared/progressbar.png";
-//
-//    /** Left cap to the status background (grey region) */
-//    private TextureRegion statusBkgLeft;
-//    /** Middle portion of the status background (grey region) */
-//    private TextureRegion statusBkgMiddle;
-//    /** Right cap to the status background (grey region) */
-//    private TextureRegion statusBkgRight;
-//    /** Left cap to the status forground (colored region) */
-//    private TextureRegion statusFrgLeft;
-//    /** Middle portion of the status forground (colored region) */
-//    private TextureRegion statusFrgMiddle;
-//    /** Right cap to the status forground (colored region) */
-//    private TextureRegion statusFrgRight;
-//
-//    /** The width of the progress bar */
-//    private int width;
-//    /** The y-coordinate of the center of the progress bar */
-//    private int centerY;
-//    /** The x-coordinate of the center of the progress bar */
-//    private int centerX;
-//    /** The height of the canvas window (necessary since sprite origin != screen origin) */
-//    private int heightY;
-//
-//
-//    /**StarCount bar */
-//
-//    private void drawStarBar(GameCanvas canvas) {
-//        canvas.draw(statusBkgLeft,   Color.WHITE, centerX-width/2, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-//        canvas.draw(statusBkgRight,  Color.WHITE, centerX+width/2-scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-//        canvas.draw(statusBkgMiddle, Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, width-2*scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-//
-//        canvas.draw(statusFrgLeft,   Color.WHITE, centerX-width/2, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-//        if (progress > 0) {
-//            float span = progress*(width-2*scale*PROGRESS_CAP)/2.0f;
-//            canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP+span, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-//            canvas.draw(statusFrgMiddle, Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, span, scale*PROGRESS_HEIGHT);
-//        } else {
-//            canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
-//        }
 
 
 }
