@@ -152,7 +152,8 @@ public class PortalPair {
     /**
      * 0: White, default
      * 1: Light blue
-     * 2:
+     * 2: Violet
+     * 3: Salmon
      *
      * @param color Number code for color
      * @return The color
@@ -161,6 +162,7 @@ public class PortalPair {
         if (color == 0) return Color.WHITE;
         if (color == 1) return Color.SKY;
         if (color == 2) return Color.VIOLET;
+        if (color == 3) return Color.SALMON;
         return Color.WHITE;
     }
 

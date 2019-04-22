@@ -299,6 +299,8 @@ public class EditController extends WorldController implements ContactListener {
             Portal p2 = port.getPortal2();
             Vector2 pos1 = p.getPosition();
             Vector2 pos2 = p2.getPosition();
+            if (color == 1)
+                pos2 = pos1.cpy().add(5, 0);
             if (!level.portalpairs.remove(port)) System.out.println("updatePortal in EditController couldn't remove port");
             level.remove(p);
             level.remove(p2);
@@ -504,7 +506,7 @@ public class EditController extends WorldController implements ContactListener {
                 Vector2 pos = input.getCrossHair();
                 float x = pos.x + camScaleX + w;
                 float y = pos.y + camScaleY + h;
-                PortalPair portal = new PortalPair(x, y, x+3, y, "portalpair" + portalPair, scale,
+                PortalPair portal = new PortalPair(x, y, x+5, y, "portalpair" + portalPair, scale,
                         JsonAssetManager.getInstance().getEntry("static portal", FilmStrip.class), 1, false);
                 portalPair++;
                 level.add(portal.getPortal1());
