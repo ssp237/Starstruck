@@ -77,7 +77,7 @@ public class Urchin extends Enemy {
      * @param prefix The prefix for the names of all textures in the assets JSON.
      */
     public static void setTextures(String prefix) {
-        System.out.println("hi");
+        //System.out.println("hi");
         pre = prefix;
         textures = new TextureRegion[4];
         textures[0] = JsonAssetManager.getInstance().getEntry(prefix + " single", TextureRegion.class);

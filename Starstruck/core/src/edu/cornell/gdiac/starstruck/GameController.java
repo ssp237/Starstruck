@@ -297,7 +297,7 @@ public class GameController extends WorldController implements ContactListener {
         setFailure(false);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
-        loadFile = "alpha2.json";
+        loadFile = "test/alpha2.json";
         loader = new SaveListener();
     }
 
@@ -311,7 +311,7 @@ public class GameController extends WorldController implements ContactListener {
         //enemies.clear();
 
         levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
-        //levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
+        //levelFormat = jsonReadesystem.r.parse(Gdx.files.internal("levels/" + loadFile));
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
 
