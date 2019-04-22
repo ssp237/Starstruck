@@ -539,7 +539,10 @@ public class CapsuleObstacle extends SimpleObstacle {
     public ObstacleType getType() { return ObstacleType.CAPSULE;}
 
     public boolean containsPoint(Vector2 point) {
-        return dist(point, getPosition()) < (Math.max(getHeight(), getWidth())/2);
+        if (getOrientation() == Orientation.VERTICAL) {
+            return dist(point, getPosition()) < getWidth()/2;
+        }
+        return dist(point, getPosition()) < getHeight()/2;
     }
 
 }

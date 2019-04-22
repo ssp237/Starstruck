@@ -158,5 +158,33 @@
 			"y2": 25,
 			"goal": "no"
 		}
+	],
+	"urchin texture": "spike",
+	"urchins": [
+		{
+			"orientation": "vertical",
+			"x": 1,
+			"y": 5,
+			"length": 2
+		},
+		{
+			"orientation": "vertical",
+			"x": 1,
+			"y": 10,
+			"length": 3
+		},
+		{
+			"orientation": "vertical",
+			"x": 1,
+			"y": 15,
+			"length": 1
+		},
+		{
+			"orientation": "horizontal",
+			"x": 10,
+			"y": 15,
+			"length": 2
+		}
+
 	]
 }

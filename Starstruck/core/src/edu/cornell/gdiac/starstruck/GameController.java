@@ -1107,6 +1107,11 @@ public class GameController extends WorldController implements ContactListener {
                 setFailure(true);
             }
 
+            if (!isComplete() && ((bd1 == avatar || bd1 == avatar2)&& bd2 instanceof Enemy
+                    || (bd2 == avatar || bd2 == avatar2) && bd1 instanceof Enemy)) {
+                setFailure(true);
+            }
+
             //Star collection
             if ((bd1.getType() == ObstacleType.STAR || bd2.getType() == ObstacleType.STAR) && count < 0) {
                 if (bd1.getType() == ObstacleType.STAR) {

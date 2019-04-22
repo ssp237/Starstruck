@@ -41,5 +41,9 @@ public enum Galaxy {
         }
     }
 
+    public String getUrchinPrefix() {
+        return "spike";
+    }
+
 
 }

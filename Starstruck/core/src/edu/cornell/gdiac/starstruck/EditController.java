@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.JsonWriter;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
+import edu.cornell.gdiac.starstruck.Models.Urchin;
 import edu.cornell.gdiac.starstruck.Models.Worm;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -156,6 +157,7 @@ public class EditController extends WorldController implements ContactListener {
     public void reset() {
         level.dispose();
         canvas.resetCamera();
+        level.setGalaxy(galaxy);
 
         if (loadFile != null) {
             levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
@@ -274,6 +276,39 @@ public class EditController extends WorldController implements ContactListener {
             level.remove(p);
             Vector2 pos = p.getPosition();
             current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, p.getInd() - 1, world, scale);
+            level.add(current);
+        }
+    }
+
+    /**
+     * Helper to update current obstacle if it is an Urchin.
+     */
+    private void updateUrchin() {
+        OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
+        InputController input = InputController.getInstance();
+        float camScaleX = camOffsetX / scale.x;
+        float camScaleY = camOffsetY / scale.y;
+        float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
+        float h = (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y;
+
+        if (input.didPrimary()){
+            Urchin u = (Urchin) current;
+            level.remove(u);
+            Vector2 pos = u.getPosition();
+            current = new Urchin(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, u.getLength() + 1, u.getOrientation());
+            level.add(current);
+        } else if (input.didDown()) {
+            Urchin u = (Urchin) current;
+            level.remove(u);
+            Vector2 pos = u.getPosition();
+            current = new Urchin(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, Math.max(u.getLength() - 1,1), u.getOrientation());
+            level.add(current);
+        } else if ((input.didLeft() && !input.leftPrevious()) || (input.didRight() && !input.rightPrevious())) {
+            Urchin u = (Urchin) current;
+            level.remove(u);
+            Vector2 pos = u.getPosition();
+            CapsuleObstacle.Orientation orie = u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL ? CapsuleObstacle.Orientation.HORIZONTAL : CapsuleObstacle.Orientation.VERTICAL;
+            current = new Urchin(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, u.getLength(), orie);
             level.add(current);
         }
     }
@@ -470,6 +505,7 @@ public class EditController extends WorldController implements ContactListener {
                         updatePlanet(); break;
                     case WORM: updateWorm(); break;
                     case PORTAL: updatePortal(); break;
+                    case URCHIN: updateUrchin(); break;
                 }
             }
         } else {
@@ -513,7 +549,11 @@ public class EditController extends WorldController implements ContactListener {
                 level.add(portal.getPortal2());
                 level.portalpairs.add(portal);
                 current = portal.getPortal1();
-            }
+            } else if (input.didU()) {
+            Vector2 pos = input.getCrossHair();
+            current = new Urchin(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, 1, CapsuleObstacle.Orientation.VERTICAL);
+            level.add(current);
+        }
             if (input.mouseDragged()) {
                 updateCamera();
             }
