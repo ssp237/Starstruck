@@ -11,6 +11,7 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.*;
@@ -111,6 +112,7 @@ public class GameController extends WorldController implements ContactListener {
         assetDirectory = jsonReader.parse(Gdx.files.internal("levels/assets.json"));
 
         JsonAssetManager.getInstance().loadDirectory(assetDirectory);
+
     }
 
     /**
@@ -150,6 +152,9 @@ public class GameController extends WorldController implements ContactListener {
         platformAssetState = AssetState.COMPLETE;
 
         planets = new PlanetList(scale);
+
+       // statusBar  = new Texture(PROGRESS_FILE);
+
     }
 
     // Physics constants for initialization
@@ -1390,4 +1395,51 @@ public class GameController extends WorldController implements ContactListener {
             canvas.endDebug();
         }
     }
+
+
+//    /** Texture atlas to support a progress bar */
+//    private Texture statusBar;
+//
+//    private static final String PROGRESS_FILE = "shared/progressbar.png";
+//
+//    /** Left cap to the status background (grey region) */
+//    private TextureRegion statusBkgLeft;
+//    /** Middle portion of the status background (grey region) */
+//    private TextureRegion statusBkgMiddle;
+//    /** Right cap to the status background (grey region) */
+//    private TextureRegion statusBkgRight;
+//    /** Left cap to the status forground (colored region) */
+//    private TextureRegion statusFrgLeft;
+//    /** Middle portion of the status forground (colored region) */
+//    private TextureRegion statusFrgMiddle;
+//    /** Right cap to the status forground (colored region) */
+//    private TextureRegion statusFrgRight;
+//
+//    /** The width of the progress bar */
+//    private int width;
+//    /** The y-coordinate of the center of the progress bar */
+//    private int centerY;
+//    /** The x-coordinate of the center of the progress bar */
+//    private int centerX;
+//    /** The height of the canvas window (necessary since sprite origin != screen origin) */
+//    private int heightY;
+//
+//
+//    /**StarCount bar */
+//
+//    private void drawStarBar(GameCanvas canvas) {
+//        canvas.draw(statusBkgLeft,   Color.WHITE, centerX-width/2, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+//        canvas.draw(statusBkgRight,  Color.WHITE, centerX+width/2-scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+//        canvas.draw(statusBkgMiddle, Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, width-2*scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+//
+//        canvas.draw(statusFrgLeft,   Color.WHITE, centerX-width/2, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+//        if (progress > 0) {
+//            float span = progress*(width-2*scale*PROGRESS_CAP)/2.0f;
+//            canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP+span, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+//            canvas.draw(statusFrgMiddle, Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, span, scale*PROGRESS_HEIGHT);
+//        } else {
+//            canvas.draw(statusFrgRight,  Color.WHITE, centerX-width/2+scale*PROGRESS_CAP, centerY, scale*PROGRESS_CAP, scale*PROGRESS_HEIGHT);
+//        }
+
+
 }
