@@ -61,5 +61,6 @@
 		"texture": "star"
 	}
 ],
-	"worms": []
+	"worms": [],
+	"portalpairs": []
 }

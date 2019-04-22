@@ -130,5 +130,6 @@
 		"y": 10.03415298461914,
 		"texture": "star"
 	}],
-	"worms": []
+	"worms": [],
+	"portalpairs": []
 }
