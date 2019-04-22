@@ -69,7 +69,7 @@ public class Starstruck extends Game implements ScreenListener {
 		// Initialize the three game worlds
 		controllers = new WorldController[SCREENS];
 		controllers[0] = new MenuMode(canvas);
-//		controllers[1] = new LevelSelect();
+		controllers[1] = new LevelSelect();
 		controllers[2] = new EditController();
 		controllers[3] = new GameController();
 		for(int ii = 0; ii < controllers.length; ii++) {

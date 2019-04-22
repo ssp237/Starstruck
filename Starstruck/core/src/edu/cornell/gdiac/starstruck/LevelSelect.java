@@ -224,7 +224,7 @@ public class LevelSelect extends WorldController implements ContactListener {
      */
     public void setDebug(boolean d) {
         super.setDebug(d);
-        level.setDebug(d);
+//        level.setDebug(d);
     }
 
     /**
