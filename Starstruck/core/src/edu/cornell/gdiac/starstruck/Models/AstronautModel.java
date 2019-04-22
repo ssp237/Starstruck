@@ -133,7 +133,20 @@ public class AstronautModel extends CapsuleObstacle {
     private boolean justMoved;
     /** Velocity of astronaut to perserve when using portal */
     public Vector2 portalVel = new Vector2();
-
+    /** Whether this astronaut is moving on its own */
+    public boolean auto;
+    /** Whether only to apply gravity */
+    public boolean only;
+    /** last planet speed */
+    public float planetVel;
+    /** Whether the astronaut is swinging off an anchor */
+    public boolean swing;
+    /** Whether the astronaut should go w the other one coming off an anchor */
+    public boolean follow;
+    /** Whether the astronaut should go to the planet coming off an anchor */
+    public boolean toplanet;
+    /** Whether the astronaut should "jump" off anchor */
+    public boolean anchorhop;
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
 
@@ -342,6 +355,8 @@ public class AstronautModel extends CapsuleObstacle {
 
     public void setOnPlanet(boolean value) {
         onPlanet = value;
+        if (!value)
+            setFixedRotation(false);
     }
 
     /**
@@ -702,30 +717,56 @@ public class AstronautModel extends CapsuleObstacle {
 
         if (!getOnPlanet()) {
             if (Math.abs(getAngularVelocity()) >= DUDE_MAXROT) {
-                setAngularVelocity(Math.signum(getAngle()) * getMaxSpeed());
-            } else {
-                body.applyTorque(-getRotation(), true);
+                body.setAngularVelocity(Math.signum(getAngularVelocity()) * DUDE_MAXROT);
+            }
+            else {
+                //body.applyTorque(-getRotation(), true);
+                body.setAngularVelocity(getAngularVelocity() - 0.1f * getRotation());
             }
         }
 
         if (getOnPlanet()) {
+//            Vector2 dir = curPlanet.getPosition().cpy().sub(getPosition());
+//            float angle = getLinearVelocity().angleRad(dir);
+//            System.out.println(getName() + ": " + (angle * (180/Math.PI)));
+//            float speed = getLinearVelocity().len() * (float)Math.sin(angle);
+//            System.out.println(speed);
             float speed = getLinearVelocity().len();
+            Vector2 reset = new Vector2();
             if (speed < 0)
                 System.out.println("speed is less than 0 in apply force");
 
             // Don't want to be moving. Damp out player motion
-            if (!moving)
-                forceCache.set(0, 0);
-//            else if (speed >= DUDE_MAXSPEED)
+            if (!moving) {
+                body.setLinearVelocity(reset);
+                body.applyLinearImpulse(gravity, getPosition(), true);
+            }
+            //forceCache.set(0, 0);
+//            else if (speed >= DUDE_MAXSPEED) {
 //                forceCache.set(planetMove.setLength(DUDE_MAXSPEED));
-
-            else
+//            }
+            else {
+                int force = 4;
                 forceCache.set(planetMove.setLength(DUDE_MAXSPEED));
+                if (auto) {
+                    //body.applyLinearImpulse(gravity, getPosition(), true);
+                    body.setLinearVelocity(forceCache.scl(2));
+                }
+                else if (!only) {
+                    if (speed >= DUDE_MAXSPEED) {
+                        forceCache.set(reset);
+                    }
+                    //body.applyLinearImpulse(gravity, getPosition(), true);
+                    body.applyForce(forceCache.scl(force), getPosition(), true);
+                }
+            }
             body.applyLinearImpulse(gravity, getPosition(), true);
-            body.setLinearVelocity(forceCache);
+            //body.applyForce(gravity, getPosition(), true);
+            //body.setLinearVelocity(forceCache);
         }
         justMoved = moving;
         moving = false;
+        auto = false;
 
         // Jump!
         if (isJumping()) {
@@ -736,9 +777,10 @@ public class AstronautModel extends CapsuleObstacle {
         }
 
         // Gravity from planets
-        if (!GameController.testC ) {
+        if (!GameController.testC && !only) {
             body.applyForce(gravity, getPosition(), true);
         }
+        only = false;
 
         if (GameController.testC) {
             forceCache.set(getMovement(), getMovementV());
@@ -765,8 +807,10 @@ public class AstronautModel extends CapsuleObstacle {
         if (!onPlanet && !idle.justReset()) idle.reset();
 
         if (isAnchored){
-            //setPosition(anchorPos);
-            setBodyType(BodyDef.BodyType.StaticBody);
+            setLinearVelocity(new Vector2());
+            setPosition(anchorPos);
+            //setBodyType(BodyDef.BodyType.StaticBody);
+            setBodyType(BodyDef.BodyType.KinematicBody);
         } else {
             setBodyType(BodyDef.BodyType.DynamicBody);
         }

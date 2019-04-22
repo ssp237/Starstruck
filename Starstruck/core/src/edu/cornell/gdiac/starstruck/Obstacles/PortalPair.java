@@ -33,17 +33,22 @@ public class PortalPair {
     private Vector2 scale;
     /** integer code for this color */
     private int color;
+    /** Is this the goal */
+    private boolean goal;
 
-    private PortalPair(float width, float height, float p1x, float p1y, float p2x, float p2y) {
+    private PortalPair(float width, float height, float p1x, float p1y, float p2x, float p2y, boolean goal) {
         portal1 = new Portal(p1x, p1y, width, height, 1);
-        portal2 = new Portal(p2x, p2y, width, height, 2);
+        if (goal)
+            portal2 = new Portal(1000, 1000, width, height, 2);
+        else
+            portal2 = new Portal(p2x, p2y, width, height, 2);
         portal1.setBodyType(BodyDef.BodyType.StaticBody);
         portal2.setBodyType(BodyDef.BodyType.StaticBody);
         active = false;
     }
 
-    public PortalPair(float width, float height, float p1x, float p1y, float p2x, float p2y, String name, Vector2 scale) {
-        this(width, height, p1x, p1y, p2x, p2y);
+    public PortalPair(float width, float height, float p1x, float p1y, float p2x, float p2y, String name, Vector2 scale, boolean goal) {
+        this(width, height, p1x, p1y, p2x, p2y, goal);
         portal1.setPortName(name);
         portal1.setName(name + "1");
         portal2.setPortName(name);
@@ -60,14 +65,15 @@ public class PortalPair {
 //        portal2.setTexture(texture);
 //    }
 
-    public PortalPair(float p1x, float p1y, float p2x, float p2y, String name, Vector2 scale, TextureRegion texture, int color) {
-        this(texture.getRegionWidth()/scale.x, texture.getRegionHeight()/scale.y, p1x, p1y, p2x, p2y, name, scale);
+    public PortalPair(float p1x, float p1y, float p2x, float p2y, String name, Vector2 scale, TextureRegion texture, int color, boolean goal) {
+        this(texture.getRegionWidth()/scale.x, texture.getRegionHeight()/scale.y, p1x, p1y, p2x, p2y, name, scale, goal);
         portal1.setTexture(texture);
         portal2.setTexture(texture);
         this.color = color;
         portal1.setColor(portalColor(color));
         portal2.setColor(portalColor(color));
         setTexture(texture);
+        this.goal = goal;
     }
 
     public String getPortalName() { return portalName; }
@@ -77,6 +83,8 @@ public class PortalPair {
     public Portal getPortal2() { return portal2; }
 
     public boolean isActive() { return active; }
+
+    public boolean isGoal() { return goal; }
 
 
     /**
@@ -111,10 +119,10 @@ public class PortalPair {
         leadPortal = otherPortal;
         trailPortal = thisPortal;
         Vector2 dir = new Vector2(avatar.lastVel);
-        //dir.setLength(getTexture().getRegionWidth()/2/scale.x + 1);
         dir.setLength(getTexture().getRegionWidth()/2/scale.x);
         avatar.setPosition(otherPortal.getPosition().cpy().add(dir));
-        avatar.portalVel.set(avatar.lastVel.cpy().setLength(PORTAL_SPEED));
+        avatar.portalVel.set(avatar.lastVel);
+        //avatar.portalVel.setLength(PORTAL_SPEED);
         if (active) { //This case should always happen before !active
             //Split rope
             joints = rope.split(world, avatar.getName().equals("avatar2"), thisPortal, otherPortal);
@@ -129,7 +137,6 @@ public class PortalPair {
             avatar.setPosition(otherPortal.getPosition().cpy().add(dir));
             avatar.setLinearVelocity(avatar.portalVel.scl(0.5f));
         }
-
     }
 
     private TextureRegion getTexture() {
@@ -141,14 +148,16 @@ public class PortalPair {
     }
 
     /**
-     * 0: Blue, default
+     * 0: White, default
+     * 1: Light blue
      *
      * @param color Number code for color
      * @return The color
      */
     private Color portalColor(int color) {
-        if (color == 0) return Color.BLUE;
-        return Color.BLUE;
+        if (color == 0) return Color.WHITE;
+        if (color == 1) return Color.SKY;
+        return Color.WHITE;
     }
 
     /**
@@ -162,7 +171,10 @@ public class PortalPair {
         TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
         String name = json.get("name").asString();
         int color = json.get("color").asInt();
-        PortalPair out =  new PortalPair(json.get("x1").asFloat(), json.get("y1").asFloat(), json.get("x2").asFloat(), json.get("y2").asFloat(), name, scale, texture, color);
+        String goal = json.get("goal").asString();
+        boolean isGoal = false;
+        if (goal.equals("yes")) isGoal = true;
+        PortalPair out =  new PortalPair(json.get("x1").asFloat(), json.get("y1").asFloat(), json.get("x2").asFloat(), json.get("y2").asFloat(), name, scale, texture, color, isGoal);
         return out;
     }
 
@@ -184,11 +196,17 @@ public class PortalPair {
         //Write name
         json.addChild("name", new JsonValue(getPortalName()));
 
-        //Write color TODO
-        json.addChild("color", new JsonValue("blue"));
+        //Write color
+        json.addChild("color", new JsonValue(color + ""));
 
         //Add textures
         json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));
+
+        //Is portal?
+        String goal = "no";
+        if (isGoal())
+            goal = "yes";
+        json.addChild("goal", new JsonValue(goal));
 
         //System.out.println(json);
 

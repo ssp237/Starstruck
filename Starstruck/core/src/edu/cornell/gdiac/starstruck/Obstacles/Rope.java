@@ -647,13 +647,32 @@ public class Rope extends ComplexObstacle {
     }
 
     /**
-     * The rope is stretched if a joint in the middle of the rope has a reaction force greater than 10.
+     * The rope is stretched if a joint of the rope has a reaction force greater than 10.
+     * 0 = avatar1's side
+     * 2 = middle of rope
+     * 1 = avatar 2's side
+     * 3 = all three
      *
      * @return True if rope is completely stretched, false otherwise
      */
-    public boolean stretched(float dt) {
-        int index = joints.size()/2;
+    public boolean stretched(float dt, int c) {
+        int index = -1;
+        if (c == 0)
+            index = 1;
+        else if (c == 2)
+            index = joints.size() - 2;
+        else if (c == 3) {
+            Joint joint1 = joints.get(1);
+            Joint joint2 = joints.get(joints.size()/2);
+            Joint joint3 = joints.get(joints.size()-2);
+            return joint1.getReactionForce(1/dt).len() > 10 && joint2.getReactionForce(1/dt).len() > 10
+                    && joint3.getReactionForce(1/dt).len() > 10;
+        }
+        else
+            index = joints.size()/2;
+        if (index < 0) System.out.println("problem with Rope.stretched");
         Joint joint = joints.get(index);
+        //System.out.println(joint.getReactionForce(1/dt).len() );
         if (joint.getReactionForce(1/dt).len() > 10) return true;
         return false;
     }

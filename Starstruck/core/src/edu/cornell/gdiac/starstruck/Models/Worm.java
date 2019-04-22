@@ -21,7 +21,7 @@ public class Worm extends Enemy{
     /** y position of the enemy */
     private float y_pos;
     /** right bound of the screen */
-    private float right_bound;
+    private float right_bound = 57.60002f;
     /** Counter for names */
     private static int worm_count = 1;
     /** Delay for wormie to come back on screen */
@@ -84,6 +84,30 @@ public class Worm extends Enemy{
     }
 
     /**
+     * Write this astronaut to a JsonValue. When parsed, this JsonValue should return the same astronaut.
+     * @return A JsonValue representing this AstronautModel.
+     */
+    public JsonValue toJson() {
+        JsonValue json = new JsonValue(JsonValue.ValueType.object);
+
+        //Add textures
+        json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));
+
+        //Write position
+        Vector2 pos = getPosition();
+
+        json.addChild("x", new JsonValue(pos.x));
+        json.addChild("y", new JsonValue(pos.y));
+
+        //Write velocity
+        json.addChild("velocity", new JsonValue(getVX()));
+
+        //System.out.println(json);
+
+        return json;
+    }
+
+    /**
      * Sets the texture to the given filmstrip with size size and delay animDelay between frames.
      * @param texture The filmstrip to set
      */
@@ -107,6 +131,8 @@ public class Worm extends Enemy{
                 this.setPosition(right_bound, y_pos);
             }
         }
+        //System.out.println(this);
+        //System.out.println(this);
 
     }
 
@@ -126,7 +152,14 @@ public class Worm extends Enemy{
     public void setRight_bound(float r_bound) {right_bound = r_bound;}
 
     public String toString(){
-        return "Worm with { velocity " + getVX() + " and position " + getPosition() +"}";
+        String out = "{texture: ";
+        //System.out.println(texture);
+        out += JsonAssetManager.getInstance().getKey(texture) + ", ";
+        out += "rightbound: " + right_bound +"}";
+
+
+        //"Worm with { velocity " + getVX() + " and position " + getPosition() +"}";
+        return out;
     }
 
 }
