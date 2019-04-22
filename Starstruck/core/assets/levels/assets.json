@@ -12,34 +12,6 @@
       "file": "platform/static_star_01.png",
       "wrap": false
     },
-    "whirlpool planet 1": {
-      "file": "planets/whirlpool planet1.png",
-      "wrap": false
-    },
-    "whirlpool planet 2": {
-      "file": "planets/whirlpool planet2.png",
-      "wrap": false
-    },
-    "whirlpool planet 3": {
-      "file": "planets/whirlpool planet3.png",
-      "wrap": false
-    },
-    "whirlpool planet 4": {
-      "file": "planets/whirlpool planet4.png",
-      "wrap": false
-    },
-    "whirlpool planet 5": {
-      "file": "planets/whirlpool planet5.png",
-      "wrap": false
-    },
-    "whirlpool planet 6": {
-      "file": "planets/whirlpool planet6.png",
-      "wrap": false
-    },
-    "gravity ring": {
-      "file": "planets/gravity ring.png",
-      "wrap": false
-    },
     "wp p1": {
       "file": "whirlpool/planets/static_planet1_v1.png",
       "wrap": false
@@ -104,6 +76,38 @@
       "file": "milky way/planets/static_gravity.ring4_v1.png",
       "wrap": false
     },
+    "de p1": {
+      "file": "default/planets/static_default.planet1_v1.png",
+      "wrap": false
+    },
+    "de g1": {
+      "file": "default/planets/static_default.gravity.ring1_v1.png",
+      "wrap": false
+    },
+    "de p2": {
+      "file": "default/planets/static_default.planet2_v1.png",
+      "wrap": false
+    },
+    "de g2": {
+      "file": "default/planets/static_default.gravity.ring2_v1.png",
+      "wrap": false
+    },
+    "de p3": {
+      "file": "default/planets/static_default.planet3_v1.png",
+      "wrap": false
+    },
+    "de g3": {
+      "file": "default/planets/static_default.gravity.ring3_v1.png",
+      "wrap": false
+    },
+    "de p4": {
+      "file": "default/planets/static_default.planet1_v1.png",
+      "wrap": false
+    },
+    "de g4": {
+      "file": "default/planets/static_default.gravity.ring1_v1.png",
+      "wrap": false
+    },
     "rope": {
       "file": "platform/ropebridge.png",
       "wrap": false
@@ -135,6 +139,22 @@
     "static portal": {
       "file": "platform/static_portal_v1.png",
       "wrap": false
+    },
+    "spike single": {
+      "file": "enemies/static_spike_circle.png",
+      "wrap": false
+    },
+    "spike top": {
+      "file": "enemies/static_spike_top.png",
+      "wrap": false
+    },
+    "spike center": {
+      "file": "enemies/static_spike_mid.png",
+      "wrap": false
+    },
+    "spike bottom": {
+      "file": "enemies/static_spike_bottom.png",
+      "wrap": false
     }
   },
   "textures": {
@@ -148,6 +168,10 @@
     },
     "mw background": {
       "file": "milky way/background_milkyway_v1.png",
+      "wrap": false
+    },
+    "de background": {
+      "file": "default/background_default_v1.png",
       "wrap": false
     },
     "death screen": {
@@ -235,6 +259,22 @@
       "cols": 12,
       "size": 12,
       "delay": 3
+    },
+    "static portal": {
+      "file": "shared/animated_portal_turning.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 18,
+      "size": 18,
+      "delay": 11
+    },
+    "goal": {
+      "file": "shared/static_end.portal_v1.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 1,
+      "size": 1,
+      "delay": 0
     }
   },
   "fonts": {

@@ -33,6 +33,8 @@ public class EditController extends WorldController implements ContactListener {
     private float screenX = 1.5f;
     private float screenY = 1.5f;
 
+    private int portalPair = 1;
+
     /** Current obstacle */
     private Obstacle current;
     /** VectorWorld */
@@ -183,6 +185,8 @@ public class EditController extends WorldController implements ContactListener {
         camOffsetX = 0;
         camOffsetY = 0;
 
+        portalPair = 1;
+
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         camera.viewportWidth = canvas.getWidth();
         camera.viewportHeight = canvas.getHeight();
@@ -272,6 +276,58 @@ public class EditController extends WorldController implements ContactListener {
             current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, p.getInd() - 1, world, scale);
             level.add(current);
         }
+    }
+
+    private void updatePortal() {
+        OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
+        InputController input = InputController.getInstance();
+        float camScaleX = camOffsetX / scale.x;
+        float camScaleY = camOffsetY / scale.y;
+        float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
+        float h = (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y;
+
+        if (input.didPrimary()){
+            Portal p = (Portal) current;
+            PortalPair port = findPortalPair(p);
+            if (port == null) System.out.println("updatePortal in EditController");
+            String name = port.getPortalName();
+            int color = port.nextColor();
+            boolean goal = color == 0;
+            String texture = "static portal";
+            if (goal) texture = "goal";
+            p = port.getPortal1();
+            Portal p2 = port.getPortal2();
+            Vector2 pos1 = p.getPosition();
+            Vector2 pos2 = p2.getPosition();
+            if (!level.portalpairs.remove(port)) System.out.println("updatePortal in EditController couldn't remove port");
+            level.remove(p);
+            level.remove(p2);
+            port = new PortalPair(pos1.x, pos1.y, pos2.x, pos2.y, name, scale,
+                    JsonAssetManager.getInstance().getEntry(texture, FilmStrip.class), color, goal);
+            level.add(port.getPortal1());
+            level.add(port.getPortal2());
+            level.portalpairs.add(port);
+            current = port.getPortal1();
+//        } else if (input.didDown()) {
+//            Planet p = (Planet) current;
+//            level.remove(p);
+//            Vector2 pos = p.getPosition();
+//            current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, p.getInd() - 1, world, scale);
+//            level.add(current);
+        }
+    }
+
+    /**
+     * Find the PortalPair of the portal. Returns null if portal can't be found, means something's wrong
+     * @param portal
+     * @return
+     */
+    private PortalPair findPortalPair(Portal portal) {
+        for(PortalPair p : level.portalpairs) {
+            if (portal.getPortName().equals(p.getPortalName()))
+                return p;
+        }
+        return null;
     }
 
     /**
@@ -393,8 +449,17 @@ public class EditController extends WorldController implements ContactListener {
 
         if (current != null) {
             if (input.didBackspace() && current.getType() != ObstacleType.PLAYER) {
-                level.remove(current);
-                current = null;
+                if (current.getType() == ObstacleType.PORTAL) {
+                    PortalPair port = findPortalPair((Portal)current);
+                    level.remove(port.getPortal1());
+                    level.remove(port.getPortal2());
+                    level.portalpairs.remove(port);
+                    current = null;
+                }
+                else {
+                    level.remove(current);
+                    current = null;
+                }
             } else {
                 current.setPosition((input.xPos() + camOffsetX) / scale.x + w,
                         -((input.yPos() - camOffsetY) / scale.y) + h + bounds.height);
@@ -402,6 +467,7 @@ public class EditController extends WorldController implements ContactListener {
                     case PLANET:
                         updatePlanet(); break;
                     case WORM: updateWorm(); break;
+                    case PORTAL: updatePortal(); break;
                 }
             }
         } else {
@@ -434,6 +500,17 @@ public class EditController extends WorldController implements ContactListener {
                 current = new Worm(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[0], FilmStrip.class), scale, 0);
                 level.add(current);
+            } else if (input.didD()) {
+                Vector2 pos = input.getCrossHair();
+                float x = pos.x + camScaleX + w;
+                float y = pos.y + camScaleY + h;
+                PortalPair portal = new PortalPair(x, y, x+3, y, "portalpair" + portalPair, scale,
+                        JsonAssetManager.getInstance().getEntry("static portal", FilmStrip.class), 1, false);
+                portalPair++;
+                level.add(portal.getPortal1());
+                level.add(portal.getPortal2());
+                level.portalpairs.add(portal);
+                current = portal.getPortal1();
             }
             if (input.mouseDragged()) {
                 updateCamera();

@@ -269,7 +269,6 @@ public class Star extends BoxObstacle {
     public ObstacleType getType() { return ObstacleType.STAR;}
 
     public boolean containsPoint(Vector2 point) {
-        return containsPoint(point);
-        //return barrier.containsPoint(point) || pivot.containsPoint(point);
+        return super.containsPoint(point);
     }
 }

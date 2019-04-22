@@ -411,6 +411,7 @@ public class LevelModel {
             case PLAYER: addPlayer((AstronautModel) obj); break;
             case ROPE: objects.add(0, obj); obj.activatePhysics(world); rope = (Rope) obj; break;
             case WORM: activate(obj); enemies.add((Worm) obj); break;
+            case PORTAL: activate(obj); break;
         }
     }
 
@@ -426,6 +427,7 @@ public class LevelModel {
             case ANCHOR: deactivate(obj); break;
             case STAR: deactivate(obj); break;
             case WORM: deactivate(obj); enemies.remove((Worm) obj); break;
+            case PORTAL: deactivate(obj); break;
         }
     }
 
