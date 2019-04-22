@@ -26,6 +26,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
+import edu.cornell.gdiac.starstruck.Models.Urchin;
 import edu.cornell.gdiac.starstruck.Models.Worm;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
@@ -373,6 +374,16 @@ public class LevelModel {
             enemies.add(wormie);
             wormVals = wormVals.next;
         }
+
+        //add urchins
+        JsonValue urchinVals = levelFormat.get("urchins").child();
+        while (urchinVals != null) {
+            Urchin urch = Urchin.fromJSON(urchinVals, scale);
+            activate(urch);
+            enemies.add(urch);
+            urchinVals = urchinVals.next;
+        }
+
 //        System.out.println("here i am enemy list");
 //        System.out.println(enemies);
 //        System.out.println(enemies.size());

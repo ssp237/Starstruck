@@ -2,6 +2,7 @@ package edu.cornell.gdiac.starstruck.Models;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.starstruck.Obstacles.ObstacleType;
@@ -9,13 +10,19 @@ import edu.cornell.gdiac.starstruck.Obstacles.Star;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
-public class Urchin extends Enemy{
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class Urchin extends Enemy {
 
 
-    /** Prefix for name of texture */
-    private String TEXTURE_PREFIX = "spike ";
+
     /** Counter for names */
     private static int urchin_count = 1;
+    /**Textures for drawing. In order, single - top - middle - bottom.*/
+    private static TextureRegion[] textures;
+    /** Number of body segments */
+    private int length;
 
 
     /**
@@ -31,9 +38,13 @@ public class Urchin extends Enemy{
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Urchin(float x, float y, float width, float height) {
+    public Urchin(float x, float y, float width, float height, int length) {
         super(x,y,width,height);
+        this.length = length;
         //right_bound = right_b;
+
+        setBodyType(BodyDef.BodyType.StaticBody);
+
         setName("urchin" + urchin_count);
         urchin_count++;
     }
@@ -50,11 +61,22 @@ public class Urchin extends Enemy{
      * @param y  		Initial y position of the avatar center
 
      */
-    public Urchin(float x, float y, TextureRegion texture, Vector2 scale) {
-        this(x,y,texture.getRegionWidth()/scale.x,texture.getRegionHeight()/scale.y);
-        setTexture(texture);
+    public Urchin(float x, float y, float width, float height, Vector2 scale, int length, Orientation orientation) {
+        this(x,y,width, height, length);
         setDrawScale(scale);
 
+    }
+
+    /**
+     * Set the array of textures to be all possible textures for this urchin based on the prefix
+     * @param prefix The prefix for the names of all textures in the assets JSON.
+     */
+    public static void setTextures(String prefix) {
+        textures = new TextureRegion[4];
+        textures[0] = JsonAssetManager.getInstance().getEntry(prefix + " single", TextureRegion.class);
+        textures[1] = JsonAssetManager.getInstance().getEntry(prefix + " top", TextureRegion.class);
+        textures[2] = JsonAssetManager.getInstance().getEntry(prefix + " center", TextureRegion.class);
+        textures[3] = JsonAssetManager.getInstance().getEntry(prefix + " bottom", TextureRegion.class);
     }
 
     /**
@@ -64,9 +86,31 @@ public class Urchin extends Enemy{
      * @return A star created according to the specifications in the JSON
      */
     public static Urchin fromJSON(JsonValue json, Vector2 scale) {
-        String key = json.get("texture").asString();
-        TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        return new Urchin(json.get("x").asFloat(), json.get("y").asFloat(), texture, scale);
+        String pre = json.get("texture prefix").asString();
+        Orientation orientation = json.get("orientation").equals("vertical") ? Orientation.VERTICAL : Orientation.HORIZONTAL;
+
+        if (textures == null) setTextures(pre);
+
+        int length = json.get("length").asInt();
+
+        float width = textures[0].getRegionWidth() / scale.x;
+        float height = 0;
+        if (length == 1 ) {
+            height = textures[0].getRegionHeight() / scale.y;
+        } else { // more than one chunk
+            height = (textures[1].getRegionHeight() + textures[3].getRegionWidth()) /  scale.y;
+            for (int i = 2; i < length; i++) {
+                height += textures[2].getRegionHeight() / scale.y;
+            }
+        }
+        if (orientation == Orientation.HORIZONTAL) {
+            float temp = height;
+            height = width;
+            width = temp;
+        }
+
+
+        return new Urchin(json.get("x").asFloat(), json.get("y").asFloat(), width, height, scale, length, orientation);
     }
 
     /**
@@ -100,10 +144,12 @@ public class Urchin extends Enemy{
     }
 
     public void draw(GameCanvas canvas) {
-        canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),1,1.0f);
+        if (length == 1) {
+            canvas.draw(textures[0], Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),1,1.0f);
+        }
     }
 
-    public ObstacleType getType() { return ObstacleType.WORM;}
+    public ObstacleType getType() { return ObstacleType.URCHIN;}
 
 
     public String toString(){
