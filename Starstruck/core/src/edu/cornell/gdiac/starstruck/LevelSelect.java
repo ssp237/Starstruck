@@ -183,8 +183,10 @@ public class LevelSelect extends WorldController implements ContactListener {
      */
     public LevelSelect() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
-//        jsonReader = new JsonReader();
-//        level = new LevelModel();
+        jsonReader = new JsonReader();
+//        level = new LevelSelectModel();
+        level = new LevelModel();
+
         setDebug(false);
         setComplete(false);
         setFailure(false);
@@ -200,8 +202,9 @@ public class LevelSelect extends WorldController implements ContactListener {
     public void reset() {
         level.dispose();
 
-//        levelFormat = jsonReader.parse(Gdx.files.internal("levels/test.json"));
-//        level.getWorld().setContactListener(this);
+        levelFormat = jsonReader.parse(Gdx.files.internal("levels/test.json"));
+        level.populate(levelFormat);
+        level.getWorld().setContactListener(this);
 
         setComplete(false);
         setFailure(false);
@@ -224,7 +227,7 @@ public class LevelSelect extends WorldController implements ContactListener {
      */
     public void setDebug(boolean d) {
         super.setDebug(d);
-//        level.setDebug(d);
+        level.setDebug(d);
     }
 
     /**

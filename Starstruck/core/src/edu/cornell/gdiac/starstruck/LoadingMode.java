@@ -50,7 +50,7 @@ import java.util.LinkedList;
  */
 public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     // Textures necessary to support the loading screen
-    private static final String BACKGROUND_FILE = "shared/loading.png";
+    private static final String BACKGROUND_FILE = "backgrounds/loading.png";
     private static final String SPIN_FILE = "shared/spin.png";
     private static final String TITLE_FILE = "shared/loading_title.png";
 
