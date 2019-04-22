@@ -48,47 +48,25 @@ public class LevelSelectModel {
 
     /** The Box2D world */
     protected World world;
-    /** The vector world */
-    private VectorWorld vectorWorld;
     /** The boundary of the world */
     private Rectangle bounds;
     /** The world scale */
     protected Vector2 scale;
     /** The background texture*/
     private Texture background;
-    /** Galaxy to source textures from */
-    private Galaxy galaxy;
 
 
     // Physics objects for the game
     /** Reference to the first character avatar */
     private AstronautModel player;
-    /** End goal */
-    private PortalPair goal;
     /** Reference to the list of planets */
-    private PlanetList planets;
-    /** Rope */
-    private Rope rope;
+    private PooledList<Level> levels = new PooledList<Level>();
     /** Whether or not the level is in debug more (showing off physics) */
     private boolean debug;
-    /** AstronautModel cache */
-    AstronautModel astroCache;
     /** All the objects in the world. */
     protected PooledList<Obstacle> objects  = new PooledList<Obstacle>();
-    /** List of stars in the world */
-    protected ArrayList<Star> stars = new ArrayList<Star>();
-    /** List of anchors in the world */
-    protected ArrayList<Anchor> anchors = new ArrayList<Anchor>();
-    /** Rope texture for extension method */
-    //protected TextureRegion ropeTexture;
-    /** List of enemies in the world */
-    protected PooledList<Enemy> enemies = new PooledList<Enemy>();
     /** List of portal pairs */
     protected ArrayList<PortalPair> portalpairs = new ArrayList<PortalPair>();
-    /** Fraction of total stars needed to win */
-    private float winPercent;
-    /** Numbher of stars needed to open portal */
-    protected int winCount;
 
     /**
      * Returns the bounding rectangle for the physics world
@@ -120,33 +98,12 @@ public class LevelSelectModel {
     }
 
     /**
-     * Returns a reference to the vector World
-     *
-     * @return a reference to the vector World
-     */
-    public VectorWorld getVectorWorld() {
-        return vectorWorld;
-    }
-
-    /**
-     * Returns a reference to the enemy list
-     *
-     * @return a reference to the enemy list
-     */
-    public PooledList<Enemy> getEnemies() {
-//        System.out.println("in getEnemies");
-//        System.out.println(enemies);
-        return enemies;
-
-    }
-
-    /**
      * Returns a reference to the planet list
      *
      * @return a reference to the planet list
      */
-    public PlanetList getPlanets() {
-        return planets;
+    public PooledList getLevels() {
+        return levels;
     }
 
     /**
@@ -158,14 +115,6 @@ public class LevelSelectModel {
         return player;
     }
 
-    /**
-     * Returns the current galaxy
-     *
-     * @return the current galaxy
-     */
-    public Galaxy getGalaxy() {
-        return galaxy;
-    }
 
     /**
      * Returns whether this level is currently in debug node
@@ -192,18 +141,6 @@ public class LevelSelectModel {
     }
 
     /**
-     * Sets the current galaxy: tells all relevant classes to use assets from the selected Galaxy.
-     *
-     * @param galaxy The galaxy to be set
-     */
-    public void setGalaxy(Galaxy galaxy) {
-        this.galaxy = galaxy;
-        Planet.setGalaxy(galaxy);
-        String gal = galaxy.getChars();
-        this.background = JsonAssetManager.getInstance().getEntry(gal + " background", Texture.class);
-    }
-
-    /**
      * Creates a new LevelModel
      *
      * The level is empty and there is no active physics world.  You must read
@@ -224,7 +161,6 @@ public class LevelSelectModel {
         this.bounds = bounds;
         this.scale = scale;
         debug  = false;
-        planets = new PlanetList(scale);
     }
 
 
@@ -249,9 +185,6 @@ public class LevelSelectModel {
         String key = levelFormat.get("background").asString();
         background = JsonAssetManager.getInstance().getEntry(key, Texture.class);
 
-        String gal = levelFormat.get("galaxy").asString();
-        setGalaxy(Galaxy.fromString(gal));
-
         bounds = new Rectangle(0,0,pSize[0],pSize[1]);
         scale.x = gSize[0]/pSize[0];
         scale.y = gSize[1]/pSize[1];
@@ -259,92 +192,23 @@ public class LevelSelectModel {
         player = AstronautModel.fromJson(levelFormat.get("astronaut 1"), scale, true);
         player.setName("avatar");
         player.activatePhysics(world);
-        //addObject(player);
-
-        //objects.remove(player1); objects.remove(player2);
-
-        JsonValue ropeVal = levelFormat.get("rope");
-
-        key = ropeVal.get("texture").asString();
-        TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        //ropeTexture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        float dwidth = texture.getRegionWidth() / scale.x;
-        float dheight = texture.getRegionHeight() / scale.y;
-
         objects.add(player);
 
-//        goal = BlackHole.fromJson(levelFormat.get("goal"), scale);
-//        goal.setName("goal");
-//        activate(goal);
-
-        Planet.setPresets(levelFormat.get("planet specs"));
-        planets = new PlanetList(scale);
-
-        JsonValue planet = levelFormat.get("planets").child();
-        while (planet != null) {
-            planets.addPlanet(planet, world, vectorWorld);
-            planet = planet.next();
+        JsonValue levelVal = levelFormat.get("levels").child();
+        while (levelVal != null) {
+            Level level = Level.fromJSON(levelVal, scale, world);
+            levels.add(level);
+            levelVal = levelVal.next();
         }
 
-        //add stars
-        int i = 0;
-        JsonValue starVals = levelFormat.get("stars").child();
-        while (starVals != null) {
-            Star star = Star.fromJSON(starVals, scale);
-            star.setName("star" + i);
-            activate(star);
-            stars.add(star);
-            starVals = starVals.next;
-        }
-
-        winPercent = levelFormat.get("win").asFloat();
-        int numStars = stars.size();
-        winCount = (int)(numStars * winPercent);
-
-
-        //add anchors
-        i = 0;
-        JsonValue anchorVals = levelFormat.get("anchors").child();
-        while(anchorVals != null) {
-            Anchor anchor = Anchor.fromJSON(anchorVals, scale);
-            anchor.setName("anchor" + i);
-            activate(anchor);
-            anchors.add(anchor);
-            anchorVals = anchorVals.next;
-        }
-
-        //add portals
-        i = 0;
-        JsonValue portalVals = levelFormat.get("portalpairs").child();
-        while (portalVals != null) {
-            PortalPair portalpair = PortalPair.fromJSON(portalVals, scale);
-            activate(portalpair.getPortal1());
-            activate(portalpair.getPortal2());
-            portalpairs.add(portalpair);
-            if (portalpair.isGoal())
-                goal = portalpair;
-            portalVals = portalVals.next;
-        }
-
-        //add worms
-        JsonValue wormVals = levelFormat.get("worms").child();
-        while (wormVals != null) {
-            Worm wormie = Worm.fromJSON(wormVals, scale);
-            activate(wormie);
-            enemies.add(wormie);
-            wormVals = wormVals.next;
-        }
-//        System.out.println("here i am enemy list");
-//        System.out.println(enemies);
-//        System.out.println(enemies.size());
     }
 
     public void dispose() {
         for(Obstacle obj : objects) {
             obj.deactivatePhysics(world);
         }
-        for(Planet p : planets.getPlanets()){
-            p.deactivatePhysics(world);
+        for(Level l : levels){
+            l.deactivatePhysics(world);
         }
         objects.clear();
         if (world != null) {
@@ -352,12 +216,7 @@ public class LevelSelectModel {
             world = new World(new Vector2(0,0), false);
         }
         objects.clear();
-        planets.clear();
-        stars.clear();
-        anchors.clear();
-        enemies.clear();
-        portalpairs.clear();
-        vectorWorld = new VectorWorld();
+        levels.clear();
     }
 
     /**
@@ -366,12 +225,8 @@ public class LevelSelectModel {
      */
     public void add(Obstacle obj) {
         switch (obj.getType()) {
-            case PLANET: planets.addPlanet((Planet) obj, vectorWorld); break;
-            case ANCHOR: activate(obj); break;
-            case STAR: activate(obj); break;
+            case LEVEL: levels.addPlanet((Planet) obj, vectorWorld); break;
             case PLAYER: addPlayer((AstronautModel) obj); break;
-            case ROPE: objects.add(0, obj); obj.activatePhysics(world); rope = (Rope) obj; break;
-            case WORM: activate(obj); enemies.add((Worm) obj); break;
         }
     }
 
@@ -383,10 +238,8 @@ public class LevelSelectModel {
      */
     public void remove(Obstacle obj) {
         switch (obj.getType()) {
-            case PLANET: obj.deactivatePhysics(world); planets.remove((Planet) obj); break;
-            case ANCHOR: deactivate(obj); break;
-            case STAR: deactivate(obj); break;
-            case WORM: deactivate(obj); enemies.remove((Worm) obj); break;
+            case LEVEL: deactivate(obj); break;
+            case PLAYER: deactivate(player); break;
         }
     }
 
@@ -438,7 +291,7 @@ public class LevelSelectModel {
     public PooledList<Obstacle> getAllObjects() {
         PooledList<Obstacle> out = new PooledList<Obstacle>();
         out.addAll(objects);
-        out.addAll(planets.getPlanets());
+        out.addAll(levels);
         return out;
     }
 
@@ -460,49 +313,19 @@ public class LevelSelectModel {
 
         out.addChild("physicsSize", physicsSize);
         out.addChild("graphicSize", graphicsSize);
-        out.addChild("win", new JsonValue(winPercent));
-
-        //Add Galaxy
-
-        out.addChild("galaxy", new JsonValue(galaxy.fullName()));
 
         //Add background
         out.addChild("background", new JsonValue(JsonAssetManager.getInstance().getKey(background)));
 
-        //Add astronauts
+        //Add rocket
         out.addChild("rocket", player.toJson());
 
-        //Add planet presets
-        out.addChild("planet specs", Planet.presetJson());
-
-        //Add planets
-        out.addChild("planets", planets.toJson());
-
-        //Add obstacles
-        JsonValue anchors = new JsonValue(JsonValue.ValueType.array);
-        JsonValue stars = new JsonValue(JsonValue.ValueType.array);
-        JsonValue worms = new JsonValue(JsonValue.ValueType.array);
-        JsonValue portalPairs = new JsonValue(JsonValue.ValueType.array);
-
-        for (Obstacle obj : objects) {
-            switch (obj.getType()) {
-                case STAR: stars.addChild(((Star) obj).toJson()); break;
-                case ANCHOR: anchors.addChild(((Anchor) obj).toJson()); break;
-                case WORM: worms.addChild(((Worm) obj).toJson()); break;
-            }
+        //Add levels
+        JsonValue levelList = new JsonValue(JsonValue.ValueType.array);
+        for (Level l : levels) {
+            levelList.addChild(l.toJson());
         }
-
-
-        out.addChild("anchors", anchors);
-        out.addChild("stars", stars);
-
-        //Add enemies
-
-        out.addChild("worms", worms);
-
-        //Add portals
-        out.addChild("portalpairs", portalPairs);
-
+        out.addChild("levels", levelList);
 
         return out;
     }
@@ -529,30 +352,25 @@ public class LevelSelectModel {
         canvas.draw(background, Color.WHITE, x, y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
         canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
 
-        for(Planet p : planets.getPlanets()){
-            p.draw(canvas);
+        for(Level l : levels){
+            l.draw(canvas);
         }
+
         for(Obstacle obj : objects) {
             if (obj.getType() != ObstacleType.PLAYER) obj.draw(canvas);
         }
 
         player.draw(canvas);
 
-        for (Enemy e: enemies) {
-            e.draw(canvas);
-        }
         canvas.end();
 
         if (debug) {
             canvas.beginDebug();
-            for(Planet p : planets.getPlanets()){
-                p.drawDebug(canvas);
+            for(Level l : levels){
+                l.drawDebug(canvas);
             }
             for(Obstacle obj : objects) {
                 obj.drawDebug(canvas);
-            }
-            for (Enemy e: enemies) {
-             e.drawDebug(canvas);
             }
             canvas.endDebug();
         }

@@ -72,7 +72,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     /** originX of loading spin */
     private static int SPIN_X = STANDARD_WIDTH/2;
     /** originY of loading spin */
-    private static int SPIN_Y = 376;
+    private static int SPIN_Y = 393;
     /** originX of loading title */
     private static int TITLE_X = 672;
     /** originY of loading title */

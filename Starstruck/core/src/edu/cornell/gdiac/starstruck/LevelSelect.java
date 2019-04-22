@@ -49,7 +49,7 @@ public class LevelSelect extends WorldController implements ContactListener {
     /** The JSON defining the level model */
     private JsonValue  levelFormat;
     /** Reference to the game level */
-    protected LevelModel level;
+    protected LevelSelectModel level;
 
     /** The sound file for a jump */
     private static final String JUMP_FILE = "jump";
@@ -184,8 +184,7 @@ public class LevelSelect extends WorldController implements ContactListener {
     public LevelSelect() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
         jsonReader = new JsonReader();
-//        level = new LevelSelectModel();
-        level = new LevelModel();
+        level = new LevelSelectModel();
 
         setDebug(false);
         setComplete(false);
@@ -216,7 +215,7 @@ public class LevelSelect extends WorldController implements ContactListener {
      * Assign the fields of the game controller state to reference the fields of the level
      */
     private void assignLevelFields() {
-        avatar = level.getPlayer1();
+        avatar = level.getPlayer();
         objects = level.objects; planets = level.getPlanets();
         world = level.getWorld(); vectorWorld = level.getVectorWorld();
     }
