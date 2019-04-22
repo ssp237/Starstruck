@@ -12,34 +12,6 @@
       "file": "platform/static_star_01.png",
       "wrap": false
     },
-    "whirlpool planet 1": {
-      "file": "planets/whirlpool planet1.png",
-      "wrap": false
-    },
-    "whirlpool planet 2": {
-      "file": "planets/whirlpool planet2.png",
-      "wrap": false
-    },
-    "whirlpool planet 3": {
-      "file": "planets/whirlpool planet3.png",
-      "wrap": false
-    },
-    "whirlpool planet 4": {
-      "file": "planets/whirlpool planet4.png",
-      "wrap": false
-    },
-    "whirlpool planet 5": {
-      "file": "planets/whirlpool planet5.png",
-      "wrap": false
-    },
-    "whirlpool planet 6": {
-      "file": "planets/whirlpool planet6.png",
-      "wrap": false
-    },
-    "gravity ring": {
-      "file": "planets/gravity ring.png",
-      "wrap": false
-    },
     "wp p1": {
       "file": "whirlpool/planets/static_planet1_v1.png",
       "wrap": false
