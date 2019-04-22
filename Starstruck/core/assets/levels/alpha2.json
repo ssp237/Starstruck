@@ -4,13 +4,9 @@
 	"galaxy": "whirlpool",
 	"background": "background",
 	"win": "0.5",
-	"goal": {
-		"pos" : [20, 20],
-		"texture": "static portal"
-	},
 	"astronaut 1": {
 		"pos": [ 5.072487831115723, 8.502835273742676 ],
-		"size": [ 0.699999988079071, 0.949999988079071 ],
+		"size": [ 0.9381107687950134, 1.3441389799118042 ],
 		"texture": "astronaut 1",
 		"glow texture": "glow"
 	},
