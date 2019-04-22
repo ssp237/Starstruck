@@ -335,8 +335,7 @@ public abstract class WorldController implements Screen {
      */
     public void setFailure(boolean value) {
         if (value) {
-            //countdown = EXIT_COUNT;
-            countdown = 90;
+            countdown = EXIT_COUNT;
         }
         failed = value;
     }
