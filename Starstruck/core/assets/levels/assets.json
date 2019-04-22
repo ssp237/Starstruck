@@ -104,6 +104,38 @@
       "file": "milky way/planets/static_gravity.ring4_v1.png",
       "wrap": false
     },
+    "de p1": {
+      "file": "default/planets/static_default.planet1_v1.png",
+      "wrap": false
+    },
+    "de g1": {
+      "file": "default/planets/static_default.gravity.ring1_v1.png",
+      "wrap": false
+    },
+    "de p2": {
+      "file": "default/planets/static_default.planet2_v1.png",
+      "wrap": false
+    },
+    "de g2": {
+      "file": "default/planets/static_default.gravity.ring2_v1.png",
+      "wrap": false
+    },
+    "de p3": {
+      "file": "default/planets/static_default.planet3_v1.png",
+      "wrap": false
+    },
+    "de g3": {
+      "file": "default/planets/static_default.gravity.ring3_v1.png",
+      "wrap": false
+    },
+    "de p4": {
+      "file": "default/planets/static_default.planet1_v1.png",
+      "wrap": false
+    },
+    "de g4": {
+      "file": "default/planets/static_default.gravity.ring1_v1.png",
+      "wrap": false
+    },
     "rope": {
       "file": "platform/ropebridge.png",
       "wrap": false
@@ -135,6 +167,22 @@
     "static portal": {
       "file": "platform/static_portal_v1.png",
       "wrap": false
+    },
+    "spike single": {
+      "file": "enemies/static_spike_circle.png",
+      "wrap": false
+    },
+    "spike top": {
+      "file": "enemies/static_spike_top.png",
+      "wrap": false
+    },
+    "spike center": {
+      "file": "enemies/static_spike_mid.png",
+      "wrap": false
+    },
+    "spike bottom": {
+      "file": "enemies/static_spike_bottom.png",
+      "wrap": false
     }
   },
   "textures": {
@@ -148,6 +196,10 @@
     },
     "mw background": {
       "file": "milky way/background_milkyway_v1.png",
+      "wrap": false
+    },
+    "de background": {
+      "file": "default/background_default_v1.png",
       "wrap": false
     },
     "death screen": {
