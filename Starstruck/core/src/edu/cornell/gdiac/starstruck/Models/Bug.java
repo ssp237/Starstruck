@@ -2,6 +2,7 @@ package edu.cornell.gdiac.starstruck.Models;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.starstruck.Obstacles.ObstacleType;
 import edu.cornell.gdiac.starstruck.Obstacles.Planet;
@@ -27,6 +28,9 @@ public class Bug extends Enemy {
     /** Speed of bug */
     private static final float BUG_SPEED = 0.01f;
 
+    Vector2 contactPointEN = new Vector2(x, y);
+
+
     /**
      * Creates a new dude avatar at the given position.
      *
@@ -44,6 +48,7 @@ public class Bug extends Enemy {
         this.y = y;
         setTexture(texture);
         setDrawScale(scale);
+        this.setBodyType(BodyDef.BodyType.DynamicBody);
     }
 
     /**
@@ -58,21 +63,27 @@ public class Bug extends Enemy {
     public void update(float dt) {
         texture.tick(); //Animation
 
+            //.sub(0, (texture.getRegionHeight()/ drawScale.y)/2)
 
 
-        if (getOnPlanet()) {
             setFixedRotation(true);
             //enemy.setRotation(1);
-            Vector2 contactPointEN = new Vector2(x, y);
+            contactPointEN.set(getPosition().cpy());
             Vector2 contactDirEn = contactPointEN.cpy().sub(curPlanetEN.getPosition());
             float angle = -contactDirEn.angleRad(new Vector2(0, 1));
             setAngle(angle);
-            //setPosition(contactPointEN);
+            //this.setPosition(contactPointEN);
             contactDirEn.rotateRad(-(float) Math.PI / 2);
-            setPosition(contactPointEN.add(contactDirEn.setLength(BUG_SPEED)));
+            //this.setLinearVelocity(contactDirEn.setLength(BUG_SPEED));
+            this.setPosition(contactPointEN.add(contactDirEn.setLength(BUG_SPEED)));
             //setGravity(vectorWorld.getForce(getPosition()));
-            applyForce();
-        }
+            //applyForce();
+            contactDirEn.rotateRad(-(float) Math.PI / 2);
+            body.applyLinearImpulse(contactDirEn.setLength(100f), getPosition(), true);
+//            this.x = this.getPosition().x;
+//            this.y = this.getPosition().y;
+
+
 
 
 

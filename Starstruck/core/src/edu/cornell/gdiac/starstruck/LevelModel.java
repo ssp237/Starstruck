@@ -279,7 +279,7 @@ public class LevelModel {
                 float radius = Planet.getRadiusPrePlanet(i, scale);
                 key = bug.get("texture").asString();
                 FilmStrip bugtexture = JsonAssetManager.getInstance().getEntry(key, FilmStrip.class);
-                buggy = new Bug(x, y + radius, bugtexture, scale);
+                buggy = new Bug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, scale);
                 activate(buggy);
                 enemies.add(buggy);
             } catch (Exception e) {
