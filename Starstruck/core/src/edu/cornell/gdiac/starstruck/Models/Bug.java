@@ -2,8 +2,12 @@ package edu.cornell.gdiac.starstruck.Models;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import edu.cornell.gdiac.starstruck.GameCanvas;
+import edu.cornell.gdiac.starstruck.Obstacles.Obstacle;
 import edu.cornell.gdiac.starstruck.Obstacles.ObstacleType;
 import edu.cornell.gdiac.starstruck.Obstacles.Planet;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -26,7 +30,7 @@ public class Bug extends Enemy {
     private Planet curPlanetEN;
 
     /** Speed of bug */
-    private static final float BUG_SPEED = 0.01f;
+    private static final float BUG_SPEED = 0.00001f;
 
     Vector2 contactPointEN = new Vector2(x, y);
 
@@ -75,12 +79,12 @@ public class Bug extends Enemy {
             //this.setPosition(contactPointEN);
             contactDirEn.rotateRad(-(float) Math.PI / 2);
             //this.setLinearVelocity(contactDirEn.setLength(BUG_SPEED));
+            //contactDirEn.rotateRad(-(float) Math.PI / 2);
             this.setPosition(contactPointEN.add(contactDirEn.setLength(BUG_SPEED)));
+        body.applyLinearImpulse(contactDirEn.cpy().rotateRad(-(float) Math.PI / 2).setLength(24f), getPosition(), true);
 
-            //setGravity(vectorWorld.getForce(getPosition()));
+        //setGravity(vectorWorld.getForce(getPosition()));
             //applyForce();
-            contactDirEn.rotateRad(-(float) Math.PI / 2);
-            body.applyLinearImpulse(contactDirEn.setLength(100f), getPosition(), true);
 //            this.x = this.getPosition().x;
 //            this.y = this.getPosition().y;
 
@@ -103,5 +107,35 @@ public class Bug extends Enemy {
     public ObstacleType getType() { return ObstacleType.BUG;}
 
     public void setPlanet (Planet p) { curPlanetEN = p;}
+
+
+
+    public void beginContact(Contact contact) {
+        Fixture fix1 = contact.getFixtureA();
+        Fixture fix2 = contact.getFixtureB();
+
+        Body body1 = fix1.getBody();
+        Body body2 = fix2.getBody();
+
+//        Object fd1 = fix1.getUserData();
+//        Object fd2 = fix2.getUserData();
+
+        try {
+            Obstacle bd1 = (Obstacle)body1.getUserData();
+            Obstacle bd2 = (Obstacle)body2.getUserData();
+
+//            String bd1N = bd1.getName();
+//            String bd2N = bd2.getName();
+
+            if ((bd1.getType() == ObstacleType.BUG || bd2.getType() == ObstacleType.BUG)
+                    && (bd1.getType() == ObstacleType.PLANET || bd2.getType() == ObstacleType.PLANET)) {
+                contactPointEN = contact.getWorldManifold().getPoints()[0];
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
 }

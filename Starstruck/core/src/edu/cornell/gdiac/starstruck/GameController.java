@@ -299,7 +299,7 @@ public class GameController extends WorldController implements ContactListener {
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
 
-        enemies.clear();
+        //enemies.clear();
 
 
         setComplete(false);
@@ -513,6 +513,7 @@ public class GameController extends WorldController implements ContactListener {
                             touching = true;
                         return;
                     }
+
                 }
             }
             else if (switched()) { //If switch was hit unanchor avatar2 and make active
