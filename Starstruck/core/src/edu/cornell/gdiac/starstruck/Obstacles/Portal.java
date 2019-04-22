@@ -27,7 +27,7 @@ import com.badlogic.gdx.graphics.Color;
 public class Portal extends BoxObstacle {
 
     /** TODO */
-    //private FilmStrip texture;
+    private FilmStrip texture;
     /** Which portal this is -- 1 or 2*/
     private int portNum;
     /** The name of this portal pair */
@@ -77,7 +77,7 @@ public class Portal extends BoxObstacle {
      * @param texture Texture for the new anchor
      * @param scale Draw scale for the new anchor
      */
-    public Portal(float x, float y, TextureRegion texture, Vector2 scale) {
+    public Portal(float x, float y, FilmStrip texture, Vector2 scale) {
         this(x,y,texture.getRegionWidth()/scale.x,texture.getRegionHeight()/scale.y);
         setDrawScale(scale);
         setTexture(texture);
@@ -90,6 +90,11 @@ public class Portal extends BoxObstacle {
         out += "}";
 
         return out;
+    }
+
+    public void update(float dt) {
+        super.update(dt);
+        texture.tick();
     }
 
     /**
@@ -111,20 +116,21 @@ public class Portal extends BoxObstacle {
     }
 
     /**
-     * TODO
-     * @param texture
+     * Sets the texture to the given filmstrip with size size and delay animDelay between frames.
+     * @param texture The filmstrip to set
      */
     public void setTexture(FilmStrip texture) {
-
+        this.texture = texture;
+        origin = new Vector2(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
     }
 
     /**
      * TODO
-     * @return
+     * @return Texture
      */
-//    public FilmStrip getTexture() {
-//        return texture;
-//    }
+    public FilmStrip getTexture() {
+        return texture;
+    }
 
     public ObstacleType getType() { return ObstacleType.PORTAL;}
 

@@ -136,10 +136,6 @@
       "file": "shared/loading.png",
       "wrap": false
     },
-    "static portal": {
-      "file": "platform/static_portal_v1.png",
-      "wrap": false
-    },
     "spike single": {
       "file": "enemies/static_spike_circle.png",
       "wrap": false
@@ -259,6 +255,14 @@
       "cols": 12,
       "size": 12,
       "delay": 3
+    },
+    "static portal": {
+      "file": "shared/animated_portal_turning.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 18,
+      "size": 18,
+      "delay": 11
     }
   },
   "fonts": {
