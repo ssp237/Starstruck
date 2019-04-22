@@ -34,6 +34,8 @@ public class Portal extends BoxObstacle {
     private String portName;
     /** Color of this portal */
     private Color color = Color.WHITE;
+    /** is this a gola portal */
+    private boolean isGoal;
 
     /**
      * Creates a new spinner at the origin.
@@ -65,9 +67,10 @@ public class Portal extends BoxObstacle {
         super(x,y, width, height);
     }
 
-    public Portal(float x, float y, float width, float height, int n) {
+    public Portal(float x, float y, float width, float height, int n, boolean goal) {
         this(x, y, width, height);
         portNum = n;
+        isGoal = goal;
     }
 
     /**
@@ -94,7 +97,8 @@ public class Portal extends BoxObstacle {
 
     public void update(float dt) {
         super.update(dt);
-        texture.tick();
+        if (!isGoal)
+            texture.tick();
     }
 
     /**

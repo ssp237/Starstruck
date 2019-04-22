@@ -139,7 +139,7 @@
 	],
 	"portalpairs": [
 		{
-			"texture": "static portal",
+			"texture": "goal",
 			"color": "0",
 			"name": "goal",
 			"x1": 20,
