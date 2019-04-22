@@ -736,6 +736,16 @@ public class AstronautModel extends CapsuleObstacle {
             if (speed < 0)
                 System.out.println("speed is less than 0 in apply force");
 
+            //Damp out player motion
+//            if (!moving) {
+//                forceCache.set(planetMove.scl(-1).setLength(DUDE_MAXSPEED*100));
+//            }
+//
+//            else {
+//                forceCache.set(planetMove.setLength(DUDE_MAXSPEED));
+//            }
+//            body.applyForce(forceCache, getPosition(), true);
+
             // Don't want to be moving. Damp out player motion
             if (!moving) {
                 body.setLinearVelocity(reset);
@@ -799,10 +809,10 @@ public class AstronautModel extends CapsuleObstacle {
     public void update(float dt) {
         // Apply cooldowns
 
-        if (onPlanet) {
-            if (justMoved || !idle.justReset()) idle.tick();
-//            else if (!idle.justReset()) idle.kcit();
-        }
+//        if (onPlanet) {
+//            if (justMoved || !idle.justReset()) idle.tick();
+////            else if (!idle.justReset()) idle.kcit();
+//        }
 
         if (!onPlanet && !idle.justReset()) idle.reset();
 
