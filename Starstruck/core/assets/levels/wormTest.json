@@ -1,0 +1,162 @@
+{
+"physicsSize": [ 38.400001525878906, 21.600000381469727 ],
+"graphicSize": [ 1280, 720 ],
+"win": 0.0,
+"galaxy": "whirlpool",
+"background": "wp background",
+"astronaut 1": {
+	"pos": [ 2.710181713104248, 5.076745510101318 ],
+	"size": [ 0.9000000357627869, 1.290000081062317 ],
+	"texture": "astronaut 1",
+	"glow texture": "glow"
+},
+"astronaut 2": {
+	"pos": [ 4.446835517883301, 6.317370891571045 ],
+	"size": [ 0.9000000357627869, 1.290000081062317 ],
+	"texture": "astronaut 2",
+	"glow texture": "glow"
+},
+"rope": {
+	"texture": "rope",
+	"rope width": 6.0
+},
+"planet specs": [ 700.0, 800.0, 900.0, 1000.0 ],
+"planets": [],
+"anchors": [],
+"stars": [],
+"worms": [
+	{
+		"texture": "blue worm",
+		"x": 19.59000015258789,
+		"y": 12.75,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 29.880001068115234,
+		"y": 13.5,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 29.73000144958496,
+		"y": 8.069999694824219,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 20.100000381469727,
+		"y": 4.709999084472656,
+		"velocity": 0.0
+	},
+	{
+		"texture": "purple worm",
+		"x": 27.030000686645508,
+		"y": 20.100000381469727,
+		"velocity": 0.0
+	},
+	{
+		"texture": "yellow worm",
+		"x": 13.983409881591797,
+		"y": 16.920000076293945,
+		"velocity": -1.0
+	},
+	{
+		"texture": "pink worm",
+		"x": 32.25,
+		"y": 17.459999084472656,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 18.21000099182129,
+		"y": 10.260000228881836,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 19.71000099182129,
+		"y": 10.260000228881836,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 21.450000762939453,
+		"y": 10.199999809265137,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 22.530000686645508,
+		"y": 10.229999542236328,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 24.060001373291016,
+		"y": 10.229999542236328,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 25.32000160217285,
+		"y": 10.109999656677246,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 27.1200008392334,
+		"y": 10.380000114440918,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 29.55000114440918,
+		"y": 10.170000076293945,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 31.14000129699707,
+		"y": 10.140000343322754,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 32.70000076293945,
+		"y": 10.859999656677246,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 33.45000076293945,
+		"y": 10.289999961853027,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 34.83000183105469,
+		"y": 9.75,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 35.90999984741211,
+		"y": 9.449999809265137,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 37.02000045776367,
+		"y": 9.989999771118164,
+		"velocity": 0.0
+	},
+	{
+		"texture": "blue worm",
+		"x": 37.11000061035156,
+		"y": 10.680000305175781,
+		"velocity": 0.0
+	}
+],
+"portalpairs": []
+}
