@@ -496,7 +496,7 @@ public class GameController extends WorldController implements ContactListener {
                         avatar2.setFixedRotation(true);
                 }
             }
-            if (anchord() && avatar1.isActive()) { //If anchored was hit unanchor, uananchor and move
+            if (InputController.getInstance().didPrimary() && avatar1.isActive()) { //If anchored was hit unanchor, uananchor and move
                 //avatar1.setUnAnchored();
                 //avatar2.swing = false;
                 avatar2.setFixedRotation(false);
@@ -534,7 +534,7 @@ public class GameController extends WorldController implements ContactListener {
                         avatar1.setFixedRotation(true);
                 }
             }
-            if (anchord() && avatar2.isActive()) { //If anchored was hit unanchor, uananchor and move
+            if (InputController.getInstance().didPrimary() && avatar2.isActive()) { //If anchored was hit unanchor, uananchor and move
                 //avatar2.setUnAnchored();
                 //avatar1.swing = false;
                 avatar1.setFixedRotation(false);
