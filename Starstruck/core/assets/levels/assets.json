@@ -140,10 +140,6 @@
       "file": "platform/static_portal_v1.png",
       "wrap": false
     },
-    "goal": {
-      "file": "shared/static_end.portal_v1.png",
-      "wrap": false
-    },
     "spike single": {
       "file": "enemies/static_spike_circle.png",
       "wrap": false
@@ -271,6 +267,14 @@
       "cols": 18,
       "size": 18,
       "delay": 11
+    },
+    "goal": {
+      "file": "shared/static_end.portal_v1.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 1,
+      "size": 1,
+      "delay": 0
     }
   },
   "fonts": {
