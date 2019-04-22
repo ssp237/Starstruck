@@ -230,6 +230,7 @@ public class LevelModel {
         Planet.setGalaxy(galaxy);
         String gal = galaxy.getChars();
         this.background = JsonAssetManager.getInstance().getEntry(gal + " background", Texture.class);
+        Urchin.setTextures(galaxy.getUrchinPrefix());
     }
 
     /**
@@ -376,6 +377,9 @@ public class LevelModel {
         }
 
         //add urchins
+        String urcTexture = levelFormat.get("urchin texture").asString();
+        Urchin.setTextures(urcTexture);
+
         JsonValue urchinVals = levelFormat.get("urchins").child();
         while (urchinVals != null) {
             Urchin urch = Urchin.fromJSON(urchinVals, scale);
@@ -423,6 +427,7 @@ public class LevelModel {
             case ROPE: objects.add(0, obj); obj.activatePhysics(world); rope = (Rope) obj; break;
             case WORM: activate(obj); enemies.add((Worm) obj); break;
             case PORTAL: activate(obj); break;
+            case URCHIN: activate(obj); enemies.add((Urchin) obj); break;
         }
     }
 
@@ -439,6 +444,7 @@ public class LevelModel {
             case STAR: deactivate(obj); break;
             case WORM: deactivate(obj); enemies.remove((Worm) obj); break;
             case PORTAL: deactivate(obj); break;
+            case URCHIN: deactivate(obj); enemies.remove((Urchin) obj); break;
         }
     }
 
@@ -543,12 +549,14 @@ public class LevelModel {
         JsonValue stars = new JsonValue(JsonValue.ValueType.array);
         JsonValue worms = new JsonValue(JsonValue.ValueType.array);
         JsonValue portalPairs = new JsonValue(JsonValue.ValueType.array);
+        JsonValue urchins = new JsonValue(JsonValue.ValueType.array);
 
         for (Obstacle obj : objects) {
             switch (obj.getType()) {
                 case STAR: stars.addChild(((Star) obj).toJson()); break;
                 case ANCHOR: anchors.addChild(((Anchor) obj).toJson()); break;
                 case WORM: worms.addChild(((Worm) obj).toJson()); break;
+                case URCHIN: urchins.addChild(((Urchin) obj).toJson()); break;
             }
         }
 
@@ -566,6 +574,10 @@ public class LevelModel {
 
         //Add portals
         out.addChild("portalpairs", portalPairs);
+
+        //Add urchins
+        out.addChild("urchin texture", new JsonValue(Urchin.getTexturePrefix()));
+        out.addChild("urchins", urchins);
 
 
         return out;
