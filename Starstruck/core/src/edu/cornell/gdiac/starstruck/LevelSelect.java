@@ -476,7 +476,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 //            if (!music.isPlaying()) { music.play();}
             // We are are ready, notify our listener
             if (currentLevel != null && isReady() && currentLevel.getUnlocked()) {
-                listener.exitScreen(this, WorldController.EXIT_PLAY, currentLevel.getFile());
+                listener.exitScreen(this, WorldController.EXIT_PLAY);
             }
         }
     }
