@@ -42,7 +42,7 @@
 		  "ring texture": "ls g2",
 		  "unlocked": "true",
 		  "completed": "false",
-		  "json file": "test/alpha2.json"
+		  "json file": "main/milkyDemo.json"
 	  },
 
     {
@@ -51,9 +51,19 @@
       "r": 2.0,
       "texture": "ls p3",
       "ring texture": "ls g3",
-      "unlocked": "false",
+      "unlocked": "true",
       "completed": "false",
-      "json file": "test/alpha3.json"
+      "json file": "main/milkyDemo2.json"
+    },
+    {
+      "x": 25,
+      "y": 18,
+      "r": 2.5,
+      "texture": "ls p4",
+      "ring texture": "ls g4",
+      "unlocked": "true",
+      "completed": "false",
+      "json file": "main/whirlpoolDemo2.json"
     }
   ]
 }
