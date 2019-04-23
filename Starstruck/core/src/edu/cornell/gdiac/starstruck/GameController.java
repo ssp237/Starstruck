@@ -1081,8 +1081,10 @@ public class GameController extends WorldController implements ContactListener {
             if (!stars.remove(starCache)) print("star collection error in game controller");
             if (!objects.remove(starCache)) print("star collection error in game controller");
             starCount++;
-            if (starCount >= winCount && !openGoal)
+            if (starCount >= winCount && !openGoal) {
                 openGoal = true;
+                goal.getPortal1().setOpen(true);
+            }
             collection = false;
         }
 

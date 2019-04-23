@@ -34,8 +34,10 @@ public class Portal extends BoxObstacle {
     private String portName;
     /** Color of this portal */
     private Color color = Color.WHITE;
-    /** is this a gola portal */
+    /** is this a goal portal */
     private boolean isGoal;
+    /** is it open */
+    private boolean isOpen = false;
 
     /**
      * Creates a new spinner at the origin.
@@ -128,6 +130,14 @@ public class Portal extends BoxObstacle {
         origin = new Vector2(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
     }
 
+    public void setOpen(boolean state) {
+        isOpen = state;
+    }
+
+    public boolean getOpen() {
+        return isOpen;
+    }
+
     /**
      * TODO
      * @return Texture
@@ -139,6 +149,6 @@ public class Portal extends BoxObstacle {
     public ObstacleType getType() { return ObstacleType.PORTAL;}
 
     public void draw(GameCanvas canvas) {
-        canvas.draw(texture,color, origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+        canvas.draw(texture,((!isOpen && isGoal) ? Color.GRAY : color), origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
     }
 }

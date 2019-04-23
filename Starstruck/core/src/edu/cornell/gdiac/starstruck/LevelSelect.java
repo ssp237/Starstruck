@@ -21,6 +21,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
@@ -57,6 +58,13 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     protected LevelSelectModel level;
     /** mouse is currently selecting */
     private Level currentLevel;
+    /** Speed of camera pan & zoom */
+    private static final float PAN_CONST = 8;
+    private static final float ZOOM_FACTOR = 0.02f;
+
+    /** Camera offset */
+    private float camOffsetX;
+    private float camOffsetY;
 
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
@@ -274,15 +282,40 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     }
 
     /**
-     * Helper method to move the camera with the astronauts
+     * Helper function to update camera panning with arrow keys when no planet is selected
      */
-    private void updateCam() {
-        float xCam = avatar.getPosition().x * avatar.drawScale.x;
-        if (xCam < canvas.getWidth()/2) xCam = canvas.getWidth()/2;
-        canvas.getCamera().position.set(new Vector3(xCam, canvas.getCamera().position.y, 0));
-        canvas.getCamera().update();
-//        System.out.println(canvas.getCamera().position);
-//        System.out.println(canvas.getHeight());
+    private void updateCamera() {
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
+        InputController input = InputController.getInstance();
+        if (input.didLeft()) { //&& camera.position.x > camera.viewportWidth/2) {
+            camera.position.x = camera.position.x - PAN_CONST;
+            camOffsetX = camOffsetX - PAN_CONST;
+        }
+        if (input.heldUp()) { //&& camera.position.y < yBound - camera.viewportHeight/2) {
+            camera.position.y = camera.position.y + PAN_CONST;
+            camOffsetY = camOffsetY + PAN_CONST;
+        }
+        if (input.didRight()) { //&& camera.position.x < xBound - camera.viewportWidth/2) {
+            camera.position.x = camera.position.x + PAN_CONST;
+            camOffsetX = camOffsetX + PAN_CONST;
+        }
+        if (input.heldDown()) { //&& camera.position.y > camera.viewportHeight/2) {
+            camera.position.y = camera.position.y - PAN_CONST;
+            camOffsetY = camOffsetY - PAN_CONST;
+        }
+        if (input.shiftHeld() && input.heldUp()) {
+//            camera.viewportWidth = camera.viewportWidth * (1-ZOOM_FACTOR);
+//            camera.viewportHeight = camera.viewportHeight * (1-ZOOM_FACTOR);
+            camera.zoom = camera.zoom - ZOOM_FACTOR;
+            //System.out.println(camera.zoom);
+        }
+        if (input.shiftHeld() && input.heldDown()) {
+//            camera.viewportWidth = camera.viewportWidth * (1+ZOOM_FACTOR);
+//            camera.viewportHeight = camera.viewportHeight * (1+ZOOM_FACTOR);
+            camera.zoom = camera.zoom + ZOOM_FACTOR;
+            //System.out.println(camera.zoom);
+        }
+        camera.update();
     }
 
     /**
@@ -358,7 +391,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
-        updateCam();
+        updateCamera();
 
         if (isFailure()) return;
 
