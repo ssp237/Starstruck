@@ -378,7 +378,7 @@ public class GameController extends WorldController implements ContactListener {
         setFailure(false);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
-        loadFile = "test/alpha2.json";
+        loadFile = "main/tutorial.json";
         loader = new SaveListener();
     }
 
@@ -443,6 +443,22 @@ public class GameController extends WorldController implements ContactListener {
         camera.viewportHeight = camHeight;
         camera.position.set(camera.viewportWidth/2, camera.viewportHeight/2, 0);
 
+        float a1x = avatar.getPosition().x * avatar.drawScale.x;
+        float a2x = avatar2.getPosition().x * avatar2.drawScale.x;
+        float xCam = (a1x + a2x) / 2;
+        float a1y = avatar.getPosition().y * avatar.drawScale.y;
+        float a2y = avatar2.getPosition().y * avatar2.drawScale.y;
+        float yCam = (a1y + a2y) / 2;
+        if (xCam < camWidth/2)
+            xCam = camWidth/2;
+        else if (xCam > xBound*scale.x - camWidth/2)
+            xCam = xBound*scale.x - camWidth/2;
+        if (yCam < camHeight/2)
+            yCam = camHeight/2;
+        else if (yCam > yBound*scale.y - camHeight/2)
+            yCam = yBound*scale.y - camHeight/2;
+        camera.position.set(xCam, yCam, 0);
+
         xBound = (1280*1.5f) / scale.x;
         yBound = (720*1.5f) / scale.y;
 
@@ -462,16 +478,17 @@ public class GameController extends WorldController implements ContactListener {
         starCount = 0;
         collection = false;
 
-        // Create enemy
-        dwidth  = enemyTexture.getRegionWidth()/scale.x;
-        dheight = enemyTexture.getRegionHeight()/scale.y;
-        enemy = new Enemy(26 + 2, 8 + 2, dwidth, dheight);
-        enemy.setDrawScale(scale);
-        enemy.setTexture(enemyTexture, 3, 10);
-        enemy.setName("bug");
-        addObject(enemy);
 
         totalStars = stars.size();
+        // Create enemy TODO hardcoded bug enemy
+//        dwidth  = enemyTexture.getRegionWidth()/scale.x;
+//        dheight = enemyTexture.getRegionHeight()/scale.y;
+//        enemy = new Enemy(26 + 2, 8 + 2, dwidth, dheight);
+//        enemy.setDrawScale(scale);
+//        enemy.setTexture(enemyTexture, 3, 10);
+//        enemy.setName("bug");
+//        addObject(enemy);
+
     }
 
     /**
@@ -727,7 +744,7 @@ public class GameController extends WorldController implements ContactListener {
         Vector3 dir = camTarget.sub(camera.position);
         if (dir.len() >= CAMERA_SPEED)
             dir.setLength(CAMERA_SPEED);
-        canvas.getCamera().position.add(dir);
+        camera.position.add(dir);
         camera.update();
     }
 
@@ -979,9 +996,10 @@ public class GameController extends WorldController implements ContactListener {
             SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
         }
 
-        if ((dist(avatar.getPosition(), enemy.getPosition()) < 1f && avatar.getOnPlanet()
-                || dist(avatar2.getPosition(), enemy.getPosition()) < 1f && avatar2.getOnPlanet()) && !isComplete() && !testE)
-            setFailure(true);
+        //TODO hardcoded bug enemy
+//        if ((dist(avatar.getPosition(), enemy.getPosition()) < 1f && avatar.getOnPlanet()
+//                || dist(avatar2.getPosition(), enemy.getPosition()) < 1f && avatar2.getOnPlanet()) && !isComplete() && !testE)
+//            setFailure(true);
 
         for (Enemy e : enemies) {
             if (e.getType() == ObstacleType.WORM) {
@@ -1113,19 +1131,20 @@ public class GameController extends WorldController implements ContactListener {
         avatar.applyForce();
         avatar2.applyForce();
 
-        enemy.update(dt);
-        if (enemy.getOnPlanet()) {
-            enemy.setFixedRotation(true);
-            //enemy.setRotation(1);
-            contactDirEn = contactPointEN.cpy().sub(curPlanetEN.getPosition());
-            float angle = -contactDirEn.angleRad(new Vector2(0, 1));
-            enemy.setAngle(angle);
-            enemy.setPosition(contactPointEN);
-            contactDirEn.rotateRad(-(float) Math.PI / 2);
-            enemy.setPosition(contactPointEN.add(contactDirEn.setLength(BUG_SPEED)));
-            enemy.setGravity(vectorWorld.getForce(enemy.getPosition()));
-            enemy.applyForce();
-        }
+        //TODO harcoded bug enemy
+//        enemy.update(dt);
+//        if (enemy.getOnPlanet()) {
+//            enemy.setFixedRotation(true);
+//            //enemy.setRotation(1);
+//            contactDirEn = contactPointEN.cpy().sub(curPlanetEN.getPosition());
+//            float angle = -contactDirEn.angleRad(new Vector2(0, 1));
+//            enemy.setAngle(angle);
+//            enemy.setPosition(contactPointEN);
+//            contactDirEn.rotateRad(-(float) Math.PI / 2);
+//            enemy.setPosition(contactPointEN.add(contactDirEn.setLength(BUG_SPEED)));
+//            enemy.setGravity(vectorWorld.getForce(enemy.getPosition()));
+//            enemy.applyForce();
+//        }
 
         avatar.lastPoint.set(avatar.getPosition());
         avatar2.lastPoint.set(avatar2.getPosition());

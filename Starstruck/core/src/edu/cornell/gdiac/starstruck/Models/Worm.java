@@ -27,6 +27,8 @@ public class Worm extends Enemy{
     /** Delay for wormie to come back on screen */
     private int delay_pos = 1000;
 
+    private float x_original;
+
 
     /**
      * Creates a new dude avatar at the given position.
@@ -47,6 +49,7 @@ public class Worm extends Enemy{
         //right_bound = right_b;
         setName("worm" + worm_count);
         worm_count++;
+        x_original = x;
     }
 
     /**
@@ -66,6 +69,7 @@ public class Worm extends Enemy{
         setTexture(texture);
         setDrawScale(scale);
         y_pos = y;
+        x_original = x;
         //right_bound = right_b;
 
     }
@@ -124,12 +128,19 @@ public class Worm extends Enemy{
         super.update(dt);
         //System.out.println(getVX());
 
-        if (this.getPosition().x < 0) {
-            delay_pos--;
-            if (delay_pos == 0) {
-                delay_pos = 1000;
-                this.setPosition(right_bound, y_pos);
-            }
+//        if (this.getPosition().x < 0) {
+//            delay_pos--;
+//            if (delay_pos == 0) {
+//                delay_pos = 1000;
+//                this.setPosition(right_bound, y_pos);
+//            }
+    //}
+        if (this.getPosition().x < x_original - 5) {
+            System.out.println(getVX());
+            setVX(-getVX());
+        } else if (this.getPosition().x > x_original + 5) {
+            System.out.println(getVX());
+            setVX(-getVX());
         }
         //System.out.println(this);
         //System.out.println(this);

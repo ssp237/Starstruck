@@ -119,8 +119,8 @@ public class Urchin extends Enemy {
         }
         if (orientation == Orientation.HORIZONTAL) {
             float temp = height;
-            height = width;
-            width = temp;
+            height = width * scale.x / scale.y;
+            width = temp * scale.y / scale.x;
         }
         return new Urchin(json.get("x").asFloat(), json.get("y").asFloat(), width, height, scale, length, orientation);
     }
