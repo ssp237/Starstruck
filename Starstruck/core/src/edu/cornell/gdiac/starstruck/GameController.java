@@ -123,28 +123,33 @@ public class GameController extends WorldController implements ContactListener {
 
     /** The width of the progress bar */
     private int widthBar = 448;
-    /** The y-coordinate of the center of the progress bar */
-    private int centerY = 2;
     /** The x-coordinate of the center of the progress bar */
-    private int centerX = 10;
+    private int initCenterX = 10;
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
     private int heightY;
 
+    private int totalStars;
 
     /**StarCount bar */
 
     private void drawStarBar(GameCanvas canvas) {
-        canvas.draw(statusBkgLeft, Color.WHITE, centerX - widthBar / 2, centerY, scale.x * PROGRESS_CAP_LEFT, scale.y * PROGRESS_HEIGHT);
-        canvas.draw(statusBkgRight, Color.WHITE, centerX + widthBar / 2 - scale.x * PROGRESS_CAP_RIGHT, centerY, scale.x * PROGRESS_CAP_RIGHT, scale.y * PROGRESS_HEIGHT);
-        canvas.draw(statusBkgMiddle, Color.WHITE, centerX - widthBar / 2 + scale.x * PROGRESS_CAP_LEFT, centerY, widthBar - 2 * scale.x * PROGRESS_CAP_LEFT, scale.y * PROGRESS_HEIGHT);
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
 
-        canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / 2, centerY, scale.x * PROGRESS_CAP_LEFT, scale.y * PROGRESS_HEIGHT);
+        float centerY = camera.position.y - ((float) canvas.getHeight())/2 + 3;
+        float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 10;
+
+        print(centerX*scale.x + (widthBar /2) - PROGRESS_CAP_RIGHT*scale.x);
+        canvas.draw(statusBkgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        canvas.draw(statusBkgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + (widthBar /2) - PROGRESS_CAP_RIGHT*0.56f*scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+        canvas.draw(statusBkgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+
+        canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
         if (starCount > 0) {
-            float span = starCount * (widthBar - 2 * scale.x * PROGRESS_CAP_RIGHT) / 2.0f;
-            canvas.draw(statusFrgRight, Color.WHITE, centerX - widthBar / 2 + scale.x * PROGRESS_CAP_RIGHT + span, centerY, scale.x * PROGRESS_CAP_RIGHT, scale.y * PROGRESS_HEIGHT);
-            canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / 2 + scale.x * PROGRESS_CAP_LEFT, centerY, span, scale.y * PROGRESS_HEIGHT);
-        } else {
-            canvas.draw(statusFrgRight, Color.WHITE, centerX - widthBar / 2 + scale.x * PROGRESS_CAP_RIGHT, centerY, scale.x * PROGRESS_CAP_RIGHT, scale.y * PROGRESS_HEIGHT);
+            float span = starCount * ((PROGRESS_MIDDLE - 2 * PROGRESS_CAP_RIGHT)) / totalStars;
+            canvas.draw(statusFrgRight, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_RIGHT + span/scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+            canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, span, PROGRESS_HEIGHT);
+       } else {
+            canvas.draw(statusFrgRight, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_RIGHT, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
         }
     }
 
@@ -466,7 +471,7 @@ public class GameController extends WorldController implements ContactListener {
         enemy.setName("bug");
         addObject(enemy);
 
-        drawStarBar(canvas);
+        totalStars = stars.size();
     }
 
     /**
@@ -1459,6 +1464,9 @@ public class GameController extends WorldController implements ContactListener {
             canvas.end();
         }
 
+        canvas.begin();
+        drawStarBar(canvas);
+        canvas.end();
 
         if(isDebug()){
             canvas.beginDebug();
