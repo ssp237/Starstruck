@@ -269,9 +269,9 @@ public class GameController extends WorldController implements ContactListener {
     private Vector2 contactDirEn = new Vector2();
 
     /** Settings of the game */
-    private boolean switchOnJump = false;
-    private boolean switchOnAnchor = false;
-    private boolean twoplayer = false;
+    private boolean switchOnJump;
+    private boolean switchOnAnchor;
+    private boolean twoplayer;
 
     // Physics objects for the game
     /** Reference to the character avatar */
@@ -509,8 +509,10 @@ public class GameController extends WorldController implements ContactListener {
         starCount = 0;
         collection = false;
 
-
         totalStars = stars.size();
+
+        setSettings();
+
         // Create enemy TODO hardcoded bug enemy
 //        dwidth  = enemyTexture.getRegionWidth()/scale.x;
 //        dheight = enemyTexture.getRegionHeight()/scale.y;
@@ -520,6 +522,15 @@ public class GameController extends WorldController implements ContactListener {
 //        enemy.setName("bug");
 //        addObject(enemy);
 
+    }
+
+    /**
+     * Set the settings at the beginning of the level.
+     */
+    public void setSettings() {
+        twoplayer = false;
+        switchOnJump = false;
+        switchOnAnchor = false;
     }
 
     /**
@@ -609,7 +620,7 @@ public class GameController extends WorldController implements ContactListener {
                 SPIN_POS.set(a.getPosition());
                 if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
                     anchorHelp(avatar1, avatar2, a);
-                    if (switchOnAnchor) {
+                    if (switchOnAnchor && !twoplayer) {
                         avatar1.setActive(false);
                         avatar2.setActive(true);
                     }
@@ -624,7 +635,7 @@ public class GameController extends WorldController implements ContactListener {
                 SPIN_POS.set(a.getPosition());
                 if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
                     anchorHelp(avatar2, avatar1, a);
-                    if (switchOnAnchor) {
+                    if (switchOnAnchor && !twoplayer) {
                         avatar1.setActive(true);
                         avatar2.setActive(false);
                     }
@@ -953,6 +964,31 @@ public class GameController extends WorldController implements ContactListener {
     }
 
     /**
+     * If settings were switched
+     */
+    private void updateSettings() {
+        InputController input = InputController.getInstance();
+        if (input.didOne()) {
+            twoplayer = !twoplayer;
+            print("Toggled setting two player: " + twoplayer);
+            avatar.setTwoPlayer(twoplayer);
+            avatar2.setTwoPlayer(twoplayer);
+            if (!twoplayer) {
+                avatar.setActive(true);
+                avatar2.setActive(false);
+            }
+        }
+        if (input.didTwo() && !twoplayer) {
+            switchOnJump = !switchOnJump;
+            print("Toggled setting switch on jump: " + switchOnJump);
+        }
+        if (input.didThree() && !twoplayer) {
+            switchOnAnchor = !switchOnAnchor;
+            print("Toggled setting switch on anchor: " + switchOnAnchor);
+        }
+    }
+
+    /**
      * Helper for update
      *
      * @param avatar Active avatar
@@ -1093,10 +1129,7 @@ public class GameController extends WorldController implements ContactListener {
 //        if (avatar.getOnPlanet()) avatar.setLinearVelocity(reset);
 //        if (avatar2.getOnPlanet()) avatar2.setLinearVelocity(reset);
 
-        if (twoplayer) {
-            switchOnAnchor = false;
-            switchOnJump = false;
-        }
+        updateSettings();
 
         if (switched()) {
             avatar.setActive(!avatar.isActive());
@@ -1250,7 +1283,7 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
-        if (switchOnJump && (avatar.isJumping() || avatar2.isJumping()) && !avatar.isAnchored() && !avatar2.isAnchored() && !testC) {
+        if (!twoplayer && switchOnJump && (avatar.isJumping() || avatar2.isJumping()) && !avatar.isAnchored() && !avatar2.isAnchored() && !testC) {
             avatar.setActive(!avatar.isActive());
             avatar2.setActive(!avatar2.isActive());
         }
