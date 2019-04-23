@@ -159,7 +159,7 @@ public class InputController {
      *
      * @return the amount of sideways movement.
      */
-    public float getHorizontal1() {return horizontal2;}
+    public float getHorizontal2() {return horizontal2;}
 
     /**
      * Returns the amount of vertical movement for player 2.
