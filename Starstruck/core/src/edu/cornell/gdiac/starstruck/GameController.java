@@ -11,6 +11,8 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.assets.*;
@@ -66,6 +68,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Space sounds */
     private static final String SPACE_SOUNDS = "space sounds";
 
+
     /** The background for DEATH*/
     private Texture death;
     /** Opacity countdown for death screen */
@@ -88,16 +91,86 @@ public class GameController extends WorldController implements ContactListener {
     private Enemy pinkworm;
     private Enemy greenworm;
 
-    /**
-     * Preloads the assets for this controller.
-     *
-     * To make the game modes more for-loop friendly, we opted for nonstatic loaders
-     * this time.  However, we still want the assets themselves to be static.  So
-     * we have an AssetState that determines the current loading state.  If the
-     * assets are already loaded, this method will do nothing.
-     *
-     * @param manager Reference to global asset manager.
-     */
+    /** Texture file for star bar*/
+    private static final String PROGRESS_FILE = "default/starbar.png";
+
+    /** Height of the star bar */
+    private static int PROGRESS_HEIGHT = 54;
+    /** Width of the rounded cap on left*/
+    private static int PROGRESS_CAP_LEFT = 80;
+    /** Width of the rounded cap on right*/
+    private static int PROGRESS_CAP_RIGHT = 10;
+    /** Width of the middle portion in texture atlas */
+    private static int PROGRESS_MIDDLE = 338;
+
+
+    /** Texture atlas to support a progress bar */
+    private Texture statusBar;
+
+
+
+    /** Left cap to the status background (grey region) */
+    private TextureRegion statusBkgLeft;
+    /** Middle portion of the status background (grey region) */
+    private TextureRegion statusBkgMiddle;
+    /** Right cap to the status background (grey region) */
+    private TextureRegion statusBkgRight;
+    /** Left cap to the status forground (colored region) */
+    private TextureRegion statusFrgLeft;
+    /** Middle portion of the status forground (colored region) */
+    private TextureRegion statusFrgMiddle;
+    /** Right cap to the status forground (colored region) */
+    private TextureRegion statusFrgRight;
+
+    /** The width of the progress bar */
+    private int widthBar = 448;
+    /** The x-coordinate of the center of the progress bar */
+    private int initCenterX = 10;
+    /** The height of the canvas window (necessary since sprite origin != screen origin) */
+    private int heightY;
+
+    private int totalStars;
+
+    /**StarCount bar */
+
+    private void drawStarBar(GameCanvas canvas) {
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
+
+        float centerY = camera.position.y - ((float) canvas.getHeight())/2 + 3;
+        float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 10;
+
+        print(centerX*scale.x + (widthBar /2) - PROGRESS_CAP_RIGHT*scale.x);
+        canvas.draw(statusBkgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        canvas.draw(statusBkgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + (widthBar /2) - PROGRESS_CAP_RIGHT*0.56f*scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+        canvas.draw(statusBkgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+
+        canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        if (starCount > 0 && starCount != totalStars) {
+            float span = starCount * ((PROGRESS_MIDDLE - 2 * PROGRESS_CAP_RIGHT)) / totalStars;
+            //canvas.draw(statusFrgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + span/scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+            canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, span, PROGRESS_HEIGHT);
+       } else if (starCount == totalStars) {
+            canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+            canvas.draw(statusFrgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + (widthBar /2) - PROGRESS_CAP_RIGHT*0.56f*scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+            canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        }
+        else {
+            canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        }
+    }
+
+
+
+        /**
+         * Preloads the assets for this controller.
+         *
+         * To make the game modes more for-loop friendly, we opted for nonstatic loaders
+         * this time.  However, we still want the assets themselves to be static.  So
+         * we have an AssetState that determines the current loading state.  If the
+         * assets are already loaded, this method will do nothing.
+         *
+         * @param manager Reference to global asset manager.
+         */
     public void preLoadContent(AssetManager manager) {
         if (platformAssetState != AssetState.EMPTY) {
             return;
@@ -111,6 +184,7 @@ public class GameController extends WorldController implements ContactListener {
         assetDirectory = jsonReader.parse(Gdx.files.internal("levels/assets.json"));
 
         JsonAssetManager.getInstance().loadDirectory(assetDirectory);
+
     }
 
     /**
@@ -150,6 +224,9 @@ public class GameController extends WorldController implements ContactListener {
         platformAssetState = AssetState.COMPLETE;
 
         planets = new PlanetList(scale);
+
+
+
     }
 
     // Physics constants for initialization
@@ -338,6 +415,20 @@ public class GameController extends WorldController implements ContactListener {
         count = 5;
         deathOp = 0f;
         portalpairCache = null;
+
+        statusBar  = JsonAssetManager.getInstance().getEntry("starbar", Texture.class);
+        // Break up the status bar texture into regions
+        statusBkgLeft   = new TextureRegion(statusBar,0,0,PROGRESS_CAP_LEFT,PROGRESS_HEIGHT);
+        statusBkgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP_RIGHT,0,PROGRESS_CAP_RIGHT,PROGRESS_HEIGHT);
+        statusBkgMiddle = new TextureRegion(statusBar,PROGRESS_CAP_LEFT,0,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
+
+        int offset = statusBar.getHeight()-PROGRESS_HEIGHT;
+        statusFrgLeft   = new TextureRegion(statusBar,0,offset,PROGRESS_CAP_LEFT,PROGRESS_HEIGHT);
+        statusFrgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP_RIGHT,offset,PROGRESS_CAP_RIGHT,PROGRESS_HEIGHT);
+        statusFrgMiddle = new TextureRegion(statusBar,PROGRESS_CAP_LEFT,offset,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
+
+        displayFont = JsonAssetManager.getInstance().getEntry("retro game", BitmapFont.class);
+
     }
 
     /**
@@ -420,6 +511,8 @@ public class GameController extends WorldController implements ContactListener {
         starCount = 0;
         collection = false;
 
+
+        totalStars = stars.size();
         // Create enemy TODO hardcoded bug enemy
 //        dwidth  = enemyTexture.getRegionWidth()/scale.x;
 //        dheight = enemyTexture.getRegionHeight()/scale.y;
@@ -428,6 +521,7 @@ public class GameController extends WorldController implements ContactListener {
 //        enemy.setTexture(enemyTexture, 3, 10);
 //        enemy.setName("bug");
 //        addObject(enemy);
+
     }
 
     /**
@@ -1423,6 +1517,9 @@ public class GameController extends WorldController implements ContactListener {
             canvas.end();
         }
 
+        canvas.begin();
+        drawStarBar(canvas);
+        canvas.end();
 
         if(isDebug()){
             canvas.beginDebug();
@@ -1432,4 +1529,8 @@ public class GameController extends WorldController implements ContactListener {
             canvas.endDebug();
         }
     }
+
+
+
+
 }

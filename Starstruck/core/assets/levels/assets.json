@@ -183,7 +183,7 @@
     "spike bottom": {
       "file": "enemies/static_spike_bottom.png",
       "wrap": false
-    }
+    },
   },
   "textures": {
     "wp background": {
@@ -225,6 +225,10 @@
     "menu background": {
       "file": "shared/menu.png",
       "wrap": false
+    },
+    "starbar": {
+      "file": "default/starbar.png",
+      "wrap": false;
     }
   },
   "filmstrips" : {
