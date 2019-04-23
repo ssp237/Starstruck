@@ -24,11 +24,11 @@
   },
   "levels": [
     {
-      "x": 4.47166109085083,
-      "y": 5.564109802246094,
+      "x": 5,
+      "y": 6,
       "r": 2.0,
 		"texture": "ls p1",
-		"ring texture": "wp g1",
+		"ring texture": "ls g1",
 		"unlocked": "true",
 		"completed": "false",
 		"json file": "main/tutorial.json"
@@ -36,21 +36,21 @@
 
 	  {
 		  "x": 12,
-		  "y": 18,
+		  "y": 15,
 		  "r": 3.0,
-		  "texture": "ls p1",
-		  "ring texture": "wp g1",
+		  "texture": "ls p2",
+		  "ring texture": "ls g2",
 		  "unlocked": "true",
 		  "completed": "false",
 		  "json file": "test/alpha2.json"
 	  },
 
     {
-      "x": 12,
-      "y": 4,
+      "x": 18,
+      "y": 8,
       "r": 2.0,
-      "texture": "ls p1",
-      "ring texture": "wp g1",
+      "texture": "ls p3",
+      "ring texture": "ls g3",
       "unlocked": "false",
       "completed": "false",
       "json file": "test/alpha3.json"

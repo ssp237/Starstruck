@@ -80,6 +80,26 @@
       "file": "levelselect/lvl1.png",
       "wrap": false
     },
+    "ls g1": {
+      "file": "levelselect/ring1.png",
+      "wrap": false
+    },
+    "ls p2": {
+      "file": "levelselect/lvl2.png",
+      "wrap": false
+    },
+    "ls g2": {
+      "file": "levelselect/ring2.png",
+      "wrap": false
+    },
+    "ls p3": {
+      "file": "levelselect/lvl3.png",
+      "wrap": false
+    },
+    "ls g3": {
+      "file": "levelselect/ring3.png",
+      "wrap": false
+    },
     "de p1": {
       "file": "default/planets/static_default.planet1_v1.png",
       "wrap": false
