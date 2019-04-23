@@ -11,6 +11,7 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.*;
@@ -219,16 +220,6 @@ public class GameController extends WorldController implements ContactListener {
 
         planets = new PlanetList(scale);
 
-        statusBar  = new Texture(PROGRESS_FILE);
-        // Break up the status bar texture into regions
-        statusBkgLeft   = new TextureRegion(statusBar,0,0,PROGRESS_CAP_LEFT,PROGRESS_HEIGHT);
-        statusBkgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP_RIGHT,0,PROGRESS_CAP_RIGHT,PROGRESS_HEIGHT);
-        statusBkgMiddle = new TextureRegion(statusBar,PROGRESS_CAP_LEFT,0,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
-
-        int offset = statusBar.getHeight()-PROGRESS_HEIGHT;
-        statusFrgLeft   = new TextureRegion(statusBar,0,offset,PROGRESS_CAP_LEFT,PROGRESS_HEIGHT);
-        statusFrgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP_RIGHT,offset,PROGRESS_CAP_RIGHT,PROGRESS_HEIGHT);
-        statusFrgMiddle = new TextureRegion(statusBar,PROGRESS_CAP_LEFT,offset,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
 
 
     }
@@ -419,6 +410,20 @@ public class GameController extends WorldController implements ContactListener {
         count = 5;
         deathOp = 0f;
         portalpairCache = null;
+
+        statusBar  = JsonAssetManager.getInstance().getEntry("starbar", Texture.class);
+        // Break up the status bar texture into regions
+        statusBkgLeft   = new TextureRegion(statusBar,0,0,PROGRESS_CAP_LEFT,PROGRESS_HEIGHT);
+        statusBkgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP_RIGHT,0,PROGRESS_CAP_RIGHT,PROGRESS_HEIGHT);
+        statusBkgMiddle = new TextureRegion(statusBar,PROGRESS_CAP_LEFT,0,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
+
+        int offset = statusBar.getHeight()-PROGRESS_HEIGHT;
+        statusFrgLeft   = new TextureRegion(statusBar,0,offset,PROGRESS_CAP_LEFT,PROGRESS_HEIGHT);
+        statusFrgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP_RIGHT,offset,PROGRESS_CAP_RIGHT,PROGRESS_HEIGHT);
+        statusFrgMiddle = new TextureRegion(statusBar,PROGRESS_CAP_LEFT,offset,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
+
+        displayFont = JsonAssetManager.getInstance().getEntry("retro game", BitmapFont.class);
+
     }
 
     /**

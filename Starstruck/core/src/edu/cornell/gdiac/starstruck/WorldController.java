@@ -120,7 +120,7 @@ public abstract class WorldController implements Screen {
         planet3 = JsonAssetManager.getInstance().getEntry("whirlpool planet 3", TextureRegion.class);
         planet4 = JsonAssetManager.getInstance().getEntry("whirlpool planet 4", TextureRegion.class);
 
-        displayFont = JsonAssetManager.getInstance().getEntry("retro game", BitmapFont.class);
+
 
         worldAssetState = AssetState.COMPLETE;
     }
