@@ -668,6 +668,7 @@ public class GameController extends WorldController implements ContactListener {
         if (isComplete()) {
             xCam = camera.position.x;
             yCam = camera.position.y;
+            canvas.resetCamera();
         }
 
         if (xCam < camWidth/2)
