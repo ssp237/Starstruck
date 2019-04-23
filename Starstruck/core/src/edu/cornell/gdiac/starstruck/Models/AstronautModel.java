@@ -149,6 +149,9 @@ public class AstronautModel extends CapsuleObstacle {
     public boolean anchorhop;
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
+    /** Two player? If true, don't draw glow */
+    private boolean twoplayer;
+
 
     /**
      * Set the glow texture
@@ -267,6 +270,11 @@ public class AstronautModel extends CapsuleObstacle {
 
     public void setPlanetMove(Vector2 value) {
         planetMove.set(value);
+    }
+
+    /** Set two player */
+    public void setTwoPlayer(boolean value) {
+        twoplayer = value;
     }
 
     /**
@@ -858,7 +866,7 @@ public class AstronautModel extends CapsuleObstacle {
      */
     public void draw(GameCanvas canvas) {
         float effect = faceRight ? -1.0f : 1.0f;
-        if (isActive()) {
+        if (isActive() && !twoplayer) {
             Color color = isPlayerOne ? p1glow : p2glow;
             canvas.draw(glowTexture, color, glowOrigin.x, glowOrigin.y, (getX()) * drawScale.x,
                     (getY()) * drawScale.y, getAngle(), effect * GLOW_SCALE, GLOW_SCALE);

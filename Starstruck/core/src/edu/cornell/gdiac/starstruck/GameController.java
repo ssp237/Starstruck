@@ -198,6 +198,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Settings of the game */
     private boolean switchOnJump = false;
     private boolean switchOnAnchor = false;
+    private boolean twoplayer = true;
 
     // Physics objects for the game
     /** Reference to the character avatar */
@@ -330,6 +331,7 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void assignLevelFields() {
         avatar = level.getPlayer1(); avatar2 = level.getPlayer2();
+        avatar.setTwoPlayer(twoplayer); avatar2.setTwoPlayer(twoplayer);
         rope = level.getRope();
         objects = level.objects; planets = level.getPlanets();
         world = level.getWorld(); vectorWorld = level.getVectorWorld();
@@ -394,11 +396,18 @@ public class GameController extends WorldController implements ContactListener {
     /**
      * Was anchor pressed
      *
-     * @return true if space was pressed
+     * @return true if anchored was pressed
      */
     private boolean anchord() {
         return InputController.getInstance().didSpace();
     }
+
+    /**
+     * For two player, was player 2 anchor pressed
+     *
+     * @return true if anchored2 was pressed
+     */
+    private boolean anchord1() { return InputController.getInstance().didSecondary(); }
 
     /**
      * Was switch pressed
@@ -406,7 +415,7 @@ public class GameController extends WorldController implements ContactListener {
      * @return true if switch was pressed
      */
     private boolean switched() {
-        return InputController.getInstance().didS();
+        return InputController.getInstance().didS() && !twoplayer;
     }
 
     /**
@@ -644,7 +653,7 @@ public class GameController extends WorldController implements ContactListener {
         Vector3 dir = camTarget.sub(camera.position);
         if (dir.len() >= CAMERA_SPEED)
             dir.setLength(CAMERA_SPEED);
-        canvas.getCamera().position.add(dir);
+        camera.position.add(dir);
         camera.update();
     }
 
@@ -660,21 +669,27 @@ public class GameController extends WorldController implements ContactListener {
         InputController input = InputController.getInstance();
         //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
         contactDir.rotateRad(-(float) Math.PI / 2);
-        float move = InputController.getInstance().getHorizontal();
-        if (InputController.getInstance().didRight() || InputController.getInstance().didLeft()) {
-            avatar.setPlanetMove(contactDir.scl(move));
-            if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
-            avatar.moving = true;
+        if (!twoplayer) {
+            float move = input.getHorizontal();
+            if (input.didRight() || input.didLeft()) {
+                avatar.setPlanetMove(contactDir.scl(move));
+                if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
+                    avatar.moving = true;
+            }
+
+            if (InputController.getInstance().didPrimary() && !auto && !testC) {
+                //print(contactPoint);
+                avatar.setJumping(true);
+                SoundController.getInstance().play(JUMP_FILE, JUMP_FILE, false, EFFECT_VOLUME);
+                contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
+                avatar.setPlanetJump(contactDir);
+                avatar.setOnPlanet(false);
+                avatar.moving = false;
+            }
         }
 
-        if (InputController.getInstance().didPrimary() && !auto && !testC) {
-            //print(contactPoint);
-            avatar.setJumping(true);
-            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
-            contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
-            avatar.setPlanetJump(contactDir);
-            avatar.setOnPlanet(false);
-            avatar.moving = false;
+        else if (twoplayer) {
+
         }
     }
 
