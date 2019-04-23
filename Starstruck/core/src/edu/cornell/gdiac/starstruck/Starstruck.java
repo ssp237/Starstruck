@@ -14,6 +14,7 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.math.Vector3;
 import edu.cornell.gdiac.util.JsonAssetManager;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -37,6 +38,8 @@ public class Starstruck extends Game implements ScreenListener {
 	private WorldController[] controllers;
 	/** Number of special screens */
 	private static int SCREENS = 4;
+
+	Vector3 camPos;
 
 	/**
 	 * Creates a new game from the configuration settings.
@@ -62,6 +65,9 @@ public class Starstruck extends Game implements ScreenListener {
 	 */
 	public void create() {
 		canvas  = new GameCanvas();
+
+		camPos = canvas.getCamera().position.cpy();
+
 		loading = new LoadingMode(canvas,1);
 
 		// Initialize the three game worlds
@@ -145,7 +151,13 @@ public class Starstruck extends Game implements ScreenListener {
 	 * @param exitCode The state of the screen upon exit
 	 */
 	public void exitScreen(Screen screen, int exitCode) {
+		canvas.getCamera().position.set(camPos);
+		//System.out.println(camPos);
+		canvas.getCamera().update();
+		//System.out.println(canvas.getCamera().position);
+
 		canvas.resetCamera();
+		//System.out.println(canvas.getCamera().position);
 		if (screen == loading) {
 			for (int ii = 0; ii < controllers.length; ii++) {
 				controllers[ii].loadContent(JsonAssetManager.getInstance());
