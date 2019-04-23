@@ -139,7 +139,7 @@ public class GameController extends WorldController implements ContactListener {
         float centerY = camera.position.y - ((float) canvas.getHeight())/2 + 3;
         float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 10;
 
-        print(centerX*scale.x + (widthBar /2) - PROGRESS_CAP_RIGHT*scale.x);
+        //print(centerX*scale.x + (widthBar /2) - PROGRESS_CAP_RIGHT*scale.x);
         canvas.draw(statusBkgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
         canvas.draw(statusBkgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + (widthBar /2) - PROGRESS_CAP_RIGHT*0.56f*scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
         canvas.draw(statusBkgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
