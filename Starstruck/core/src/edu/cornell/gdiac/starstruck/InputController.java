@@ -153,13 +153,13 @@ public class InputController {
     }
 
     /**
-     * Returns the amount of sideways movement for player 2.
+     * Returns the amount of sideways movement for player 2/other player.
      *
      * -1 = left, 1 = right, 0 = still
      *
      * @return the amount of sideways movement.
      */
-    public float getHorizontal2() {return horizontal2;}
+    public float getHorizontal1() {return horizontal2;}
 
     /**
      * Returns the amount of vertical movement for player 2.
@@ -317,6 +317,18 @@ public class InputController {
     public boolean heldDown() { return downHeld; }
 
     public boolean didDown() { return downPressed && !downPrevious; }
+
+    public boolean heldA() { return aPressed; }
+
+    public boolean aPrevious() { return aPrevious; }
+
+    public boolean heldD() { return dPressed; }
+
+    public boolean dPrevious() { return dPrevious; }
+
+    public boolean heldS() { return sPressed; }
+
+    public boolean sPrevious() { return sPrevious; }
 
     public boolean didA() {
         return aPressed && !aPrevious;
