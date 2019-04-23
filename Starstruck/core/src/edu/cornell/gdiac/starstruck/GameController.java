@@ -159,8 +159,6 @@ public class GameController extends WorldController implements ContactListener {
         }
     }
 
-
-
         /**
          * Preloads the assets for this controller.
          *
@@ -224,8 +222,6 @@ public class GameController extends WorldController implements ContactListener {
         platformAssetState = AssetState.COMPLETE;
 
         planets = new PlanetList(scale);
-
-
 
     }
 

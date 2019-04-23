@@ -49,6 +49,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
     /** The reader to process JSON files */
     private JsonReader jsonReader;
+    /** The JSON asset directory */
+    private JsonValue  assetDirectory;
     /** The JSON defining the level model */
     private JsonValue  levelFormat;
     /** Reference to the game level */
@@ -131,6 +133,9 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
 
+    /** Track asset loading from all instances and subclasses */
+    private AssetState platformAssetState = AssetState.EMPTY;
+
     /**
      * Return a reference to the primary avatar
      * @return Return a reference to the primary avatar.
@@ -164,6 +169,33 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         pressState = 0;
         active = false;
         sensorFixtures = new ObjectSet<Fixture>();
+    }
+
+
+    /**
+     * Preloads the assets for this controller.
+     *
+     * To make the game modes more for-loop friendly, we opted for nonstatic loaders
+     * this time.  However, we still want the assets themselves to be static.  So
+     * we have an AssetState that determines the current loading state.  If the
+     * assets are already loaded, this method will do nothing.
+     *
+     * @param manager Reference to global asset manager.
+     */
+    public void preLoadContent(AssetManager manager) {
+        if (platformAssetState != AssetState.EMPTY) {
+            return;
+        }
+
+        platformAssetState = AssetState.LOADING;
+
+        super.preLoadContent(manager);
+
+        jsonReader = new JsonReader();
+        assetDirectory = jsonReader.parse(Gdx.files.internal("levels/assets.json"));
+
+        JsonAssetManager.getInstance().loadDirectory(assetDirectory);
+
     }
 
     /**
@@ -476,7 +508,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 //            if (!music.isPlaying()) { music.play();}
             // We are are ready, notify our listener
             if (currentLevel != null && isReady() && currentLevel.getUnlocked()) {
-                listener.exitScreen(this, WorldController.EXIT_PLAY);
+                listener.exitScreen(this, WorldController.EXIT_PLAY, currentLevel.getFile());
             }
         }
     }
