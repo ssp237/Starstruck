@@ -153,7 +153,7 @@ public class InputController {
     }
 
     /**
-     * Returns the amount of sideways movement for player 2.
+     * Returns the amount of sideways movement for player 2/other player.
      *
      * -1 = left, 1 = right, 0 = still
      *
@@ -318,6 +318,18 @@ public class InputController {
 
     public boolean didDown() { return downPressed && !downPrevious; }
 
+    public boolean heldA() { return aPressed; }
+
+    public boolean aPrevious() { return aPrevious; }
+
+    public boolean heldD() { return dPressed; }
+
+    public boolean dPrevious() { return dPrevious; }
+
+    public boolean heldS() { return sPressed; }
+
+    public boolean sPrevious() { return sPrevious; }
+
     public boolean didA() {
         return aPressed && !aPrevious;
     }
@@ -465,7 +477,7 @@ public class InputController {
         // Give priority to gamepad results
         debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.Y));
         primePressed = (secondary && primePressed) || (Gdx.input.isKeyPressed(Input.Keys.UP));
-        secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.X));
+        secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.L));
         prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
         nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
         exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));

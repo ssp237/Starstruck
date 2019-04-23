@@ -259,7 +259,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Gentle force to send avatar to planet cmoing off anchor */
     private static final float TO_PLANET = 100f;
     /** Reel force */
-    private static final float REEL_FORCE = 2f;
+    private static final float REEL_FORCE = 7.5f;
 
     // Other game objects
     /** The position of the spinning barrier */
@@ -275,6 +275,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Settings of the game */
     private boolean switchOnJump = false;
     private boolean switchOnAnchor = false;
+    private boolean twoplayer = false;
 
     // Physics objects for the game
     /** Reference to the character avatar */
@@ -436,6 +437,7 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void assignLevelFields() {
         avatar = level.getPlayer1(); avatar2 = level.getPlayer2();
+        avatar.setTwoPlayer(twoplayer); avatar2.setTwoPlayer(twoplayer);
         rope = level.getRope();
         objects = level.objects; planets = level.getPlanets();
         world = level.getWorld(); vectorWorld = level.getVectorWorld();
@@ -527,11 +529,18 @@ public class GameController extends WorldController implements ContactListener {
     /**
      * Was anchor pressed
      *
-     * @return true if space was pressed
+     * @return true if anchored was pressed
      */
     private boolean anchord() {
         return InputController.getInstance().didSpace();
     }
+
+    /**
+     * For two player, was player 2 anchor pressed
+     *
+     * @return true if anchored2 was pressed
+     */
+    private boolean anchord1() { return InputController.getInstance().didSecondary(); }
 
     /**
      * Was switch pressed
@@ -539,7 +548,7 @@ public class GameController extends WorldController implements ContactListener {
      * @return true if switch was pressed
      */
     private boolean switched() {
-        return InputController.getInstance().didS();
+        return InputController.getInstance().didS() && !twoplayer;
     }
 
     /**
@@ -547,7 +556,13 @@ public class GameController extends WorldController implements ContactListener {
      *
      * @return true if down is being pressed
      */
-    private boolean reeled() { return InputController.getInstance().heldDown(); }
+    private boolean reeled() {
+        return InputController.getInstance().heldDown() || InputController.getInstance().didDown();
+    }
+
+    private boolean reeled2() {
+        return InputController.getInstance().heldS() || InputController.getInstance().didS();
+    }
 
     /**
      * print method
@@ -592,7 +607,8 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void updateAnchor(AstronautModel avatar1, AstronautModel avatar2, float dt) {
         //If unanchored and anchor is hit
-        if (avatar1.isActive() && !avatar1.getOnPlanet() && !avatar1.isAnchored() && anchord()) {
+        if (avatar1.isActive() && !avatar1.getOnPlanet() && !avatar1.isAnchored() && anchord() && !twoplayer
+                || twoplayer && !avatar1.getOnPlanet() && !avatar1.isAnchored() && anchord1()) {
             for (Anchor a : anchors) {
                 SPIN_POS.set(a.getPosition());
                 if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
@@ -606,7 +622,8 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
-        if (avatar2.isActive() && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord()) {
+        if (avatar2.isActive() && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord() && !twoplayer
+                || twoplayer && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord()) {
             for (Anchor a : anchors) {
                 SPIN_POS.set(a.getPosition());
                 if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
@@ -622,14 +639,15 @@ public class GameController extends WorldController implements ContactListener {
 
         //If avatar1 is already anchored check if anchored was hit
         if (avatar1.isAnchored()) {
-            if (!avatar2.getOnPlanet() && !avatar2.isAnchored()) { //If avatar2 is in space, swing avatarw
+            if (!avatar2.getOnPlanet() && !avatar2.isAnchored()) { //If avatar2 is in space, swing avatar2
                 if (rope.stretched(dt, 3)) {
                     avatar2.swing = true;
-                    if (!avatar2.isActive())
+                    if (!avatar2.isActive() && !twoplayer)
                         avatar2.setFixedRotation(true);
                 }
             }
-            if (InputController.getInstance().didPrimary() && avatar1.isActive()) { //If anchored was hit unanchor, uananchor and move
+            if (InputController.getInstance().didPrimary() && avatar1.isActive() && !twoplayer
+                    || twoplayer && InputController.getInstance().didPrimary()) { //If anchored was hit unanchor, uananchor and move
                 //avatar1.setUnAnchored();
                 //avatar2.swing = false;
                 avatar2.setFixedRotation(false);
@@ -663,11 +681,12 @@ public class GameController extends WorldController implements ContactListener {
             if (!avatar1.getOnPlanet() && !avatar1.isAnchored()) { //If avatar1 is in space, swing avatar1
                 if (rope.stretched(dt, 3)) {
                     avatar1.swing = true;
-                    if (!avatar1.isActive())
+                    if (!avatar1.isActive() && !twoplayer)
                         avatar1.setFixedRotation(true);
                 }
             }
-            if (InputController.getInstance().didPrimary() && avatar2.isActive()) { //If anchored was hit unanchor, uananchor and move
+            if (InputController.getInstance().didPrimary() && avatar2.isActive() && !twoplayer
+                    || twoplayer && InputController.getInstance().didW()) { //If anchored was hit unanchor, uananchor and move
                 //avatar2.setUnAnchored();
                 //avatar1.swing = false;
                 avatar1.setFixedRotation(false);
@@ -793,21 +812,65 @@ public class GameController extends WorldController implements ContactListener {
         InputController input = InputController.getInstance();
         //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
         contactDir.rotateRad(-(float) Math.PI / 2);
-        float move = InputController.getInstance().getHorizontal();
-        if (InputController.getInstance().didRight() || InputController.getInstance().didLeft()) {
-            avatar.setPlanetMove(contactDir.scl(move));
-            if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
-            avatar.moving = true;
+        if (!twoplayer) {
+            float move = input.getHorizontal();
+            if (input.didRight() || input.didLeft()) {
+                avatar.setPlanetMove(contactDir.scl(move));
+                avatar.setRight(input.didRight());
+                if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
+                    avatar.moving = true;
+            }
+
+            if (input.didPrimary() && !auto && !testC) {
+                //print(contactPoint);
+                avatar.setJumping(true);
+                SoundController.getInstance().play(JUMP_FILE, JUMP_FILE, false, EFFECT_VOLUME);
+                contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
+                avatar.setPlanetJump(contactDir);
+                avatar.setOnPlanet(false);
+                avatar.moving = false;
+            }
         }
 
-        if (InputController.getInstance().didPrimary() && !auto && !testC) {
-            //print(contactPoint);
-            avatar.setJumping(true);
-            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
-            contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
-            avatar.setPlanetJump(contactDir);
-            avatar.setOnPlanet(false);
-            avatar.moving = false;
+        else if (twoplayer) {
+            if (avatar == avatar2) {
+                float move = input.getHorizontal2();
+                if (input.heldD() || input.heldA()) {
+                    avatar.setPlanetMove(contactDir.scl(move));
+                    avatar.setRight(input.heldD());
+                    if (input.heldD() && !input.aPrevious() || input.heldA() && !input.dPrevious())
+                        avatar.moving = true;
+                }
+
+                if (input.didW()) {
+                    avatar.setJumping(true);
+                    SoundController.getInstance().play(JUMP_FILE, JUMP_FILE, false, EFFECT_VOLUME);
+                    contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
+                    avatar.setPlanetJump(contactDir);
+                    avatar.setOnPlanet(false);
+                    avatar.moving = false;
+                }
+            }
+
+            if (avatar == this.avatar) {
+                float move = input.getHorizontal();
+                if (input.didRight() || input.didLeft()) {
+                    avatar.setPlanetMove(contactDir.scl(move));
+                    avatar.setRight(input.didRight());
+                    if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
+                        avatar.moving = true;
+                }
+
+                if (input.didPrimary()) {
+                    //print(contactPoint);
+                    avatar.setJumping(true);
+                    SoundController.getInstance().play(JUMP_FILE, JUMP_FILE, false, EFFECT_VOLUME);
+                    contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
+                    avatar.setPlanetJump(contactDir);
+                    avatar.setOnPlanet(false);
+                    avatar.moving = false;
+                }
+            }
         }
     }
 
@@ -912,7 +975,7 @@ public class GameController extends WorldController implements ContactListener {
             }
             updateMovement(avatar, avatar.contactDir, (Planet) avatar.curPlanet, false);
 
-            if (avatar2.getOnPlanet()) { //Inactive astronaut
+            if (avatar2.getOnPlanet() && !twoplayer) { //Inactive astronaut
                 avatar2.setFixedRotation(true);
                 avatar2.contactDir.set(avatar2.getPosition().cpy().sub(avatar2.curPlanet.getPosition()));
                 angle = -avatar2.contactDir.angleRad(new Vector2 (0, 1));
@@ -936,12 +999,22 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
         else {
-            avatar.setRotation(InputController.getInstance().getHorizontal());
-            if (avatar2.getOnPlanet()) { //If the inactive avatar is on planet
-                avatar2.setFixedRotation(true);
-                avatar2.contactDir.set(avatar2.getPosition().cpy().sub(avatar2.curPlanet.getPosition()));
-                angle = -avatar2.contactDir.angleRad(new Vector2 (0, 1));
-                avatar2.setAngle(angle);
+            if (!twoplayer) {
+                avatar.setRotation(InputController.getInstance().getHorizontal());
+                if (avatar2.getOnPlanet()) { //If the inactive avatar is on planet
+                    avatar2.setFixedRotation(true);
+                    avatar2.contactDir.set(avatar2.getPosition().cpy().sub(avatar2.curPlanet.getPosition()));
+                    angle = -avatar2.contactDir.angleRad(new Vector2(0, 1));
+                    avatar2.setAngle(angle);
+                }
+            }
+
+            else {
+                if (avatar == this.avatar) {
+                    avatar.setRotation(InputController.getInstance().getHorizontal());
+                }
+                else
+                    avatar.setRotation(InputController.getInstance().getHorizontal2());
             }
         }
     }
@@ -1023,6 +1096,11 @@ public class GameController extends WorldController implements ContactListener {
 //        if (avatar.getOnPlanet()) avatar.setLinearVelocity(reset);
 //        if (avatar2.getOnPlanet()) avatar2.setLinearVelocity(reset);
 
+        if (twoplayer) {
+            switchOnAnchor = false;
+            switchOnJump = false;
+        }
+
         if (switched()) {
             avatar.setActive(!avatar.isActive());
             avatar2.setActive(!avatar2.isActive());
@@ -1047,7 +1125,7 @@ public class GameController extends WorldController implements ContactListener {
 
         float angVel = 0.1f;
         if (avatar.isAnchored()) {
-            if (!avatar.isActive() || avatar.getRotation() == 0) { //Dampen rotation
+            if ((!avatar.isActive() && !twoplayer) || avatar.getRotation() == 0) { //Dampen rotation
                 if (avatar.getAngularVelocity() > 0) {
                     if (avatar.getAngularVelocity() < angVel)
                         angVel = avatar.getAngularVelocity();
@@ -1063,7 +1141,7 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         if (avatar2.isAnchored()) {
-            if (!avatar2.isActive() || avatar2.getRotation() == 0) { //Dampen
+            if ((!avatar2.isActive() && !twoplayer) || avatar2.getRotation() == 0) { //Dampen
                 if (avatar2.getAngularVelocity() > 0) {
                     if (avatar2.getAngularVelocity() < angVel)
                         angVel = avatar2.getAngularVelocity();
@@ -1129,30 +1207,47 @@ public class GameController extends WorldController implements ContactListener {
         portalCount--;
         portal = false;
 
-        if (avatar.isActive()) {
+        if (twoplayer) {
             if (reeled() && !avatar2.getOnPlanet() && !avatar2.isAnchored()) {
                 reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
                 reelCache.setLength(REEL_FORCE);
                 avatar2.getBody().applyForceToCenter(reelCache, true);
             }
             updateHelp(avatar, avatar2, dt);
-            if (testC) {
-                avatar.setFixedRotation(true);
-                avatar.setMovement(InputController.getInstance().getHorizontal());
-                avatar.setMovementV(InputController.getInstance().getVertical());
-            }
-        }
-        else { //if avatar2 is active
-            if (reeled() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
+
+            if (reeled2() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
                 reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
                 reelCache.setLength(REEL_FORCE);
                 avatar.getBody().applyForceToCenter(reelCache, true);
             }
             updateHelp(avatar2, avatar, dt);
-            if (testC) {
-                avatar2.setFixedRotation(true);
-                avatar2.setMovement(InputController.getInstance().getHorizontal());
-                avatar2.setMovementV(InputController.getInstance().getVertical());
+        }
+
+        else { //twoplayer off
+            if (avatar.isActive()) {
+                if (reeled() && !avatar2.getOnPlanet() && !avatar2.isAnchored()) {
+                    reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
+                    reelCache.setLength(REEL_FORCE);
+                    avatar2.getBody().applyForceToCenter(reelCache, true);
+                }
+                updateHelp(avatar, avatar2, dt);
+                if (testC) {
+                    avatar.setFixedRotation(true);
+                    avatar.setMovement(InputController.getInstance().getHorizontal());
+                    avatar.setMovementV(InputController.getInstance().getVertical());
+                }
+            } else { //if avatar2 is active
+                if (reeled() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
+                    reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
+                    reelCache.setLength(REEL_FORCE);
+                    avatar.getBody().applyForceToCenter(reelCache, true);
+                }
+                updateHelp(avatar2, avatar, dt);
+                if (testC) {
+                    avatar2.setFixedRotation(true);
+                    avatar2.setMovement(InputController.getInstance().getHorizontal());
+                    avatar2.setMovementV(InputController.getInstance().getVertical());
+                }
             }
         }
 

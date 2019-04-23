@@ -42,7 +42,7 @@ public class AstronautModel extends CapsuleObstacle {
     /** The dude is a slippery one */
     private static final float DUDE_FRICTION = 0.0f;
     /** The maximum character speed */
-    private float DUDE_MAXSPEED = 2.8f;
+    private float DUDE_MAXSPEED = 3.0f;
     /** The maximum character rotation in space */
     private static final float DUDE_MAXROT = 6.5f;
     /** The impulse for the character jump */
@@ -149,6 +149,9 @@ public class AstronautModel extends CapsuleObstacle {
     public boolean anchorhop;
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
+    /** Two player? If true, don't draw glow */
+    private boolean twoplayer;
+
 
     /**
      * Set the glow texture
@@ -186,6 +189,10 @@ public class AstronautModel extends CapsuleObstacle {
         } else if (movement > 0) {
             faceRight = true;
         }
+    }
+
+    public void setRight(boolean value) {
+        faceRight = value;
     }
 
     public float getMovementV () { return movementV; }
@@ -267,6 +274,11 @@ public class AstronautModel extends CapsuleObstacle {
 
     public void setPlanetMove(Vector2 value) {
         planetMove.set(value);
+    }
+
+    /** Set two player */
+    public void setTwoPlayer(boolean value) {
+        twoplayer = value;
     }
 
     /**
@@ -809,10 +821,10 @@ public class AstronautModel extends CapsuleObstacle {
     public void update(float dt) {
         // Apply cooldowns
 
-//        if (onPlanet) {
-//            if (justMoved || !idle.justReset()) idle.tick();
-////            else if (!idle.justReset()) idle.kcit();
-//        }
+        if (onPlanet) {
+            if (justMoved || !idle.justReset()) idle.tick();
+//            else if (!idle.justReset()) idle.kcit();
+        }
 
         if (!onPlanet && !idle.justReset()) idle.reset();
 
@@ -857,8 +869,8 @@ public class AstronautModel extends CapsuleObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        float effect = faceRight ? -1.0f : 1.0f;
-        if (isActive()) {
+        float effect = faceRight ? 1.0f : -1.0f;
+        if (isActive() && !twoplayer) {
             Color color = isPlayerOne ? p1glow : p2glow;
             canvas.draw(glowTexture, color, glowOrigin.x, glowOrigin.y, (getX()) * drawScale.x,
                     (getY()) * drawScale.y, getAngle(), effect * GLOW_SCALE, GLOW_SCALE);
