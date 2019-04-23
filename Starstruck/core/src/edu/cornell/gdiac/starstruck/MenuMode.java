@@ -487,11 +487,6 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             pressState = 1;
             buttonId = BUILD;
         }
-//        else if (pressState == 0 && keycode == Input.Keys.ESCAPE) {
-//            pressState = 1;
-//            buttonId = QUIT;
-//            return false;
-//        }
         return true;
     }
 
@@ -521,10 +516,6 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             pressState = 2;
             return false;
         }
-//        else if (keycode == Input.Keys.ESCAPE) {
-//            pressState = 2;
-//            return false;
-//        }
         return true;
     }
 

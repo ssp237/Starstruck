@@ -31,8 +31,6 @@ public class Starstruck extends Game implements ScreenListener {
 	private GameCanvas canvas;
 	/** Avatar mode for the asset loading screen (CONTROLLER CLASS) */
 	private LoadingMode loading;
-	/** Avatar mode for the main menu (CONTROLLER CLASS) */
-	private MenuMode menu;
 	/** Avatar mode for the the game proper (CONTROLLER CLASS) */
 	private int current;
 	/** List of all WorldControllers */
@@ -129,7 +127,10 @@ public class Starstruck extends Game implements ScreenListener {
 		if (exitCode == WorldController.EXIT_PLAY) {
 			current = WorldController.EXIT_PLAY;
 			controllers[current] = new GameController(json);
-			setScreen(controllers[current]);
+			controllers[current].loadContent(JsonAssetManager.getInstance());
+			controllers[current].setScreenListener(this);
+			controllers[current].setCanvas(canvas);
+			exitScreen(screen, WorldController.EXIT_PLAY);
 		} else {
 			exitScreen(screen, exitCode);
 		}
