@@ -7,7 +7,8 @@ package edu.cornell.gdiac.starstruck;
 public enum Galaxy {
     DEFAULT("de"), //Galaxy from first game play prototype.
     WHIRLPOOL("wp"),
-    MILKYWAY("mw");
+    MILKYWAY("mw"),
+    LEVELSELECT("ls");
 
     private final String chars;
 
@@ -29,6 +30,8 @@ public enum Galaxy {
             return WHIRLPOOL;
         } else if (chars.equals("milky way")) {
             return MILKYWAY;
+        } else if (chars.equals("level select")) {
+            return LEVELSELECT;
         }
         return DEFAULT;
     }
@@ -37,6 +40,7 @@ public enum Galaxy {
         switch (this) {
             case WHIRLPOOL: return "whirlpool";
             case MILKYWAY: return "milky way";
+            case LEVELSELECT: return "level select";
             default: return "default";
         }
     }

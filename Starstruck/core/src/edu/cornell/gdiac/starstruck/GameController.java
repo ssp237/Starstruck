@@ -363,7 +363,23 @@ public class GameController extends WorldController implements ContactListener {
      * @return Return a reference to the secondary avatar.
      */
     public AstronautModel getAvatar2() { return avatar2; }
-
+    /**
+     * Creates and initialize a new instance of the platformer game
+     *
+     * The game has default gravity and other settings
+     */
+    public GameController(String loadFile) {
+        super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
+        jsonReader = new JsonReader();
+        level = new LevelModel();
+        setDebug(false);
+        setComplete(false);
+        setFailure(false);
+        world.setContactListener(this);
+        sensorFixtures = new ObjectSet<Fixture>();
+        this.loadFile = loadFile;
+        loader = new SaveListener();
+    }
     /**
      * Creates and initialize a new instance of the platformer game
      *
@@ -390,7 +406,6 @@ public class GameController extends WorldController implements ContactListener {
     public void reset() {
         level.dispose();
         //enemies.clear();
-
         levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
         //levelFormat = jsonReadesystem.r.parse(Gdx.files.internal("levels/" + loadFile));
         level.populate(levelFormat);
@@ -429,6 +444,14 @@ public class GameController extends WorldController implements ContactListener {
     public void setDebug(boolean d) {
         super.setDebug(d);
         level.setDebug(d);
+    }
+
+    /**
+     * Set level to a new json file
+     * @param json Json file name to set
+     */
+    public void setJson(String json) {
+        loadFile = json;
     }
 
     /**
@@ -943,7 +966,7 @@ public class GameController extends WorldController implements ContactListener {
     }
 
     /**
-     * Try resetting the current level to the level in loader; return true if succesful.
+     * Try resetting the current level to the level in loader; return true if successful.
      * @return If the level was successfully reset.
      */
     private boolean loadNewFile() {

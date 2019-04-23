@@ -85,7 +85,7 @@ public class WheelObstacle extends SimpleObstacle {
         super(x,y);
         shape = new CircleShape();
         shape.setRadius(radius);
-        center.set(x, y-radius);
+        center.set(x, y);
     }
 
     /**

@@ -76,6 +76,30 @@
       "file": "milky way/planets/static_gravity.ring4_v1.png",
       "wrap": false
     },
+    "ls p1": {
+      "file": "levelselect/lvl1.png",
+      "wrap": false
+    },
+    "ls g1": {
+      "file": "levelselect/ring1.png",
+      "wrap": false
+    },
+    "ls p2": {
+      "file": "levelselect/lvl2.png",
+      "wrap": false
+    },
+    "ls g2": {
+      "file": "levelselect/ring2.png",
+      "wrap": false
+    },
+    "ls p3": {
+      "file": "levelselect/lvl3.png",
+      "wrap": false
+    },
+    "ls g3": {
+      "file": "levelselect/ring3.png",
+      "wrap": false
+    },
     "de p1": {
       "file": "default/planets/static_default.planet1_v1.png",
       "wrap": false
@@ -136,6 +160,10 @@
       "file": "shared/loading.png",
       "wrap": false
     },
+    "rocket": {
+      "file": "astronauts/rocket.png",
+      "wrap": false
+    },
     "static portal": {
       "file": "platform/static_portal_v1.png",
       "wrap": false
@@ -174,8 +202,28 @@
       "file": "default/background_default_v1.png",
       "wrap": false
     },
+    "ls background": {
+      "file": "backgrounds/levelselect_background.png",
+      "wrap": false
+    },
     "death screen": {
       "file": "backgrounds/you_dead_1.png",
+      "wrap": false
+    },
+    "play": {
+      "file": "buttons/play.png",
+      "wrap": false
+    },
+    "build": {
+      "file": "buttons/build.png",
+      "wrap": false
+    },
+    "quit": {
+      "file": "buttons/quit.png",
+      "wrap": false
+    },
+    "menu background": {
+      "file": "shared/menu.png",
       "wrap": false
     }
   },

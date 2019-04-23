@@ -55,7 +55,7 @@ import java.util.LinkedList;
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
-public class MenuMode extends GameController implements Screen, InputProcessor, ControllerListener {
+public class MenuMode extends WorldController implements Screen, InputProcessor, ControllerListener {
     // Textures necessary to support the loading screen
     private static final String BACKGROUND_FILE = "shared/menu.png";
     private static final String PLAY_BTN_FILE = "buttons/play.png";
@@ -264,14 +264,14 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
                 pressState = 0;
                 buttonId = 0;
                 System.out.println("play");
-                listener.exitScreen(this, WorldController.EXIT_NEXT);
+                listener.exitScreen(this, WorldController.EXIT_SELECT);
             }
             if (isReady() && listener != null && buttonId == BUILD) {
                 pressState = 0;
                 buttonId = 0;
                 System.out.println("build");
 
-                listener.exitScreen(this, WorldController.TO_EDIT);
+                listener.exitScreen(this, WorldController.EXIT_EDIT);
             }
             if (isReady() && listener != null && buttonId == QUIT) {
                 pressState = 0;
@@ -487,11 +487,6 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
             pressState = 1;
             buttonId = BUILD;
         }
-//        else if (pressState == 0 && keycode == Input.Keys.ESCAPE) {
-//            pressState = 1;
-//            buttonId = QUIT;
-//            return false;
-//        }
         return true;
     }
 
@@ -521,10 +516,6 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
             pressState = 2;
             return false;
         }
-//        else if (keycode == Input.Keys.ESCAPE) {
-//            pressState = 2;
-//            return false;
-//        }
         return true;
     }
 
@@ -655,6 +646,8 @@ public class MenuMode extends GameController implements Screen, InputProcessor, 
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        Gdx.input.setInputProcessor(this);
+
         buttonId = 0;
         pressState = 0;
     }

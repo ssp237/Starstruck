@@ -31,8 +31,6 @@ public class Starstruck extends Game implements ScreenListener {
 	private GameCanvas canvas;
 	/** Avatar mode for the asset loading screen (CONTROLLER CLASS) */
 	private LoadingMode loading;
-	/** Avatar mode for the main menu (CONTROLLER CLASS) */
-	private MenuMode menu;
 	/** Avatar mode for the the game proper (CONTROLLER CLASS) */
 	private int current;
 	/** List of all WorldControllers */
@@ -68,8 +66,8 @@ public class Starstruck extends Game implements ScreenListener {
 
 		// Initialize the three game worlds
 		controllers = new WorldController[SCREENS];
+		controllers[1] = new LevelSelect(canvas);
 		controllers[0] = new MenuMode(canvas);
-		controllers[1] = new LevelSelect();
 		controllers[2] = new EditController();
 		controllers[3] = new GameController();
 		for(int ii = 0; ii < controllers.length; ii++) {
@@ -124,6 +122,28 @@ public class Starstruck extends Game implements ScreenListener {
 	 * @param screen   The screen requesting to exit
 	 * @param exitCode The state of the screen upon exit
 	 */
+	public void exitScreen(Screen screen, int exitCode, String json) {
+		canvas.resetCamera();
+		if (exitCode == WorldController.EXIT_PLAY) {
+			current = WorldController.EXIT_PLAY;
+			controllers[current] = new GameController(json);
+			controllers[current].loadContent(JsonAssetManager.getInstance());
+			controllers[current].setScreenListener(this);
+			controllers[current].setCanvas(canvas);
+			exitScreen(screen, WorldController.EXIT_PLAY);
+		} else {
+			exitScreen(screen, exitCode);
+		}
+	}
+
+	/**
+	 * The given screen has made a request to exit its player mode.
+	 *
+	 * The value exitCode can be used to implement menu options.
+	 *
+	 * @param screen   The screen requesting to exit
+	 * @param exitCode The state of the screen upon exit
+	 */
 	public void exitScreen(Screen screen, int exitCode) {
 		canvas.resetCamera();
 		if (screen == loading) {
@@ -147,12 +167,16 @@ public class Starstruck extends Game implements ScreenListener {
 			} else {
 				Gdx.app.exit();
 			}
-		} else if (exitCode == WorldController.EXIT_NEXT) {
-			current = WorldController.EXIT_NEXT;
+		} else if (exitCode == WorldController.EXIT_SELECT) {
+			current = WorldController.EXIT_SELECT;
 			controllers[current].reset();
 			setScreen(controllers[current]);
-		} else if (exitCode == WorldController.TO_EDIT) {
-			current = WorldController.TO_EDIT;
+		} else if (exitCode == WorldController.EXIT_EDIT) {
+			current = WorldController.EXIT_EDIT;
+			controllers[current].reset();
+			setScreen(controllers[current]);
+		} else if (exitCode == WorldController.EXIT_PLAY) {
+			current = WorldController.EXIT_PLAY;
 			controllers[current].reset();
 			setScreen(controllers[current]);
 		}
