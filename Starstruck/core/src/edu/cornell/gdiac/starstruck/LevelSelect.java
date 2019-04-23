@@ -11,7 +11,15 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.ControllerListener;
+
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -20,11 +28,8 @@ import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ObjectSet;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
-import edu.cornell.gdiac.starstruck.Models.Enemy;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
-import edu.cornell.gdiac.util.FilmStrip;
-import edu.cornell.gdiac.util.JsonAssetManager;
-import edu.cornell.gdiac.util.SoundController;
+import edu.cornell.gdiac.util.*;
 
 import java.util.ArrayList;
 
@@ -40,51 +45,41 @@ import java.util.ArrayList;
  * This is the purpose of our AssetState variable; it ensures that multiple instances
  * place nicely with the static assets.
  */
-public class LevelSelect extends WorldController implements ContactListener {
+public class LevelSelect extends WorldController implements Screen, InputProcessor, ControllerListener {
 
     /** The reader to process JSON files */
     private JsonReader jsonReader;
-    /** The JSON asset directory */
-    private JsonValue  assetDirectory;
     /** The JSON defining the level model */
     private JsonValue  levelFormat;
     /** Reference to the game level */
     protected LevelSelectModel level;
+    /** mouse is currently selecting */
+    private Level currentLevel;
 
-    /** The sound file for a jump */
-    private static final String JUMP_FILE = "jump";
-    /** The sound file for a landing */
-    private static final String LAND_FILE = "land";
-    /** The sound file for a collision */
-    private static final String COLLISION_FILE = "anchor";
-    /** The sound file for a character switch */
-    private static final String SWITCH_FILE = "switch";
-    /** The sound file to anchor */
-    private static final String ANCHOR_FILE = "anchor";
+    /** Reference to GameCanvas created by the root */
+    private GameCanvas canvas;
+    /** Listener that will update the player mode when we are done */
+    private ScreenListener listener;
+
     /** Space sounds */
     private static final String SPACE_SOUNDS = "space sounds";
 
-    /** Texture asset for the enemy */
-    private FilmStrip enemyTexture;
-    /** Texture asset for the enemy */
-    private FilmStrip pinkwormTexture;
-    /** Texture asset for the enemy */
-    private FilmStrip greenwormTexture;
+    /** The height of the canvas window (necessary since sprite origin != screen origin) */
+    private int heightY;
+    /** Scaling factor for when the student changes the resolution. */
+    private float scale;
 
+    /** Standard window size (for scaling) */
+    private static int STANDARD_WIDTH  = 1280;
+    /** Standard window height (for scaling) */
+    private static int STANDARD_HEIGHT = 720;
 
-    /** Track asset loading from all instances and subclasses */
-    private AssetState platformAssetState = AssetState.EMPTY;
+    /** The current state of the play button */
+    private int pressState;
 
-    /** Cache variable to store current planet being drawn*/
-    private WheelObstacle planetCache;
+    /** Whether or not this player mode is still active */
+    private boolean active;
 
-
-    /** Location and animation information for enemy */
-    private Enemy enemy;
-
-    private Enemy pinkworm;
-
-    private Enemy greenworm;
 
     /**
      * Load the assets for this controller.
@@ -97,16 +92,8 @@ public class LevelSelect extends WorldController implements ContactListener {
      * @param manager Reference to global asset manager.
      */
     public void loadContent(AssetManager manager) {
-        if (platformAssetState != AssetState.LOADING) {
-            return;
-        }
 
         JsonAssetManager.getInstance().allocateDirectory();
-
-
-        enemyTexture = JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class);
-        pinkwormTexture = JsonAssetManager.getInstance().getEntry("pink worm", FilmStrip.class);
-        greenwormTexture = JsonAssetManager.getInstance().getEntry("green worm", FilmStrip.class);
 
         // TODO sound
         SoundController sounds = SoundController.getInstance();
@@ -117,38 +104,15 @@ public class LevelSelect extends WorldController implements ContactListener {
         sounds.allocate("space sounds");
 
         super.loadContent(manager);
-        platformAssetState = AssetState.COMPLETE;
 
-        planets = new PlanetList(scale);
+        levels = new PooledList<Level>();
     }
 
     // Physics constants for initialization
-    /** The new heavier gravity for this world (so it is not so floaty) */
-    private static final float  DEFAULT_GRAVITY = 0f;//-14.7f;
-    /** The density for most physics objects */
-    private static final float  BASIC_DENSITY = 0.0f;
-    /** The density for a bullet */
-    private static final float  HEAVY_DENSITY = 10.0f;
-    /** Friction of most platforms */
-    private static final float  BASIC_FRICTION = 0.4f;
-    /** The restitution for all physics objects */
-    private static final float  BASIC_RESTITUTION = 0.1f;
-    /** The width of the rope bridge */
-    private static final float  BRIDGE_WIDTH = 6.0f;
-    /** Offset for bullet when firing */
-    private static final float  BULLET_OFFSET = 0.2f;
-    /** The speed of the bullet after firing */
-    private static final float  BULLET_SPEED = 20.0f;
     /** The volume for sound effects */
     private static final float EFFECT_VOLUME = 0.8f;
     /** The volume for music */
     private static final float MUSIC_VOLUME = 0.3f;
-    /** The distance from an anchor at which an astronaut will be able to anchor */
-    private static float ANCHOR_DIST = 1f;
-    /** Speed of bug */
-    private static final float BUG_SPEED = 0.01f;
-    /** Speed of astronaut on planet */
-    private static final float PLANET_SPEED = 0.03f;
     /** 0 vector 2 */
     private static final Vector2 reset = new Vector2(0, 0);
     /** Turns off enemy collisions for testing */
@@ -159,13 +123,10 @@ public class LevelSelect extends WorldController implements ContactListener {
     // Physics objects for the game
     /** Reference to the character avatar */
     private AstronautModel avatar;
-    /** Planets */
-    private PlanetList planets;
-    /** Planets */
-    private Galaxy galaxy = Galaxy.WHIRLPOOL;
-
-    /** Reference to the goalDoor (for collision detection) */
-//    private BoxObstacle goalDoor;
+    /** Levels */
+    private PooledList<Level> levels;
+    /** galaxy */
+    private Galaxy galaxy = Galaxy.LEVELSELECT;
 
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
@@ -181,16 +142,37 @@ public class LevelSelect extends WorldController implements ContactListener {
      *
      * The game has default gravity and other settings
      */
-    public LevelSelect() {
-        super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
+    public LevelSelect(GameCanvas canvas) {
+
+        this.canvas  = canvas;
+
+        // Compute the dimensions from the canvas
+        resize(canvas.getWidth(),canvas.getHeight());
+
         jsonReader = new JsonReader();
         level = new LevelSelectModel();
+        currentLevel = null;
 
         setDebug(false);
         setComplete(false);
         setFailure(false);
-        world.setContactListener(this);
+        Gdx.input.setInputProcessor(this);
+        // Let ANY connected controller start the game.
+        for(Controller controller : Controllers.getControllers()) {
+            controller.addListener(this);
+        }
+        pressState = 0;
+        active = false;
         sensorFixtures = new ObjectSet<Fixture>();
+    }
+
+    /**
+     * Sets the ScreenListener for this mode
+     *
+     * The ScreenListener will respond to requests to quit.
+     */
+    public void setScreenListener(ScreenListener listener) {
+        this.listener = listener;
     }
 
     /**
@@ -199,16 +181,18 @@ public class LevelSelect extends WorldController implements ContactListener {
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        Gdx.input.setInputProcessor(this);
+
         level.dispose();
 
-        levelFormat = jsonReader.parse(Gdx.files.internal("levels/test.json"));
+        levelFormat = jsonReader.parse(Gdx.files.internal("levels/levelselect.json"));
         level.populate(levelFormat);
-        level.getWorld().setContactListener(this);
 
         setComplete(false);
         setFailure(false);
+        currentLevel = null;
+        pressState = 0;
         assignLevelFields();
-        populateLevel(); //Just to add enemies
     }
 
     /**
@@ -216,8 +200,9 @@ public class LevelSelect extends WorldController implements ContactListener {
      */
     private void assignLevelFields() {
         avatar = level.getPlayer();
-        objects = level.objects; planets = level.getPlanets();
-        world = level.getWorld(); vectorWorld = level.getVectorWorld();
+        objects = level.objects;
+        levels = level.getLevels();
+        world = level.getWorld();
     }
 
     /**
@@ -236,24 +221,6 @@ public class LevelSelect extends WorldController implements ContactListener {
         // Add level goal
         float dwidth;
         float dheight;
-    }
-
-    /**
-     * Was anchor pressed
-     *
-     * @return true if space was pressed
-     */
-    private boolean anchord() {
-        return InputController.getInstance().didDown();
-    }
-
-    /**
-     * Was switch pressed
-     *
-     * @return true if switch was pressed
-     */
-    private boolean shifted() {
-        return InputController.getInstance().didSpace();
     }
 
     /**
@@ -291,10 +258,8 @@ public class LevelSelect extends WorldController implements ContactListener {
      *
      * @param avatar the active avatar
      * @param contactDir Up direction of avatar
-     * @param curPlanet planet the avatar is currently on
-     * @param auto Whether this astronaut is being controlled or acting on its own
      */
-    private void updateMovement(AstronautModel avatar, Vector2 contactDir, Planet curPlanet, boolean auto) {
+    private void updateMovement(AstronautModel avatar, Vector2 contactDir) {
         //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
         contactDir.rotateRad(-(float) Math.PI / 2);
         float move = InputController.getInstance().getHorizontal();
@@ -303,16 +268,26 @@ public class LevelSelect extends WorldController implements ContactListener {
             avatar.moving = true;
         }
 
-        if (InputController.getInstance().didPrimary() && !auto && !testC) {
+        if (InputController.getInstance().didPrimary() && !testC) {
             //print(contactPoint);
             avatar.setJumping(true);
-            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
-            contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
+//            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
             avatar.setPlanetJump(contactDir);
             avatar.setOnPlanet(false);
             avatar.moving = false;
         }
     }
+
+
+    /**
+     * Returns true if all assets are loaded and the player is ready to go.
+     *
+     * @return true if the player is ready to go
+     */
+    public boolean isReady() {
+        return pressState == 2;
+    }
+
 
     /**
      * Returns whether to process the update loop
@@ -330,12 +305,12 @@ public class LevelSelect extends WorldController implements ContactListener {
             return false;
         }
 
-        if (!isFailure() && (avatar.getY() < - 2 || avatar.getY() > bounds.height + 2
-                || avatar.getX() < -2)) {
-            // || avatar.getX() > bounds.getWidth() + 1)) {
-            setFailure(true);
-            return false;
-        }
+//        if (!isFailure() && (avatar.getY() < - 2 || avatar.getY() > bounds.height + 2
+//                || avatar.getX() < -2)) {
+//            // || avatar.getX() > bounds.getWidth() + 1)) {
+//            setFailure(true);
+//            return false;
+//        }
 
         return true;
     }
@@ -355,10 +330,20 @@ public class LevelSelect extends WorldController implements ContactListener {
 
         if (isFailure()) return;
 
+//        updateMovement(avatar, avatar.contactDir);
+        avatar.setRotation(InputController.getInstance().getHorizontal());
+//        float angle = -avatar.contactDir.angleRad(new Vector2 (0, 1));
+//        avatar.setAngle(angle);
 
         avatar.applyForce();
+        if (testC) {
+            avatar.setFixedRotation(true);
+            avatar.setMovement(InputController.getInstance().getHorizontal());
+            avatar.setMovementV(InputController.getInstance().getVertical());
+        }
 
         avatar.lastPoint.set(avatar.getPosition());
+        avatar.lastVel.set(avatar.getLinearVelocity());
 
         //TODO Removed sound stuffs
 
@@ -366,108 +351,95 @@ public class LevelSelect extends WorldController implements ContactListener {
         SoundController.getInstance().update();
     }
 
-    /**
-     * Callback method for the start of a collision
+    /** Called when a key was pressed
      *
-     * This method is called when we first get a collision between two objects.  We use
-     * this method to test if it is the "right" kind of collision.  In particular, we
-     * use it to test if we made it to the win door.
+     * @param keycode one of the constants in {@link Input.Keys}
+     * @return whether the input was processed */
+    public boolean keyDown (int keycode) {
+        return true;
+    };
+
+    /** Called when a key was released
      *
-     * @param contact The two bodies that collided
-     */
-    public void beginContact(Contact contact) {
-        Fixture fix1 = contact.getFixtureA();
-        Fixture fix2 = contact.getFixtureB();
+     * @param keycode one of the constants in {@link Input.Keys}
+     * @return whether the input was processed */
+    public boolean keyUp (int keycode) {
+        return true;
+    };
 
-        Body body1 = fix1.getBody();
-        Body body2 = fix2.getBody();
+    /** Called when a key was typed
+     *
+     * @param character The character
+     * @return whether the input was processed */
+    public boolean keyTyped (char character) {
+        return true;
+    };
 
-        Object fd1 = fix1.getUserData();
-        Object fd2 = fix2.getUserData();
-
-        try {
-            Obstacle bd1 = (Obstacle)body1.getUserData();
-            Obstacle bd2 = (Obstacle)body2.getUserData();
-
-            String bd1N = bd1.getName();
-            String bd2N = bd2.getName();
-
-            // Check for win condition
-            //TODO Removed win
-//            if ((bd1 == avatar   && bd2 == goalDoor) ||
-//                    (bd1 == goalDoor && bd2 == avatar)) {
-//                setComplete(true);
-//            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    /** Called when the screen was touched or a mouse button was pressed. The button parameter will be {@link Input.Buttons#LEFT} on iOS.
+     * @param screenX The x coordinate, origin is in the upper left corner
+     * @param screenY The y coordinate, origin is in the upper left corner
+     * @param pointer the pointer for the event.
+     * @param button the button
+     * @return whether the input was processed */
+    public boolean touchDown (int screenX, int screenY, int pointer, int button) {
+        if (currentLevel != null) {
+            pressState = 1;
         }
+        return true;
+    };
 
-    }
-
-    /**
-     * Callback method for the start of a collision
-     *
-     * This method is called when two objects cease to touch.  The main use of this method
-     * is to determine when the characer is NOT on the ground.  This is how we prevent
-     * double jumping.
-     */
-    public void endContact(Contact contact) {
-        //avatar.setOnPlanet(false);
-
-        Fixture fix1 = contact.getFixtureA();
-        Fixture fix2 = contact.getFixtureB();
-
-        Body body1 = fix1.getBody();
-        Body body2 = fix2.getBody();
-
-        Object fd1 = fix1.getUserData();
-        Object fd2 = fix2.getUserData();
-
-        Object bd1 = body1.getUserData();
-        Object bd2 = body2.getUserData();
-
-        if ((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
-                (avatar.getSensorName().equals(fd1) && avatar != bd2)) {
-            sensorFixtures.remove(avatar == bd1 ? fix2 : fix1);
-            if (sensorFixtures.size == 0) {
-                avatar.setGrounded(false);
+    /** Called when a finger was lifted or a mouse button was released. The button parameter will be {@link Input.Buttons#LEFT} on iOS.
+     * @param pointer the pointer for the event.
+     * @param button the button
+     * @return whether the input was processed */
+    public boolean touchUp (int screenX, int screenY, int pointer, int button) {
+        if (currentLevel != null) {
+            screenY = heightY - screenY;
+            Vector2 scale = level.getScale();
+            Vector2 mouse = new Vector2(screenX/scale.x, screenY/scale.y);
+            Vector2 center = currentLevel.getPosition();
+            float dist = dist(center,mouse);
+            if (dist <= currentLevel.getRadius()) {
+               pressState = 2;
             }
         }
+        return true;
+    };
 
-    }
+    /** Called when a finger or the mouse was dragged.
+     * @param pointer the pointer for the event.
+     * @return whether the input was processed */
+    public boolean touchDragged (int screenX, int screenY, int pointer) {
+        return true;
+    };
 
-    /** Unused ContactListener method */
-    public void postSolve(Contact contact, ContactImpulse impulse) {}
-    /** Unused ContactListener method */
-    public void preSolve(Contact contact, Manifold oldManifold) {
-        Fixture fix1 = contact.getFixtureA();
-        Fixture fix2 = contact.getFixtureB();
-
-        Body body1 = fix1.getBody();
-        Body body2 = fix2.getBody();
-
-        Object fd1 = fix1.getUserData();
-        Object fd2 = fix2.getUserData();
-
-        try {
-            Obstacle bd1 = (Obstacle)body1.getUserData();
-            Obstacle bd2 = (Obstacle)body2.getUserData();
-
-            String bd1N = bd1.getName();
-            String bd2N = bd2.getName();
-
-            //Turns off enemy avatar collisions entirely for testing
-            if (testE) {
-                if ((bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))
-                && ((bd1.getName().contains("bug") || bd2.getName().contains("bug"))
-                || (bd1.getName().contains("worm") || bd2.getName().contains("worm"))))
-                    contact.setEnabled(false);
+    /** Called when the mouse was moved without any buttons being pressed. Will not be called on iOS.
+     * @return whether the input was processed */
+    public boolean mouseMoved (int screenX, int screenY) {
+        currentLevel = null;
+        screenY = heightY - screenY;
+        Vector2 scale = level.getScale();
+        Vector2 mouse = new Vector2(screenX/scale.x, screenY/scale.y);
+        Vector2 center;
+        float dist;
+        for (Level l : levels) {
+            l.setActive(false);
+            center = l.getPosition();
+            dist = dist(center, mouse);
+            if (dist <= l.getRadius()) {
+                l.setActive(true);
+                currentLevel = l;
             }
-
-        } catch (Exception e){
-            e.printStackTrace();
         }
-    }
+        return true;
+    };
+
+    /** Called when the mouse wheel was scrolled. Will not be called on iOS.
+     * @param amount the scroll amount, -1 or 1 depending on the direction the wheel was scrolled.
+     * @return whether the input was processed. */
+    public boolean scrolled (int amount) {
+        return true;
+    };
 
     /**
      * Draw the physics objects to the canvas and the background
@@ -488,4 +460,143 @@ public class LevelSelect extends WorldController implements ContactListener {
             canvas.end();
         }
     }
+
+    /**
+     * Called when the Screen should render itself.
+     *
+     * We defer to the other methods update() and draw().  However, it is VERY important
+     * that we only quit AFTER a draw.
+     *
+     * @param delta Number of seconds since last animation frame
+     */
+    public void render(float delta) {
+        if (active) {
+            update(delta);
+            draw(delta);
+//            if (!music.isPlaying()) { music.play();}
+            // We are are ready, notify our listener
+            if (currentLevel != null && isReady() && currentLevel.getUnlocked()) {
+                listener.exitScreen(this, WorldController.EXIT_PLAY, currentLevel.getFile());
+            }
+        }
+    }
+
+    /**
+     * Called when the Screen is resized.
+     *
+     * This can happen at any point during a non-paused state but will never happen
+     * before a call to show().
+     *
+     * @param width  The new width in pixels
+     * @param height The new height in pixels
+     */
+    public void resize(int width, int height) {
+        // Compute the drawing scale
+        float sx = ((float)width)/STANDARD_WIDTH;
+        float sy = ((float)height)/STANDARD_HEIGHT;
+        scale = (sx < sy ? sx : sy);
+
+        heightY = height;
+    }
+
+    /**
+     * Called when the Screen is paused.
+     *
+     * This is usually when it's not active or visible on screen. An Application is
+     * also paused before it is destroyed.
+     */
+    public void pause() {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * Called when the Screen is resumed from a paused state.
+     *
+     * This is usually when it regains focus.
+     */
+    public void resume() {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * Called when this screen becomes the current screen for a Game.
+     */
+    public void show() {
+        // Useless if called in outside animation loop
+        active = true;
+    }
+
+    /**
+     * Called when this screen is no longer the current screen for a Game.
+     */
+    public void hide() {
+        // Useless if called in outside animation loop
+        active = false;
+    }
+
+    /** A {@link Controller} got connected.
+     * @param controller */
+    public void connected (Controller controller) {  }
+
+    /** A {@link Controller} got disconnected.
+     * @param controller */
+    public void disconnected (Controller controller) {  }
+
+    /** A button on the {@link Controller} was pressed. The buttonCode is controller specific. The
+     * <code>com.badlogic.gdx.controllers.mapping</code> package hosts button constants for known controllers.
+     * @param controller
+     * @param buttonCode
+     * @return whether to hand the event to other listeners. */
+    public boolean buttonDown (Controller controller, int buttonCode) { return true; }
+
+    /** A button on the {@link Controller} was released. The buttonCode is controller specific. The
+     * <code>com.badlogic.gdx.controllers.mapping</code> package hosts button constants for known controllers.
+     * @param controller
+     * @param buttonCode
+     * @return whether to hand the event to other listeners. */
+    public boolean buttonUp (Controller controller, int buttonCode) { return true; }
+
+    /** An axis on the {@link Controller} moved. The axisCode is controller specific. The axis value is in the range [-1, 1]. The
+     * <code>com.badlogic.gdx.controllers.mapping</code> package hosts axes constants for known controllers.
+     * @param controller
+     * @param axisCode
+     * @param value the axis value, -1 to 1
+     * @return whether to hand the event to other listeners. */
+    public boolean axisMoved (Controller controller, int axisCode, float value) { return true; }
+
+    /** A POV on the {@link Controller} moved. The povCode is controller specific. The
+     * <code>com.badlogic.gdx.controllers.mapping</code> package hosts POV constants for known controllers.
+     * @param controller
+     * @param povCode
+     * @param value
+     * @return whether to hand the event to other listeners. */
+    public boolean povMoved (Controller controller, int povCode, PovDirection value) { return true; }
+
+    /** An x-slider on the {@link Controller} moved. The sliderCode is controller specific. The
+     * <code>com.badlogic.gdx.controllers.mapping</code> package hosts slider constants for known controllers.
+     * @param controller
+     * @param sliderCode
+     * @param value
+     * @return whether to hand the event to other listeners. */
+    public boolean xSliderMoved (Controller controller, int sliderCode, boolean value) { return true; }
+
+    /** An y-slider on the {@link Controller} moved. The sliderCode is controller specific. The
+     * <code>com.badlogic.gdx.controllers.mapping</code> package hosts slider constants for known controllers.
+     * @param controller
+     * @param sliderCode
+     * @param value
+     * @return whether to hand the event to other listeners. */
+    public boolean ySliderMoved (Controller controller, int sliderCode, boolean value) { return true; }
+
+    /** An accelerometer value on the {@link Controller} changed. The accelerometerCode is controller specific. The
+     * <code>com.badlogic.gdx.controllers.mapping</code> package hosts slider constants for known controllers. The value is a
+     * {@link Vector3} representing the acceleration on a 3-axis accelerometer in m/s^2.
+     * @param controller
+     * @param accelerometerCode
+     * @param value
+     * @return whether to hand the event to other listeners. */
+    public boolean accelerometerMoved (Controller controller, int accelerometerCode, Vector3 value) { return true; }
+
 }

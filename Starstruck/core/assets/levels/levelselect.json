@@ -1,0 +1,59 @@
+{
+  "physicsSize": [
+    38.400001525878906,
+    21.600000381469727
+  ],
+  "graphicSize": [
+    1280,
+    720
+  ],
+  "galaxy": "level select",
+  "background": "ls background",
+  "win": "0.5",
+  "astronaut 1": {
+    "pos": [
+      5.072487831115723,
+      8.502835273742676
+    ],
+    "size": [
+      0.9381107687950134,
+      1.3441389799118042
+    ],
+    "texture": "rocket",
+    "glow texture": "glow"
+  },
+  "levels": [
+    {
+      "x": 4.47166109085083,
+      "y": 5.564109802246094,
+      "r": 2.0,
+		"texture": "ls p1",
+		"ring texture": "wp g1",
+		"unlocked": "true",
+		"completed": "false",
+		"json file": "levels/test.json"
+    },
+
+	  {
+		  "x": 12,
+		  "y": 18,
+		  "r": 3.0,
+		  "texture": "ls p1",
+		  "ring texture": "wp g1",
+		  "unlocked": "true",
+		  "completed": "false",
+		  "json file": "levels/alpha2.json"
+	  },
+
+    {
+      "x": 8,
+      "y": 25,
+      "r": 2.0,
+      "texture": "ls p1",
+      "ring texture": "wp g1",
+      "unlocked": "false",
+      "completed": "false",
+      "json file": "levels/test.json"
+    }
+  ]
+}

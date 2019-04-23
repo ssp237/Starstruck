@@ -264,14 +264,14 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
                 pressState = 0;
                 buttonId = 0;
                 System.out.println("play");
-                listener.exitScreen(this, WorldController.EXIT_NEXT);
+                listener.exitScreen(this, WorldController.EXIT_SELECT);
             }
             if (isReady() && listener != null && buttonId == BUILD) {
                 pressState = 0;
                 buttonId = 0;
                 System.out.println("build");
 
-                listener.exitScreen(this, WorldController.TO_EDIT);
+                listener.exitScreen(this, WorldController.EXIT_EDIT);
             }
             if (isReady() && listener != null && buttonId == QUIT) {
                 pressState = 0;
@@ -655,6 +655,8 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+        Gdx.input.setInputProcessor(this);
+
         buttonId = 0;
         pressState = 0;
     }

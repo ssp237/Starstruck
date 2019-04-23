@@ -16,5 +16,6 @@ public enum ObstacleType {
     ANCHOR,
     STAR,
     PORTAL,
-    GOAL
+    GOAL,
+    LEVEL
 }

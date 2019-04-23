@@ -54,7 +54,8 @@ public class LevelSelectModel {
     protected Vector2 scale;
     /** The background texture*/
     private Texture background;
-
+    /** height of canvas */
+    private int heightY = 720;
 
     // Physics objects for the game
     /** Reference to the first character avatar */
@@ -98,9 +99,9 @@ public class LevelSelectModel {
     }
 
     /**
-     * Returns a reference to the planet list
+     * Returns a reference to the levels list
      *
-     * @return a reference to the planet list
+     * @return a reference to the levels list
      */
     public PooledList getLevels() {
         return levels;
@@ -192,6 +193,7 @@ public class LevelSelectModel {
         player = AstronautModel.fromJson(levelFormat.get("astronaut 1"), scale, true);
         player.setName("avatar");
         player.activatePhysics(world);
+        player.setActive(false);
         objects.add(player);
 
         JsonValue levelVal = levelFormat.get("levels").child();
@@ -225,7 +227,7 @@ public class LevelSelectModel {
      */
     public void add(Obstacle obj) {
         switch (obj.getType()) {
-            case LEVEL: levels.addPlanet((Planet) obj, vectorWorld); break;
+            case LEVEL: levels.add((Level) obj); break;
             case PLAYER: addPlayer((AstronautModel) obj); break;
         }
     }
@@ -347,10 +349,7 @@ public class LevelSelectModel {
         float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
         float y = (float) Math.floor((canvas.getCamera().position.y - canvas.getHeight()/2)/canvas.getHeight()) * canvas.getHeight();
 
-        canvas.draw(background, Color.WHITE, x, y,canvas.getWidth(),canvas.getHeight());
-        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y,canvas.getWidth(),canvas.getHeight());
-        canvas.draw(background, Color.WHITE, x, y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
-        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
+        canvas.draw(background, x, y);
 
         for(Level l : levels){
             l.draw(canvas);
@@ -360,7 +359,7 @@ public class LevelSelectModel {
             if (obj.getType() != ObstacleType.PLAYER) obj.draw(canvas);
         }
 
-        player.draw(canvas);
+//        player.draw(canvas);
 
         canvas.end();
 

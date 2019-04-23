@@ -26,6 +26,10 @@ public class Level extends WheelObstacle {
     protected boolean completed;
     /** Boolean to check if level has been unlocked */
     protected boolean unlocked;
+    /** Boolean to check if mouse is hovering */
+    protected boolean active;
+    /** Name of json file associated with this level */
+    protected String jsonFile;
 
     private float grscale;
 
@@ -39,11 +43,12 @@ public class Level extends WheelObstacle {
      * @param radius The planet's radius
      */
     public Level(float x, float y, float radius, TextureRegion texture,
-                 World world, Vector2 scale, TextureRegion ringTexture) {
+                 World world, Vector2 scale, TextureRegion ringTexture, String file) {
         super(x, y, radius);
         this.texture = texture;
         this.ringTexture = ringTexture;
         this.radius = radius;
+        this.jsonFile = file;
 
         setBodyType(BodyDef.BodyType.StaticBody);
 
@@ -66,6 +71,8 @@ public class Level extends WheelObstacle {
      */
     public JsonValue toJson() {
         JsonValue json = new JsonValue(JsonValue.ValueType.object);
+
+        json.addChild("level json", new JsonValue(jsonFile));
 
         //Write position
         Vector2 pos = getPosition();
@@ -98,9 +105,10 @@ public class Level extends WheelObstacle {
         TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
         String keyRing = json.get("ring texture").asString();
         TextureRegion ringTexture = JsonAssetManager.getInstance().getEntry(keyRing, TextureRegion.class);
+        String file = json.get("json file").asString();
 
         Level out =  new Level(json.get("x").asFloat(), json.get("y").asFloat(), json.get("r").asFloat(),
-            texture, world, scale, ringTexture);
+            texture, world, scale, ringTexture, file);
 
         boolean state = json.get("completed").asBoolean();
         out.setCompleted(state);
@@ -124,6 +132,16 @@ public class Level extends WheelObstacle {
     public TextureRegion getRingTexture() { return ringTexture;}
 
     /**
+     * Get the unlocked state of this level
+     */
+    public String getFile() { return jsonFile;}
+
+    /**
+     * Get the unlocked state of this level
+     */
+    public boolean getUnlocked() { return unlocked;}
+
+    /**
      * Set the unlocked state of this level
      */
     public void setUnlocked(boolean state) { unlocked = state;}
@@ -133,22 +151,33 @@ public class Level extends WheelObstacle {
     public void setCompleted(boolean state) { completed = state;}
 
     /**
+     * Sets hover to true when mouse pointer is over this level sprite
+     */
+    public void setActive(boolean state) {
+        active = state;
+    }
+
+    /**
      *
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-
-        //Draw planet
-        canvas.draw(getTexture(), Color.WHITE, origin.x, origin.y,getX() * drawScale.x - texture.getRegionWidth()/(2/scaleDraw),
-                getY() * drawScale.x - texture.getRegionHeight()/(2/scaleDraw), getAngle(), scaleDraw,scaleDraw);
-
-        float rScale = grscale * scaleDraw * ((getRadius() + grange) / getRadius());
+        Color unlockedColor = (unlocked ? new Color(1,1,1,1) : new Color(0.7f,0.7f,0.7f,1f));
 
         Color color = new Color(1,1,1,0.75f);
+        float rScale =  scaleDraw * ((getRadius() + grange) / getRadius());
 
         //Draw ring
-//        canvas.draw(ringTexture, color, origin.x, origin.y,getX() * drawScale.x - ringTexture.getRegionWidth()/(2/rScale),
-//                getY() * drawScale.x - ringTexture.getRegionHeight()/(2/rScale), getAngle(), rScale, rScale);
+        if (active && unlocked) {
+            canvas.draw(ringTexture, color, origin.x, origin.y, getX() * drawScale.x - ringTexture.getRegionWidth() / (2 / rScale),
+                    getY() * drawScale.x - ringTexture.getRegionHeight() / (2 / rScale), getAngle(), rScale, rScale);
+        }
+
+        //Draw planet
+        canvas.draw(getTexture(), unlockedColor, origin.x, origin.y,getX() * drawScale.x - texture.getRegionWidth()/(2/scaleDraw),
+                getY() * drawScale.x - texture.getRegionHeight()/(2/scaleDraw), getAngle(), scaleDraw,scaleDraw);
+
+
 
     }
 
