@@ -133,6 +133,8 @@ public class Starstruck extends Game implements ScreenListener {
 		if (exitCode == WorldController.EXIT_PLAY) {
 			current = WorldController.EXIT_PLAY;
 			controllers[current] = new GameController(json);
+			controllers[current].preLoadContent(JsonAssetManager.getInstance());
+
 			controllers[current].loadContent(JsonAssetManager.getInstance());
 			controllers[current].setScreenListener(this);
 			controllers[current].setCanvas(canvas);

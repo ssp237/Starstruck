@@ -159,8 +159,6 @@ public class GameController extends WorldController implements ContactListener {
         }
     }
 
-
-
         /**
          * Preloads the assets for this controller.
          *
@@ -224,8 +222,6 @@ public class GameController extends WorldController implements ContactListener {
         platformAssetState = AssetState.COMPLETE;
 
         planets = new PlanetList(scale);
-
-
 
     }
 
@@ -781,6 +777,7 @@ public class GameController extends WorldController implements ContactListener {
         if (isComplete()) {
             xCam = camera.position.x;
             yCam = camera.position.y;
+            canvas.resetCamera();
         }
 
         if (xCam < camWidth/2)
@@ -1162,8 +1159,10 @@ public class GameController extends WorldController implements ContactListener {
             if (!stars.remove(starCache)) print("star collection error in game controller");
             if (!objects.remove(starCache)) print("star collection error in game controller");
             starCount++;
-            if (starCount >= winCount && !openGoal)
+            if (starCount >= winCount && !openGoal) {
                 openGoal = true;
+                goal.getPortal1().setOpen(true);
+            }
             collection = false;
         }
 

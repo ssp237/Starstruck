@@ -21,6 +21,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
@@ -49,12 +50,21 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
     /** The reader to process JSON files */
     private JsonReader jsonReader;
+    /** The JSON asset directory */
+    private JsonValue  assetDirectory;
     /** The JSON defining the level model */
     private JsonValue  levelFormat;
     /** Reference to the game level */
     protected LevelSelectModel level;
     /** mouse is currently selecting */
     private Level currentLevel;
+    /** Speed of camera pan & zoom */
+    private static final float PAN_CONST = 8;
+    private static final float ZOOM_FACTOR = 0.02f;
+
+    /** Camera offset */
+    private float camOffsetX;
+    private float camOffsetY;
 
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
@@ -131,6 +141,9 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
 
+    /** Track asset loading from all instances and subclasses */
+    private AssetState platformAssetState = AssetState.EMPTY;
+
     /**
      * Return a reference to the primary avatar
      * @return Return a reference to the primary avatar.
@@ -164,6 +177,33 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         pressState = 0;
         active = false;
         sensorFixtures = new ObjectSet<Fixture>();
+    }
+
+
+    /**
+     * Preloads the assets for this controller.
+     *
+     * To make the game modes more for-loop friendly, we opted for nonstatic loaders
+     * this time.  However, we still want the assets themselves to be static.  So
+     * we have an AssetState that determines the current loading state.  If the
+     * assets are already loaded, this method will do nothing.
+     *
+     * @param manager Reference to global asset manager.
+     */
+    public void preLoadContent(AssetManager manager) {
+        if (platformAssetState != AssetState.EMPTY) {
+            return;
+        }
+
+        platformAssetState = AssetState.LOADING;
+
+        super.preLoadContent(manager);
+
+        jsonReader = new JsonReader();
+        assetDirectory = jsonReader.parse(Gdx.files.internal("levels/assets.json"));
+
+        JsonAssetManager.getInstance().loadDirectory(assetDirectory);
+
     }
 
     /**
@@ -242,15 +282,40 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     }
 
     /**
-     * Helper method to move the camera with the astronauts
+     * Helper function to update camera panning with arrow keys when no planet is selected
      */
-    private void updateCam() {
-        float xCam = avatar.getPosition().x * avatar.drawScale.x;
-        if (xCam < canvas.getWidth()/2) xCam = canvas.getWidth()/2;
-        canvas.getCamera().position.set(new Vector3(xCam, canvas.getCamera().position.y, 0));
-        canvas.getCamera().update();
-//        System.out.println(canvas.getCamera().position);
-//        System.out.println(canvas.getHeight());
+    private void updateCamera() {
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
+        InputController input = InputController.getInstance();
+        if (input.didLeft()) { //&& camera.position.x > camera.viewportWidth/2) {
+            camera.position.x = camera.position.x - PAN_CONST;
+            camOffsetX = camOffsetX - PAN_CONST;
+        }
+        if (input.heldUp()) { //&& camera.position.y < yBound - camera.viewportHeight/2) {
+            camera.position.y = camera.position.y + PAN_CONST;
+            camOffsetY = camOffsetY + PAN_CONST;
+        }
+        if (input.didRight()) { //&& camera.position.x < xBound - camera.viewportWidth/2) {
+            camera.position.x = camera.position.x + PAN_CONST;
+            camOffsetX = camOffsetX + PAN_CONST;
+        }
+        if (input.heldDown()) { //&& camera.position.y > camera.viewportHeight/2) {
+            camera.position.y = camera.position.y - PAN_CONST;
+            camOffsetY = camOffsetY - PAN_CONST;
+        }
+        if (input.shiftHeld() && input.heldUp()) {
+//            camera.viewportWidth = camera.viewportWidth * (1-ZOOM_FACTOR);
+//            camera.viewportHeight = camera.viewportHeight * (1-ZOOM_FACTOR);
+            camera.zoom = camera.zoom - ZOOM_FACTOR;
+            //System.out.println(camera.zoom);
+        }
+        if (input.shiftHeld() && input.heldDown()) {
+//            camera.viewportWidth = camera.viewportWidth * (1+ZOOM_FACTOR);
+//            camera.viewportHeight = camera.viewportHeight * (1+ZOOM_FACTOR);
+            camera.zoom = camera.zoom + ZOOM_FACTOR;
+            //System.out.println(camera.zoom);
+        }
+        camera.update();
     }
 
     /**
@@ -326,7 +391,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
-        updateCam();
+        updateCamera();
 
         if (isFailure()) return;
 
@@ -476,7 +541,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 //            if (!music.isPlaying()) { music.play();}
             // We are are ready, notify our listener
             if (currentLevel != null && isReady() && currentLevel.getUnlocked()) {
-                listener.exitScreen(this, WorldController.EXIT_PLAY);
+                listener.exitScreen(this, WorldController.EXIT_PLAY, currentLevel.getFile());
             }
         }
     }
