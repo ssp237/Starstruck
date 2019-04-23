@@ -26,6 +26,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
+import edu.cornell.gdiac.starstruck.Models.Urchin;
 import edu.cornell.gdiac.starstruck.Models.Worm;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
@@ -229,6 +230,7 @@ public class LevelModel {
         Planet.setGalaxy(galaxy);
         String gal = galaxy.getChars();
         this.background = JsonAssetManager.getInstance().getEntry(gal + " background", Texture.class);
+        Urchin.setTextures(galaxy.getUrchinPrefix());
     }
 
     /**
@@ -373,6 +375,19 @@ public class LevelModel {
             enemies.add(wormie);
             wormVals = wormVals.next;
         }
+
+        //add urchins
+        String urcTexture = levelFormat.get("urchin texture").asString();
+        Urchin.setTextures(urcTexture);
+
+        JsonValue urchinVals = levelFormat.get("urchins").child();
+        while (urchinVals != null) {
+            Urchin urch = Urchin.fromJSON(urchinVals, scale);
+            activate(urch);
+            enemies.add(urch);
+            urchinVals = urchinVals.next;
+        }
+
 //        System.out.println("here i am enemy list");
 //        System.out.println(enemies);
 //        System.out.println(enemies.size());
@@ -412,6 +427,7 @@ public class LevelModel {
             case ROPE: objects.add(0, obj); obj.activatePhysics(world); rope = (Rope) obj; break;
             case WORM: activate(obj); enemies.add((Worm) obj); break;
             case PORTAL: activate(obj); break;
+            case URCHIN: activate(obj); enemies.add((Urchin) obj); break;
         }
     }
 
@@ -428,6 +444,7 @@ public class LevelModel {
             case STAR: deactivate(obj); break;
             case WORM: deactivate(obj); enemies.remove((Worm) obj); break;
             case PORTAL: deactivate(obj); break;
+            case URCHIN: deactivate(obj); enemies.remove((Urchin) obj); break;
         }
     }
 
@@ -505,7 +522,7 @@ public class LevelModel {
 
         out.addChild("physicsSize", physicsSize);
         out.addChild("graphicSize", graphicsSize);
-        out.addChild("win", new JsonValue(winPercent));
+        out.addChild("win", new JsonValue("0.5"));
 
         //Add Galaxy
 
@@ -532,13 +549,19 @@ public class LevelModel {
         JsonValue stars = new JsonValue(JsonValue.ValueType.array);
         JsonValue worms = new JsonValue(JsonValue.ValueType.array);
         JsonValue portalPairs = new JsonValue(JsonValue.ValueType.array);
+        JsonValue urchins = new JsonValue(JsonValue.ValueType.array);
 
         for (Obstacle obj : objects) {
             switch (obj.getType()) {
                 case STAR: stars.addChild(((Star) obj).toJson()); break;
                 case ANCHOR: anchors.addChild(((Anchor) obj).toJson()); break;
                 case WORM: worms.addChild(((Worm) obj).toJson()); break;
+                case URCHIN: urchins.addChild(((Urchin) obj).toJson()); break;
             }
+        }
+
+        for (PortalPair port : portalpairs) {
+            portalPairs.addChild(port.toJson());
         }
 
 
@@ -551,6 +574,10 @@ public class LevelModel {
 
         //Add portals
         out.addChild("portalpairs", portalPairs);
+
+        //Add urchins
+        out.addChild("urchin texture", new JsonValue(Urchin.getTexturePrefix()));
+        out.addChild("urchins", urchins);
 
 
         return out;

@@ -161,7 +161,7 @@ public class Star extends BoxObstacle {
         json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));
 
         //Add location
-        json.addChild("location", new JsonValue(location));
+        json.addChild("location", new JsonValue("space"));
 
         //System.out.println(json);
 
