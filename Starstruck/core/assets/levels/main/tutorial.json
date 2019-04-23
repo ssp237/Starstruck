@@ -122,13 +122,13 @@
 		"texture": "green worm",
 		"x": 37.612796783447266,
 		"y": 28.57439613342285,
-		"velocity": 0.0
+		"velocity": 3.0
 	},
 	{
 		"texture": "blue worm",
 		"x": 46.55039596557617,
 		"y": 16.308000564575195,
-		"velocity": 0.0
+		"velocity": 1.0
 	}
 ],
 "portalpairs": [
