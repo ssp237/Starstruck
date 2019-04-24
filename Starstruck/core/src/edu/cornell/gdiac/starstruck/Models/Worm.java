@@ -128,10 +128,12 @@ public class Worm extends Enemy{
     public void update(float dt) {
         texture.tick(); //Animation
 
-        if (texture.getFrame() < texture.getSize()/2) {
-            setVX(0);
-        } else {
-            setVX(v_original);
+        if (!texture.getName().equals("pink berry")) {
+            if (texture.getFrame() < texture.getSize() / 2) {
+                setVX(0);
+            } else {
+                setVX(v_original);
+            }
         }
 
         super.update(dt);
