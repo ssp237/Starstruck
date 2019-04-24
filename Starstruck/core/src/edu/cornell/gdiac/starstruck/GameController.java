@@ -557,7 +557,7 @@ public class GameController extends WorldController implements ContactListener {
      * @return true if switch was pressed
      */
     private boolean switched() {
-        return InputController.getInstance().didS() && !twoplayer;
+        return InputController.getInstance().didSwitch() && !twoplayer;
     }
 
     /**
