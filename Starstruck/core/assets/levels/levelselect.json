@@ -64,6 +64,16 @@
       "unlocked": "true",
       "completed": "false",
       "json file": "main/whirlpoolDemo2.json"
+    },
+    {
+      "x": 31,
+      "y": 5,
+      "r": 3,
+      "texture": "ls p4",
+      "ring texture": "ls g4",
+      "unlocked": "true",
+      "completed": "false",
+      "json file": "test/2playersplit.json"
     }
   ]
 }
