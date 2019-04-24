@@ -97,6 +97,8 @@ public class InputController {
     private boolean gPrevious;
     private boolean uPressed;
     private boolean uPrevious;
+    private boolean switchPressed;
+    private boolean switchPrevious;
     private boolean onePressed;
     private boolean onePrevious;
     private boolean twoPressed;
@@ -370,6 +372,8 @@ public class InputController {
         return uPressed && !uPrevious;
     }
 
+    public boolean didSwitch() { return switchPressed && !switchPressed; }
+
     public boolean didOne() { return onePressed && !onePrevious; }
 
     public boolean didTwo() { return twoPressed && !twoPrevious; }
@@ -434,6 +438,7 @@ public class InputController {
         wPrevious = wPressed;
         gPrevious = gPressed;
         uPrevious = uPressed;
+        switchPrevious = switchPressed;
         onePrevious = onePressed;
         twoPrevious = twoPressed;
         threePrevious = threePressed;
@@ -478,7 +483,7 @@ public class InputController {
         rightPressed = xbox.getLeftX() > 0.6; //right
         primePressed = xbox.getA(); //jump
         secondPressed = xbox.getX(); //anchor
-        //sPressed = xbox.getY(); //switch
+        switchPressed = xbox.getY(); //switch
         downHeld = xbox.getB(); //reel
         debugPressed  = xbox.getR3(); //debug
 
@@ -560,6 +565,7 @@ public class InputController {
         wPressed = Gdx.input.isKeyPressed (Input.Keys.W);
         gPressed = Gdx.input.isKeyPressed (Input.Keys.G);
         uPressed = Gdx.input.isKeyPressed (Input.Keys.U);
+        switchPressed = Gdx.input.isKeyPressed(Input.Keys.S);
         onePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_1);
         twoPressed = Gdx.input.isKeyPressed(Input.Keys.NUM_2);
         threePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_3);
