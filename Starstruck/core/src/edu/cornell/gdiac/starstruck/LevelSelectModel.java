@@ -164,8 +164,6 @@ public class LevelSelectModel {
         debug  = false;
     }
 
-
-
     /**
      * Set the background to the specified texture.
      * @param background The texture to use as the background.
@@ -173,6 +171,13 @@ public class LevelSelectModel {
     public void setBackground(Texture background) {
         this.background = background;
     }
+
+    /**
+     * Return a reference to the background
+     *
+     * @return Texture background
+     */
+    public Texture getBackground() { return background; }
 
     /**
      * Lays out the game geography from the given JSON file. Requires planets is not null.
@@ -346,10 +351,10 @@ public class LevelSelectModel {
 
         canvas.begin();
 
-        float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
-        float y = (float) Math.floor((canvas.getCamera().position.y - canvas.getHeight()/2)/canvas.getHeight()) * canvas.getHeight();
+//        float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
+//        float y = (float) Math.floor((canvas.getCamera().position.y - canvas.getHeight()/2)/canvas.getHeight()) * canvas.getHeight();
 
-        canvas.draw(background, x, y);
+        canvas.draw(background, 0, 0);
 
         for(Level l : levels){
             l.draw(canvas);
