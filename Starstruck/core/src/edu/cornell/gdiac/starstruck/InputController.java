@@ -117,6 +117,13 @@ public class InputController {
     /** Whether backspace was pressed */
     private boolean backspacePressed;
     private boolean backspacePrevious;
+    /** Anchoring controls */
+    private boolean anchorPressed;
+    private boolean anchorPrevious;
+    private boolean anchor1Pressed;
+    private boolean anchor1Previous;
+    private boolean anchor2Pressed;
+    private boolean anchor2Previous;
 
     /** Mouse's current position*/
     private float x_pos;
@@ -241,6 +248,13 @@ public class InputController {
     public boolean didShift() { return shiftPressed && !shiftPrevious; }
 
     public boolean didBackspace() { return backspacePressed && !backspacePrevious; }
+
+    public boolean didAnchor() { return anchorPressed && !anchorPrevious; }
+
+    public boolean didAnchor1() { return anchor1Pressed && !anchor1Previous; }
+
+    public boolean didAnchor2() { return anchor2Pressed && !anchor2Previous; }
+
 
     /**
      * Returns true if the tertiary action button was pressed.
@@ -443,10 +457,11 @@ public class InputController {
         shiftPrevious = shiftPressed;
         tertiaryPrevious = tertiaryPressed;
         backspacePrevious = backspacePressed;
+        anchorPrevious = anchorPressed;
+        anchor1Previous = anchor1Pressed;
+        anchor2Previous = anchor2Pressed;
 
         // Check to see if a GamePad is connected
-        System.out.println(xbox.isConnected());
-        System.out.println(xbox2.isConnected());
         if (xbox.isConnected() && xbox2.isConnected()) { // Both controllers connected
             readGamepad(bounds, scale);
             readGamepad2(bounds, scale);
@@ -477,7 +492,9 @@ public class InputController {
         leftPressed = xbox.getLeftX() < -0.6; //left
         rightPressed = xbox.getLeftX() > 0.6; //right
         primePressed = xbox.getA(); //jump
-        secondPressed = xbox.getX(); //anchor
+        //secondPressed = xbox.getX(); //anchor
+        anchorPressed = xbox.getX();
+        anchor1Pressed = xbox.getX();
         switchPressed = xbox.getY(); //switch
         downHeld = xbox.getB(); //reel
         debugPressed  = xbox.getR3(); //debug
@@ -517,7 +534,8 @@ public class InputController {
         aPressed = xbox2.getLeftX() < -0.6; //left
         dPressed = xbox2.getLeftX() > 0.6; //right
         wPressed = xbox2.getA(); //jump
-        spacePressed = xbox2.getX(); //anchor
+        //spacePressed = xbox2.getX(); //anchor
+        anchor2Pressed = xbox.getX();
         sPressed = xbox2.getB(); //reel
         debugPressed  = xbox2.getR3(); //debug
         //no switch in 2 player mode
@@ -560,12 +578,15 @@ public class InputController {
         gPressed = (secondary && gPressed ) || Gdx.input.isKeyPressed (Input.Keys.G);
         uPressed = (secondary && uPressed ) || Gdx.input.isKeyPressed (Input.Keys.U);
         switchPressed = (secondary && switchPressed ) || Gdx.input.isKeyPressed(Input.Keys.S);
-        onePressed = (secondary && onePressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_1);
-        twoPressed = (secondary && twoPressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_2);
-        threePressed = (secondary && threePressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_3);
+        onePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_1); //Used for settings
+        twoPressed = Gdx.input.isKeyPressed(Input.Keys.NUM_2); //Used for settings
+        threePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_3); //Used for settings
         fourPressed = (secondary && fourPressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_4);
         fivePressed = (secondary && fivePressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_5);
         resetPressed = (secondary && resetPressed) || Gdx.input.isKeyPressed(Input.Keys.R);
+        anchorPressed = (secondary && anchorPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
+        anchor1Pressed = (secondary && anchor1Pressed) || (Gdx.input.isKeyPressed(Input.Keys.L));
+        anchor2Pressed = (secondary && anchor2Pressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
 
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);

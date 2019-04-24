@@ -541,7 +541,7 @@ public class GameController extends WorldController implements ContactListener {
      * @return true if anchored was pressed
      */
     private boolean anchord() {
-        return InputController.getInstance().didSpace();
+        return InputController.getInstance().didAnchor();
     }
 
     /**
@@ -549,7 +549,14 @@ public class GameController extends WorldController implements ContactListener {
      *
      * @return true if anchored2 was pressed
      */
-    private boolean anchord1() { return InputController.getInstance().didSecondary(); }
+    private boolean anchord1() { return InputController.getInstance().didAnchor1(); }
+
+    /**
+     * For two player, was player 1 anchor pressed
+     *
+     * @return true if anchored2 was pressed
+     */
+    private boolean anchord2() { return InputController.getInstance().didAnchor2(); }
 
     /**
      * Was switch pressed
@@ -632,7 +639,7 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         if (avatar2.isActive() && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord() && !twoplayer
-                || twoplayer && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord()) {
+                || twoplayer && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord2()) {
             for (Anchor a : anchors) {
                 SPIN_POS.set(a.getPosition());
                 if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
