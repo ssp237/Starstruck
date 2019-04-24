@@ -28,6 +28,7 @@ public class Worm extends Enemy{
     private int delay_pos = 1000;
 
     private float x_original;
+    private float v_original;
 
 
     /**
@@ -46,6 +47,7 @@ public class Worm extends Enemy{
     public Worm(float x, float y, float width, float height, float velocityX) {
         super(x,y,width,height);
         this.setVX(velocityX);
+        v_original = velocityX;
         //right_bound = right_b;
         setName("worm" + worm_count);
         worm_count++;
@@ -125,6 +127,13 @@ public class Worm extends Enemy{
 
     public void update(float dt) {
         texture.tick(); //Animation
+
+        if (texture.getFrame() < texture.getSize()/2) {
+            setVX(0);
+        } else {
+            setVX(v_original);
+        }
+
         super.update(dt);
         //System.out.println(getVX());
 
@@ -134,13 +143,15 @@ public class Worm extends Enemy{
 //                delay_pos = 1000;
 //                this.setPosition(right_bound, y_pos);
 //            }
-    //}
+        //}
         if (this.getPosition().x < x_original - 5) {
             //System.out.println(getVX());
-            setVX(-getVX());
+            v_original = Math.abs(v_original);
+            //setVX(-getVX());
         } else if (this.getPosition().x > x_original + 5) {
             //System.out.println(getVX());
-            setVX(-getVX());
+            v_original = -Math.abs(v_original);
+            //setVX(-getVX());
         }
         //System.out.println(this);
         //System.out.println(this);
@@ -152,7 +163,7 @@ public class Worm extends Enemy{
     }
 
     public void draw(GameCanvas canvas) {
-        float effect = isFacingRight() ? -1.0f : 1.0f;
+        float effect = v_original > 0 ? -1.0f : 1.0f;
         canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 
