@@ -14,6 +14,7 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.math.*;
 import edu.cornell.gdiac.util.*;
 
@@ -138,7 +139,8 @@ public class InputController {
     private float momentum;
 
     /** An X-Box controller (if it is connected) */
-//    XBox360Controller xbox;
+    XBoxController xbox;
+    XBoxController xbox2;
 
     /**
      * Returns the amount of sideways movement.
@@ -396,10 +398,10 @@ public class InputController {
      */
     public InputController() {
         // If we have a game-pad for id, then use it.
-//        xbox = new XBox360Controller(0);
+        xbox = new XBoxController(0);
+        xbox2 = new XBoxController(1);
         crosshair = new Vector2();
         crosscache = new Vector2();
-
     }
 
     /**
@@ -443,12 +445,20 @@ public class InputController {
         backspacePrevious = backspacePressed;
 
         // Check to see if a GamePad is connected
-//        if (xbox.isConnected()) {
-//            readGamepad(bounds, scale);
-//            readKeyboard(bounds, scale, true); // Read as a back-up
-//        } else {
+        if (xbox.isConnected()) {
+            readGamepad(bounds, scale);
+            readKeyboard(bounds, scale, true); // Read as a back-up
+        }
+        else {
             readKeyboard(bounds, scale, false);
-//        }
+        }
+        if (xbox2.isConnected()) {
+            readGamepad2(bounds, scale);
+            readKeyboard(bounds, scale, true);
+        }
+        else {
+            readKeyboard(bounds, scale, false);
+        }
     }
 
     /**
@@ -461,21 +471,23 @@ public class InputController {
      * @param bounds The input bounds for the crosshair.
      * @param scale  The drawing scale
      */
-//    private void readGamepad(Rectangle bounds, Vector2 scale) {
-//        resetPressed = xbox.getStart();
-//        exitPressed  = xbox.getBack();
-//        nextPressed  = xbox.getRB();
-//        prevPressed  = xbox.getLB();
-//        primePressed = xbox.getA();
-//        debugPressed  = xbox.getY();
-//
-//        // Increase animation frame, but only if trying to move
-//        horizontal = xbox.getLeftX();
-//        vertical   = xbox.getLeftY();
-//        secondPressed = xbox.getRightTrigger() > 0.6f;
-//
-//        // Move the crosshairs with the right stick.
-//        tertiaryPressed = xbox.getA();
+    private void readGamepad(Rectangle bounds, Vector2 scale) {
+        resetPressed = xbox.getStart(); //restart
+        exitPressed  = xbox.getBack(); //esc
+        leftPressed = xbox.getLeftX() < -0.6; //left
+        rightPressed = xbox.getLeftX() > 0.6; //right
+        primePressed = xbox.getA(); //jump
+        secondPressed = xbox.getX(); //anchor
+        //sPressed = xbox.getY(); //switch
+        downHeld = xbox.getB(); //reel
+        debugPressed  = xbox.getR3(); //debug
+
+        // Increase animation frame, but only if trying to move
+        horizontal = xbox.getLeftX();
+        vertical   = xbox.getLeftY();
+
+        // Move the crosshairs with the right stick.
+        //tertiaryPressed = xbox.getA();
 //        crosscache.set(xbox.getLeftX(), xbox.getLeftY());
 //        if (crosscache.len2() > GP_THRESHOLD) {
 //            momentum += GP_ACCELERATE;
@@ -487,7 +499,33 @@ public class InputController {
 //            momentum = 0;
 //        }
 //        clampPosition(bounds);
-//    }
+    }
+
+    /**
+     * Reads input from a second X-Box controller connected to this computer.
+     *
+     * The method provides both the input bounds and the drawing scale.  It needs
+     * the drawing scale to convert screen coordinates to world coordinates.  The
+     * bounds are for the crosshair.  They cannot go outside of this zone.
+     *
+     * @param bounds The input bounds for the crosshair.
+     * @param scale  The drawing scale
+     */
+    private void readGamepad2(Rectangle bounds, Vector2 scale) {
+        resetPressed = xbox2.getStart(); //restart
+        exitPressed  = xbox2.getBack(); //esc
+        aPressed = xbox2.getLeftX() < -0.6; //left
+        dPressed = xbox2.getLeftX() > 0.6; //right
+        wPressed = xbox2.getA(); //jump
+        spacePressed = xbox2.getX(); //anchor
+        sPressed = xbox2.getB(); //reel
+        debugPressed  = xbox2.getR3(); //debug
+        //no switch in 2 player mode
+
+        // Increase animation frame, but only if trying to move
+        horizontal2 = xbox.getLeftX();
+        vertical2   = xbox.getLeftY();
+    }
 
     /**
      * Reads input from the keyboard.

@@ -288,8 +288,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         Texture background = level.getBackground();
         float rightBound = background.getWidth();
-        print(rightBound);
-        print(camera.position.x);
         float right = 1280 - 1280/4;
         float left = 1280/4;
         if (Gdx.input.getX() >= right && camera.position.x + camera.viewportWidth/2 < rightBound) {
