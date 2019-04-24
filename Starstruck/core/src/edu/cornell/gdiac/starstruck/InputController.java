@@ -14,7 +14,6 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.math.*;
 import edu.cornell.gdiac.util.*;
 
@@ -141,8 +140,8 @@ public class InputController {
     private float momentum;
 
     /** An X-Box controller (if it is connected) */
-    XBoxController xbox;
-    XBoxController xbox2;
+    XboxController xbox;
+    XboxController xbox2;
 
     /**
      * Returns the amount of sideways movement.
@@ -398,8 +397,8 @@ public class InputController {
      */
     public InputController() {
         // If we have a game-pad for id, then use it.
-        xbox = new XBoxController(0);
-        xbox2 = new XBoxController(1);
+        xbox = new XboxController(0);
+        xbox2 = new XboxController(1);
         crosshair = new Vector2();
         crosscache = new Vector2();
     }
@@ -446,18 +445,18 @@ public class InputController {
         backspacePrevious = backspacePressed;
 
         // Check to see if a GamePad is connected
-        if (xbox.isConnected()) {
+        System.out.println(xbox.isConnected());
+        System.out.println(xbox2.isConnected());
+        if (xbox.isConnected() && xbox2.isConnected()) { // Both controllers connected
             readGamepad(bounds, scale);
-            readKeyboard(bounds, scale, true); // Read as a back-up
-        }
-        else {
-            readKeyboard(bounds, scale, false);
-        }
-        if (xbox2.isConnected()) {
             readGamepad2(bounds, scale);
             readKeyboard(bounds, scale, true);
         }
-        else {
+        else if (xbox.isConnected()) { //One controller connected
+            readGamepad(bounds, scale);
+            readKeyboard(bounds, scale, true);
+        }
+        else { //No controllers connected
             readKeyboard(bounds, scale, false);
         }
     }
@@ -546,28 +545,27 @@ public class InputController {
         nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
         exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
         spacePressed = (secondary && spacePressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
-        shiftPressed = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT));
+        shiftPressed = (secondary && shiftPressed) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT));
         backspacePressed = (secondary && backspacePressed) || (Gdx.input.isKeyPressed(Input.Keys.BACKSPACE));
-        // TODO no controller support
-        rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT);
-        leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT);
-        upHeld = Gdx.input.isKeyPressed (Input.Keys.UP);
-        downHeld = Gdx.input.isKeyPressed (Input.Keys.DOWN);
-        downPressed = Gdx.input.isKeyPressed (Input.Keys.DOWN);
-        aPressed = Gdx.input.isKeyPressed (Input.Keys.A);
-        sPressed = Gdx.input.isKeyPressed (Input.Keys.S);
-        dPressed = Gdx.input.isKeyPressed (Input.Keys.D);
-        oPressed = Gdx.input.isKeyPressed (Input.Keys.O);
-        wPressed = Gdx.input.isKeyPressed (Input.Keys.W);
-        gPressed = Gdx.input.isKeyPressed (Input.Keys.G);
-        uPressed = Gdx.input.isKeyPressed (Input.Keys.U);
-        switchPressed = Gdx.input.isKeyPressed(Input.Keys.S);
-        onePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_1);
-        twoPressed = Gdx.input.isKeyPressed(Input.Keys.NUM_2);
-        threePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_3);
-        fourPressed = Gdx.input.isKeyPressed(Input.Keys.NUM_4);
-        fivePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_5);
-        resetPressed = Gdx.input.isKeyPressed(Input.Keys.R);
+        rightPressed = (secondary && rightPressed) || Gdx.input.isKeyPressed (Input.Keys.RIGHT);
+        leftPressed = (secondary && leftPressed) || Gdx.input.isKeyPressed (Input.Keys.LEFT);
+        upHeld = (secondary && upHeld) || Gdx.input.isKeyPressed (Input.Keys.UP);
+        downHeld = (secondary && downHeld) || Gdx.input.isKeyPressed (Input.Keys.DOWN);
+        downPressed = (secondary && downPressed) || Gdx.input.isKeyPressed (Input.Keys.DOWN);
+        aPressed = (secondary && aPressed) || Gdx.input.isKeyPressed (Input.Keys.A);
+        sPressed = (secondary && sPressed) || Gdx.input.isKeyPressed (Input.Keys.S);
+        dPressed = (secondary && dPressed) || Gdx.input.isKeyPressed (Input.Keys.D);
+        oPressed = (secondary && oPressed) || Gdx.input.isKeyPressed (Input.Keys.O);
+        wPressed = (secondary && wPressed) || Gdx.input.isKeyPressed (Input.Keys.W);
+        gPressed = (secondary && gPressed ) || Gdx.input.isKeyPressed (Input.Keys.G);
+        uPressed = (secondary && uPressed ) || Gdx.input.isKeyPressed (Input.Keys.U);
+        switchPressed = (secondary && switchPressed ) || Gdx.input.isKeyPressed(Input.Keys.S);
+        onePressed = (secondary && onePressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_1);
+        twoPressed = (secondary && twoPressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_2);
+        threePressed = (secondary && threePressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_3);
+        fourPressed = (secondary && fourPressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_4);
+        fivePressed = (secondary && fivePressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_5);
+        resetPressed = (secondary && resetPressed) || Gdx.input.isKeyPressed(Input.Keys.R);
 
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);
@@ -586,26 +584,24 @@ public class InputController {
             vertical -= 1.0f;
         }
 
-        vertical2 = (secondary ? vertical : 0.0f);
+        vertical2 = (secondary ? vertical2 : 0.0f);
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             vertical2 += 1.0f;
         }
-
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             vertical2 -= 1.0f;
         }
 
-        horizontal2 = (secondary ? horizontal : 0.0f);
+        horizontal2 = (secondary ? horizontal2 : 0.0f);
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             horizontal2 -= 1.0f;
         }
-
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             horizontal2 += 1.0f;
         }
 
-        // Rotate/turn, no controller support
-        turn = 0f;
+        // Rotate/turn
+        turn = (secondary ? turn : 0f);
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
             turn = turn + 1f;//(float) (Math.PI/180);
         }

@@ -43,7 +43,7 @@ import com.badlogic.gdx.controllers.*;
  * The constructor DOES NOT verify that the controller is indeed an XBox 360 
  * controller.
  */
-public class XBoxController implements ControllerListener {
+public class XboxController implements ControllerListener {
     /** The controller id number */
     private int deviceid;
     /** Reference to base controller object wrapped by this instance. */
@@ -123,7 +123,7 @@ public class XBoxController implements ControllerListener {
      *
      * @param device The device id to treat as an X-Box controller
      */
-    public XBoxController(int device) {
+    public XboxController(int device) {
         deviceid = device;
         if (Controllers.getControllers().size > deviceid) {
             initialize(Controllers.getControllers().get(deviceid));
