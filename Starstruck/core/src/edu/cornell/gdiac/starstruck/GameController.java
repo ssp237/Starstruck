@@ -229,7 +229,7 @@ public class GameController extends WorldController implements ContactListener {
     /** The new heavier gravity for this world (so it is not so floaty) */
     private static final float  DEFAULT_GRAVITY = 0f;//-14.7f;
     /** The volume for sound effects */
-    private static final float EFFECT_VOLUME = 0.8f;
+    private static final float EFFECT_VOLUME = 0.6f;
     /** The volume for music */
     private static final float MUSIC_VOLUME = 0.3f;
     /** The distance from an anchor at which an astronaut will be able to anchor */
@@ -269,9 +269,9 @@ public class GameController extends WorldController implements ContactListener {
     private Vector2 contactDirEn = new Vector2();
 
     /** Settings of the game */
-    private boolean switchOnJump;
-    private boolean switchOnAnchor;
-    private boolean twoplayer;
+    private boolean switchOnJump = false;
+    private boolean switchOnAnchor = false;
+    private boolean twoplayer = false;
 
     // Physics objects for the game
     /** Reference to the character avatar */
@@ -513,7 +513,7 @@ public class GameController extends WorldController implements ContactListener {
 
         //rope.setReelForce(REEL_FORCE);
 
-        setSettings();
+//        setSettings();
 
         // Create enemy TODO hardcoded bug enemy
 //        dwidth  = enemyTexture.getRegionWidth()/scale.x;
