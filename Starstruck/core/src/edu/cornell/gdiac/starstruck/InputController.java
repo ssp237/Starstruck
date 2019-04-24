@@ -344,9 +344,7 @@ public class InputController {
 
     public boolean sPrevious() { return sPrevious; }
 
-    public boolean didA() {
-        return aPressed && !aPrevious;
-    }
+    public boolean didA() { return aPressed && !aPrevious; }
 
     public boolean didS() {
         return sPressed && !sPrevious;
@@ -364,15 +362,13 @@ public class InputController {
         return wPressed && !wPrevious;
     }
 
-    public boolean didG() {
-        return gPressed && !gPrevious;
-    }
+    public boolean didG() { return gPressed && !gPrevious; }
 
     public boolean didU() {
         return uPressed && !uPrevious;
     }
 
-    public boolean didSwitch() { return switchPressed && !switchPressed; }
+    public boolean didSwitch() { return switchPressed && !switchPrevious; }
 
     public boolean didOne() { return onePressed && !onePrevious; }
 
