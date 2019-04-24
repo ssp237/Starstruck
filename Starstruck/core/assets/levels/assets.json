@@ -316,8 +316,8 @@
       "file": "milky way/enemies/berries/animated_mwenemy(sberry)_biting.png",
       "wrap": false,
       "rows": 1,
-      "cols": 12,
-      "size": 12,
+      "cols": 10,
+      "size": 10,
       "delay": 3
     },
     "static portal": {
