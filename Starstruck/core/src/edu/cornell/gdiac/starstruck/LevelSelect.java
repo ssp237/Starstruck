@@ -233,6 +233,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         currentLevel = null;
         pressState = 0;
         assignLevelFields();
+        camOffsetX = 0;
     }
 
     /**
@@ -292,9 +293,11 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         float left = 1280/4;
         if (Gdx.input.getX() >= right && camera.position.x + camera.viewportWidth/2 < rightBound) {
             camera.position.add(new Vector3(PAN_CONST, 0, 0));
+            camOffsetX = camOffsetX + PAN_CONST;
         }
         if (Gdx.input.getX() <= left && camera.position.x - camera.viewportWidth/2 > 0) {
             camera.position.sub(new Vector3(PAN_CONST, 0, 0));
+            camOffsetX = camOffsetX - PAN_CONST;
         }
         camera.update();
     }
@@ -439,12 +442,14 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param button the button
      * @return whether the input was processed */
     public boolean touchUp (int screenX, int screenY, int pointer, int button) {
+
         if (currentLevel != null) {
             screenY = heightY - screenY;
             Vector2 scale = level.getScale();
+            Vector2 camOffset = new Vector2(camOffsetX/scale.x, 0);
             Vector2 mouse = new Vector2(screenX/scale.x, screenY/scale.y);
             Vector2 center = currentLevel.getPosition();
-            float dist = dist(center,mouse);
+            float dist = dist(center,mouse.cpy().add(camOffset));
             if (dist <= currentLevel.getRadius()) {
                pressState = 2;
             }
@@ -468,10 +473,13 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         Vector2 mouse = new Vector2(screenX/scale.x, screenY/scale.y);
         Vector2 center;
         float dist;
+
+        Vector2 camOffset = new Vector2(camOffsetX/scale.x, 0);
+
         for (Level l : levels) {
             l.setActive(false);
             center = l.getPosition();
-            dist = dist(center, mouse);
+            dist = dist(center, mouse.cpy().add(camOffset));
             if (dist <= l.getRadius()) {
                 l.setActive(true);
                 currentLevel = l;
