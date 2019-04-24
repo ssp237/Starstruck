@@ -108,6 +108,14 @@
       "file": "levelselect/ring4.png",
       "wrap": false
     },
+    "ls p5": {
+      "file": "levelselect/lvl5.png",
+      "wrap": false
+    },
+    "ls g5": {
+      "file": "levelselect/ring5.png",
+      "wrap": false
+    },
     "de p1": {
       "file": "default/planets/static_default.planet1_v1.png",
       "wrap": false
@@ -316,8 +324,8 @@
       "file": "milky way/enemies/berries/animated_mwenemy(sberry)_biting.png",
       "wrap": false,
       "rows": 1,
-      "cols": 12,
-      "size": 12,
+      "cols": 10,
+      "size": 10,
       "delay": 3
     },
     "static portal": {

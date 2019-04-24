@@ -22,6 +22,7 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
@@ -48,6 +49,8 @@ import java.util.ArrayList;
  */
 public class LevelSelect extends WorldController implements Screen, InputProcessor, ControllerListener {
 
+    /** Speed of camera pan & zoom */
+    private static final float PAN_CONST = 5;
     /** The reader to process JSON files */
     private JsonReader jsonReader;
     /** The JSON asset directory */
@@ -58,9 +61,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     protected LevelSelectModel level;
     /** mouse is currently selecting */
     private Level currentLevel;
-    /** Speed of camera pan & zoom */
-    private static final float PAN_CONST = 8;
-    private static final float ZOOM_FACTOR = 0.02f;
 
     /** Camera offset */
     private float camOffsetX;
@@ -233,6 +233,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         currentLevel = null;
         pressState = 0;
         assignLevelFields();
+        camOffsetX = 0;
     }
 
     /**
@@ -286,34 +287,17 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      */
     private void updateCamera() {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
-        InputController input = InputController.getInstance();
-        if (input.didLeft()) { //&& camera.position.x > camera.viewportWidth/2) {
-            camera.position.x = camera.position.x - PAN_CONST;
-            camOffsetX = camOffsetX - PAN_CONST;
-        }
-        if (input.heldUp()) { //&& camera.position.y < yBound - camera.viewportHeight/2) {
-            camera.position.y = camera.position.y + PAN_CONST;
-            camOffsetY = camOffsetY + PAN_CONST;
-        }
-        if (input.didRight()) { //&& camera.position.x < xBound - camera.viewportWidth/2) {
-            camera.position.x = camera.position.x + PAN_CONST;
+        Texture background = level.getBackground();
+        float rightBound = background.getWidth();
+        float right = 1280 - 1280/4;
+        float left = 1280/4;
+        if (Gdx.input.getX() >= right && camera.position.x + camera.viewportWidth/2 < rightBound) {
+            camera.position.add(new Vector3(PAN_CONST, 0, 0));
             camOffsetX = camOffsetX + PAN_CONST;
         }
-        if (input.heldDown()) { //&& camera.position.y > camera.viewportHeight/2) {
-            camera.position.y = camera.position.y - PAN_CONST;
-            camOffsetY = camOffsetY - PAN_CONST;
-        }
-        if (input.shiftHeld() && input.heldUp()) {
-//            camera.viewportWidth = camera.viewportWidth * (1-ZOOM_FACTOR);
-//            camera.viewportHeight = camera.viewportHeight * (1-ZOOM_FACTOR);
-            camera.zoom = camera.zoom - ZOOM_FACTOR;
-            //System.out.println(camera.zoom);
-        }
-        if (input.shiftHeld() && input.heldDown()) {
-//            camera.viewportWidth = camera.viewportWidth * (1+ZOOM_FACTOR);
-//            camera.viewportHeight = camera.viewportHeight * (1+ZOOM_FACTOR);
-            camera.zoom = camera.zoom + ZOOM_FACTOR;
-            //System.out.println(camera.zoom);
+        if (Gdx.input.getX() <= left && camera.position.x - camera.viewportWidth/2 > 0) {
+            camera.position.sub(new Vector3(PAN_CONST, 0, 0));
+            camOffsetX = camOffsetX - PAN_CONST;
         }
         camera.update();
     }
@@ -458,12 +442,14 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param button the button
      * @return whether the input was processed */
     public boolean touchUp (int screenX, int screenY, int pointer, int button) {
+
         if (currentLevel != null) {
             screenY = heightY - screenY;
             Vector2 scale = level.getScale();
+            Vector2 camOffset = new Vector2(camOffsetX/scale.x, 0);
             Vector2 mouse = new Vector2(screenX/scale.x, screenY/scale.y);
             Vector2 center = currentLevel.getPosition();
-            float dist = dist(center,mouse);
+            float dist = dist(center,mouse.cpy().add(camOffset));
             if (dist <= currentLevel.getRadius()) {
                pressState = 2;
             }
@@ -487,10 +473,13 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         Vector2 mouse = new Vector2(screenX/scale.x, screenY/scale.y);
         Vector2 center;
         float dist;
+
+        Vector2 camOffset = new Vector2(camOffsetX/scale.x, 0);
+
         for (Level l : levels) {
             l.setActive(false);
             center = l.getPosition();
-            dist = dist(center, mouse);
+            dist = dist(center, mouse.cpy().add(camOffset));
             if (dist <= l.getRadius()) {
                 l.setActive(true);
                 currentLevel = l;

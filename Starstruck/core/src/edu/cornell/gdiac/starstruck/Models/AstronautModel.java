@@ -42,7 +42,7 @@ public class AstronautModel extends CapsuleObstacle {
     /** The dude is a slippery one */
     private static final float DUDE_FRICTION = 0.0f;
     /** The maximum character speed */
-    private float DUDE_MAXSPEED = 3.0f;
+    private float DUDE_MAXSPEED = 3.2f;
     /** The maximum character rotation in space */
     private static final float DUDE_MAXROT = 6.5f;
     /** The impulse for the character jump */

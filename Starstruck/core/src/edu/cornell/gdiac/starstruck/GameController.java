@@ -512,8 +512,7 @@ public class GameController extends WorldController implements ContactListener {
         totalStars = stars.size();
 
         //rope.setReelForce(REEL_FORCE);
-
-//        setSettings();
+        //setSettings();
 
         // Create enemy TODO hardcoded bug enemy
 //        dwidth  = enemyTexture.getRegionWidth()/scale.x;
@@ -541,7 +540,7 @@ public class GameController extends WorldController implements ContactListener {
      * @return true if anchored was pressed
      */
     private boolean anchord() {
-        return InputController.getInstance().didSpace();
+        return InputController.getInstance().didAnchor();
     }
 
     /**
@@ -549,7 +548,14 @@ public class GameController extends WorldController implements ContactListener {
      *
      * @return true if anchored2 was pressed
      */
-    private boolean anchord1() { return InputController.getInstance().didSecondary(); }
+    private boolean anchord1() { return InputController.getInstance().didAnchor1(); }
+
+    /**
+     * For two player, was player 1 anchor pressed
+     *
+     * @return true if anchored2 was pressed
+     */
+    private boolean anchord2() { return InputController.getInstance().didAnchor2(); }
 
     /**
      * Was switch pressed
@@ -557,7 +563,7 @@ public class GameController extends WorldController implements ContactListener {
      * @return true if switch was pressed
      */
     private boolean switched() {
-        return InputController.getInstance().didS() && !twoplayer;
+        return InputController.getInstance().didSwitch() && !twoplayer;
     }
 
     /**
@@ -632,7 +638,7 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         if (avatar2.isActive() && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord() && !twoplayer
-                || twoplayer && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord()) {
+                || twoplayer && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord2()) {
             for (Anchor a : anchors) {
                 SPIN_POS.set(a.getPosition());
                 if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
@@ -1630,12 +1636,18 @@ public class GameController extends WorldController implements ContactListener {
         canvas.clear();
         level.draw(canvas);
 
+        canvas.begin();
+        drawStarBar(canvas);
+        canvas.end();
+
         if (isFailure()) {
             displayFont.setColor(Color.RED);
             canvas.begin(); // DO NOT SCALE
             //canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
             //canvas.drawText("u ded :(", displayFont, cam.position.x-140, cam.position.y+30);
             //canvas.draw(background, Color.WHITE, x, y,canvas.getWidth(),canvas.getHeight());
+//            deathOp += 0.0001f;
+//            deathOp *= 1.05;
             deathOp += 0.01f;
             Color drawColor = new Color(1,1,1, deathOp);
             canvas.draw(death, drawColor, cam.position.x - canvas.getWidth()/2, cam.position.y - canvas.getHeight()/2, canvas.getWidth(), canvas.getHeight());
@@ -1648,10 +1660,6 @@ public class GameController extends WorldController implements ContactListener {
             canvas.drawText("Yay! :):)", displayFont, cam.position.x-140, cam.position.y+30);
             canvas.end();
         }
-
-        canvas.begin();
-        drawStarBar(canvas);
-        canvas.end();
 
         if(isDebug()){
             canvas.beginDebug();
