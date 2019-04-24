@@ -500,13 +500,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         canvas.clear();
 
         level.draw(canvas);
-
-        if (isFailure()) {
-            displayFont.setColor(Color.RED);
-            canvas.begin(); // DO NOT SCALE
-            canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
-            canvas.end();
-        }
     }
 
     /**

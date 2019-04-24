@@ -1630,6 +1630,10 @@ public class GameController extends WorldController implements ContactListener {
         canvas.clear();
         level.draw(canvas);
 
+        canvas.begin();
+        drawStarBar(canvas);
+        canvas.end();
+
         if (isFailure()) {
             displayFont.setColor(Color.RED);
             canvas.begin(); // DO NOT SCALE
@@ -1648,10 +1652,6 @@ public class GameController extends WorldController implements ContactListener {
             canvas.drawText("Yay! :):)", displayFont, cam.position.x-140, cam.position.y+30);
             canvas.end();
         }
-
-        canvas.begin();
-        drawStarBar(canvas);
-        canvas.end();
 
         if(isDebug()){
             canvas.beginDebug();
