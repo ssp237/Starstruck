@@ -1640,6 +1640,8 @@ public class GameController extends WorldController implements ContactListener {
             //canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
             //canvas.drawText("u ded :(", displayFont, cam.position.x-140, cam.position.y+30);
             //canvas.draw(background, Color.WHITE, x, y,canvas.getWidth(),canvas.getHeight());
+//            deathOp += 0.0001f;
+//            deathOp *= 1.05;
             deathOp += 0.01f;
             Color drawColor = new Color(1,1,1, deathOp);
             canvas.draw(death, drawColor, cam.position.x - canvas.getWidth()/2, cam.position.y - canvas.getHeight()/2, canvas.getWidth(), canvas.getHeight());
