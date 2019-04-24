@@ -136,10 +136,10 @@ public class Worm extends Enemy{
 //            }
     //}
         if (this.getPosition().x < x_original - 5) {
-            System.out.println(getVX());
+            //System.out.println(getVX());
             setVX(-getVX());
         } else if (this.getPosition().x > x_original + 5) {
-            System.out.println(getVX());
+            //System.out.println(getVX());
             setVX(-getVX());
         }
         //System.out.println(this);

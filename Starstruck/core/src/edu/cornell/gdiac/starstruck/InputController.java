@@ -96,6 +96,16 @@ public class InputController {
     private boolean gPrevious;
     private boolean uPressed;
     private boolean uPrevious;
+    private boolean onePressed;
+    private boolean onePrevious;
+    private boolean twoPressed;
+    private boolean twoPrevious;
+    private boolean threePressed;
+    private boolean threePrevious;
+    private boolean fourPressed;
+    private boolean fourPrevious;
+    private boolean fivePressed;
+    private boolean fivePrevious;
     /** Whether space was pressed */
     private boolean spacePressed;
     private boolean spacePrevious;
@@ -358,6 +368,16 @@ public class InputController {
         return uPressed && !uPrevious;
     }
 
+    public boolean didOne() { return onePressed && !onePrevious; }
+
+    public boolean didTwo() { return twoPressed && !twoPrevious; }
+
+    public boolean didThree() { return threePressed && !threePrevious; }
+
+    public boolean didFour() { return fourPressed && !fourPrevious; }
+
+    public boolean didFive() { return fivePressed && !fivePrevious; }
+
     public float xPos() {return Gdx.input.getX();}
 
     public float yPos() {return Gdx.input.getY();}
@@ -412,6 +432,11 @@ public class InputController {
         wPrevious = wPressed;
         gPrevious = gPressed;
         uPrevious = uPressed;
+        onePrevious = onePressed;
+        twoPrevious = twoPressed;
+        threePrevious = threePressed;
+        fourPrevious = fourPressed;
+        fivePrevious = fivePressed;
         spacePrevious = spacePressed;
         shiftPrevious = shiftPressed;
         tertiaryPrevious = tertiaryPressed;
@@ -497,6 +522,11 @@ public class InputController {
         wPressed = Gdx.input.isKeyPressed (Input.Keys.W);
         gPressed = Gdx.input.isKeyPressed (Input.Keys.G);
         uPressed = Gdx.input.isKeyPressed (Input.Keys.U);
+        onePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_1);
+        twoPressed = Gdx.input.isKeyPressed(Input.Keys.NUM_2);
+        threePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_3);
+        fourPressed = Gdx.input.isKeyPressed(Input.Keys.NUM_4);
+        fivePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_5);
         resetPressed = Gdx.input.isKeyPressed(Input.Keys.R);
 
         // Directional controls
