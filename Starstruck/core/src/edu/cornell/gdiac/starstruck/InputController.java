@@ -535,14 +535,14 @@ public class InputController {
         dPressed = xbox2.getLeftX() > 0.6; //right
         wPressed = xbox2.getA(); //jump
         //spacePressed = xbox2.getX(); //anchor
-        anchor2Pressed = xbox.getX();
+        anchor2Pressed = xbox2.getX();
         sPressed = xbox2.getB(); //reel
         debugPressed  = xbox2.getR3(); //debug
         //no switch in 2 player mode
 
         // Increase animation frame, but only if trying to move
-        horizontal2 = xbox.getLeftX();
-        vertical2   = xbox.getLeftY();
+        horizontal2 = xbox2.getLeftX();
+        vertical2   = xbox2.getLeftY();
     }
 
     /**
