@@ -151,6 +151,8 @@ public class AstronautModel extends CapsuleObstacle {
     private Vector2 forceCache = new Vector2();
     /** Two player? If true, don't draw glow */
     private boolean twoplayer;
+    /** To keep or flip controls */
+    private int lastFace = 1;
 
 
     /**
@@ -189,6 +191,10 @@ public class AstronautModel extends CapsuleObstacle {
         } else if (movement > 0) {
             faceRight = true;
         }
+    }
+
+    public boolean getRight() {
+        return faceRight;
     }
 
     public void setRight(boolean value) {
@@ -280,6 +286,10 @@ public class AstronautModel extends CapsuleObstacle {
     public void setTwoPlayer(boolean value) {
         twoplayer = value;
     }
+
+    public int lastFace() { return lastFace; }
+
+    public void setLastFace(int value) { lastFace = value; }
 
     /**
      * Returns how much force to apply to get the dude moving
@@ -744,10 +754,9 @@ public class AstronautModel extends CapsuleObstacle {
 //            float speed = getLinearVelocity().len() * (float)Math.sin(angle);
 //            System.out.println(speed);
             float speed = getLinearVelocity().len();
+            if (speed > 0.05) {
+            }
             Vector2 reset = new Vector2();
-            if (speed < 0)
-                System.out.println("speed is less than 0 in apply force");
-
             //Damp out player motion
 //            if (!moving) {
 //                forceCache.set(planetMove.scl(-1).setLength(DUDE_MAXSPEED*100));

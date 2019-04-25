@@ -838,8 +838,20 @@ public class GameController extends WorldController implements ContactListener {
         if (!twoplayer) {
             float move = input.getHorizontal();
             if (input.didRight() || input.didLeft()) {
-                avatar.setPlanetMove(contactDir.scl(move));
-                avatar.setRight(input.didRight());
+                if ((input.didRight() && !input.rightPrevious() || input.didLeft() && !input.leftPrevious())) {
+                    float angle = avatar.getAngle();
+                    if (angle > Math.PI/2 || angle <= -Math.PI/2) {
+                        avatar.setLastFace(-1);
+                        avatar.setRight(input.didLeft());
+                    }
+                    else {
+                        avatar.setLastFace(1);
+                        avatar.setRight(input.didRight());
+                    }
+                }
+                avatar.setPlanetMove(contactDir.scl(move*avatar.lastFace()));
+                //avatar.setRight(input.didRight());
+
                 if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
                     avatar.moving = true;
             }
@@ -1031,6 +1043,8 @@ public class GameController extends WorldController implements ContactListener {
                 if (avatar.curPlanet == avatar2.curPlanet) { //If the two avatars are on the same planet, move inactive avatar
                     if (updateRope(avatar, avatar2, rope, 'j', dt)) {
                         avatar2.auto = true;
+                        avatar2.setLastFace(avatar.lastFace());
+                        avatar2.setRight(avatar.getRight());
                         updateMovement(avatar2, avatar2.contactDir, (Planet)avatar2.curPlanet, true);
                         //avatar2.setLinearVelocity((avatar2.contactDir.cpy().rotateRad(-(float) Math.PI / 2)).setLength(avatar2.getMaxSpeed()));
                     }
@@ -1141,14 +1155,17 @@ public class GameController extends WorldController implements ContactListener {
             Gdx.input.getTextInput(loader, "Load...", "level.json", "");
         }
 
-//        if (avatar.getOnPlanet()) avatar.setLinearVelocity(reset);
-//        if (avatar2.getOnPlanet()) avatar2.setLinearVelocity(reset);
-
         updateSettings();
 
         if (switched()) {
             avatar.setActive(!avatar.isActive());
             avatar2.setActive(!avatar2.isActive());
+            if (avatar.isActive() && avatar.getOnPlanet()) {
+                avatar.setLinearVelocity(reset);
+            }
+            if (avatar2.isActive() && avatar2.getOnPlanet()) {
+                avatar2.setLinearVelocity(reset);
+            }
             SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
         }
 
@@ -1440,6 +1457,9 @@ public class GameController extends WorldController implements ContactListener {
 
             if ((bd1 == avatar || bd2 == avatar) && (bd1N.contains("planet") || bd2N.contains("planet")) && !barrier) {
                 avatar.curPlanet = (bd1 == avatar) ? bd2 : bd1;
+                if (!avatar.getOnPlanet()) {
+                    avatar.setLinearVelocity(reset);
+                }
                 avatar.setOnPlanet(true);
                 // See if we have landed on the ground.
                 if (((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
@@ -1451,6 +1471,9 @@ public class GameController extends WorldController implements ContactListener {
 
             if ((bd1 == avatar2 || bd2 == avatar2) && (bd1N.contains("planet") || bd2N.contains("planet")) && !barrier) {
                 avatar2.curPlanet = (bd1 == avatar2) ? bd2 : bd1;
+                if (!avatar2.getOnPlanet()) {
+                    avatar2.setLinearVelocity(reset);
+                }
                 avatar2.setOnPlanet(true);
                 // See if we have landed on the ground.
                 if (((avatar2.getSensorName().equals(fd2) && avatar2 != bd1) ||
