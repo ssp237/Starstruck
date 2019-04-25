@@ -244,7 +244,11 @@
     },
     "starbar": {
       "file": "default/starbar.png",
-      "wrap": false;
+      "wrap": false
+    },
+    "starbarglow": {
+      "file": "default/starbarglow.png",
+      "wrap": false
     }
   },
   "filmstrips" : {
