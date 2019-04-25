@@ -562,19 +562,27 @@ public class Rope extends ComplexObstacle {
     /**
      * Pull the avatar in the direction of the rope
      *
-     * @param isAvatar2
+     * @param isAvatar2 is avatar2 the one to be reeled
      */
-    public void reel(boolean isAvatar2) {
+    public void reel(boolean isAvatar2, Vector2 dir) {
         BoxObstacle plank;
         BoxObstacle plank0;
+        dir.setLength(reel_force);
         if (isAvatar2) {
             for (int i = bodies.size()-2; i >= 0; i--) { //i = bodies.size()-2;
                 plank = (BoxObstacle)bodies.get(i);
                 plank0 = (BoxObstacle)bodies.get(i+1);
                 dirCache = plank.getPosition().cpy().sub(plank0.getPosition());
                 dirCache.setLength(reel_force);
-                plank.getBody().applyForceToCenter(dirCache, true);
-                if (i >= bodies.size()/2) i--;
+                if (i >= bodies.size()/2) {
+                    plank.getBody().applyForceToCenter(dir, true);
+                    //i--;
+                }
+                else {
+                    plank.getBody().applyForceToCenter(dirCache, true);
+                    //plank.getBody().applyForceToCenter(dir, true);
+                    //i--;
+                }
             }
         }
         else {
@@ -583,8 +591,15 @@ public class Rope extends ComplexObstacle {
                 plank0 = (BoxObstacle) bodies.get(i-1);
                 dirCache = plank.getPosition().cpy().sub(plank0.getPosition());
                 dirCache.setLength(reel_force);
-                plank.getBody().applyForceToCenter(dirCache, true);
-                if (i <= bodies.size()/2) i++;
+                if (i <= bodies.size()/2) {
+                    plank.getBody().applyForceToCenter(dir, true);
+                    //i++;
+                }
+                else {
+                    plank.getBody().applyForceToCenter(dirCache, true);
+                    //plank.getBody().applyForceToCenter(dir, true);
+                    //i++;
+                }
             }
         }
     }

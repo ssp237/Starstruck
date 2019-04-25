@@ -1249,43 +1249,45 @@ public class GameController extends WorldController implements ContactListener {
 
         if (twoplayer) {
             if (reeled() && !avatar2.getOnPlanet() && !avatar2.isAnchored()) {
-//                reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
+                reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
 //                reelCache.setLength(REEL_FORCE);
 //                avatar2.getBody().applyForceToCenter(reelCache, true);
-                rope.reel(true);
+                rope.reel(true, reelCache);
             }
             updateHelp(avatar, avatar2, dt);
 
             if (reeled2() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
-//                reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
+                reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
 //                reelCache.setLength(REEL_FORCE);
 //                avatar.getBody().applyForceToCenter(reelCache, true);
-                rope.reel(false);
+                rope.reel(false, reelCache);
             }
             updateHelp(avatar2, avatar, dt);
         }
 
         else { //twoplayer off
-            if (avatar.isActive()) {
-                if (reeled() && !avatar2.getOnPlanet() && !avatar2.isAnchored()) {
-//                    reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
-//                    reelCache.setLength(REEL_FORCE);
-//                    avatar2.getBody().applyForceToCenter(reelCache, true);
-                    rope.reel(true);
+            if (avatar.getOnPlanet() && !avatar2.getOnPlanet()) {
+                if (reeled()) {
+                    reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
+                    rope.reel(true, reelCache);
                 }
+            }
+            else if (avatar2.getOnPlanet() && !avatar.getOnPlanet()) {
+                if (reeled()) {
+                    reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
+                    rope.reel(false, reelCache);
+                }
+            }
+
+            if (avatar.isActive()) {
                 updateHelp(avatar, avatar2, dt);
                 if (testC) {
                     avatar.setFixedRotation(true);
                     avatar.setMovement(InputController.getInstance().getHorizontal());
                     avatar.setMovementV(InputController.getInstance().getVertical());
                 }
-            } else { //if avatar2 is active
-                if (reeled() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
-//                    reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
-//                    reelCache.setLength(REEL_FORCE);
-//                    avatar.getBody().applyForceToCenter(reelCache, true);
-                    rope.reel(false);
-                }
+            }
+            else { //if avatar2 is active
                 updateHelp(avatar2, avatar, dt);
                 if (testC) {
                     avatar2.setFixedRotation(true);
