@@ -838,19 +838,8 @@ public class GameController extends WorldController implements ContactListener {
         if (!twoplayer) {
             float move = input.getHorizontal();
             if (input.didRight() || input.didLeft()) {
-                if ((input.didRight() && !input.rightPrevious() || input.didLeft() && !input.leftPrevious())) {
-                    float angle = avatar.getAngle();
-                    if (angle > Math.PI/2 || angle <= -Math.PI/2) {
-                        avatar.setLastFace(-1);
-                        avatar.setRight(input.didLeft());
-                    }
-                    else {
-                        avatar.setLastFace(1);
-                        avatar.setRight(input.didRight());
-                    }
-                }
-                avatar.setPlanetMove(contactDir.scl(move*avatar.lastFace()));
-                //avatar.setRight(input.didRight());
+                avatar.setPlanetMove(contactDir.scl(move));
+                avatar.setRight(input.didRight());
 
                 if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
                     avatar.moving = true;

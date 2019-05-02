@@ -154,7 +154,6 @@ public class AstronautModel extends CapsuleObstacle {
     /** To keep or flip controls */
     private int lastFace = 1;
 
-
     /**
      * Set the glow texture
      *
