@@ -88,7 +88,7 @@ public class LevelModel {
     /** List of portal pairs */
     protected ArrayList<PortalPair> portalpairs = new ArrayList<PortalPair>();
     /** Fraction of total stars needed to win */
-    private float winPercent;
+    protected float winPercent;
     /** Numbher of stars needed to open portal */
     protected int winCount;
     /** Bounds of play space in terms of screens */
@@ -533,7 +533,7 @@ public class LevelModel {
         out.addChild("physicsSize", physicsSize);
         out.addChild("graphicSize", graphicsSize);
         out.addChild("playSize", playSize);
-        out.addChild("win", new JsonValue("0.5"));
+        out.addChild("win", new JsonValue(winPercent + ""));
 
         //Add Galaxy
 

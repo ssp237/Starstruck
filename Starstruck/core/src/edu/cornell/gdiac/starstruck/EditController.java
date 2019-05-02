@@ -35,6 +35,8 @@ public class EditController extends WorldController implements ContactListener {
     private float screenY;
 //    private float xBound = (1280*screenX) / scale.x;
 //    private float yBound = (720*screenY) / scale.y;
+    /** Percentage of stars needed to open end portal */
+    private float winCond;
 
     private int portalPair = 1;
 
@@ -63,6 +65,8 @@ public class EditController extends WorldController implements ContactListener {
     private GalaxyListener galListener;
     /** Reader to set bounds of level*/
     private BoundsListener boundListener;
+    /** Listener to set win condition */
+    private WinListener winListener;
 
     /** Current galaxy to source assets from */
     private Galaxy galaxy;
@@ -138,6 +142,9 @@ public class EditController extends WorldController implements ContactListener {
 
     public class BoundsListener implements Input.TextInputListener {
 
+        public float xBound;
+        public float yBound;
+
         public BoundsListener(){
             screenX = 1.5f;
             screenY = 1.5f;
@@ -152,15 +159,39 @@ public class EditController extends WorldController implements ContactListener {
                     System.out.println("Enter 2 numbers separated by a comma");
                     return;
                 }
-                screenX = Float.parseFloat(bounds[0].trim());
-                screenY = Float.parseFloat(bounds[1].trim());
+                xBound = Float.parseFloat(bounds[0].trim());
+                yBound = Float.parseFloat(bounds[1].trim());
+                screenX = xBound;
+                screenY = yBound;
                 level.xPlay = screenX;
                 level.yPlay = screenY;
 
             } catch (Exception e) {
-                screenX = 1.5f;
-                screenY = 1.5f;
                 System.out.println("Error setting bounds");
+            }
+        }
+
+        public void canceled () {
+        }
+    }
+
+    public class WinListener implements Input.TextInputListener {
+
+        public float winPer;
+
+        public WinListener(){
+            winCond = 0.5f;
+            level.winPercent = winCond;
+        }
+
+        public void input (String text) {
+            try {
+                winPer = Float.parseFloat(text);
+                winCond = winPer;
+                level.winPercent = winCond;
+
+            } catch (Exception e) {
+                System.out.println("Error setting win condition");
             }
         }
 
@@ -183,6 +214,7 @@ public class EditController extends WorldController implements ContactListener {
         wormListener = new WormListener();
         galListener = new GalaxyListener();
         boundListener = new BoundsListener();
+        winListener = new WinListener();
         jsonReader = new JsonReader();
         loadFile = null;
         levelFormat = null;
@@ -196,6 +228,7 @@ public class EditController extends WorldController implements ContactListener {
         canvas.resetCamera();
         level.setGalaxy(galaxy);
         boundListener = new BoundsListener();
+        winListener = new WinListener();
 
         if (loadFile != null) {
             levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
@@ -545,6 +578,8 @@ public class EditController extends WorldController implements ContactListener {
                 Gdx.input.getTextInput(galListener, "Switch to what galaxy?", "whirlpool", "");
             } else if (input.shiftHeld() && input.didAnchor1()) {
                 Gdx.input.getTextInput(boundListener, "Size of level", screenX + ", " + screenY, "");
+            } else if (input.shiftHeld() && input.didW()) {
+                Gdx.input.getTextInput(winListener, "Win condition", winCond + "", "");
             } else if (input.shiftHeld() && input.didD()) {
                 loadFile = null;
                 reset();
