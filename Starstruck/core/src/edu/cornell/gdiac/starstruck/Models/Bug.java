@@ -121,7 +121,7 @@ public class Bug extends Enemy {
 
         //Add textures
         json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));
-        
+
         return json;
     }
 
