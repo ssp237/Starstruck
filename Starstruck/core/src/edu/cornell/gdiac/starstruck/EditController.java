@@ -2,9 +2,11 @@ package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
@@ -29,10 +31,10 @@ public class EditController extends WorldController implements ContactListener {
     private static final float PAN_CONST = 8;
     private static final float ZOOM_FACTOR = 0.02f;
     /** Bounds of this level */
-    private float xBound = (1280*1.5f) / scale.x;
-    private float yBound = (720*1.5f) / scale.y;
-    private float screenX = 1.5f;
-    private float screenY = 1.5f;
+    private float screenX;
+    private float screenY;
+//    private float xBound = (1280*screenX) / scale.x;
+//    private float yBound = (720*screenY) / scale.y;
 
     private int portalPair = 1;
 
@@ -59,6 +61,8 @@ public class EditController extends WorldController implements ContactListener {
     private JsonReader jsonReader;
     /** Reader to process galaxy switches */
     private GalaxyListener galListener;
+    /** Reader to set bounds of level*/
+    private BoundsListener boundListener;
 
     /** Current galaxy to source assets from */
     private Galaxy galaxy;
@@ -132,6 +136,38 @@ public class EditController extends WorldController implements ContactListener {
         }
     }
 
+    public class BoundsListener implements Input.TextInputListener {
+
+        public BoundsListener(){
+            screenX = 1.5f;
+            screenY = 1.5f;
+            level.xPlay = screenX;
+            level.yPlay = screenY;
+        }
+
+        public void input (String text) {
+            try {
+                String[] bounds = text.split(",");
+                if (bounds.length != 2) {
+                    System.out.println("Enter 2 numbers separated by a comma");
+                    return;
+                }
+                screenX = Float.parseFloat(bounds[0].trim());
+                screenY = Float.parseFloat(bounds[1].trim());
+                level.xPlay = screenX;
+                level.yPlay = screenY;
+
+            } catch (Exception e) {
+                screenX = 1.5f;
+                screenY = 1.5f;
+                System.out.println("Error setting bounds");
+            }
+        }
+
+        public void canceled () {
+        }
+    }
+
 
     public EditController() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
@@ -146,6 +182,7 @@ public class EditController extends WorldController implements ContactListener {
         save = new SaveListener();
         wormListener = new WormListener();
         galListener = new GalaxyListener();
+        boundListener = new BoundsListener();
         jsonReader = new JsonReader();
         loadFile = null;
         levelFormat = null;
@@ -158,6 +195,7 @@ public class EditController extends WorldController implements ContactListener {
         level.dispose();
         canvas.resetCamera();
         level.setGalaxy(galaxy);
+        boundListener = new BoundsListener();
 
         if (loadFile != null) {
             levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
@@ -503,8 +541,10 @@ public class EditController extends WorldController implements ContactListener {
                 Gdx.input.getTextInput(save, "Save as...", "level.json", "");
             } else if (input.shiftHeld() && input.didO()) {
                 Gdx.input.getTextInput(load, "Load...", "level.json", "");
-            }else if (input.shiftHeld() && input.didG()) {
+            } else if (input.shiftHeld() && input.didG()) {
                 Gdx.input.getTextInput(galListener, "Switch to what galaxy?", "whirlpool", "");
+            } else if (input.shiftHeld() && input.didAnchor1()) {
+                Gdx.input.getTextInput(boundListener, "Size of level", screenX + ", " + screenY, "");
             } else if (input.shiftHeld() && input.didD()) {
                 loadFile = null;
                 reset();
@@ -578,6 +618,15 @@ public class EditController extends WorldController implements ContactListener {
         canvas.end();
 
         level.draw(canvas, 'e');
+
+//        OrthographicCamera cam = (OrthographicCamera) canvas.getCamera();
+//        float width = canvas.getWidth()/2-10;
+//        float height = canvas.getHeight()/2-10;
+//        displayFont = JsonAssetManager.getInstance().getEntry("retro game", BitmapFont.class);
+//        displayFont.setColor(Color.RED);
+//        canvas.begin();
+//        canvas.drawText(screenX + ", " + screenY, displayFont, cam.position.x, cam.position.y);
+//        canvas.end();
 
 //        canvas.begin();
 //        if (current != null) {

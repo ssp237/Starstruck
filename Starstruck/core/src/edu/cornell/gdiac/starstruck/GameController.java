@@ -41,10 +41,9 @@ import edu.cornell.gdiac.util.FilmStrip;
  */
 public class GameController extends WorldController implements ContactListener {
 
-    int count;
-
-
-    /** Time to delay after dying */
+    /** Delays */
+    private int count;
+    private int collectCount;
 
     /** The reader to process JSON files */
     private JsonReader jsonReader;
@@ -415,6 +414,7 @@ public class GameController extends WorldController implements ContactListener {
         populateLevel(); //Just to add enemies and special lists of objects
 
         count = 5;
+        collectCount = 60;
         deathOp = 0f;
         portalpairCache = null;
 
@@ -497,8 +497,8 @@ public class GameController extends WorldController implements ContactListener {
             yCam = yBound*scale.y - camHeight/2;
         camera.position.set(xCam, yCam, 0);
 
-        xBound = (1280*1.5f) / scale.x;
-        yBound = (720*1.5f) / scale.y;
+        xBound = (1280*level.xPlay) / scale.x;
+        yBound = (720*level.yPlay) / scale.y;
 
         stars = level.stars;
         anchors = level.anchors;
@@ -1402,7 +1402,7 @@ public class GameController extends WorldController implements ContactListener {
             }
 
             //Star collection
-            if ((bd1.getType() == ObstacleType.STAR || bd2.getType() == ObstacleType.STAR) && count < 0) {
+            if ((bd1.getType() == ObstacleType.STAR || bd2.getType() == ObstacleType.STAR) && collectCount < 0) {
                 if (bd1.getType() == ObstacleType.STAR) {
                     starCache = (Star)bd1;
                     obstacleCache = bd2;
@@ -1647,9 +1647,14 @@ public class GameController extends WorldController implements ContactListener {
      */
     public void draw(float delta) {
 
-        if (count >= 0) {
+        if (count >= 0 && collectCount >= 0) {
             count --;
+            collectCount--;
             return;
+        }
+
+        if (collectCount >=0) {
+            collectCount--;
         }
 
         OrthographicCamera cam = (OrthographicCamera)canvas.getCamera();

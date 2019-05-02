@@ -91,6 +91,9 @@ public class LevelModel {
     private float winPercent;
     /** Numbher of stars needed to open portal */
     protected int winCount;
+    /** Bounds of play space in terms of screens */
+    protected float xPlay;
+    protected float yPlay;
 
     /**
      * Returns the bounding rectangle for the physics world
@@ -275,6 +278,7 @@ public class LevelModel {
     public void populate(JsonValue levelFormat) {
         float[] pSize = levelFormat.get("physicsSize").asFloatArray();
         int[] gSize = levelFormat.get("graphicSize").asIntArray();
+        float[] playSize = levelFormat.get("playSize").asFloatArray();
 
         String key = levelFormat.get("background").asString();
         background = JsonAssetManager.getInstance().getEntry(key, Texture.class);
@@ -285,6 +289,8 @@ public class LevelModel {
         bounds = new Rectangle(0,0,pSize[0],pSize[1]);
         scale.x = gSize[0]/pSize[0];
         scale.y = gSize[1]/pSize[1];
+        xPlay = playSize[0];
+        yPlay = playSize[1];
 
         player1 = AstronautModel.fromJson(levelFormat.get("astronaut 1"), scale, true);
         player1.setName("avatar");
@@ -520,8 +526,13 @@ public class LevelModel {
         graphicsSize.addChild(new JsonValue((int) (bounds.width * scale.x)));
         graphicsSize.addChild(new JsonValue((int) (bounds.height * scale.y)));
 
+        JsonValue playSize = new JsonValue(JsonValue.ValueType.array);
+        playSize.addChild(new JsonValue(xPlay));
+        playSize.addChild(new JsonValue(yPlay));
+
         out.addChild("physicsSize", physicsSize);
         out.addChild("graphicSize", graphicsSize);
+        out.addChild("playSize", playSize);
         out.addChild("win", new JsonValue("0.5"));
 
         //Add Galaxy
