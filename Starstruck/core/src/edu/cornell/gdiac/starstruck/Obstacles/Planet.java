@@ -28,6 +28,7 @@ public class Planet extends WheelObstacle {
     private int ind;
     /** True if this planet has a bug.*/
     private boolean bug_bool;
+    private Bug buggy;
 
 
     /** Pre-set masses */
@@ -107,6 +108,7 @@ public class Planet extends WheelObstacle {
         }
         else {
             this.bug_bool = true;
+            buggy = bug;
         }
 
         texture = JsonAssetManager.getInstance().getEntry(("wp p" + i), TextureRegion.class);
@@ -134,6 +136,14 @@ public class Planet extends WheelObstacle {
         counter++;
 
         ind = i;
+    }
+
+    /**
+     * Set da bug
+     * @param bug da bug
+     */
+    public void setBug (Bug bug) {
+        buggy = bug;
     }
 
     /**
@@ -201,6 +211,10 @@ public class Planet extends WheelObstacle {
         json.addChild("i", new JsonValue(ind));
 
         //System.out.println(json);
+
+        if (bug_bool) {
+            json.addChild("bug", buggy.toJson());
+        }
 
         return json;
     }
