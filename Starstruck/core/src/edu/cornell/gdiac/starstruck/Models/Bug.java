@@ -6,11 +6,13 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.starstruck.Obstacles.Obstacle;
 import edu.cornell.gdiac.starstruck.Obstacles.ObstacleType;
 import edu.cornell.gdiac.starstruck.Obstacles.Planet;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.JsonAssetManager;
 
 public class Bug extends Enemy {
 
@@ -114,7 +116,14 @@ public class Bug extends Enemy {
 
     public void setPlanet (Planet p) { curPlanetEN = p;}
 
+    public JsonValue toJson () {
+        JsonValue json = new JsonValue(JsonValue.ValueType.object);
 
+        //Add textures
+        json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));
+        
+        return json;
+    }
 
     public void beginContact(Contact contact) {
         Fixture fix1 = contact.getFixtureA();
