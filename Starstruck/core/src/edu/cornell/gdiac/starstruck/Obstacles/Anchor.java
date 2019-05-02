@@ -71,7 +71,7 @@ public class Anchor extends ComplexObstacle {
         setName(SPINNER_NAME);
 
         // Create the barrier
-        barrier = new BoxObstacle(x,y,width,height);
+        barrier = new BoxObstacle(x,y,width/2,height/2);
         barrier.setName(BARRIER_NAME);
         barrier.setDensity(HEAVY_DENSITY);
         bodies.add(barrier);
@@ -151,7 +151,7 @@ public class Anchor extends ComplexObstacle {
      * @return true if object allocation succeeded
      */
     protected boolean createJoints(World world) {
-        assert bodies.size > 0;
+        assert bodies.size() > 0;
 
         //#region INSERT CODE HERE
         // Attach the barrier to the pin here

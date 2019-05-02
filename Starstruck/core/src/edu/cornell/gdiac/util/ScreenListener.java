@@ -39,6 +39,16 @@
       *
       * @param screen   The screen requesting to exit
       * @param exitCode The state of the screen upon exit
+      * @param json The name of the file to load
+      */
+     public void exitScreen(Screen screen, int exitCode, String json);
+     /**
+      * The given screen has made a request to exit its player mode.
+      *
+      * The value exitCode can be used to implement menu options.
+      *
+      * @param screen   The screen requesting to exit
+      * @param exitCode The state of the screen upon exit
       */
      public void exitScreen(Screen screen, int exitCode);
  }

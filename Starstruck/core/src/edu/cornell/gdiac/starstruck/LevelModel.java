@@ -27,6 +27,7 @@ import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Models.Bug;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
+import edu.cornell.gdiac.starstruck.Models.Urchin;
 import edu.cornell.gdiac.starstruck.Models.Worm;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
@@ -56,12 +57,17 @@ public class LevelModel {
     protected Vector2 scale;
     /** The background texture*/
     private Texture background;
+    /** Galaxy to source textures from */
+    private Galaxy galaxy;
+
 
     // Physics objects for the game
     /** Reference to the first character avatar */
     private AstronautModel player1;
     /** Reference to the second character avatar */
     private AstronautModel player2;
+    /** End goal */
+    private PortalPair goal;
     /** Reference to the list of planets */
     private PlanetList planets;
     /** Rope */
@@ -80,6 +86,12 @@ public class LevelModel {
     //protected TextureRegion ropeTexture;
     /** List of enemies in the world */
     protected PooledList<Enemy> enemies = new PooledList<Enemy>();
+    /** List of portal pairs */
+    protected ArrayList<PortalPair> portalpairs = new ArrayList<PortalPair>();
+    /** Fraction of total stars needed to win */
+    private float winPercent;
+    /** Numbher of stars needed to open portal */
+    protected int winCount;
 
     /**
      * Returns the bounding rectangle for the physics world
@@ -125,7 +137,10 @@ public class LevelModel {
      * @return a reference to the enemy list
      */
     public PooledList<Enemy> getEnemies() {
+//        System.out.println("in getEnemies");
+//        System.out.println(enemies);
         return enemies;
+
     }
 
     /**
@@ -165,6 +180,24 @@ public class LevelModel {
     }
 
     /**
+     * Returns a reference to the goal
+     *
+     * @return a reference to the goal
+     */
+    public PortalPair getGoal() {
+        return goal;
+    }
+
+    /**
+     * Returns the current galaxy
+     *
+     * @return the current galaxy
+     */
+    public Galaxy getGalaxy() {
+        return galaxy;
+    }
+
+    /**
      * Returns whether this level is currently in debug node
      *
      * If the level is in debug mode, then the physics bodies will all be drawn as
@@ -189,6 +222,19 @@ public class LevelModel {
     }
 
     /**
+     * Sets the current galaxy: tells all relevant classes to use assets from the selected Galaxy.
+     *
+     * @param galaxy The galaxy to be set
+     */
+    public void setGalaxy(Galaxy galaxy) {
+        this.galaxy = galaxy;
+        Planet.setGalaxy(galaxy);
+        String gal = galaxy.getChars();
+        this.background = JsonAssetManager.getInstance().getEntry(gal + " background", Texture.class);
+        Urchin.setTextures(galaxy.getUrchinPrefix());
+    }
+
+    /**
      * Creates a new LevelModel
      *
      * The level is empty and there is no active physics world.  You must read
@@ -209,7 +255,7 @@ public class LevelModel {
         this.bounds = bounds;
         this.scale = scale;
         debug  = false;
-        planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
+        planets = new PlanetList(scale);
     }
 
 
@@ -234,11 +280,14 @@ public class LevelModel {
         String key = levelFormat.get("background").asString();
         background = JsonAssetManager.getInstance().getEntry(key, Texture.class);
 
+        String gal = levelFormat.get("galaxy").asString();
+        setGalaxy(Galaxy.fromString(gal));
+
         bounds = new Rectangle(0,0,pSize[0],pSize[1]);
         scale.x = gSize[0]/pSize[0];
         scale.y = gSize[1]/pSize[1];
 
-        player1 = AstronautModel.fromJson(levelFormat.get("astronaut 1"), scale,true);
+        player1 = AstronautModel.fromJson(levelFormat.get("astronaut 1"), scale, true);
         player1.setName("avatar");
         player1.activatePhysics(world);
         //addObject(player1);
@@ -254,8 +303,8 @@ public class LevelModel {
         key = ropeVal.get("texture").asString();
         TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
         //ropeTexture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        float dwidth  = texture.getRegionWidth()/scale.x;
-        float dheight = texture.getRegionHeight()/scale.y;
+        float dwidth = texture.getRegionWidth() / scale.x;
+        float dheight = texture.getRegionHeight() / scale.y;
         rope = new Rope(player1.getX() + 0.5f, player1.getY() + 0.5f,
                 ropeVal.get("rope width").asFloat(), dwidth, dheight, player1, player2);
         rope.setTexture(texture);
@@ -263,10 +312,15 @@ public class LevelModel {
         rope.setName("rope");
         activate(rope);
 
-        objects.add(player1); objects.add(player2);
+        objects.add(player1);
+        objects.add(player2);
+
+//        goal = BlackHole.fromJson(levelFormat.get("goal"), scale);
+//        goal.setName("goal");
+//        activate(goal);
 
         Planet.setPresets(levelFormat.get("planet specs"));
-        planets = new PlanetList(Galaxy.WHIRLPOOL, scale);
+        planets = new PlanetList(scale);
 
         JsonValue planet = levelFormat.get("planets").child();
         while(planet != null) {
@@ -287,20 +341,23 @@ public class LevelModel {
             }
 
             planets.addPlanet(planet, world, vectorWorld, buggy);
-            planet = planet.next();
-
         }
 
         //add stars
         int i = 0;
         JsonValue starVals = levelFormat.get("stars").child();
-        while(starVals != null) {
+        while (starVals != null) {
             Star star = Star.fromJSON(starVals, scale);
             star.setName("star" + i);
             activate(star);
             stars.add(star);
             starVals = starVals.next;
         }
+
+        winPercent = levelFormat.get("win").asFloat();
+        int numStars = stars.size();
+        winCount = (int)(numStars * winPercent);
+
 
         //add anchors
         i = 0;
@@ -313,9 +370,21 @@ public class LevelModel {
             anchorVals = anchorVals.next;
         }
 
+        //add portals
+        i = 0;
+        JsonValue portalVals = levelFormat.get("portalpairs").child();
+        while (portalVals != null) {
+            PortalPair portalpair = PortalPair.fromJSON(portalVals, scale);
+            activate(portalpair.getPortal1());
+            activate(portalpair.getPortal2());
+            portalpairs.add(portalpair);
+            if (portalpair.isGoal())
+                goal = portalpair;
+            portalVals = portalVals.next;
+        }
 
         //add worms
-       JsonValue wormVals = levelFormat.get("worms").child();
+        JsonValue wormVals = levelFormat.get("worms").child();
         while (wormVals != null) {
             Worm wormie = Worm.fromJSON(wormVals, scale);
             activate(wormie);
@@ -323,7 +392,21 @@ public class LevelModel {
             wormVals = wormVals.next;
         }
 
+        //add urchins
+        String urcTexture = levelFormat.get("urchin texture").asString();
+        Urchin.setTextures(urcTexture);
 
+        JsonValue urchinVals = levelFormat.get("urchins").child();
+        while (urchinVals != null) {
+            Urchin urch = Urchin.fromJSON(urchinVals, scale);
+            activate(urch);
+            enemies.add(urch);
+            urchinVals = urchinVals.next;
+        }
+
+//        System.out.println("here i am enemy list");
+//        System.out.println(enemies);
+//        System.out.println(enemies.size());
     }
 
     public void dispose() {
@@ -343,6 +426,7 @@ public class LevelModel {
         stars.clear();
         anchors.clear();
         enemies.clear();
+        portalpairs.clear();
         vectorWorld = new VectorWorld();
     }
 
@@ -358,6 +442,8 @@ public class LevelModel {
             case PLAYER: addPlayer((AstronautModel) obj); break;
             case ROPE: objects.add(0, obj); obj.activatePhysics(world); rope = (Rope) obj; break;
             case WORM: activate(obj); enemies.add((Worm) obj); break;
+            case PORTAL: activate(obj); break;
+            case URCHIN: activate(obj); enemies.add((Urchin) obj); break;
         }
     }
 
@@ -373,6 +459,8 @@ public class LevelModel {
             case ANCHOR: deactivate(obj); break;
             case STAR: deactivate(obj); break;
             case WORM: deactivate(obj); enemies.remove((Worm) obj); break;
+            case PORTAL: deactivate(obj); break;
+            case URCHIN: deactivate(obj); enemies.remove((Urchin) obj); break;
         }
     }
 
@@ -450,6 +538,11 @@ public class LevelModel {
 
         out.addChild("physicsSize", physicsSize);
         out.addChild("graphicSize", graphicsSize);
+        out.addChild("win", new JsonValue("0.5"));
+
+        //Add Galaxy
+
+        out.addChild("galaxy", new JsonValue(galaxy.fullName()));
 
         //Add background
         out.addChild("background", new JsonValue(JsonAssetManager.getInstance().getKey(background)));
@@ -471,12 +564,20 @@ public class LevelModel {
         JsonValue anchors = new JsonValue(JsonValue.ValueType.array);
         JsonValue stars = new JsonValue(JsonValue.ValueType.array);
         JsonValue worms = new JsonValue(JsonValue.ValueType.array);
+        JsonValue portalPairs = new JsonValue(JsonValue.ValueType.array);
+        JsonValue urchins = new JsonValue(JsonValue.ValueType.array);
 
         for (Obstacle obj : objects) {
             switch (obj.getType()) {
                 case STAR: stars.addChild(((Star) obj).toJson()); break;
                 case ANCHOR: anchors.addChild(((Anchor) obj).toJson()); break;
+                case WORM: worms.addChild(((Worm) obj).toJson()); break;
+                case URCHIN: urchins.addChild(((Urchin) obj).toJson()); break;
             }
+        }
+
+        for (PortalPair port : portalpairs) {
+            portalPairs.addChild(port.toJson());
         }
 
 
@@ -485,7 +586,14 @@ public class LevelModel {
 
         //Add enemies
 
-        out.addChild("worm", worms);
+        out.addChild("worms", worms);
+
+        //Add portals
+        out.addChild("portalpairs", portalPairs);
+
+        //Add urchins
+        out.addChild("urchin texture", new JsonValue(Urchin.getTexturePrefix()));
+        out.addChild("urchins", urchins);
 
 
         return out;
@@ -500,6 +608,7 @@ public class LevelModel {
      * @param canvas	the drawing context
      */
     public void draw(GameCanvas canvas) {
+
         canvas.clear();
 
         canvas.begin();
@@ -535,6 +644,53 @@ public class LevelModel {
             }
             for (Enemy e: enemies) {
              e.drawDebug(canvas);
+            }
+            canvas.endDebug();
+        }
+    }
+
+    /**
+     * Draw method for level editor that doesn't tile background
+     *
+     * @param canvas
+     * @param c
+     */
+    public void draw(GameCanvas canvas, char c) {
+//        canvas.clear();
+
+        canvas.begin();
+
+        float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
+        float y = (float) Math.floor((canvas.getCamera().position.y - canvas.getHeight()/2)/canvas.getHeight()) * canvas.getHeight();
+
+//        canvas.draw(background, Color.WHITE, x, y,canvas.getWidth(),canvas.getHeight());
+//        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y,canvas.getWidth(),canvas.getHeight());
+//        canvas.draw(background, Color.WHITE, x, y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
+//        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
+
+        for(Planet p : planets.getPlanets()){
+            p.draw(canvas);
+        }
+        for(Obstacle obj : objects) {
+            if (obj.getType() != ObstacleType.PLAYER) obj.draw(canvas);
+        }
+        if (player1.isActive()) { player2.draw(canvas); player1.draw(canvas); }
+        else { player1.draw(canvas); player2.draw(canvas); }
+        for (Enemy e: enemies) {
+            e.draw(canvas);
+        }
+        canvas.end();
+
+        if (debug) {
+            canvas.beginDebug();
+            for(Planet p : planets.getPlanets()){
+                p.drawDebug(canvas);
+            }
+            for(Obstacle obj : objects) {
+                obj.drawDebug(canvas);
+            }
+            for (Enemy e: enemies) {
+                e.drawDebug(canvas);
             }
             canvas.endDebug();
         }

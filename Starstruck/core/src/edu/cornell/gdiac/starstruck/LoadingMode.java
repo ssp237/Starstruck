@@ -50,7 +50,7 @@ import java.util.LinkedList;
  */
 public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     // Textures necessary to support the loading screen
-    private static final String BACKGROUND_FILE = "shared/loading.png";
+    private static final String BACKGROUND_FILE = "backgrounds/loading.png";
     private static final String SPIN_FILE = "shared/spin.png";
     private static final String TITLE_FILE = "shared/loading_title.png";
 
@@ -72,7 +72,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     /** originX of loading spin */
     private static int SPIN_X = STANDARD_WIDTH/2;
     /** originY of loading spin */
-    private static int SPIN_Y = 376;
+    private static int SPIN_Y = 393;
     /** originX of loading title */
     private static int TITLE_X = 672;
     /** originY of loading title */
@@ -173,7 +173,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
         // Load the next two images immediately.
         background = new Texture(BACKGROUND_FILE);
         spin = new Texture(SPIN_FILE);
-        title = new FilmStrip(new Texture(TITLE_FILE), 4, 1, 4, 20);
+        title = new FilmStrip(new Texture(TITLE_FILE), 4, 1, 4, 20, "title");
 
         // No progress so far.
         progress   = 0;
@@ -213,7 +213,7 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
 
         for(String s : manager.getAssetNames()) {
             if (manager.isLoaded(s) && !loaded.contains(s)){
-                System.out.println(s);
+                //System.out.println(s);
                 loaded.add(s);
             }
         }

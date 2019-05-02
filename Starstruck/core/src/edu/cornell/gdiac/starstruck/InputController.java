@@ -75,9 +75,6 @@ public class InputController {
     private boolean rightPrevious;
     private boolean leftPressed;
     private boolean leftPrevious;
-    /** Whether up and down arrow keys are being pressed & held */
-    private boolean downHeld;
-    private boolean upHeld;
     /** Whether down key was pressed */
     private boolean downPressed;
     private boolean downPrevious;
@@ -92,6 +89,22 @@ public class InputController {
     private boolean oPrevious;
     private boolean wPressed;
     private boolean wPrevious;
+    private boolean gPressed;
+    private boolean gPrevious;
+    private boolean uPressed;
+    private boolean uPrevious;
+    private boolean switchPressed;
+    private boolean switchPrevious;
+    private boolean onePressed;
+    private boolean onePrevious;
+    private boolean twoPressed;
+    private boolean twoPrevious;
+    private boolean threePressed;
+    private boolean threePrevious;
+    private boolean fourPressed;
+    private boolean fourPrevious;
+    private boolean fivePressed;
+    private boolean fivePrevious;
     /** Whether space was pressed */
     private boolean spacePressed;
     private boolean spacePrevious;
@@ -101,6 +114,13 @@ public class InputController {
     /** Whether backspace was pressed */
     private boolean backspacePressed;
     private boolean backspacePrevious;
+    /** Anchoring controls */
+    private boolean anchorPressed;
+    private boolean anchorPrevious;
+    private boolean anchor1Pressed;
+    private boolean anchor1Previous;
+    private boolean anchor2Pressed;
+    private boolean anchor2Previous;
 
     /** Mouse's current position*/
     private float x_pos;
@@ -124,7 +144,8 @@ public class InputController {
     private float momentum;
 
     /** An X-Box controller (if it is connected) */
-//    XBox360Controller xbox;
+    XboxController xbox;
+    XboxController xbox2;
 
     /**
      * Returns the amount of sideways movement.
@@ -149,7 +170,7 @@ public class InputController {
     }
 
     /**
-     * Returns the amount of sideways movement for player 2.
+     * Returns the amount of sideways movement for player 2/other player.
      *
      * -1 = left, 1 = right, 0 = still
      *
@@ -224,6 +245,13 @@ public class InputController {
     public boolean didShift() { return shiftPressed && !shiftPrevious; }
 
     public boolean didBackspace() { return backspacePressed && !backspacePrevious; }
+
+    public boolean didAnchor() { return anchorPressed && !anchorPrevious; }
+
+    public boolean didAnchor1() { return anchor1Pressed && !anchor1Previous; }
+
+    public boolean didAnchor2() { return anchor2Pressed && !anchor2Previous; }
+
 
     /**
      * Returns true if the tertiary action button was pressed.
@@ -300,19 +328,33 @@ public class InputController {
         return rightPressed;
     }
 
+    public boolean rightPrevious() { return rightPrevious; }
+
     public boolean didLeft() {
         return leftPressed;
     }
 
-    public boolean heldUp() { return upHeld; }
+    public boolean leftPrevious() { return leftPrevious; }
 
-    public boolean heldDown() { return downHeld; }
+    public boolean heldUp() { return primePressed; }
+
+    public boolean heldDown() { return downPressed; }
 
     public boolean didDown() { return downPressed && !downPrevious; }
 
-    public boolean didA() {
-        return aPressed && !aPrevious;
-    }
+    public boolean heldA() { return aPressed; }
+
+    public boolean aPrevious() { return aPrevious; }
+
+    public boolean heldD() { return dPressed; }
+
+    public boolean dPrevious() { return dPrevious; }
+
+    public boolean heldS() { return sPressed; }
+
+    public boolean sPrevious() { return sPrevious; }
+
+    public boolean didA() { return aPressed && !aPrevious; }
 
     public boolean didS() {
         return sPressed && !sPrevious;
@@ -325,9 +367,28 @@ public class InputController {
     public boolean didD() {
         return dPressed && !dPrevious;
     }
+
     public boolean didW() {
         return wPressed && !wPrevious;
     }
+
+    public boolean didG() { return gPressed && !gPrevious; }
+
+    public boolean didU() {
+        return uPressed && !uPrevious;
+    }
+
+    public boolean didSwitch() { return switchPressed && !switchPrevious; }
+
+    public boolean didOne() { return onePressed && !onePrevious; }
+
+    public boolean didTwo() { return twoPressed && !twoPrevious; }
+
+    public boolean didThree() { return threePressed && !threePrevious; }
+
+    public boolean didFour() { return fourPressed && !fourPrevious; }
+
+    public boolean didFive() { return fivePressed && !fivePrevious; }
 
     public float xPos() {return Gdx.input.getX();}
 
@@ -347,10 +408,10 @@ public class InputController {
      */
     public InputController() {
         // If we have a game-pad for id, then use it.
-//        xbox = new XBox360Controller(0);
+        xbox = new XboxController(0);
+        xbox2 = new XboxController(1);
         crosshair = new Vector2();
         crosscache = new Vector2();
-
     }
 
     /**
@@ -381,18 +442,35 @@ public class InputController {
         sPrevious = sPressed;
         oPrevious = oPressed;
         wPrevious = wPressed;
+        gPrevious = gPressed;
+        uPrevious = uPressed;
+        switchPrevious = switchPressed;
+        onePrevious = onePressed;
+        twoPrevious = twoPressed;
+        threePrevious = threePressed;
+        fourPrevious = fourPressed;
+        fivePrevious = fivePressed;
         spacePrevious = spacePressed;
         shiftPrevious = shiftPressed;
         tertiaryPrevious = tertiaryPressed;
         backspacePrevious = backspacePressed;
+        anchorPrevious = anchorPressed;
+        anchor1Previous = anchor1Pressed;
+        anchor2Previous = anchor2Pressed;
 
         // Check to see if a GamePad is connected
-//        if (xbox.isConnected()) {
-//            readGamepad(bounds, scale);
-//            readKeyboard(bounds, scale, true); // Read as a back-up
-//        } else {
+        if (xbox.isConnected() && xbox2.isConnected()) { // Both controllers connected
+            readGamepad(bounds, scale);
+            readGamepad2(bounds, scale);
+            readKeyboard(bounds, scale, true);
+        }
+        else if (xbox.isConnected()) { //One controller connected
+            readGamepad(bounds, scale);
+            readKeyboard(bounds, scale, true);
+        }
+        else { //No controllers connected
             readKeyboard(bounds, scale, false);
-//        }
+        }
     }
 
     /**
@@ -405,21 +483,26 @@ public class InputController {
      * @param bounds The input bounds for the crosshair.
      * @param scale  The drawing scale
      */
-//    private void readGamepad(Rectangle bounds, Vector2 scale) {
-//        resetPressed = xbox.getStart();
-//        exitPressed  = xbox.getBack();
-//        nextPressed  = xbox.getRB();
-//        prevPressed  = xbox.getLB();
-//        primePressed = xbox.getA();
-//        debugPressed  = xbox.getY();
-//
-//        // Increase animation frame, but only if trying to move
-//        horizontal = xbox.getLeftX();
-//        vertical   = xbox.getLeftY();
-//        secondPressed = xbox.getRightTrigger() > 0.6f;
-//
-//        // Move the crosshairs with the right stick.
-//        tertiaryPressed = xbox.getA();
+    private void readGamepad(Rectangle bounds, Vector2 scale) {
+        resetPressed = xbox.getStart(); //restart
+        exitPressed  = xbox.getBack(); //esc
+        leftPressed = xbox.getLeftX() < -0.6; //left
+        rightPressed = xbox.getLeftX() > 0.6; //right
+        primePressed = xbox.getA(); //jump
+//        anchorPressed = xbox.getX();
+//        anchor1Pressed = xbox.getX();
+        anchorPressed = xbox.getA();
+        anchor1Pressed = xbox.getA();
+        switchPressed = xbox.getX(); //switch
+        downPressed = xbox.getB(); //reel
+        debugPressed  = xbox.getR3(); //debug
+
+        // Increase animation frame, but only if trying to move
+        horizontal = xbox.getLeftX();
+        vertical   = xbox.getLeftY();
+
+        // Move the crosshairs with the right stick.
+        //tertiaryPressed = xbox.getA();
 //        crosscache.set(xbox.getLeftX(), xbox.getLeftY());
 //        if (crosscache.len2() > GP_THRESHOLD) {
 //            momentum += GP_ACCELERATE;
@@ -431,7 +514,34 @@ public class InputController {
 //            momentum = 0;
 //        }
 //        clampPosition(bounds);
-//    }
+    }
+
+    /**
+     * Reads input from a second X-Box controller connected to this computer.
+     *
+     * The method provides both the input bounds and the drawing scale.  It needs
+     * the drawing scale to convert screen coordinates to world coordinates.  The
+     * bounds are for the crosshair.  They cannot go outside of this zone.
+     *
+     * @param bounds The input bounds for the crosshair.
+     * @param scale  The drawing scale
+     */
+    private void readGamepad2(Rectangle bounds, Vector2 scale) {
+        resetPressed = xbox2.getStart(); //restart
+        exitPressed  = xbox2.getBack(); //esc
+        aPressed = xbox2.getLeftX() < -0.6; //left
+        dPressed = xbox2.getLeftX() > 0.6; //right
+        wPressed = xbox2.getA(); //jump
+//        anchor2Pressed = xbox2.getX();
+        anchor2Pressed = xbox2.getA();
+        sPressed = xbox2.getB(); //reel
+        debugPressed  = xbox2.getR3(); //debug
+        //no switch in 2 player mode
+
+        // Increase animation frame, but only if trying to move
+        horizontal2 = xbox2.getLeftX();
+        vertical2   = xbox2.getLeftY();
+    }
 
     /**
      * Reads input from the keyboard.
@@ -446,25 +556,33 @@ public class InputController {
         // Give priority to gamepad results
         debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.Y));
         primePressed = (secondary && primePressed) || (Gdx.input.isKeyPressed(Input.Keys.UP));
-        secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.X));
+        secondPressed = (secondary && secondPressed) || (Gdx.input.isKeyPressed(Input.Keys.L));
         prevPressed = (secondary && prevPressed) || (Gdx.input.isKeyPressed(Input.Keys.P));
         nextPressed = (secondary && nextPressed) || (Gdx.input.isKeyPressed(Input.Keys.N));
         exitPressed  = (secondary && exitPressed) || (Gdx.input.isKeyPressed(Input.Keys.ESCAPE));
         spacePressed = (secondary && spacePressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
-        shiftPressed = (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT));
+        shiftPressed = (secondary && shiftPressed) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT));
         backspacePressed = (secondary && backspacePressed) || (Gdx.input.isKeyPressed(Input.Keys.BACKSPACE));
-        // TODO no controller support
-        rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT);
-        leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT);
-        upHeld = Gdx.input.isKeyPressed (Input.Keys.UP);
-        downHeld = Gdx.input.isKeyPressed (Input.Keys.DOWN);
-        downPressed = Gdx.input.isKeyPressed (Input.Keys.DOWN);
-        aPressed = Gdx.input.isKeyPressed (Input.Keys.A);
-        sPressed = Gdx.input.isKeyPressed (Input.Keys.S);
-        dPressed = Gdx.input.isKeyPressed (Input.Keys.D);
-        oPressed = Gdx.input.isKeyPressed (Input.Keys.O);
-        wPressed = Gdx.input.isKeyPressed (Input.Keys.W);
-        resetPressed = Gdx.input.isKeyPressed(Input.Keys.R);
+        rightPressed = (secondary && rightPressed) || Gdx.input.isKeyPressed (Input.Keys.RIGHT);
+        leftPressed = (secondary && leftPressed) || Gdx.input.isKeyPressed (Input.Keys.LEFT);
+        downPressed = (secondary && downPressed) || Gdx.input.isKeyPressed (Input.Keys.DOWN);
+        aPressed = (secondary && aPressed) || Gdx.input.isKeyPressed (Input.Keys.A);
+        sPressed = (secondary && sPressed) || Gdx.input.isKeyPressed (Input.Keys.S);
+        dPressed = (secondary && dPressed) || Gdx.input.isKeyPressed (Input.Keys.D);
+        oPressed = (secondary && oPressed) || Gdx.input.isKeyPressed (Input.Keys.O);
+        wPressed = (secondary && wPressed) || Gdx.input.isKeyPressed (Input.Keys.W);
+        gPressed = (secondary && gPressed ) || Gdx.input.isKeyPressed (Input.Keys.G);
+        uPressed = (secondary && uPressed ) || Gdx.input.isKeyPressed (Input.Keys.U);
+        switchPressed = (secondary && switchPressed ) || Gdx.input.isKeyPressed(Input.Keys.S);
+        onePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_1); //Used for settings
+        twoPressed = Gdx.input.isKeyPressed(Input.Keys.NUM_2); //Used for settings
+        threePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_3); //Used for settings
+        fourPressed = (secondary && fourPressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_4);
+        fivePressed = (secondary && fivePressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_5);
+        resetPressed = (secondary && resetPressed) || Gdx.input.isKeyPressed(Input.Keys.R);
+        anchorPressed = (secondary && anchorPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
+        anchor1Pressed = (secondary && anchor1Pressed) || (Gdx.input.isKeyPressed(Input.Keys.L));
+        anchor2Pressed = (secondary && anchor2Pressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
 
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);
@@ -483,26 +601,24 @@ public class InputController {
             vertical -= 1.0f;
         }
 
-        vertical2 = (secondary ? vertical : 0.0f);
+        vertical2 = (secondary ? vertical2 : 0.0f);
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             vertical2 += 1.0f;
         }
-
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             vertical2 -= 1.0f;
         }
 
-        horizontal2 = (secondary ? horizontal : 0.0f);
+        horizontal2 = (secondary ? horizontal2 : 0.0f);
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             horizontal2 -= 1.0f;
         }
-
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             horizontal2 += 1.0f;
         }
 
-        // Rotate/turn, no controller support
-        turn = 0f;
+        // Rotate/turn
+        turn = (secondary ? turn : 0f);
         if (Gdx.input.isKeyPressed(Input.Keys.E)) {
             turn = turn + 1f;//(float) (Math.PI/180);
         }

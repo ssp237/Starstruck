@@ -14,5 +14,9 @@ public enum ObstacleType {
     PLAYER,
     ROPE,
     ANCHOR,
-    STAR
+    STAR,
+    PORTAL,
+    GOAL,
+    LEVEL,
+    URCHIN
 }

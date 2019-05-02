@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.starstruck.Galaxy;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.starstruck.Models.Bug;
 import edu.cornell.gdiac.util.JsonAssetManager;
@@ -36,6 +37,9 @@ public class Planet extends WheelObstacle {
     private static float mass2 = 800;
     private static float mass3 = 900;
     private static float mass4 = 1000;
+
+    /** Current galaxy for drawing */
+    private static Galaxy galaxy = Galaxy.WHIRLPOOL;
 
     private float grscale;
 
@@ -111,8 +115,14 @@ public class Planet extends WheelObstacle {
             buggy = bug;
         }
 
-        texture = JsonAssetManager.getInstance().getEntry(("wp p" + i), TextureRegion.class);
-        ringTexture = JsonAssetManager.getInstance().getEntry(("wp g" + i), TextureRegion.class);
+        String gal = galaxy.getChars();
+
+        //System.out.println(gal + " p" + i);
+
+        texture = JsonAssetManager.getInstance().getEntry(( gal + " p" + i), TextureRegion.class);
+        ringTexture = JsonAssetManager.getInstance().getEntry((gal + " g" + i), TextureRegion.class);
+
+        //System.out.println(texture);
 
         float radius = texture.getRegionWidth() / (scale.x * 2);
         setRadius(radius);
@@ -177,6 +187,22 @@ public class Planet extends WheelObstacle {
     }
 
     /**
+     * Set the galaxy to galaxy.
+     * @param galaxy The galaxy to set as the current galaxy.
+     */
+    public static void setGalaxy(Galaxy galaxy){
+        Planet.galaxy = galaxy;
+    }
+
+    /**
+     *  Set the current galaxy to the galaxy represented by string S.
+     * @param s A string representing the galaxy t set as the new current galaxy.
+     */
+    public static void setGalaxy(String s) {
+        setGalaxy(Galaxy.fromString(s));
+    }
+
+    /**
      * Return a JsonValue representing the preset mass values for planets such that this JsonValue could
      * be passed into setPresets() to return the same preset mass values.
      *
@@ -231,10 +257,6 @@ public class Planet extends WheelObstacle {
      */
     public void draw(GameCanvas canvas) {
 
-        //Draw planet
-        canvas.draw(getTexture(), Color.WHITE, origin.x, origin.y,getX() * drawScale.x - texture.getRegionWidth()/(2/scaleDraw),
-                getY() * drawScale.x - texture.getRegionHeight()/(2/scaleDraw), getAngle(), scaleDraw,scaleDraw);
-
         float rScale = grscale * scaleDraw * ((getRadius() + grange) / getRadius());
 
         Color color = new Color(1,1,1,0.75f);
@@ -242,6 +264,11 @@ public class Planet extends WheelObstacle {
         //Draw ring
         canvas.draw(ringTexture, color, origin.x, origin.y,getX() * drawScale.x - ringTexture.getRegionWidth()/(2/rScale),
                 getY() * drawScale.x - ringTexture.getRegionHeight()/(2/rScale), getAngle(), rScale, rScale);
+
+        //System.out.println(JsonAssetManager.getInstance().getKey(getTexture()));
+        //Draw planet
+        canvas.draw(getTexture(), Color.WHITE, origin.x, origin.y,getX() * drawScale.x - texture.getRegionWidth()/(2/scaleDraw),
+                getY() * drawScale.x - texture.getRegionHeight()/(2/scaleDraw), getAngle(), scaleDraw,scaleDraw);
 
     }
 

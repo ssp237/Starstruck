@@ -85,7 +85,7 @@ public class WheelObstacle extends SimpleObstacle {
         super(x,y);
         shape = new CircleShape();
         shape.setRadius(radius);
-        center.set(x, y-radius);
+        center.set(x, y);
     }
 
     /**
@@ -133,6 +133,6 @@ public class WheelObstacle extends SimpleObstacle {
 
     public boolean containsPoint(Vector2 point) {
         //System.out.println("dist is " + Obstacle.dist(point, center) + "   and radius is " + getRadius());
-        return Obstacle.dist(point, getPosition()) < getRadius();
+        return dist(point, getPosition()) < getRadius();
     }
 }

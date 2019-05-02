@@ -23,6 +23,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 
 import edu.cornell.gdiac.starstruck.*;  // For GameCanvas
 
+import java.util.ArrayList;
+
 /**
  * Composite model class to support collisions.
  *
@@ -42,9 +44,9 @@ public abstract class ComplexObstacle extends Obstacle {
     /** A root body for this box 2d. */
     protected Body body;
     /** A complex physics object has multiple bodies */
-    protected Array<Obstacle> bodies;
+    protected ArrayList<Obstacle> bodies;
     /** Potential joints for connecting the multiple bodies */
-    protected Array<Joint> joints;
+    protected ArrayList<Joint> joints;
 
     /// BodyDef Methods
     /**
@@ -912,7 +914,7 @@ public abstract class ComplexObstacle extends Obstacle {
      * @return the Box2D body for this object.
      */
     public Body getBody() {
-        return (bodies.size > 0 ? bodies.get(0).getBody() : null);
+        return (bodies.size() > 0 ? bodies.get(0).getBody() : null);
     }
 
     /**
@@ -956,8 +958,8 @@ public abstract class ComplexObstacle extends Obstacle {
      */
     protected ComplexObstacle(float x, float y) {
         super(x,y);
-        bodies = new Array<Obstacle>();
-        joints = new Array<Joint>();
+        bodies = new ArrayList<Obstacle>();
+        joints = new ArrayList<Joint>();
     }
 
     /**

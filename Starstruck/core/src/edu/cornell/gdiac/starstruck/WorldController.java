@@ -25,7 +25,6 @@ import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
-import com.badlogic.gdx.graphics.g2d.freetype.*;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
 import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
@@ -121,7 +120,7 @@ public abstract class WorldController implements Screen {
         planet3 = JsonAssetManager.getInstance().getEntry("whirlpool planet 3", TextureRegion.class);
         planet4 = JsonAssetManager.getInstance().getEntry("whirlpool planet 4", TextureRegion.class);
 
-        displayFont = JsonAssetManager.getInstance().getEntry("retro game", BitmapFont.class);
+
 
         worldAssetState = AssetState.COMPLETE;
     }
@@ -151,52 +150,6 @@ public abstract class WorldController implements Screen {
     }
 
     /**
-     * Returns a newly loaded filmstrip for the given file.
-     *
-     * This helper methods is used to set texture settings (such as scaling, and
-     * the number of animation frames) after loading.
-     *
-     * @param manager 	Reference to global asset manager.
-     * @param file		The texture (region) file
-     * @param rows 		The number of rows in the filmstrip
-     * @param cols 		The number of columns in the filmstrip
-     * @param size 		The number of frames in the filmstrip
-     *
-     * @return a newly loaded texture region for the given file.
-     */
-    protected FilmStrip createFilmStrip(AssetManager manager, String file, int rows, int cols, int size) {
-        if (manager.isLoaded(file)) {
-            FilmStrip strip = new FilmStrip(manager.get(file, Texture.class),rows,cols,size);
-            strip.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-            return strip;
-        }
-        return null;
-    }
-
-    /**
-     * Returns a newly loaded filmstrip for the given file.
-     *
-     * This helper methods is used to set texture settings (such as scaling, and
-     * the number of animation frames) after loading.
-     *
-     * @param file		The texture (region) file
-     * @param rows 		The number of rows in the filmstrip
-     * @param cols 		The number of columns in the filmstrip
-     * @param size 		The number of frames in the filmstrip
-     *
-     * @return a newly loaded texture region for the given file.
-     */
-    protected FilmStrip createFilmStrip(String file, int rows, int cols, int size) {
-        try {
-            FilmStrip strip = new FilmStrip(JsonAssetManager.getInstance().getEntry(file, Texture.class),rows,cols,size);
-            strip.getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-            return strip;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
      * Unloads the assets for this game.
      *
      * This method erases the static variables.  It also deletes the associated textures
@@ -215,11 +168,11 @@ public abstract class WorldController implements Screen {
     /** Exit code for quitting the game */
     public static final int EXIT_QUIT = 0;
     /** Exit code for advancing to next level */
-    public static final int EXIT_NEXT = 3;
+    public static final int EXIT_SELECT = 1;
     /** Exit code for jumping back to previous level */
-    public static final int TO_EDIT = 2;
+    public static final int EXIT_EDIT = 2;
     /** Exit code for quitting to the menu */
-    public static final int EXIT_MENU = 0;
+    public static final int EXIT_PLAY = 3;
     /** How many frames after winning/losing do we continue? */
     public static final int EXIT_COUNT = 120;
 
@@ -522,10 +475,10 @@ public abstract class WorldController implements Screen {
             listener.exitScreen(this, EXIT_QUIT);
             return false;
         } else if (input.didAdvance()) {
-            listener.exitScreen(this, EXIT_NEXT);
+            listener.exitScreen(this, EXIT_SELECT);
             return false;
         } else if (input.didRetreat()) {
-            listener.exitScreen(this, TO_EDIT);
+            listener.exitScreen(this, EXIT_EDIT);
             return false;
         } else if (countdown > 0) {
             countdown--;
@@ -533,7 +486,7 @@ public abstract class WorldController implements Screen {
             if (failed) {
                 reset();
             } else if (complete) {
-                listener.exitScreen(this, EXIT_NEXT);
+                listener.exitScreen(this, EXIT_SELECT);
                 return false;
             }
         }
