@@ -34,6 +34,8 @@ public class Bug extends Enemy {
 
     Vector2 contactPointEN = new Vector2(x, y);
 
+    private static int counter = 0;
+
 
     /**
      * Creates a new dude avatar at the given position.
@@ -53,6 +55,8 @@ public class Bug extends Enemy {
         setTexture(texture);
         setDrawScale(scale);
         this.setBodyType(BodyDef.BodyType.DynamicBody);
+        counter++;
+        setName("bug " + counter);
     }
 
     /**
