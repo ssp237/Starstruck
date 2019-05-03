@@ -398,7 +398,9 @@ public class InputController {
      * Is shift being held down?
      * @return Is shift being held down?
      */
-    public boolean shiftHeld() {return shiftPressed && shiftPrevious;}
+    public boolean shiftHeld() {
+        return shiftPressed; //&& shiftPrevious;
+    }
 
     /**
      * Creates a new input controller
