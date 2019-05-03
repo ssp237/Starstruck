@@ -121,6 +121,8 @@ public class InputController {
     private boolean anchor1Previous;
     private boolean anchor2Pressed;
     private boolean anchor2Previous;
+    private boolean lPressed;
+    private boolean lPrevious;
 
     /** Mouse's current position*/
     private float x_pos;
@@ -251,6 +253,8 @@ public class InputController {
     public boolean didAnchor1() { return anchor1Pressed && !anchor1Previous; }
 
     public boolean didAnchor2() { return anchor2Pressed && !anchor2Previous; }
+
+    public boolean didL() { return lPressed && !lPrevious; }
 
 
     /**
@@ -459,6 +463,7 @@ public class InputController {
         anchorPrevious = anchorPressed;
         anchor1Previous = anchor1Pressed;
         anchor2Previous = anchor2Pressed;
+        lPrevious = lPressed;
 
         // Check to see if a GamePad is connected
         if (xbox.isConnected() && xbox2.isConnected()) { // Both controllers connected
@@ -583,8 +588,9 @@ public class InputController {
         fivePressed = (secondary && fivePressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_5);
         resetPressed = (secondary && resetPressed) || Gdx.input.isKeyPressed(Input.Keys.R);
         anchorPressed = (secondary && anchorPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
-        anchor1Pressed = (secondary && anchor1Pressed) || (Gdx.input.isKeyPressed(Input.Keys.L));
-        anchor2Pressed = (secondary && anchor2Pressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
+        anchor1Pressed = (secondary && anchor1Pressed) || (Gdx.input.isKeyPressed(Input.Keys.SLASH));
+        anchor2Pressed = (secondary && anchor2Pressed) || (Gdx.input.isKeyPressed(Input.Keys.E));
+        lPressed = (secondary && lPressed) || (Gdx.input.isKeyPressed(Input.Keys.L));
 
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);

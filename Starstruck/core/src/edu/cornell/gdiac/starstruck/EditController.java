@@ -576,7 +576,7 @@ public class EditController extends WorldController implements ContactListener {
                 Gdx.input.getTextInput(load, "Load...", "level.json", "");
             } else if (input.shiftHeld() && input.didG()) {
                 Gdx.input.getTextInput(galListener, "Switch to what galaxy?", "whirlpool", "");
-            } else if (input.shiftHeld() && input.didAnchor1()) {
+            } else if (input.shiftHeld() && input.didL()) {
                 Gdx.input.getTextInput(boundListener, "Size of level", screenX + ", " + screenY, "");
             } else if (input.shiftHeld() && input.didW()) {
                 Gdx.input.getTextInput(winListener, "Win condition", winCond + "", "");
