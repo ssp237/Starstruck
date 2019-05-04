@@ -39,6 +39,7 @@ public class EditController extends WorldController implements ContactListener {
     private float winCond;
 
     private int portalPair = 1;
+    private int task = 1;
 
     /** Current obstacle */
     private Obstacle current;
@@ -259,6 +260,7 @@ public class EditController extends WorldController implements ContactListener {
         camOffsetY = 0;
 
         portalPair = 1;
+        task = 1;
 
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         camera.viewportWidth = canvas.getWidth();
@@ -429,6 +431,20 @@ public class EditController extends WorldController implements ContactListener {
     }
 
     /**
+     * Find the TutorialPoint of the point. Returns null if can't be found, means something's wrong
+     * @param tutorial
+     * @return
+     */
+    private TutorialPoint findTutPoint(Star tutorial) {
+        for(TutorialPoint p : level.tutpoints) {
+            if (tutorial.getTutName().equals(p.getName()))
+                return p;
+        }
+        return null;
+    }
+
+
+    /**
      * Helper function to process clicking
      */
     private void updateClick() {
@@ -554,6 +570,13 @@ public class EditController extends WorldController implements ContactListener {
                     level.portalpairs.remove(port);
                     current = null;
                 }
+                else if (current.getType() == ObstacleType.TUTORIAL) {
+                    TutorialPoint tutorial = findTutPoint((Star)current);
+                    level.remove(tutorial.getPinkPoint());
+                    level.remove(tutorial.getBluePoint());
+                    level.tutpoints.remove(tutorial);
+                    current = null;
+                }
                 else {
                     level.remove(current);
                     current = null;
@@ -614,11 +637,23 @@ public class EditController extends WorldController implements ContactListener {
                 level.add(portal.getPortal2());
                 level.portalpairs.add(portal);
                 current = portal.getPortal1();
+            } else if (input.didT()) {
+                Vector2 pos = input.getCrossHair();
+                float x = pos.x + camScaleX + w;
+                float y = pos.y + camScaleY + h;
+                TutorialPoint tutorial = new TutorialPoint(x, y, x+2, y,
+                        JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class),
+                        JsonAssetManager.getInstance().getEntry("static portal", FilmStrip.class), scale, "task"+task);
+                task++;
+                level.add(tutorial.getPinkPoint());
+                level.add(tutorial.getBluePoint());
+                level.tutpoints.add(tutorial);
+                current = tutorial.getPinkPoint();
             } else if (input.didU()) {
-            Vector2 pos = input.getCrossHair();
-            current = new Urchin(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, 1, CapsuleObstacle.Orientation.VERTICAL);
-            level.add(current);
-        }
+                Vector2 pos = input.getCrossHair();
+                current = new Urchin(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, 1, CapsuleObstacle.Orientation.VERTICAL);
+                level.add(current);
+            }
             if (input.mouseDragged()) {
                 updateCamera();
             }

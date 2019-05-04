@@ -342,6 +342,8 @@ public class GameController extends WorldController implements ContactListener {
     private Vector2 reelCache;
     /** Obstacle cache */
     private Obstacle obstacleCache;
+    /** Tutorial controller */
+    private TutorialController tutorial;
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -360,6 +362,7 @@ public class GameController extends WorldController implements ContactListener {
      * @return Return a reference to the secondary avatar.
      */
     public AstronautModel getAvatar2() { return avatar2; }
+
     /**
      * Creates and initialize a new instance of the platformer game
      *
@@ -377,6 +380,7 @@ public class GameController extends WorldController implements ContactListener {
         this.loadFile = loadFile;
         loader = new SaveListener();
     }
+
     /**
      * Creates and initialize a new instance of the platformer game
      *

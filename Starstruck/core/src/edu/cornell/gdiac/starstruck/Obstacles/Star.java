@@ -14,12 +14,14 @@
  */
 package edu.cornell.gdiac.starstruck.Obstacles;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.*;
 import com.badlogic.gdx.math.collision.*;
 import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
 public class Star extends BoxObstacle {
@@ -44,9 +46,12 @@ public class Star extends BoxObstacle {
     protected boolean remove = false;
     /** Location of this star */
     private String location;
-
-    /** Ray cache for calculating intersection */
-    private Ray rayCache;
+    /** Type */
+    private ObstacleType starType;
+    /** Is this the blue or pink tutorial point? */
+    private String color;
+    /** Name of this tutorial */
+    private String tutName;
 
     /**
      * Creates a new spinner at the origin.
@@ -77,6 +82,7 @@ public class Star extends BoxObstacle {
     public Star(float x, float y, float width, float height) {
         super(x,y,width,height);
         setName("star");
+        starType = ObstacleType.STAR;
 //        setName(SPINNER_NAME);
 //
 //        // Create the barrier
@@ -126,6 +132,14 @@ public class Star extends BoxObstacle {
     }
 
     public String getLoc() { return location; }
+
+    public String getColor() { return color; }
+
+    public void setColor(String value) { color = value; }
+
+    public void setTutName(String value) { tutName = value; }
+
+    public String getTutName() { return tutName; }
 
     /**
      * Return a new star with parameters specified by the JSON
@@ -200,6 +214,9 @@ public class Star extends BoxObstacle {
     public String toString() {
         String out = "Star with {";
 
+        if (getType() == ObstacleType.TUTORIAL)
+            out = "Tutorial star with {";
+
         out += "pos: " + getPosition();
         out += "}";
 
@@ -266,9 +283,29 @@ public class Star extends BoxObstacle {
         return false;
     }
 
-    public ObstacleType getType() { return ObstacleType.STAR;}
+    public ObstacleType getType() { return starType;}
+
+    public void setType(ObstacleType type) { starType = type; }
 
     public boolean containsPoint(Vector2 point) {
         return super.containsPoint(point);
+    }
+
+    /**
+     * Draws the physics object.
+     *
+     * @param canvas Drawing context
+     */
+    public void draw(GameCanvas canvas) {
+        if (getType() == ObstacleType.TUTORIAL) {
+            if (getColor().equals("pink"))
+                canvas.draw(texture, Color.PINK,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+            else if (color.equals("blue"))
+                canvas.draw(texture, Color.TEAL,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+            else System.out.println("Didn't draw tutorial point");
+        }
+        else {
+            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+        }
     }
 }

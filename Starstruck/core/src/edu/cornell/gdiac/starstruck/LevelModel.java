@@ -81,6 +81,8 @@ public class LevelModel {
     protected ArrayList<Star> stars = new ArrayList<Star>();
     /** List of anchors in the world */
     protected ArrayList<Anchor> anchors = new ArrayList<Anchor>();
+    /** List of tutorial points in this level */
+    protected ArrayList<TutorialPoint> tutpoints = new ArrayList<TutorialPoint>();
     /** Rope texture for extension method */
     //protected TextureRegion ropeTexture;
     /** List of enemies in the world */
@@ -348,6 +350,17 @@ public class LevelModel {
         int numStars = stars.size();
         winCount = (int)(numStars * winPercent);
 
+        //add tutorial points
+        i = 0;
+        JsonValue tutorialVals = levelFormat.get("tutorialpoints").child();
+        while (tutorialVals != null) {
+            TutorialPoint tutpoint = TutorialPoint.fromJSON(tutorialVals, scale);
+            activate(tutpoint.getPinkPoint());
+            activate(tutpoint.getBluePoint());
+            tutpoints.add(tutpoint);
+            tutorialVals = tutorialVals.next;
+        }
+
 
         //add anchors
         i = 0;
@@ -417,6 +430,7 @@ public class LevelModel {
         anchors.clear();
         enemies.clear();
         portalpairs.clear();
+        tutpoints.clear();
         vectorWorld = new VectorWorld();
     }
 
@@ -434,6 +448,7 @@ public class LevelModel {
             case WORM: activate(obj); enemies.add((Worm) obj); break;
             case PORTAL: activate(obj); break;
             case URCHIN: activate(obj); enemies.add((Urchin) obj); break;
+            case TUTORIAL: activate(obj); break;
         }
     }
 
@@ -451,6 +466,7 @@ public class LevelModel {
             case WORM: deactivate(obj); enemies.remove((Worm) obj); break;
             case PORTAL: deactivate(obj); break;
             case URCHIN: deactivate(obj); enemies.remove((Urchin) obj); break;
+            case TUTORIAL: deactivate(obj); break;
         }
     }
 
@@ -560,6 +576,7 @@ public class LevelModel {
         JsonValue stars = new JsonValue(JsonValue.ValueType.array);
         JsonValue worms = new JsonValue(JsonValue.ValueType.array);
         JsonValue portalPairs = new JsonValue(JsonValue.ValueType.array);
+        JsonValue tutorialPoints = new JsonValue(JsonValue.ValueType.array);
         JsonValue urchins = new JsonValue(JsonValue.ValueType.array);
 
         for (Obstacle obj : objects) {
@@ -575,6 +592,9 @@ public class LevelModel {
             portalPairs.addChild(port.toJson());
         }
 
+        for (TutorialPoint tutorial : tutpoints) {
+            tutorialPoints.addChild(tutorial.toJson());
+        }
 
         out.addChild("anchors", anchors);
         out.addChild("stars", stars);
@@ -585,6 +605,9 @@ public class LevelModel {
 
         //Add portals
         out.addChild("portalpairs", portalPairs);
+
+        //Add tutorial points
+        out.addChild("tutorialpoints", tutorialPoints);
 
         //Add urchins
         out.addChild("urchin texture", new JsonValue(Urchin.getTexturePrefix()));

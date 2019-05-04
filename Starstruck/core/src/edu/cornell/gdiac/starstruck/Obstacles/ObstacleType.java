@@ -18,5 +18,6 @@ public enum ObstacleType {
     PORTAL,
     GOAL,
     LEVEL,
-    URCHIN
+    URCHIN,
+    TUTORIAL
 }
