@@ -788,6 +788,7 @@ public class AstronautModel extends CapsuleObstacle {
                     }
                     //body.applyLinearImpulse(gravity, getPosition(), true);
                     body.applyForce(forceCache.scl(force), getPosition(), true);
+                    //System.out.println(forceCache);
                 }
             }
             body.applyLinearImpulse(gravity, getPosition(), true);

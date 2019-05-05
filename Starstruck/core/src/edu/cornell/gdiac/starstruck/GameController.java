@@ -852,8 +852,8 @@ public class GameController extends WorldController implements ContactListener {
             if (input.didRight() || input.didLeft()) {
                 avatar.setPlanetMove(contactDir.scl(move));
                 avatar.setRight(input.didRight());
-
-                if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
+                if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious()
+                        || (input.getControlType() == ControllerType.CTRLONE && (input.xboxUp() || input.xboxDown())))
                     avatar.moving = true;
             }
 
@@ -871,9 +871,15 @@ public class GameController extends WorldController implements ContactListener {
         else if (twoplayer) {
             if (avatar == avatar2) {
                 float move = input.getHorizontal2();
-                if (input.heldD() || input.heldA()) {
+                if (input.heldD() || input.heldA()
+                        || (input.getControlType() == ControllerType.CTRLTWO && (input.xboxUp2() || input.xboxDown2()))) {
                     avatar.setPlanetMove(contactDir.scl(move));
-                    avatar.setRight(input.heldD());
+                    //avatar.setRight(input.heldD());
+                    if (input.getControlType() == ControllerType.CTRLTWO) {
+                        Vector2 dir = new Vector2(1,0).rotateRad(input.getAngle2());
+                        avatar.setPlanetMove(dir);
+                        avatar.moving = true;
+                    }
                     if (input.heldD() && !input.aPrevious() || input.heldA() && !input.dPrevious())
                         avatar.moving = true;
                 }
@@ -890,9 +896,16 @@ public class GameController extends WorldController implements ContactListener {
 
             if (avatar == this.avatar) {
                 float move = input.getHorizontal();
-                if (input.didRight() || input.didLeft()) {
+                if (input.didRight() || input.didLeft()
+                        || (input.getControlType() == ControllerType.CTRLTWO && (input.xboxUp() || input.xboxDown()))) {
                     avatar.setPlanetMove(contactDir.scl(move));
-                    avatar.setRight(input.didRight());
+                    //avatar.setRight(input.didRight());
+                    if (input.getControlType() == ControllerType.CTRLTWO) {
+                        Vector2 dir = new Vector2(1,0).rotateRad(input.getAngle());
+                        //print(dir.scl(10));
+                        avatar.setPlanetMove(dir);
+                        avatar.moving = true;
+                    }
                     if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
                         avatar.moving = true;
                 }
@@ -1263,13 +1276,9 @@ public class GameController extends WorldController implements ContactListener {
             if (!stars.remove(starCache)) print("star collection error in game controller");
             if (!objects.remove(starCache)) print("star collection error in game controller");
             starCount++;
-            if (starCount >= winCount && !openGoal && tutorialpoints.isEmpty()) {
-                openGoal = true;
-                goal.getPortal1().setOpen(true);
-            }
             collection = false;
         }
-        if (stars.isEmpty() && tutorialpoints.isEmpty()) {
+        if (starCount >= winCount && !openGoal && tutorialpoints.isEmpty()) {
             openGoal = true;
             goal.getPortal1().setOpen(true);
         }
