@@ -1263,13 +1263,16 @@ public class GameController extends WorldController implements ContactListener {
             if (!stars.remove(starCache)) print("star collection error in game controller");
             if (!objects.remove(starCache)) print("star collection error in game controller");
             starCount++;
-            if (starCount >= winCount && !openGoal) {
+            if (starCount >= winCount && !openGoal && tutorialpoints.isEmpty()) {
                 openGoal = true;
                 goal.getPortal1().setOpen(true);
             }
             collection = false;
         }
-
+        if (stars.isEmpty() && tutorialpoints.isEmpty()) {
+            openGoal = true;
+            goal.getPortal1().setOpen(true);
+        }
 
         //TODO win condition
 //        if (stars.isEmpty()) {
@@ -1284,7 +1287,7 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
         if (portalpairCache != null && portalpairCache.isActive()) {
-            if (portalpairCache.isGoal() && !isFailure() && tutorialpoints.isEmpty()) { //By this point we have already confirmed that goal is open
+            if (portalpairCache.isGoal() && !isFailure()) { //By this point we have already confirmed that goal is open
                 setComplete(true);
             }
             if (avatarCache == avatar) {
