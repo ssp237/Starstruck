@@ -154,6 +154,23 @@ public class Planet extends WheelObstacle {
      */
     public void setBug (Bug bug) {
         buggy = bug;
+        bug_bool = true;
+    }
+
+    /**
+     * Get da bug (null if no bug)
+     * @return da bug
+     */
+    public Bug getBug(){
+        return buggy;
+    }
+
+    /**
+     * Remove da bug
+     */
+    public void removeBug() {
+        buggy = null;
+        bug_bool = false;
     }
 
     /**

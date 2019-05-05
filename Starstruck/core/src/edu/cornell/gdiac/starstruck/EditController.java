@@ -329,12 +329,14 @@ public class EditController extends WorldController implements ContactListener {
      */
     private void updatePlanet() {
         InputController input = InputController.getInstance();
+        OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
 
         if (input.didPrimary()){
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
-            current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, p.getInd() + 1, world, scale, null);
+
+            current = new Planet(pos.x, pos.y, p.getInd() + 1, world, scale, null);
 
             level.add(current);
         } else if (input.didDown()) {
@@ -345,7 +347,18 @@ public class EditController extends WorldController implements ContactListener {
             current = new Planet(pos.x, pos.y, p.getInd() - 1, world, scale, null);
 
             level.add(current);
-        }
+        } else if (input.didB()){
+            float camScaleX = camOffsetX / scale.x;
+            float camScaleY = camOffsetY / scale.y;
+            float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
+            float h = (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y;
+            Vector2 pos = input.getCrossHair();
+            Bug bugger = new Bug(pos.x + camScaleX + w, pos.y + camScaleY + h,
+                JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class), scale);
+            ((Planet) current).setBug(bugger);
+            bugger.setPlanet((Planet) current);
+            level.add(bugger);
+    }
     }
 
     /**
@@ -511,6 +524,7 @@ public class EditController extends WorldController implements ContactListener {
             levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + load.file));
             level.populate(levelFormat);
             loadFile = load.file;
+            galaxy = level.getGalaxy();
             load.file = null;
 
             return true;
@@ -525,7 +539,7 @@ public class EditController extends WorldController implements ContactListener {
         OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
         //System.out.println(wormListener.worm);
         //System.out.println(current);
-        int i = 0;
+        //int i = 0;
 //        for (Obstacle obj : level.getAllObjects()) {
 //            i += obj.getType() == ObstacleType.ANCHOR ? 1 : 0;
 //        }
@@ -621,16 +635,11 @@ public class EditController extends WorldController implements ContactListener {
                 current = new Star(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry("star", TextureRegion.class), scale);
                 level.add(current);
-            } else if (input.didW()){
+            } else if (input.didW()) {
                 Vector2 pos = input.getCrossHair();
                 current = new Worm(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[0], FilmStrip.class), scale, 0);
                 level.add(current);
-//            } else if (input.didB()){
-//                Vector2 pos = input.getCrossHair();
-//                current = new Bug(pos.x + camScaleX + w, pos.y + camScaleY + h,
-//                        JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[0], FilmStrip.class), scale, 0);
-//                level.add(current);
             } else if (input.didD()) {
                 Vector2 pos = input.getCrossHair();
                 float x = pos.x + camScaleX + w;

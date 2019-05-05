@@ -75,7 +75,6 @@ public class Bug extends Enemy {
 
             //.sub(0, (texture.getRegionHeight()/ drawScale.y)/2)
 
-
             setFixedRotation(true);
             //enemy.setRotation(1);
             contactPointEN.set(getPosition().cpy());
@@ -95,13 +94,6 @@ public class Bug extends Enemy {
             //applyForce();
 //            this.x = this.getPosition().x;
 //            this.y = this.getPosition().y;
-
-
-
-
-
-
-
 
         super.update(dt);
     }
