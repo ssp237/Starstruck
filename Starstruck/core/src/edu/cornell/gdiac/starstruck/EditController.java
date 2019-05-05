@@ -15,10 +15,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonValue.PrettyPrintSettings;
 import com.badlogic.gdx.utils.JsonWriter;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
-import edu.cornell.gdiac.starstruck.Models.AstronautModel;
-import edu.cornell.gdiac.starstruck.Models.Enemy;
-import edu.cornell.gdiac.starstruck.Models.Urchin;
-import edu.cornell.gdiac.starstruck.Models.Worm;
+import edu.cornell.gdiac.starstruck.Models.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
@@ -626,6 +623,11 @@ public class EditController extends WorldController implements ContactListener {
                 current = new Worm(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[0], FilmStrip.class), scale, 0);
                 level.add(current);
+//            } else if (input.didB()){
+//                Vector2 pos = input.getCrossHair();
+//                current = new Bug(pos.x + camScaleX + w, pos.y + camScaleY + h,
+//                        JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[0], FilmStrip.class), scale, 0);
+//                level.add(current);
             } else if (input.didD()) {
                 Vector2 pos = input.getCrossHair();
                 float x = pos.x + camScaleX + w;
