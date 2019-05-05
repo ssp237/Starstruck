@@ -343,7 +343,6 @@ public class LevelModel {
             planets.addPlanet(planet, world, vectorWorld, buggy);
 
             planet = planet.next();
-
         }
 
         //add stars
@@ -394,7 +393,6 @@ public class LevelModel {
             enemies.add(wormie);
             wormVals = wormVals.next;
         }
-
 
         //add urchins
         String urcTexture = levelFormat.get("urchin texture").asString();

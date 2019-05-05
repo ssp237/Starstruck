@@ -108,8 +108,6 @@ public class GameController extends WorldController implements ContactListener {
     /** Texture atlas to support a progress bar */
     private Texture statusBar;
 
-
-
     /** Left cap to the status background (grey region) */
     private TextureRegion statusBkgLeft;
     /** Middle portion of the status background (grey region) */
@@ -122,6 +120,8 @@ public class GameController extends WorldController implements ContactListener {
     private TextureRegion statusFrgMiddle;
     /** Right cap to the status forground (colored region) */
     private TextureRegion statusFrgRight;
+    /** All stars collected glow for status bar */
+    private Texture statusGlow;
 
     /** The width of the progress bar */
     private int widthBar = 448;
@@ -140,20 +140,25 @@ public class GameController extends WorldController implements ContactListener {
         float centerY = camera.position.y - ((float) canvas.getHeight())/2 + 3;
         float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 10;
 
-        //print(centerX*scale.x + (widthBar /2) - PROGRESS_CAP_RIGHT*scale.x);
-        canvas.draw(statusBkgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
-        canvas.draw(statusBkgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + (widthBar /2) - PROGRESS_CAP_RIGHT*0.56f*scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
-        canvas.draw(statusBkgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        if (starCount != totalStars) {
+            canvas.draw(statusBkgLeft, Color.WHITE, centerX - widthBar / (2 * scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+            canvas.draw(statusBkgRight, Color.WHITE, initCenterX * scale.x + (camera.position.x - (float) canvas.getWidth() / 2) + (widthBar / 2) - PROGRESS_CAP_RIGHT * 0.56f * scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+            canvas.draw(statusBkgMiddle, Color.WHITE, centerX - widthBar / (2 * scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+            canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2 * scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        }
 
-        canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
-        if (starCount > 0 && starCount != totalStars) {
-            float span = starCount * ((PROGRESS_MIDDLE - 2 * PROGRESS_CAP_RIGHT)) / totalStars;
+        if (starCount > 0 && starCount < winCount) {
+            float span = starCount * ((PROGRESS_MIDDLE - 2 * PROGRESS_CAP_RIGHT)) / winCount;
             //canvas.draw(statusFrgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + span/scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
             canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, span, PROGRESS_HEIGHT);
-       } else if (starCount == totalStars) {
+        }
+        else if (starCount >= winCount && starCount < totalStars) {
             canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
             canvas.draw(statusFrgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + (widthBar /2) - PROGRESS_CAP_RIGHT*0.56f*scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
             canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        }
+        else if (starCount == totalStars) {
+            canvas.draw(statusGlow, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, statusGlow.getWidth(), statusGlow.getHeight());
         }
         else {
             canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
@@ -425,6 +430,8 @@ public class GameController extends WorldController implements ContactListener {
         statusFrgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP_RIGHT,offset,PROGRESS_CAP_RIGHT,PROGRESS_HEIGHT);
         statusFrgMiddle = new TextureRegion(statusBar,PROGRESS_CAP_LEFT,offset,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
 
+        statusGlow = JsonAssetManager.getInstance().getEntry("starbarglow", Texture.class);
+
         displayFont = JsonAssetManager.getInstance().getEntry("retro game", BitmapFont.class);
 
     }
@@ -692,7 +699,6 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
-
         //If avatar2 is already anchored check if anchored was hit
         if (avatar2.isAnchored()) {
             if (!avatar1.getOnPlanet() && !avatar1.isAnchored()) { //If avatar1 is in space, swing avatar1
@@ -834,8 +840,20 @@ public class GameController extends WorldController implements ContactListener {
         if (!twoplayer) {
             float move = input.getHorizontal();
             if (input.didRight() || input.didLeft()) {
-                avatar.setPlanetMove(contactDir.scl(move));
-                avatar.setRight(input.didRight());
+                if ((input.didRight() && !input.rightPrevious() || input.didLeft() && !input.leftPrevious())) {
+                    float angle = avatar.getAngle();
+                    if (angle > Math.PI/2 || angle <= -Math.PI/2) {
+                        avatar.setLastFace(-1);
+                        avatar.setRight(input.didLeft());
+                    }
+                    else {
+                        avatar.setLastFace(1);
+                        avatar.setRight(input.didRight());
+                    }
+                }
+                avatar.setPlanetMove(contactDir.scl(move*avatar.lastFace()));
+                //avatar.setRight(input.didRight());
+
                 if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
                     avatar.moving = true;
             }
@@ -1047,6 +1065,8 @@ public class GameController extends WorldController implements ContactListener {
                 if (avatar.curPlanet == avatar2.curPlanet) { //If the two avatars are on the same planet, move inactive avatar
                     if (updateRope(avatar, avatar2, rope, 'j', dt)) {
                         avatar2.auto = true;
+                        avatar2.setLastFace(avatar.lastFace());
+                        avatar2.setRight(avatar.getRight());
                         updateMovement(avatar2, avatar2.contactDir, (Planet)avatar2.curPlanet, true);
                         //avatar2.setLinearVelocity((avatar2.contactDir.cpy().rotateRad(-(float) Math.PI / 2)).setLength(avatar2.getMaxSpeed()));
                     }
@@ -1157,14 +1177,17 @@ public class GameController extends WorldController implements ContactListener {
             Gdx.input.getTextInput(loader, "Load...", "level.json", "");
         }
 
-//        if (avatar.getOnPlanet()) avatar.setLinearVelocity(reset);
-//        if (avatar2.getOnPlanet()) avatar2.setLinearVelocity(reset);
-
         updateSettings();
 
         if (switched()) {
             avatar.setActive(!avatar.isActive());
             avatar2.setActive(!avatar2.isActive());
+            if (avatar.isActive() && avatar.getOnPlanet()) {
+                avatar.setLinearVelocity(reset);
+            }
+            if (avatar2.isActive() && avatar2.getOnPlanet()) {
+                avatar2.setLinearVelocity(reset);
+            }
             SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
         }
 
@@ -1272,43 +1295,45 @@ public class GameController extends WorldController implements ContactListener {
 
         if (twoplayer) {
             if (reeled() && !avatar2.getOnPlanet() && !avatar2.isAnchored()) {
-//                reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
+                reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
 //                reelCache.setLength(REEL_FORCE);
 //                avatar2.getBody().applyForceToCenter(reelCache, true);
-                rope.reel(true);
+                rope.reel(true, reelCache);
             }
             updateHelp(avatar, avatar2, dt);
 
             if (reeled2() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
-//                reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
+                reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
 //                reelCache.setLength(REEL_FORCE);
 //                avatar.getBody().applyForceToCenter(reelCache, true);
-                rope.reel(false);
+                rope.reel(false, reelCache);
             }
             updateHelp(avatar2, avatar, dt);
         }
 
         else { //twoplayer off
-            if (avatar.isActive()) {
-                if (reeled() && !avatar2.getOnPlanet() && !avatar2.isAnchored()) {
-//                    reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
-//                    reelCache.setLength(REEL_FORCE);
-//                    avatar2.getBody().applyForceToCenter(reelCache, true);
-                    rope.reel(true);
+            if (avatar.getOnPlanet() && !avatar2.getOnPlanet()) {
+                if (reeled()) {
+                    reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
+                    rope.reel(true, reelCache);
                 }
+            }
+            else if (avatar2.getOnPlanet() && !avatar.getOnPlanet()) {
+                if (reeled()) {
+                    reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
+                    rope.reel(false, reelCache);
+                }
+            }
+
+            if (avatar.isActive()) {
                 updateHelp(avatar, avatar2, dt);
                 if (testC) {
                     avatar.setFixedRotation(true);
                     avatar.setMovement(InputController.getInstance().getHorizontal());
                     avatar.setMovementV(InputController.getInstance().getVertical());
                 }
-            } else { //if avatar2 is active
-                if (reeled() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
-//                    reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
-//                    reelCache.setLength(REEL_FORCE);
-//                    avatar.getBody().applyForceToCenter(reelCache, true);
-                    rope.reel(false);
-                }
+            }
+            else { //if avatar2 is active
                 updateHelp(avatar2, avatar, dt);
                 if (testC) {
                     avatar2.setFixedRotation(true);
@@ -1454,6 +1479,9 @@ public class GameController extends WorldController implements ContactListener {
 
             if ((bd1 == avatar || bd2 == avatar) && (bd1N.contains("planet") || bd2N.contains("planet")) && !barrier) {
                 avatar.curPlanet = (bd1 == avatar) ? bd2 : bd1;
+                if (!avatar.getOnPlanet()) {
+                    avatar.setLinearVelocity(reset);
+                }
                 avatar.setOnPlanet(true);
                 // See if we have landed on the ground.
                 if (((avatar.getSensorName().equals(fd2) && avatar != bd1) ||
@@ -1465,6 +1493,9 @@ public class GameController extends WorldController implements ContactListener {
 
             if ((bd1 == avatar2 || bd2 == avatar2) && (bd1N.contains("planet") || bd2N.contains("planet")) && !barrier) {
                 avatar2.curPlanet = (bd1 == avatar2) ? bd2 : bd1;
+                if (!avatar2.getOnPlanet()) {
+                    avatar2.setLinearVelocity(reset);
+                }
                 avatar2.setOnPlanet(true);
                 // See if we have landed on the ground.
                 if (((avatar2.getSensorName().equals(fd2) && avatar2 != bd1) ||

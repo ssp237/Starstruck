@@ -199,7 +199,7 @@
     "spike bottom": {
       "file": "enemies/static_spike_bottom.png",
       "wrap": false
-    },
+    }
   },
   "textures": {
     "wp background": {
@@ -244,6 +244,11 @@
     },
     "starbar": {
       "file": "default/starbar.png",
+      "wrap": false
+
+    },
+    "starbarglow": {
+      "file": "default/starbarglow.png",
       "wrap": false
     }
   },

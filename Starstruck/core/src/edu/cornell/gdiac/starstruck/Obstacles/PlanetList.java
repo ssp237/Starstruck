@@ -100,6 +100,13 @@ public class PlanetList {
 //        vectorWorld.addPlanet(p);
 //        planets.add(p);
 //    }
+    /**
+     * Helper to find distance
+     *
+     * @param v1 v1
+     * @param v2 v2
+     * @return distance between v1 and v2
+     */
     private float dist(Vector2 v1, Vector2 v2) {
         return (float) Math.sqrt((v1.x - v2.x)*(v1.x-v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
     }

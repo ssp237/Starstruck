@@ -75,9 +75,6 @@ public class InputController {
     private boolean rightPrevious;
     private boolean leftPressed;
     private boolean leftPrevious;
-    /** Whether up and down arrow keys are being pressed & held */
-    private boolean downHeld;
-    private boolean upHeld;
     /** Whether down key was pressed */
     private boolean downPressed;
     private boolean downPrevious;
@@ -339,9 +336,9 @@ public class InputController {
 
     public boolean leftPrevious() { return leftPrevious; }
 
-    public boolean heldUp() { return upHeld; }
+    public boolean heldUp() { return primePressed; }
 
-    public boolean heldDown() { return downHeld; }
+    public boolean heldDown() { return downPressed; }
 
     public boolean didDown() { return downPressed && !downPrevious; }
 
@@ -492,11 +489,12 @@ public class InputController {
         leftPressed = xbox.getLeftX() < -0.6; //left
         rightPressed = xbox.getLeftX() > 0.6; //right
         primePressed = xbox.getA(); //jump
-        //secondPressed = xbox.getX(); //anchor
-        anchorPressed = xbox.getX();
-        anchor1Pressed = xbox.getX();
-        switchPressed = xbox.getY(); //switch
-        downHeld = xbox.getB(); //reel
+//        anchorPressed = xbox.getX();
+//        anchor1Pressed = xbox.getX();
+        anchorPressed = xbox.getA();
+        anchor1Pressed = xbox.getA();
+        switchPressed = xbox.getX(); //switch
+        downPressed = xbox.getB(); //reel
         debugPressed  = xbox.getR3(); //debug
 
         // Increase animation frame, but only if trying to move
@@ -534,8 +532,8 @@ public class InputController {
         aPressed = xbox2.getLeftX() < -0.6; //left
         dPressed = xbox2.getLeftX() > 0.6; //right
         wPressed = xbox2.getA(); //jump
-        //spacePressed = xbox2.getX(); //anchor
-        anchor2Pressed = xbox2.getX();
+//        anchor2Pressed = xbox2.getX();
+        anchor2Pressed = xbox2.getA();
         sPressed = xbox2.getB(); //reel
         debugPressed  = xbox2.getR3(); //debug
         //no switch in 2 player mode
@@ -567,8 +565,6 @@ public class InputController {
         backspacePressed = (secondary && backspacePressed) || (Gdx.input.isKeyPressed(Input.Keys.BACKSPACE));
         rightPressed = (secondary && rightPressed) || Gdx.input.isKeyPressed (Input.Keys.RIGHT);
         leftPressed = (secondary && leftPressed) || Gdx.input.isKeyPressed (Input.Keys.LEFT);
-        upHeld = (secondary && upHeld) || Gdx.input.isKeyPressed (Input.Keys.UP);
-        downHeld = (secondary && downHeld) || Gdx.input.isKeyPressed (Input.Keys.DOWN);
         downPressed = (secondary && downPressed) || Gdx.input.isKeyPressed (Input.Keys.DOWN);
         aPressed = (secondary && aPressed) || Gdx.input.isKeyPressed (Input.Keys.A);
         sPressed = (secondary && sPressed) || Gdx.input.isKeyPressed (Input.Keys.S);

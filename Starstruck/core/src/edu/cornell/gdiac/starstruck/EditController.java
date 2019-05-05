@@ -273,6 +273,7 @@ public class EditController extends WorldController implements ContactListener {
             Vector2 pos = p.getPosition();
 
             current = new Planet(pos.x, pos.y, p.getInd() - 1, world, scale, null);
+
             level.add(current);
         }
     }
@@ -514,7 +515,6 @@ public class EditController extends WorldController implements ContactListener {
             } else if (input.didP()) {
                 Vector2 pos = input.getCrossHair();
                 current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, 1, world, scale, null);
-
                 level.add(current);
             } else if (input.didA()) {
                 Vector2 pos = input.getCrossHair();
