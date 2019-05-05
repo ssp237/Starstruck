@@ -35,6 +35,12 @@ public class TutorialPoint {
     private FilmStrip task;
     /** Name of this tutorial */
     private String name;
+    /** Whether pinkPoint was completed */
+    private boolean pinkHit;
+    /** Whether bluePoint was completed */
+    private boolean blueHit;
+    /** Whether this task is complete */
+    private boolean complete;
 
     /**
      * Create new tutorial points with the given texture and draw scale.
@@ -50,12 +56,15 @@ public class TutorialPoint {
 //        pinkPoint.setTexture(texture);
 //        pinkPoint.setDrawScale(scale);
         pinkPoint.setType(ObstacleType.TUTORIAL);
+        pinkHit = false;
         //bluePoint = new Star(x2, y2, texture.getRegionWidth(), texture.getRegionHeight());
         bluePoint = new Star(x2, y2, texture, scale);
         bluePoint.setColor("blue");
         //bluePoint.setTexture(texture);
         //bluePoint.setDrawScale(scale);
         bluePoint.setType(ObstacleType.TUTORIAL);
+        blueHit = false;
+        complete = false;
     }
 
     public TutorialPoint(float x1, float y1, float x2, float y2, TextureRegion texture, FilmStrip taskText, Vector2 scale) {
@@ -75,6 +84,26 @@ public class TutorialPoint {
     public Star getBluePoint() { return bluePoint; }
 
     public String getName() { return name; }
+
+    public FilmStrip getTask() { return task; }
+
+    public boolean pinkHit() { return pinkHit; }
+
+    public void setPinkHit(boolean value) {
+        pinkHit = value;
+        pinkPoint.setHit(true);
+    }
+
+    public boolean blueHit() { return blueHit; }
+
+    public void setBlueHit(boolean value) {
+        blueHit = value;
+        bluePoint.setHit(true);
+    }
+
+    public boolean complete() { return complete; }
+
+    public void setComplete(boolean value) { complete = value; }
 
     /**
      * Return a new star with parameters specified by the JSON

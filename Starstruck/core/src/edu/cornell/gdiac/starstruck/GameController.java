@@ -290,6 +290,8 @@ public class GameController extends WorldController implements ContactListener {
     private ArrayList<Rope> ropes = new ArrayList<Rope>();
     /** List of PortalPairs */
     private ArrayList<PortalPair> portalpairs = new ArrayList<PortalPair>();
+    /** List of tutorial points */
+    private ArrayList<TutorialPoint> tutorialpoints = new ArrayList<TutorialPoint>();
     /** Planets */
     private PlanetList planets;
     /** Planets */
@@ -342,8 +344,11 @@ public class GameController extends WorldController implements ContactListener {
     private Vector2 reelCache;
     /** Obstacle cache */
     private Obstacle obstacleCache;
-    /** Tutorial controller */
-    private TutorialController tutorial;
+    /** tutorial cache */
+    private TutorialPoint tutPointCache;
+    /** Whether tutorial needs to be drawn */
+    private boolean tutorial;
+
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -507,6 +512,9 @@ public class GameController extends WorldController implements ContactListener {
         stars = level.stars;
         anchors = level.anchors;
         portalpairs = level.portalpairs;
+        tutorialpoints = level.tutpoints;
+        tutorial = false;
+        tutPointCache = null;
 
         winCount = level.winCount;
         openGoal = false;
@@ -984,6 +992,19 @@ public class GameController extends WorldController implements ContactListener {
     }
 
     /**
+     * Find the Tutorial Point of this point. Returns null if portal can't be found, means something's wrong
+     * @param point
+     * @return
+     */
+    private TutorialPoint findTutPoint(Star point) {
+        for(TutorialPoint p : tutorialpoints) {
+            if (p.getName().equals(point.getTutName()))
+                return p;
+        }
+        return null;
+    }
+
+    /**
      * If settings were switched
      */
     private void updateSettings() {
@@ -1006,6 +1027,29 @@ public class GameController extends WorldController implements ContactListener {
             switchOnAnchor = !switchOnAnchor;
             print("Toggled setting switch on anchor: " + switchOnAnchor);
         }
+    }
+
+    private void updateTutorial() {
+        if (!tutorialpoints.isEmpty()) {
+            tutorial = true;
+            tutPointCache = tutorialpoints.get(0);
+            if (tutPointCache.complete()) {
+                Star pink = tutPointCache.getPinkPoint();
+                Star blue = tutPointCache.getBluePoint();
+                pink.deactivatePhysics(world);
+                blue.deactivatePhysics(world);
+                objects.remove(pink);
+                objects.remove(blue);
+                tutorialpoints.remove(tutPointCache);
+                if (!tutorialpoints.isEmpty()) {
+                    tutPointCache = tutorialpoints.get(0);
+                }
+                else
+                    tutorial = false;
+            }
+            if (tutPointCache != null) tutPointCache.getTask().tick();
+        }
+        else tutorial = false;
     }
 
     /**
@@ -1150,6 +1194,8 @@ public class GameController extends WorldController implements ContactListener {
 
         updateSettings();
 
+        updateTutorial();
+
         if (switched()) {
             avatar.setActive(!avatar.isActive());
             avatar2.setActive(!avatar2.isActive());
@@ -1238,7 +1284,7 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
         if (portalpairCache != null && portalpairCache.isActive()) {
-            if (portalpairCache.isGoal() && !isFailure()) { //By this point we have already confirmed that goal is open
+            if (portalpairCache.isGoal() && !isFailure() && tutorialpoints.isEmpty()) { //By this point we have already confirmed that goal is open
                 setComplete(true);
             }
             if (avatarCache == avatar) {
@@ -1446,6 +1492,17 @@ public class GameController extends WorldController implements ContactListener {
                 portal = true;
                 portalCache = (Portal)bd1;
                 avatarCache = avatar2;
+            }
+
+            //If there is an active task, has it been completed
+            if (tutorial) {
+                if (bd1 == avatar && bd2 == tutPointCache.getPinkPoint() || bd2 == avatar && bd1 == tutPointCache.getPinkPoint()) {
+                    tutPointCache.setPinkHit(true);
+                }
+                if (bd1 == avatar2 && bd2 == tutPointCache.getBluePoint() || bd2 == avatar2 && bd1 == tutPointCache.getBluePoint()) {
+                    tutPointCache.setBlueHit(true);
+                }
+                tutPointCache.setComplete(tutPointCache.pinkHit() && tutPointCache.blueHit());
             }
 
             if ((bd1 == avatar || bd2 == avatar) && (bd1N.contains("planet") || bd2N.contains("planet")) && !barrier) {
@@ -1668,6 +1725,19 @@ public class GameController extends WorldController implements ContactListener {
 
         canvas.begin();
         drawStarBar(canvas);
+        if (tutorial) {
+            OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
+            FilmStrip text = tutPointCache.getTask();
+            float xPos = camera.position.x - text.getRegionWidth()/2;
+            float yPos = camera.position.y - camera.viewportHeight/2 + 2;
+            canvas.draw(text, Color.WHITE, 0, 0, xPos, yPos, 0, 1, 1);
+            if (!tutPointCache.pinkHit()) {
+                tutPointCache.getPinkPoint().draw(canvas);
+            }
+            if (!tutPointCache.blueHit()) {
+                tutPointCache.getBluePoint().draw(canvas);
+            }
+        }
         canvas.end();
 
         if (isFailure()) {

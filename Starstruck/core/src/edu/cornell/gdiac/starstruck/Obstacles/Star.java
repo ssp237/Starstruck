@@ -52,6 +52,9 @@ public class Star extends BoxObstacle {
     private String color;
     /** Name of this tutorial */
     private String tutName;
+    /** For tutorial, is this object hit */
+    private boolean hit;
+
 
     /**
      * Creates a new spinner at the origin.
@@ -83,6 +86,7 @@ public class Star extends BoxObstacle {
         super(x,y,width,height);
         setName("star");
         starType = ObstacleType.STAR;
+        hit = false;
 //        setName(SPINNER_NAME);
 //
 //        // Create the barrier
@@ -140,6 +144,8 @@ public class Star extends BoxObstacle {
     public void setTutName(String value) { tutName = value; }
 
     public String getTutName() { return tutName; }
+
+    public void setHit(boolean value) { hit = value; }
 
     /**
      * Return a new star with parameters specified by the JSON
@@ -283,6 +289,12 @@ public class Star extends BoxObstacle {
         return false;
     }
 
+    public void update(float dt) {
+        if (getType() == ObstacleType.TUTORIAL) {
+
+        }
+    }
+
     public ObstacleType getType() { return starType;}
 
     public void setType(ObstacleType type) { starType = type; }
@@ -297,14 +309,14 @@ public class Star extends BoxObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        if (getType() == ObstacleType.TUTORIAL) {
+        if (getType() == ObstacleType.TUTORIAL && !hit) {
             if (getColor().equals("pink"))
                 canvas.draw(texture, Color.PINK,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
             else if (color.equals("blue"))
                 canvas.draw(texture, Color.TEAL,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
             else System.out.println("Didn't draw tutorial point");
         }
-        else {
+        else if (getType() == ObstacleType.STAR){
             canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
         }
     }

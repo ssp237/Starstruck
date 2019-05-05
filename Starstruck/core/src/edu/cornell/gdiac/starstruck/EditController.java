@@ -685,6 +685,10 @@ public class EditController extends WorldController implements ContactListener {
         Texture background = JsonAssetManager.getInstance().getEntry(gal + " background", Texture.class);
         canvas.begin();
         canvas.draw(background, 0, 0, canvas.getWidth()*screenX, canvas.getHeight()*screenY);
+        for (TutorialPoint p : level.tutpoints) {
+            p.getPinkPoint().draw(canvas);
+            p.getBluePoint().draw(canvas);
+        }
         canvas.end();
 
         level.draw(canvas, 'e');

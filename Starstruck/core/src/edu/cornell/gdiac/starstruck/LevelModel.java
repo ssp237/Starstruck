@@ -690,7 +690,8 @@ public class LevelModel {
             p.draw(canvas);
         }
         for(Obstacle obj : objects) {
-            if (obj.getType() != ObstacleType.PLAYER) obj.draw(canvas);
+            if (obj.getType() != ObstacleType.PLAYER && obj.getType() != ObstacleType.TUTORIAL)
+                obj.draw(canvas);
         }
         if (player1.isActive()) { player2.draw(canvas); player1.draw(canvas); }
         else { player1.draw(canvas); player2.draw(canvas); }
