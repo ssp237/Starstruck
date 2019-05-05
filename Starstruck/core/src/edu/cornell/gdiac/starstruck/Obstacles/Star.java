@@ -311,9 +311,9 @@ public class Star extends BoxObstacle {
     public void draw(GameCanvas canvas) {
         if (getType() == ObstacleType.TUTORIAL && !hit) { //TODO
             if (getColor().equals("pink"))
-                canvas.draw(texture, Color.PINK,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),2.5f,2.5f);
+                canvas.draw(texture, Color.PINK,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),2f,2f);
             else if (color.equals("blue"))
-                canvas.draw(texture, Color.TEAL,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),2.5f,2.5f);
+                canvas.draw(texture, Color.TEAL,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),2f,2f);
             else System.out.println("Didn't draw tutorial point");
         }
         else if (getType() == ObstacleType.STAR){
