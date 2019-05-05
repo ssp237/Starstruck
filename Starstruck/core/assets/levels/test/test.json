@@ -1,0 +1,198 @@
+{
+  "physicsSize":    [38.4,21.6],
+  "graphicSize":    [ 1280, 720],
+  "galaxy": "whirlpool",
+  "background": "background",
+  "gravity":  	  0,
+  "level" : 1,
+  "astronaut 1": {
+    "pos":           [ 2.5,  5.0],
+    "size":          [ 0.7, 0.95],
+    "texture":       "astronaut 1",
+    "glow texture":  "glow"
+  },
+  "astronaut 2": {
+    "pos":           [ 3.5,  6.5],
+    "size":          [ 0.7, 0.95],
+    "bodytype":      "dynamic",
+    "density":        1.0,
+    "friction":       0.0,
+    "restitution":    0.0,
+    "force": 		 20.0,
+    "damping": 		 10.0,
+    "maxspeed": 	  2.8,
+    "jumppulse": 	  6,
+    "jumplimit": 	 30,
+    "jumpsound":	 "jump",
+    "texture":       "astronaut 2",
+    "glow texture":  "glow",
+    "debugcolor":    "white",
+    "debugopacity":  192,
+    "sensorsize": 	 [ 0.183, 0.05 ],
+    "sensorname": 	 "dudeGroundSensor",
+    "sensorcolor":   "red",
+    "sensoropacity": 192
+  },
+  "rope": {
+    "texture": "rope",
+    "rope width": 6.0
+  },
+  "planet specs": [700, 800, 900, 1000],
+  "planets": [
+    {
+      "x": 3,
+      "y": 3,
+      "i": 2
+
+    },
+    {
+      "x": 6,
+      "y": 12,
+      "i": 2,
+      "bug": {
+        "texture": "orange bug"
+      }
+    },
+    {
+      "x": 15,
+      "y": 17,
+      "i": 3
+    },
+    {
+      "x": 26,
+      "y": 8,
+      "i": 3
+    },
+    {
+      "x": 30,
+      "y": 15,
+      "i": 1
+    },
+    {
+      "x": 37,
+      "y": 5,
+      "i": 3
+    },
+    {
+      "x": 48,
+      "y": 17,
+      "i": 4
+    },
+    {
+      "x": 52,
+      "y": 6,
+      "i": 3
+    },
+    {
+      "x": 8,
+      "y": 20,
+      "i": 3
+    }
+  ],
+  "anchors": [
+    {
+      "x": 32.5,
+      "y": 17,
+      "texture": "anchor"
+    },
+    {
+      "x": 37,
+      "y": 18,
+      "texture": "anchor"
+    },
+    {
+      "x": 35.5,
+      "y": 13.5,
+      "texture": "anchor"
+    },
+    {
+      "x": 14,
+      "y": 2.75,
+      "texture": "anchor"
+    },
+    {
+      "x": 18.5,
+      "y": 3,
+      "texture": "anchor"
+    },
+    {
+      "x": 16,
+      "y": 5,
+      "texture": "anchor"
+    },
+    {
+      "x": 17,
+      "y": 1,
+      "texture": "anchor"
+    },
+    {
+      "x": 8.5,
+      "y": 16,
+      "texture": "anchor"
+    },
+    {
+      "x": 9,
+      "y": 14,
+      "texture": "anchor"
+    },
+    {
+      "x": 10,
+      "y": 16,
+      "texture": "anchor"
+    }
+  ],
+  "stars": [
+    {
+      "x": 35,
+      "y": 15.75,
+      "texture": "star"
+    },
+    {
+      "x": 35.5,
+      "y": 16.5,
+      "texture": "star"
+    },
+    {
+      "x": 35.25,
+      "y": 15,
+      "texture": "star"
+    },
+    {
+      "x": 16,
+      "y": 4,
+      "texture": "star"
+    },
+    {
+      "x": 17,
+      "y": 3,
+      "texture": "star"
+    },
+    {
+      "x": 16.5,
+      "y": 2.5,
+      "texture": "star"
+    },
+    {
+      "x": 9,
+      "y": 15,
+      "texture": "star"
+    }
+  ],
+  "worms": [
+    {
+      "texture": "pink worm",
+      "x": 6.5,
+      "y": 15,
+      "velocity": -1.4
+    },
+    {
+      "texture": "green worm",
+      "x": 6.5,
+      "y": 12,
+      "velocity": -2
+    }
+  ],
+  "portalpairs": [],
+  "urchin texture": "spike",
+  "urchins": []
+}

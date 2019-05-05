@@ -42,7 +42,7 @@ public class AstronautModel extends CapsuleObstacle {
     /** The dude is a slippery one */
     private static final float DUDE_FRICTION = 0.0f;
     /** The maximum character speed */
-    private float DUDE_MAXSPEED = 2.8f;
+    private float DUDE_MAXSPEED = 3.2f;
     /** The maximum character rotation in space */
     private static final float DUDE_MAXROT = 6.5f;
     /** The impulse for the character jump */
@@ -129,10 +129,29 @@ public class AstronautModel extends CapsuleObstacle {
     public Vector2 contactDir;
     /** The previous linear velocity of this astronaut */
     public Vector2 lastVel;
-
-
+    /** Did we just move? */
+    private boolean justMoved;
+    /** Velocity of astronaut to perserve when using portal */
+    public Vector2 portalVel = new Vector2();
+    /** Whether this astronaut is moving on its own */
+    public boolean auto;
+    /** Whether only to apply gravity */
+    public boolean only;
+    /** last planet speed */
+    public float planetVel;
+    /** Whether the astronaut is swinging off an anchor */
+    public boolean swing;
+    /** Whether the astronaut should go w the other one coming off an anchor */
+    public boolean follow;
+    /** Whether the astronaut should go to the planet coming off an anchor */
+    public boolean toplanet;
+    /** Whether the astronaut should "jump" off anchor */
+    public boolean anchorhop;
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
+    /** Two player? If true, don't draw glow */
+    private boolean twoplayer;
+
 
     /**
      * Set the glow texture
@@ -170,6 +189,10 @@ public class AstronautModel extends CapsuleObstacle {
         } else if (movement > 0) {
             faceRight = true;
         }
+    }
+
+    public void setRight(boolean value) {
+        faceRight = value;
     }
 
     public float getMovementV () { return movementV; }
@@ -251,6 +274,11 @@ public class AstronautModel extends CapsuleObstacle {
 
     public void setPlanetMove(Vector2 value) {
         planetMove.set(value);
+    }
+
+    /** Set two player */
+    public void setTwoPlayer(boolean value) {
+        twoplayer = value;
     }
 
     /**
@@ -339,6 +367,8 @@ public class AstronautModel extends CapsuleObstacle {
 
     public void setOnPlanet(boolean value) {
         onPlanet = value;
+        if (!value)
+            setFixedRotation(false);
     }
 
     /**
@@ -360,7 +390,11 @@ public class AstronautModel extends CapsuleObstacle {
      *
      * @param anchor the anchor the astronaut is glued to
      */
-    public void setAnchored(Anchor anchor) { anchorPos = anchor.getPosition(); isAnchored = true;}
+    public void setAnchored(Anchor anchor) {
+        anchorPos = anchor.getPosition();
+        curAnchor = anchor;
+        isAnchored = true;
+    }
 
     /**
      * Sets astronaut to be unanchored
@@ -520,6 +554,7 @@ public class AstronautModel extends CapsuleObstacle {
 
         String film = playerOne ? "astronaut 1 idle" : "astronaut 2 idle";
         idle = JsonAssetManager.getInstance().getEntry(film, FilmStrip.class);
+        justMoved = false;
     }
 
     /**
@@ -694,29 +729,66 @@ public class AstronautModel extends CapsuleObstacle {
 
         if (!getOnPlanet()) {
             if (Math.abs(getAngularVelocity()) >= DUDE_MAXROT) {
-                setAngularVelocity(Math.signum(getAngle()) * getMaxSpeed());
-            } else {
-                body.applyTorque(-getRotation(), true);
+                body.setAngularVelocity(Math.signum(getAngularVelocity()) * DUDE_MAXROT);
+            }
+            else {
+                //body.applyTorque(-getRotation(), true);
+                body.setAngularVelocity(getAngularVelocity() - 0.1f * getRotation());
             }
         }
 
         if (getOnPlanet()) {
+//            Vector2 dir = curPlanet.getPosition().cpy().sub(getPosition());
+//            float angle = getLinearVelocity().angleRad(dir);
+//            System.out.println(getName() + ": " + (angle * (180/Math.PI)));
+//            float speed = getLinearVelocity().len() * (float)Math.sin(angle);
+//            System.out.println(speed);
             float speed = getLinearVelocity().len();
+            Vector2 reset = new Vector2();
             if (speed < 0)
                 System.out.println("speed is less than 0 in apply force");
 
-            // Don't want to be moving. Damp out player motion
-            if (!moving)
-                forceCache.set(0, 0);
-//            else if (speed >= DUDE_MAXSPEED)
+            //Damp out player motion
+//            if (!moving) {
+//                forceCache.set(planetMove.scl(-1).setLength(DUDE_MAXSPEED*100));
+//            }
+//
+//            else {
 //                forceCache.set(planetMove.setLength(DUDE_MAXSPEED));
+//            }
+//            body.applyForce(forceCache, getPosition(), true);
 
-            else
+            // Don't want to be moving. Damp out player motion
+            if (!moving) {
+                body.setLinearVelocity(reset);
+                body.applyLinearImpulse(gravity, getPosition(), true);
+            }
+            //forceCache.set(0, 0);
+//            else if (speed >= DUDE_MAXSPEED) {
+//                forceCache.set(planetMove.setLength(DUDE_MAXSPEED));
+//            }
+            else {
+                int force = 4;
                 forceCache.set(planetMove.setLength(DUDE_MAXSPEED));
+                if (auto) {
+                    //body.applyLinearImpulse(gravity, getPosition(), true);
+                    body.setLinearVelocity(forceCache.scl(2));
+                }
+                else if (!only) {
+                    if (speed >= DUDE_MAXSPEED) {
+                        forceCache.set(reset);
+                    }
+                    //body.applyLinearImpulse(gravity, getPosition(), true);
+                    body.applyForce(forceCache.scl(force), getPosition(), true);
+                }
+            }
             body.applyLinearImpulse(gravity, getPosition(), true);
-            body.setLinearVelocity(forceCache);
+            //body.applyForce(gravity, getPosition(), true);
+            //body.setLinearVelocity(forceCache);
         }
+        justMoved = moving;
         moving = false;
+        auto = false;
 
         // Jump!
         if (isJumping()) {
@@ -727,9 +799,10 @@ public class AstronautModel extends CapsuleObstacle {
         }
 
         // Gravity from planets
-        if (!GameController.testC ) {
+        if (!GameController.testC && !only) {
             body.applyForce(gravity, getPosition(), true);
         }
+        only = false;
 
         if (GameController.testC) {
             forceCache.set(getMovement(), getMovementV());
@@ -748,11 +821,18 @@ public class AstronautModel extends CapsuleObstacle {
     public void update(float dt) {
         // Apply cooldowns
 
-        if (onPlanet) idle.tick();
+        if (onPlanet) {
+            if (justMoved || !idle.justReset()) idle.tick();
+//            else if (!idle.justReset()) idle.kcit();
+        }
+
+        if (!onPlanet && !idle.justReset()) idle.reset();
 
         if (isAnchored){
-            //setPosition(anchorPos);
-            setBodyType(BodyDef.BodyType.StaticBody);
+            setLinearVelocity(new Vector2());
+            setPosition(anchorPos);
+            //setBodyType(BodyDef.BodyType.StaticBody);
+            setBodyType(BodyDef.BodyType.KinematicBody);
         } else {
             setBodyType(BodyDef.BodyType.DynamicBody);
         }
@@ -789,8 +869,8 @@ public class AstronautModel extends CapsuleObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        float effect = faceRight ? -1.0f : 1.0f;
-        if (isActive()) {
+        float effect = faceRight ? 1.0f : -1.0f;
+        if (isActive() && !twoplayer) {
             Color color = isPlayerOne ? p1glow : p2glow;
             canvas.draw(glowTexture, color, glowOrigin.x, glowOrigin.y, (getX()) * drawScale.x,
                     (getY()) * drawScale.y, getAngle(), effect * GLOW_SCALE, GLOW_SCALE);

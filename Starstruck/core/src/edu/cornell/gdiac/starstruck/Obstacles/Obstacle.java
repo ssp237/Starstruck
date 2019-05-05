@@ -960,7 +960,7 @@ public abstract class Obstacle {
      * @param v2 Point 2
      * @return Distance between point 1 and 2
      */
-    public static float dist(Vector2 v1, Vector2 v2) {
+    public float dist(Vector2 v1, Vector2 v2) {
         return (float) Math.sqrt((v1.x - v2.x)*(v1.x-v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
     }
 

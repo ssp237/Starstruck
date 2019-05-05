@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.JsonWriter;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
+import edu.cornell.gdiac.starstruck.Models.Urchin;
 import edu.cornell.gdiac.starstruck.Models.Worm;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -24,8 +25,16 @@ import java.util.Arrays;
 
 public class EditController extends WorldController implements ContactListener {
 
-    /** Speed of camera pan */
-    private static final float PAN_CONST = 4;
+    /** Speed of camera pan & zoom */
+    private static final float PAN_CONST = 8;
+    private static final float ZOOM_FACTOR = 0.02f;
+    /** Bounds of this level */
+    private float xBound = (1280*1.5f) / scale.x;
+    private float yBound = (720*1.5f) / scale.y;
+    private float screenX = 1.5f;
+    private float screenY = 1.5f;
+
+    private int portalPair = 1;
 
     /** Current obstacle */
     private Obstacle current;
@@ -48,6 +57,11 @@ public class EditController extends WorldController implements ContactListener {
     private JsonValue  levelFormat;
     /** The reader to process JSON files */
     private JsonReader jsonReader;
+    /** Reader to process galaxy switches */
+    private GalaxyListener galListener;
+
+    /** Current galaxy to source assets from */
+    private Galaxy galaxy;
 
     /** References to players and rope */
     private AstronautModel player1;
@@ -56,6 +70,10 @@ public class EditController extends WorldController implements ContactListener {
 
     /** Possible worm textures */
     private static final String[] WORM_TEXTURES = { "blue worm", "green worm", "pink worm", "purple worm", "red worm", "yellow worm"};
+    /** Possible berry textures */
+    private static final String[] BERRY_TEXTURES = { "pink berry"};
+    /** Current horizontally moving enemy textures */
+    private String[] FISH_TEXTURES;
 
     /** Initial position of player 1*/
     private static Vector2 P1_POS = new Vector2(2.5f, 5.0f);
@@ -94,6 +112,26 @@ public class EditController extends WorldController implements ContactListener {
         }
     }
 
+    public class GalaxyListener implements Input.TextInputListener {
+
+        public void input (String text) {
+            //System.out.println(text);
+            Galaxy gal = Galaxy.fromString(text);
+            level.setGalaxy(gal);
+            galaxy = gal;
+
+            switch (gal) {
+                case WHIRLPOOL: FISH_TEXTURES = WORM_TEXTURES; break;
+                case MILKYWAY: FISH_TEXTURES = BERRY_TEXTURES; break;
+                default: FISH_TEXTURES = WORM_TEXTURES;
+            }
+
+        }
+
+        public void canceled () {
+        }
+    }
+
 
     public EditController() {
         super(DEFAULT_WIDTH,DEFAULT_HEIGHT,DEFAULT_GRAVITY);
@@ -107,13 +145,19 @@ public class EditController extends WorldController implements ContactListener {
         vectorWorld = new VectorWorld();
         save = new SaveListener();
         wormListener = new WormListener();
+        galListener = new GalaxyListener();
         jsonReader = new JsonReader();
         loadFile = null;
         levelFormat = null;
+        galaxy = Galaxy.WHIRLPOOL;
+        level.setGalaxy(galaxy);
+        FISH_TEXTURES = WORM_TEXTURES;
     }
 
     public void reset() {
         level.dispose();
+        canvas.resetCamera();
+        level.setGalaxy(galaxy);
 
         if (loadFile != null) {
             levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
@@ -132,12 +176,7 @@ public class EditController extends WorldController implements ContactListener {
         setFailure(false);
         save = new SaveListener();
         load = new SaveListener();
-
-//        canvas.getCamera().position.x -= camOffsetX;
-//        canvas.getCamera().position.y -= camOffsetY;
-//        camOffsetX = camOffsetY = 0;
-//        canvas.getCamera().update();
-
+        galListener = new GalaxyListener();
     }
 
     private void createPlayers() {
@@ -147,6 +186,15 @@ public class EditController extends WorldController implements ContactListener {
 
         camOffsetX = 0;
         camOffsetY = 0;
+
+        portalPair = 1;
+
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
+        camera.viewportWidth = canvas.getWidth();
+        camera.viewportHeight = canvas.getHeight();
+        camera.position.x = camera.viewportWidth/2;
+        camera.position.y = camera.viewportHeight/2;
+        //System.out.println(camera.zoom);
 
         texture = JsonAssetManager.getInstance().getEntry("astronaut 1", TextureRegion.class);
         dwidth = texture.getRegionWidth()/scale.x;
@@ -190,14 +238,15 @@ public class EditController extends WorldController implements ContactListener {
         if (input.didPrimary()){
             Worm wormy = (Worm) current;
             String key = JsonAssetManager.getInstance().getKey(wormy.getTexture());
-            int i = Arrays.binarySearch(WORM_TEXTURES, key);
-            wormy.setTexture(JsonAssetManager.getInstance().getEntry(WORM_TEXTURES[(i + 1) % WORM_TEXTURES.length], FilmStrip.class));
+            //System.out.println(key);
+            int i = Arrays.binarySearch(FISH_TEXTURES, key);
+            wormy.setTexture(JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[(i + 1) % FISH_TEXTURES.length], FilmStrip.class));
 
         } else if (input.didDown()) {
             Worm wormy = (Worm) current;
             String key = JsonAssetManager.getInstance().getKey(wormy.getTexture());
-            int i = Arrays.binarySearch(WORM_TEXTURES, key);
-            wormy.setTexture(JsonAssetManager.getInstance().getEntry(WORM_TEXTURES[i == 0 ? WORM_TEXTURES.length - 1 : (i - 1) % WORM_TEXTURES.length], FilmStrip.class));
+            int i = Arrays.binarySearch(FISH_TEXTURES, key);
+            wormy.setTexture(JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[i == 0 ? FISH_TEXTURES.length - 1 : (i - 1) % FISH_TEXTURES.length], FilmStrip.class));
         } else if (input.shiftHeld() && input.didTertiary()){
             wormListener.worm = (Worm) current;
             Gdx.input.getTextInput(wormListener, "Set velocity to...", Float.toString(current.getVX()), "");
@@ -210,19 +259,104 @@ public class EditController extends WorldController implements ContactListener {
      */
     private void updatePlanet() {
         InputController input = InputController.getInstance();
+
         if (input.didPrimary()){
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
             current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, p.getInd() + 1, world, scale, null);
+
             level.add(current);
         } else if (input.didDown()) {
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
-            current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, p.getInd() - 1, world, scale, null);
+
+            current = new Planet(pos.x, pos.y, p.getInd() - 1, world, scale, null);
             level.add(current);
         }
+    }
+
+    /**
+     * Helper to update current obstacle if it is an Urchin.
+     */
+    private void updateUrchin() {
+        InputController input = InputController.getInstance();
+
+        if (input.didPrimary()){
+            Urchin u = (Urchin) current;
+            level.remove(u);
+            Vector2 pos = u.getPosition();
+            current = new Urchin(pos.x , pos.y , scale, u.getLength() + 1, u.getOrientation());
+            level.add(current);
+        } else if (input.didDown()) {
+            Urchin u = (Urchin) current;
+            level.remove(u);
+            Vector2 pos = u.getPosition();
+            current = new Urchin(pos.x, pos.y, scale, Math.max(u.getLength() - 1,1), u.getOrientation());
+            level.add(current);
+        } else if ((input.didLeft() && !input.leftPrevious()) || (input.didRight() && !input.rightPrevious())) {
+            Urchin u = (Urchin) current;
+            level.remove(u);
+            Vector2 pos = u.getPosition();
+            CapsuleObstacle.Orientation orie = u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL ? CapsuleObstacle.Orientation.HORIZONTAL : CapsuleObstacle.Orientation.VERTICAL;
+            current = new Urchin(pos.x, pos.y, scale, u.getLength(), orie);
+            level.add(current);
+        }
+    }
+
+    private void updatePortal() {
+        OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
+        InputController input = InputController.getInstance();
+        float camScaleX = camOffsetX / scale.x;
+        float camScaleY = camOffsetY / scale.y;
+        float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
+        float h = (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y;
+
+        if (input.didPrimary()){
+            Portal p = (Portal) current;
+            PortalPair port = findPortalPair(p);
+            if (port == null) System.out.println("updatePortal in EditController");
+            String name = port.getPortalName();
+            int color = port.nextColor();
+            boolean goal = color == 0;
+            String texture = "static portal";
+            if (goal) texture = "goal";
+            p = port.getPortal1();
+            Portal p2 = port.getPortal2();
+            Vector2 pos1 = p.getPosition();
+            Vector2 pos2 = p2.getPosition();
+            if (color == 1)
+                pos2 = pos1.cpy().add(5, 0);
+            if (!level.portalpairs.remove(port)) System.out.println("updatePortal in EditController couldn't remove port");
+            level.remove(p);
+            level.remove(p2);
+            port = new PortalPair(pos1.x, pos1.y, pos2.x, pos2.y, name, scale,
+                    JsonAssetManager.getInstance().getEntry(texture, FilmStrip.class), color, goal);
+            level.add(port.getPortal1());
+            level.add(port.getPortal2());
+            level.portalpairs.add(port);
+            current = port.getPortal1();
+//        } else if (input.didDown()) {
+//            Planet p = (Planet) current;
+//            level.remove(p);
+//            Vector2 pos = p.getPosition();
+//            current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, p.getInd() - 1, world, scale);
+//            level.add(current);
+        }
+    }
+
+    /**
+     * Find the PortalPair of the portal. Returns null if portal can't be found, means something's wrong
+     * @param portal
+     * @return
+     */
+    private PortalPair findPortalPair(Portal portal) {
+        for(PortalPair p : level.portalpairs) {
+            if (portal.getPortName().equals(p.getPortalName()))
+                return p;
+        }
+        return null;
     }
 
     /**
@@ -235,8 +369,11 @@ public class EditController extends WorldController implements ContactListener {
         }
         else {
             for (Obstacle obj : level.getAllObjects()) {
+                OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
                 Vector2 camOffset = new Vector2(camOffsetX/scale.x, camOffsetY/scale.y);
-                if (obj.containsPoint(input.getCrossHair().cpy().add(camOffset))) {
+                Vector2 zoom = new Vector2((input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x,
+                (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y);
+                if (obj.containsPoint(input.getCrossHair().cpy().add(camOffset).add(zoom))) {
                     current = obj;
                 }
             }
@@ -249,21 +386,33 @@ public class EditController extends WorldController implements ContactListener {
     private void updateCamera() {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         InputController input = InputController.getInstance();
-        if (input.didLeft()) {
+        if (input.didLeft()) { //&& camera.position.x > camera.viewportWidth/2) {
             camera.position.x = camera.position.x - PAN_CONST;
             camOffsetX = camOffsetX - PAN_CONST;
         }
-        if (input.heldUp()) {
+        if (input.heldUp()) { //&& camera.position.y < yBound - camera.viewportHeight/2) {
             camera.position.y = camera.position.y + PAN_CONST;
             camOffsetY = camOffsetY + PAN_CONST;
         }
-        if (input.didRight()) {
+        if (input.didRight()) { //&& camera.position.x < xBound - camera.viewportWidth/2) {
             camera.position.x = camera.position.x + PAN_CONST;
             camOffsetX = camOffsetX + PAN_CONST;
         }
-        if (input.heldDown()) {
+        if (input.heldDown()) { //&& camera.position.y > camera.viewportHeight/2) {
             camera.position.y = camera.position.y - PAN_CONST;
             camOffsetY = camOffsetY - PAN_CONST;
+        }
+        if (input.shiftHeld() && input.heldUp()) {
+//            camera.viewportWidth = camera.viewportWidth * (1-ZOOM_FACTOR);
+//            camera.viewportHeight = camera.viewportHeight * (1-ZOOM_FACTOR);
+            camera.zoom = camera.zoom - ZOOM_FACTOR;
+            //System.out.println(camera.zoom);
+        }
+        if (input.shiftHeld() && input.heldDown()) {
+//            camera.viewportWidth = camera.viewportWidth * (1+ZOOM_FACTOR);
+//            camera.viewportHeight = camera.viewportHeight * (1+ZOOM_FACTOR);
+            camera.zoom = camera.zoom + ZOOM_FACTOR;
+            //System.out.println(camera.zoom);
         }
         camera.update();
     }
@@ -287,6 +436,8 @@ public class EditController extends WorldController implements ContactListener {
     }
 
     public void update(float dt) {
+        //System.out.println(Arrays.toString(FISH_TEXTURES));
+        OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
         //System.out.println(wormListener.worm);
         //System.out.println(current);
         int i = 0;
@@ -297,6 +448,12 @@ public class EditController extends WorldController implements ContactListener {
         //System.out.println(level.getAllObjects());
         //System.out.println(level.getPlayer1().getVX() + "   " + level.getPlayer1().getVY());
         InputController input = InputController.getInstance();
+
+        float camScaleX = camOffsetX / scale.x;
+        float camScaleY = camOffsetY / scale.y;
+
+        float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
+        float h = (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y;
 
         if (current == null)
             updateCamera();
@@ -321,15 +478,26 @@ public class EditController extends WorldController implements ContactListener {
 
         if (current != null) {
             if (input.didBackspace() && current.getType() != ObstacleType.PLAYER) {
-                level.remove(current);
-                current = null;
+                if (current.getType() == ObstacleType.PORTAL) {
+                    PortalPair port = findPortalPair((Portal)current);
+                    level.remove(port.getPortal1());
+                    level.remove(port.getPortal2());
+                    level.portalpairs.remove(port);
+                    current = null;
+                }
+                else {
+                    level.remove(current);
+                    current = null;
+                }
             } else {
-                current.setPosition((input.xPos() + camOffsetX) / scale.x,
-                        -((input.yPos() - camOffsetY)/ scale.y) + bounds.height);
+                current.setPosition((input.xPos() + camOffsetX) / scale.x + w,
+                        -((input.yPos() - camOffsetY) / scale.y) + h + bounds.height);
                 switch (current.getType()) {
                     case PLANET:
                         updatePlanet(); break;
                     case WORM: updateWorm(); break;
+                    case PORTAL: updatePortal(); break;
+                    case URCHIN: updateUrchin(); break;
                 }
             }
         } else {
@@ -337,30 +505,48 @@ public class EditController extends WorldController implements ContactListener {
                 Gdx.input.getTextInput(save, "Save as...", "level.json", "");
             } else if (input.shiftHeld() && input.didO()) {
                 Gdx.input.getTextInput(load, "Load...", "level.json", "");
+            }else if (input.shiftHeld() && input.didG()) {
+                Gdx.input.getTextInput(galListener, "Switch to what galaxy?", "whirlpool", "");
             } else if (input.shiftHeld() && input.didD()) {
                 loadFile = null;
                 reset();
                 return;
             } else if (input.didP()) {
                 Vector2 pos = input.getCrossHair();
-                current = new Planet(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y, 1, world, scale, null);
+                current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, 1, world, scale, null);
+
                 level.add(current);
             } else if (input.didA()) {
                 Vector2 pos = input.getCrossHair();
-                current = new Anchor(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y,
+                current = new Anchor(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
                 level.add(current);
             } else if (input.didS()) {
                 Vector2 pos = input.getCrossHair();
-                current = new Star(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y,
+                current = new Star(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry("star", TextureRegion.class), scale);
                 level.add(current);
             } else if (input.didW()){
                 Vector2 pos = input.getCrossHair();
-                current = new Worm(pos.x + camOffsetX/scale.x, pos.y + camOffsetY/scale.y,
-                        JsonAssetManager.getInstance().getEntry("pink worm", FilmStrip.class), scale, 0);
+                current = new Worm(pos.x + camScaleX + w, pos.y + camScaleY + h,
+                        JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[0], FilmStrip.class), scale, 0);
                 level.add(current);
-            }
+            } else if (input.didD()) {
+                Vector2 pos = input.getCrossHair();
+                float x = pos.x + camScaleX + w;
+                float y = pos.y + camScaleY + h;
+                PortalPair portal = new PortalPair(x, y, x+5, y, "portalpair" + portalPair, scale,
+                        JsonAssetManager.getInstance().getEntry("static portal", FilmStrip.class), 1, false);
+                portalPair++;
+                level.add(portal.getPortal1());
+                level.add(portal.getPortal2());
+                level.portalpairs.add(portal);
+                current = portal.getPortal1();
+            } else if (input.didU()) {
+            Vector2 pos = input.getCrossHair();
+            current = new Urchin(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, 1, CapsuleObstacle.Orientation.VERTICAL);
+            level.add(current);
+        }
             if (input.mouseDragged()) {
                 updateCamera();
             }
@@ -388,7 +574,13 @@ public class EditController extends WorldController implements ContactListener {
     public void draw(float dt) {
         canvas.clear();
 
-        level.draw(canvas);
+        String gal = galaxy.getChars();
+        Texture background = JsonAssetManager.getInstance().getEntry(gal + " background", Texture.class);
+        canvas.begin();
+        canvas.draw(background, 0, 0, canvas.getWidth()*screenX, canvas.getHeight()*screenY);
+        canvas.end();
+
+        level.draw(canvas, 'e');
 
 //        canvas.begin();
 //        if (current != null) {
@@ -421,5 +613,91 @@ public class EditController extends WorldController implements ContactListener {
     /** Unused ContactListener method */
     public void postSolve(Contact contact, ContactImpulse impulse) {}
     /** Unused ContactListener method */
-    public void preSolve(Contact contact, Manifold oldManifold) {}
+    public void preSolve(Contact contact, Manifold oldManifold) {
+        Fixture fix1 = contact.getFixtureA();
+        Fixture fix2 = contact.getFixtureB();
+
+        Body body1 = fix1.getBody();
+        Body body2 = fix2.getBody();
+
+        Object fd1 = fix1.getUserData();
+        Object fd2 = fix2.getUserData();
+
+        try {
+            Obstacle bd1 = (Obstacle)body1.getUserData();
+            Obstacle bd2 = (Obstacle)body2.getUserData();
+
+            String bd1N = bd1.getName();
+            String bd2N = bd2.getName();
+
+            //Disable all collisions for worms
+            if (bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) {
+                contact.setEnabled(false);
+            }
+
+            //Disable all collisions with portal
+            if (bd1.getType() == ObstacleType.PORTAL || bd2.getType() == ObstacleType.PORTAL) {
+                contact.setEnabled(false);
+            }
+
+            //Disables all collisions w rope
+            if (bd1.getName().contains("rope") || bd2.getName().contains("rope")) {
+                contact.setEnabled(false);
+            }
+            //Disables all anchor and star collisions
+            if(bd1N.contains("anchor") || bd2N.contains("anchor") || bd1N.contains("star") || bd2N.contains("star")){
+                contact.setEnabled(false);
+            }
+            //Enables collisions between rope and anchor
+//            if (bd1.getName().contains("rope") && bd2.getName().contains("anchor")
+//                    || bd1.getName().contains("anchor") && bd2.getName().contains("rope")) {
+//                contact.setEnabled(true);
+//            }
+
+            //Disables collisions between ends of rope and anchors
+//            ropeList = rope.getPlanks();
+//            BoxObstacle plank0 = (BoxObstacle)ropeList.get(0);
+//            BoxObstacle plank1 = (BoxObstacle)ropeList.get(1);
+//            BoxObstacle plank4 = (BoxObstacle)ropeList.get(2);
+//            BoxObstacle plank2 = (BoxObstacle)ropeList.get(ropeList.size()-2);
+//            BoxObstacle plank3 = (BoxObstacle)ropeList.get(ropeList.size()-1);
+//            BoxObstacle plank5 = (BoxObstacle)ropeList.get(ropeList.size()-3);
+//            if (bd1N.contains("anchor") && (bd2 == plank0 || bd2 == plank1 || bd2 == plank2 || bd2 == plank3)
+//                    || bd2N.contains("anchor") && (bd1 == plank0 || bd1 == plank1 || bd1 == plank2 || bd1 == plank3)) {
+//                contact.setEnabled(false);
+//            }
+
+            //Enables collisions between rope and planet
+            if (bd1.getName().contains("rope") && bd2.getName().contains("planet")
+                    || bd1.getName().contains("planet") && bd2.getName().contains("rope")) {
+                contact.setEnabled(true);
+            }
+            //Disable collisions between astronauts
+            if (bd1.getName().contains("avatar") && bd2.getName().contains("avatar")) {
+                contact.setEnabled(false);
+            }
+            //Disables collisions between astronauts and anchors
+            if (bd1.getName().contains("avatar") && bd2.getName().contains("anchor")
+                    || bd1.getName().contains("anchor") && bd2.getName().contains("avatar")) {
+                contact.setEnabled(false);
+            }
+            //Disables collisions between astronauts and stars
+            if (bd1.getName().contains("avatar") && bd2.getName().contains("star")
+                    || bd1.getName().contains("star") && bd2.getName().contains("avatar")) {
+                contact.setEnabled(false);
+            }
+
+
+            //Disable the collision between anchors and rope on avatar
+            int n = rope.nLinks() - 1 ;//(int) BRIDGE_WIDTH*2-1;
+            if ((bd1N.contains("anchor") || bd2N.contains("anchor")) && (
+                    bd1N.equals("rope_plank0") || bd2N.equals("rope_plank0") ||
+                            bd1N.equals("rope_plank"+n) || bd2N.equals("rope_plank"+n))) {
+                contact.setEnabled(false);
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

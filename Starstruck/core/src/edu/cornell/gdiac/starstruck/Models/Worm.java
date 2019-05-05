@@ -21,11 +21,13 @@ public class Worm extends Enemy{
     /** y position of the enemy */
     private float y_pos;
     /** right bound of the screen */
-    private float right_bound;
+    private float right_bound = 57.60002f;
     /** Counter for names */
     private static int worm_count = 1;
     /** Delay for wormie to come back on screen */
     private int delay_pos = 1000;
+
+    private float x_original;
 
 
     /**
@@ -47,6 +49,7 @@ public class Worm extends Enemy{
         //right_bound = right_b;
         setName("worm" + worm_count);
         worm_count++;
+        x_original = x;
     }
 
     /**
@@ -66,6 +69,7 @@ public class Worm extends Enemy{
         setTexture(texture);
         setDrawScale(scale);
         y_pos = y;
+        x_original = x;
         //right_bound = right_b;
 
     }
@@ -84,10 +88,37 @@ public class Worm extends Enemy{
     }
 
     /**
+     * Write this astronaut to a JsonValue. When parsed, this JsonValue should return the same astronaut.
+     * @return A JsonValue representing this AstronautModel.
+     */
+    public JsonValue toJson() {
+        JsonValue json = new JsonValue(JsonValue.ValueType.object);
+
+        //Add textures
+        json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));
+
+        //Write position
+        Vector2 pos = getPosition();
+
+        json.addChild("x", new JsonValue(pos.x));
+        json.addChild("y", new JsonValue(pos.y));
+
+        //Write velocity
+        json.addChild("velocity", new JsonValue(getVX()));
+
+        //System.out.println(json);
+
+        return json;
+    }
+
+    /**
      * Sets the texture to the given filmstrip with size size and delay animDelay between frames.
      * @param texture The filmstrip to set
      */
     public void setTexture(FilmStrip texture) {
+        int i = texture.getSize();
+        //System.out.println((int) Math.random() * i);
+        texture.setFrame((int) (Math.random() * i));
         this.texture = texture;
         origin = new Vector2(texture.getRegionWidth()/2.0f, texture.getRegionHeight()/2.0f);
     }
@@ -95,15 +126,24 @@ public class Worm extends Enemy{
     public void update(float dt) {
         texture.tick(); //Animation
         super.update(dt);
-        System.out.println(getVX());
+        //System.out.println(getVX());
 
-        if (this.getPosition().x < 0) {
-            delay_pos--;
-            if (delay_pos == 0) {
-                delay_pos = 1000;
-                this.setPosition(right_bound, y_pos);
-            }
+//        if (this.getPosition().x < 0) {
+//            delay_pos--;
+//            if (delay_pos == 0) {
+//                delay_pos = 1000;
+//                this.setPosition(right_bound, y_pos);
+//            }
+    //}
+        if (this.getPosition().x < x_original - 5) {
+            //System.out.println(getVX());
+            setVX(-getVX());
+        } else if (this.getPosition().x > x_original + 5) {
+            //System.out.println(getVX());
+            setVX(-getVX());
         }
+        //System.out.println(this);
+        //System.out.println(this);
 
     }
 
@@ -123,7 +163,14 @@ public class Worm extends Enemy{
     public void setRight_bound(float r_bound) {right_bound = r_bound;}
 
     public String toString(){
-        return "Worm with { velocity " + getVX() + " and position " + getPosition() +"}";
+        String out = "{texture: ";
+        //System.out.println(texture);
+        out += JsonAssetManager.getInstance().getKey(texture) + ", ";
+        out += "rightbound: " + right_bound +"}";
+
+
+        //"Worm with { velocity " + getVX() + " and position " + getPosition() +"}";
+        return out;
     }
 
 }

@@ -12,34 +12,6 @@
       "file": "platform/static_star_01.png",
       "wrap": false
     },
-    "whirlpool planet 1": {
-      "file": "planets/whirlpool planet1.png",
-      "wrap": false
-    },
-    "whirlpool planet 2": {
-      "file": "planets/whirlpool planet2.png",
-      "wrap": false
-    },
-    "whirlpool planet 3": {
-      "file": "planets/whirlpool planet3.png",
-      "wrap": false
-    },
-    "whirlpool planet 4": {
-      "file": "planets/whirlpool planet4.png",
-      "wrap": false
-    },
-    "whirlpool planet 5": {
-      "file": "planets/whirlpool planet5.png",
-      "wrap": false
-    },
-    "whirlpool planet 6": {
-      "file": "planets/whirlpool planet6.png",
-      "wrap": false
-    },
-    "gravity ring": {
-      "file": "planets/gravity ring.png",
-      "wrap": false
-    },
     "wp p1": {
       "file": "whirlpool/planets/static_planet1_v1.png",
       "wrap": false
@@ -72,6 +44,110 @@
       "file": "whirlpool/planets/static_gravity.ring4_v0.png",
       "wrap": false
     },
+    "mw p1": {
+      "file": "milky way/planets/static_planet1_v1.png",
+      "wrap": false
+    },
+    "mw g1": {
+      "file": "milky way/planets/static_gravity.ring1_v1.png",
+      "wrap": false
+    },
+    "mw p2": {
+      "file": "milky way/planets/static_planet2_v1.png",
+      "wrap": false
+    },
+    "mw g2": {
+      "file": "milky way/planets/static_gravity.ring2_v1.png",
+      "wrap": false
+    },
+    "mw p3": {
+      "file": "milky way/planets/static_planet3_v1.png",
+      "wrap": false
+    },
+    "mw g3": {
+      "file": "milky way/planets/static_gravity.ring3_v1.png",
+      "wrap": false
+    },
+    "mw p4": {
+      "file": "milky way/planets/static_planet4_v1.png",
+      "wrap": false
+    },
+    "mw g4": {
+      "file": "milky way/planets/static_gravity.ring4_v1.png",
+      "wrap": false
+    },
+    "ls p1": {
+      "file": "levelselect/lvl1.png",
+      "wrap": false
+    },
+    "ls g1": {
+      "file": "levelselect/ring1.png",
+      "wrap": false
+    },
+    "ls p2": {
+      "file": "levelselect/lvl2.png",
+      "wrap": false
+    },
+    "ls g2": {
+      "file": "levelselect/ring2.png",
+      "wrap": false
+    },
+    "ls p3": {
+      "file": "levelselect/lvl3.png",
+      "wrap": false
+    },
+    "ls g3": {
+      "file": "levelselect/ring3.png",
+      "wrap": false
+    },
+    "ls p4": {
+      "file": "levelselect/lvl4.png",
+      "wrap": false
+    },
+    "ls g4": {
+      "file": "levelselect/ring4.png",
+      "wrap": false
+    },
+    "ls p5": {
+      "file": "levelselect/lvl5.png",
+      "wrap": false
+    },
+    "ls g5": {
+      "file": "levelselect/ring5.png",
+      "wrap": false
+    },
+    "de p1": {
+      "file": "default/planets/static_default.planet1_v1.png",
+      "wrap": false
+    },
+    "de g1": {
+      "file": "default/planets/static_default.gravity.ring1_v1.png",
+      "wrap": false
+    },
+    "de p2": {
+      "file": "default/planets/static_default.planet2_v1.png",
+      "wrap": false
+    },
+    "de g2": {
+      "file": "default/planets/static_default.gravity.ring2_v1.png",
+      "wrap": false
+    },
+    "de p3": {
+      "file": "default/planets/static_default.planet3_v1.png",
+      "wrap": false
+    },
+    "de g3": {
+      "file": "default/planets/static_default.gravity.ring3_v1.png",
+      "wrap": false
+    },
+    "de p4": {
+      "file": "default/planets/static_default.planet1_v1.png",
+      "wrap": false
+    },
+    "de g4": {
+      "file": "default/planets/static_default.gravity.ring1_v1.png",
+      "wrap": false
+    },
     "rope": {
       "file": "platform/ropebridge.png",
       "wrap": false
@@ -99,15 +175,75 @@
     "loading": {
       "file": "shared/loading.png",
       "wrap": false
-    }
+    },
+    "rocket": {
+      "file": "astronauts/rocket.png",
+      "wrap": false
+    },
+    "static portal": {
+      "file": "platform/static_portal_v1.png",
+      "wrap": false
+    },
+    "spike single": {
+      "file": "enemies/static_spike_circle.png",
+      "wrap": false
+    },
+    "spike top": {
+      "file": "enemies/static_spike_top.png",
+      "wrap": false
+    },
+    "spike center": {
+      "file": "enemies/static_spike_mid.png",
+      "wrap": false
+    },
+    "spike bottom": {
+      "file": "enemies/static_spike_bottom.png",
+      "wrap": false
+    },
   },
   "textures": {
+    "wp background": {
+      "file": "platform/background.png",
+      "wrap": false
+    },
     "background": {
       "file": "platform/background.png",
       "wrap": false
     },
+    "mw background": {
+      "file": "milky way/background_milkyway_v1.png",
+      "wrap": false
+    },
+    "de background": {
+      "file": "default/background_default_v1.png",
+      "wrap": false
+    },
+    "ls background": {
+      "file": "backgrounds/levelselect_background.png",
+      "wrap": false
+    },
     "death screen": {
       "file": "backgrounds/you_dead_1.png",
+      "wrap": false
+    },
+    "play": {
+      "file": "buttons/play.png",
+      "wrap": false
+    },
+    "build": {
+      "file": "buttons/build.png",
+      "wrap": false
+    },
+    "quit": {
+      "file": "buttons/quit.png",
+      "wrap": false
+    },
+    "menu background": {
+      "file": "shared/menu.png",
+      "wrap": false
+    },
+    "starbar": {
+      "file": "default/starbar.png",
       "wrap": false
     }
   },
@@ -183,6 +319,30 @@
       "cols": 3,
       "size": 3,
       "delay": 20
+    },
+    "pink berry": {
+      "file": "milky way/enemies/berries/animated_mwenemy(sberry)_biting.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 10,
+      "size": 10,
+      "delay": 3
+    },
+    "static portal": {
+      "file": "shared/animated_portal_turning.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 18,
+      "size": 18,
+      "delay": 11
+    },
+    "goal": {
+      "file": "shared/static_end.portal_v1.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 1,
+      "size": 1,
+      "delay": 0
     }
   },
   "fonts": {
