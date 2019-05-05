@@ -2,9 +2,17 @@ package edu.cornell.gdiac.starstruck.Models;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.GameCanvas;
+import edu.cornell.gdiac.starstruck.Obstacles.Obstacle;
 import edu.cornell.gdiac.starstruck.Obstacles.ObstacleType;
+import edu.cornell.gdiac.starstruck.Obstacles.Planet;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.JsonAssetManager;
 
 public class Bug extends Enemy {
 
@@ -16,6 +24,21 @@ public class Bug extends Enemy {
     /** Counter for animation delay */
     private int delay;
 
+    /** position */
+    private float x;
+    private float y;
+
+    /**current planet of enemy */
+    private Planet curPlanetEN;
+
+    /** Speed of bug */
+    private static final float BUG_SPEED = 0.00001f;
+
+    Vector2 contactPointEN = new Vector2(x, y);
+
+    private static int counter = 0;
+
+
     /**
      * Creates a new dude avatar at the given position.
      *
@@ -26,11 +49,16 @@ public class Bug extends Enemy {
      *
      * @param x  		Initial x position of the avatar center
      * @param y  		Initial y position of the avatar center
-     * @param width		The object width in physics units
-     * @param height	The object width in physics units
      */
-    public Bug(float x, float y, float width, float height) {
-        super(x,y,width,height);
+    public Bug(float x, float y, FilmStrip texture, Vector2 scale) {
+        super(x,y,texture.getRegionWidth()/scale.x,texture.getRegionHeight()/scale.y);
+        this.x = x;
+        this.y = y;
+        setTexture(texture);
+        setDrawScale(scale);
+        this.setBodyType(BodyDef.BodyType.DynamicBody);
+        counter++;
+        setName("bug " + counter);
     }
 
     /**
@@ -45,6 +73,28 @@ public class Bug extends Enemy {
     public void update(float dt) {
         texture.tick(); //Animation
 
+            //.sub(0, (texture.getRegionHeight()/ drawScale.y)/2)
+
+            setFixedRotation(true);
+            //enemy.setRotation(1);
+            contactPointEN.set(getPosition().cpy());
+            Vector2 contactDirEn = contactPointEN.cpy().sub(curPlanetEN.getPosition());
+            float angle = -contactDirEn.angleRad(new Vector2(0, 1));
+            setAngle(angle);
+            //this.setPosition(contactPointEN);
+            contactDirEn.rotateRad(-(float) Math.PI / 2);
+            //this.setLinearVelocity(contactDirEn.setLength(BUG_SPEED));
+            //contactDirEn.rotateRad(-(float) Math.PI / 2);
+            this.setPosition(contactPointEN.add(contactDirEn.setLength(BUG_SPEED)));
+            //body.applyForce(contactDirEn.setLength(BUG_SPEED), getPosition(), true);
+//            body.setLinearVelocity(new Vector2 (0, 0 ));
+            body.applyLinearImpulse(contactDirEn.cpy().rotateRad(-(float) Math.PI / 2).setLength(24f), getPosition(), true);
+
+        //setGravity(vectorWorld.getForce(getPosition()));
+            //applyForce();
+//            this.x = this.getPosition().x;
+//            this.y = this.getPosition().y;
+
         super.update(dt);
     }
 
@@ -55,4 +105,44 @@ public class Bug extends Enemy {
     }
 
     public ObstacleType getType() { return ObstacleType.BUG;}
+
+    public void setPlanet (Planet p) { curPlanetEN = p;}
+
+    public JsonValue toJson () {
+        JsonValue json = new JsonValue(JsonValue.ValueType.object);
+
+        //Add textures
+        json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));
+
+        return json;
+    }
+
+    public void beginContact(Contact contact) {
+        Fixture fix1 = contact.getFixtureA();
+        Fixture fix2 = contact.getFixtureB();
+
+        Body body1 = fix1.getBody();
+        Body body2 = fix2.getBody();
+
+//        Object fd1 = fix1.getUserData();
+//        Object fd2 = fix2.getUserData();
+
+        try {
+            Obstacle bd1 = (Obstacle)body1.getUserData();
+            Obstacle bd2 = (Obstacle)body2.getUserData();
+
+//            String bd1N = bd1.getName();
+//            String bd2N = bd2.getName();
+
+            if ((bd1.getType() == ObstacleType.BUG || bd2.getType() == ObstacleType.BUG)
+                    && (bd1.getType() == ObstacleType.PLANET || bd2.getType() == ObstacleType.PLANET)) {
+                contactPointEN = contact.getWorldManifold().getPoints()[0];
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

@@ -25,6 +25,7 @@ import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
+import edu.cornell.gdiac.starstruck.Models.Bug;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
 import edu.cornell.gdiac.starstruck.Models.Urchin;
 import edu.cornell.gdiac.starstruck.Models.Worm;
@@ -330,8 +331,25 @@ public class LevelModel {
         planets = new PlanetList(scale);
 
         JsonValue planet = levelFormat.get("planets").child();
-        while (planet != null) {
-            planets.addPlanet(planet, world, vectorWorld);
+        while(planet != null) {
+            float x = planet.getFloat("x");
+            float y = planet.getFloat("y");
+            int i = planet.getInt("i");
+            Bug buggy = null;
+            try {
+                JsonValue bug = planet.get("bug");
+                float radius = Planet.getRadiusPrePlanet(i, scale);
+                key = bug.get("texture").asString();
+                FilmStrip bugtexture = JsonAssetManager.getInstance().getEntry(key, FilmStrip.class);
+                buggy = new Bug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, scale);
+                activate(buggy);
+                enemies.add(buggy);
+            } catch (Exception e) {
+
+            }
+
+            planets.addPlanet(planet, world, vectorWorld, buggy);
+
             planet = planet.next();
         }
 
@@ -410,6 +428,7 @@ public class LevelModel {
 //        System.out.println("here i am enemy list");
 //        System.out.println(enemies);
 //        System.out.println(enemies.size());
+
     }
 
     public void dispose() {
@@ -446,6 +465,7 @@ public class LevelModel {
             case PLAYER: addPlayer((AstronautModel) obj); break;
             case ROPE: objects.add(0, obj); obj.activatePhysics(world); rope = (Rope) obj; break;
             case WORM: activate(obj); enemies.add((Worm) obj); break;
+            case BUG: activate(obj); enemies.add((Bug) obj); break;
             case PORTAL: activate(obj); break;
             case URCHIN: activate(obj); enemies.add((Urchin) obj); break;
             case TUTORIAL: activate(obj); break;
@@ -460,10 +480,16 @@ public class LevelModel {
      */
     public void remove(Obstacle obj) {
         switch (obj.getType()) {
-            case PLANET: obj.deactivatePhysics(world); planets.remove((Planet) obj); break;
+            case PLANET:
+                Bug bugger = ((Planet) obj).getBug();
+                if ( bugger != null) {
+                    remove(bugger);
+                }
+                obj.deactivatePhysics(world); planets.remove((Planet) obj); break;
             case ANCHOR: deactivate(obj); break;
             case STAR: deactivate(obj); break;
             case WORM: deactivate(obj); enemies.remove((Worm) obj); break;
+            case BUG: deactivate(obj); enemies.remove((Bug) obj); break;
             case PORTAL: deactivate(obj); break;
             case URCHIN: deactivate(obj); enemies.remove((Urchin) obj); break;
             case TUTORIAL: deactivate(obj); break;

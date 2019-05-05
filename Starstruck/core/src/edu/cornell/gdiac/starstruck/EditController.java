@@ -15,10 +15,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonValue.PrettyPrintSettings;
 import com.badlogic.gdx.utils.JsonWriter;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
-import edu.cornell.gdiac.starstruck.Models.AstronautModel;
-import edu.cornell.gdiac.starstruck.Models.Enemy;
-import edu.cornell.gdiac.starstruck.Models.Urchin;
-import edu.cornell.gdiac.starstruck.Models.Worm;
+import edu.cornell.gdiac.starstruck.Models.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
@@ -332,20 +329,36 @@ public class EditController extends WorldController implements ContactListener {
      */
     private void updatePlanet() {
         InputController input = InputController.getInstance();
+        OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
 
         if (input.didPrimary()){
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
-            current = new Planet(pos.x, pos.y, p.getInd() + 1, world, scale);
+
+            current = new Planet(pos.x, pos.y, p.getInd() + 1, world, scale, null);
+
             level.add(current);
         } else if (input.didDown()) {
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
-            current = new Planet(pos.x, pos.y, p.getInd() - 1, world, scale);
+
+            current = new Planet(pos.x, pos.y, p.getInd() - 1, world, scale, null);
+
             level.add(current);
-        }
+        } else if (input.didB()){
+            float camScaleX = camOffsetX / scale.x;
+            float camScaleY = camOffsetY / scale.y;
+            float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
+            float h = (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y;
+            Vector2 pos = input.getCrossHair();
+            Bug bugger = new Bug(pos.x + camScaleX + w, pos.y + camScaleY + h,
+                JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class), scale);
+            ((Planet) current).setBug(bugger);
+            bugger.setPlanet((Planet) current);
+            level.add(bugger);
+    }
     }
 
     /**
@@ -511,6 +524,7 @@ public class EditController extends WorldController implements ContactListener {
             levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + load.file));
             level.populate(levelFormat);
             loadFile = load.file;
+            galaxy = level.getGalaxy();
             load.file = null;
 
             return true;
@@ -525,7 +539,7 @@ public class EditController extends WorldController implements ContactListener {
         OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
         //System.out.println(wormListener.worm);
         //System.out.println(current);
-        int i = 0;
+        //int i = 0;
 //        for (Obstacle obj : level.getAllObjects()) {
 //            i += obj.getType() == ObstacleType.ANCHOR ? 1 : 0;
 //        }
@@ -609,7 +623,7 @@ public class EditController extends WorldController implements ContactListener {
                 return;
             } else if (input.didP()) {
                 Vector2 pos = input.getCrossHair();
-                current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, 1, world, scale);
+                current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, 1, world, scale, null);
                 level.add(current);
             } else if (input.didA()) {
                 Vector2 pos = input.getCrossHair();
@@ -621,7 +635,7 @@ public class EditController extends WorldController implements ContactListener {
                 current = new Star(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry("star", TextureRegion.class), scale);
                 level.add(current);
-            } else if (input.didW()){
+            } else if (input.didW()) {
                 Vector2 pos = input.getCrossHair();
                 current = new Worm(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[0], FilmStrip.class), scale, 0);

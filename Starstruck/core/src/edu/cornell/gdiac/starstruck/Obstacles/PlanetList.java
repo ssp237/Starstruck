@@ -1,9 +1,14 @@
 package edu.cornell.gdiac.starstruck.Obstacles;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
+import edu.cornell.gdiac.starstruck.Models.Bug;
+import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.JsonAssetManager;
+
 
 import java.util.ArrayList;
 
@@ -56,8 +61,8 @@ public class PlanetList {
      * @param world World this planet exists in.
      * @param vectorWorld VectorWorld controlling gravity for this planet.
      */
-    public void addPlanet(float x, float y, int i, World world, VectorWorld vectorWorld) {
-        Planet p = new Planet(x, y, i, world, scale);
+    public void addPlanet(float x, float y, int i, World world, VectorWorld vectorWorld, Bug bug) {
+        Planet p = new Planet(x, y, i, world, scale, bug);
         vectorWorld.addPlanet(p);
         planets.add(p);
     }
@@ -68,13 +73,33 @@ public class PlanetList {
      * @param world World this planet exists in.
      * @param vectorWorld VectorWorld controlling gravity for this planet.
      */
-    public void addPlanet(JsonValue json, World world, VectorWorld vectorWorld) {
+    public void addPlanet(JsonValue json, World world, VectorWorld vectorWorld, Bug buggy) {
         float x = json.getFloat("x");
         float y = json.getFloat("y");
         int i = json.getInt("i");
-        addPlanet(x,y,i,world,vectorWorld);
+
+        Planet p = new Planet(x,y,i,world, scale, buggy);
+        addPlanet(p,vectorWorld);
+
+        if (buggy != null) {
+            buggy.setPlanet(p);
+        }
     }
 
+//    /**
+//     * Helper to find distance
+//     *
+//     * @param v1 v1
+//     * @param v2 v2
+//     * @return distance between v1 and v2
+//     */
+//    public void addPlanet(float x, float y, float radius, float mass, float grange,
+//                          int sprite, World world, VectorWorld vectorWorld) {
+//        TextureRegion texture = getPlanetTexture(sprite);
+//        Planet p = new Planet(x, y, radius, mass, grange, texture, world, scale, gring_texture, null);
+//        vectorWorld.addPlanet(p);
+//        planets.add(p);
+//    }
     /**
      * Helper to find distance
      *

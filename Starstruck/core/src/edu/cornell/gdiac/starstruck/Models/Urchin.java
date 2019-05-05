@@ -70,6 +70,7 @@ public class Urchin extends Enemy {
                 (length == 1) ? textures[0].getRegionHeight() / scale.y :
                         (textures[1].getRegionHeight() / scale.y + Math.max(0, length - 2)*textures[2].getRegionHeight() /scale.y + textures[3].getRegionHeight()/scale.y),
         scale, length, orientation);
+        System.out.println("height: " + getHeight() + ", width: " + getWidth());
     }
 
     /**
