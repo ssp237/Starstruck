@@ -691,11 +691,15 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 
         buttonId = 0;
         pressState = 0;
-        music.stop();
-        music.dispose();
+        if (music != null) {
+            music.stop();
+            music.dispose();
+        }
 
-        GameController.getMusic().stop();
-        GameController.getMusic().dispose();
+        if (GameController.getMusic() != null) {
+            GameController.getMusic().stop();
+            GameController.getMusic().dispose();
+        }
 
 
     }
