@@ -77,15 +77,9 @@ public class GameController extends WorldController implements ContactListener {
     private boolean justDead;
     private Vector2 deathPos;
     private FilmStrip deathSprite;
-
-    /** Texture asset for the enemy */
-    private FilmStrip enemyTexture;
-    /** Texture asset for the enemy */
-    private FilmStrip pinkwormTexture;
-    /** Texture asset for the enemy */
-    private FilmStrip greenwormTexture;
-    /** Texture asset for rope */
-    //private TextureRegion ropeTexture;
+    private int animLoop = 0;
+    /**Maximum animation loops for death */
+    private static int MAX_ANIM = 2;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -209,10 +203,6 @@ public class GameController extends WorldController implements ContactListener {
 
         death = JsonAssetManager.getInstance().getEntry("dead background", Texture.class);
         deathSprite = JsonAssetManager.getInstance().getEntry("you dead", FilmStrip.class);
-
-        enemyTexture = JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class);
-        pinkwormTexture = JsonAssetManager.getInstance().getEntry("pink worm", FilmStrip.class);
-        greenwormTexture = JsonAssetManager.getInstance().getEntry("green worm", FilmStrip.class);
 
         // TODO sound
         SoundController sounds = SoundController.getInstance();
@@ -558,6 +548,7 @@ public class GameController extends WorldController implements ContactListener {
         if (death != null && !isFailure() && !justDead) {
             deathPos = new Vector2(-death.getWidth(), 0);
             print(deathPos);
+            animLoop = 0; 
         }
     }
 
@@ -1794,7 +1785,27 @@ public class GameController extends WorldController implements ContactListener {
 
         }
 
-        if ((deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) >= canvas.getWidth()/2) {
+        if (animLoop >= MAX_ANIM) {
+            canvas.begin(); // DO NOT SCALE
+            //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
+            Color drawColor = new Color(1,1,1, 1);
+            canvas.draw(death, drawColor, deathPos.x + cam.position.x - canvas.getWidth()/2,
+                    deathPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(deathSprite, Color.WHITE,deathSprite.getRegionWidth()/2,deathSprite.getRegionHeight()/2,
+                    deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+                    (deathPos.y + cam.position.y ),0,1,1.0f);;
+            canvas.end();
+            deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
+
+            if (deathPos.x > death.getWidth()) {
+                animLoop = 0;
+                deathPos.x = -death.getWidth(); //Reset
+            }
+        }
+
+        print(animLoop);
+
+        if ((deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) >= canvas.getWidth()/2 && animLoop < MAX_ANIM) {
             canvas.begin(); // DO NOT SCALE
             Color drawColor = new Color(1,1,1, 1);
             canvas.draw(death, drawColor, deathPos.x + cam.position.x - canvas.getWidth()/2,
@@ -1804,16 +1815,12 @@ public class GameController extends WorldController implements ContactListener {
                     (deathPos.y + cam.position.y ),0,1,1.0f);
             canvas.end();
             deathSprite.tick();
+            if (deathSprite.justReset()) animLoop++;
         }
 
         if (deathPos.x != -death.getWidth() && (deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) < canvas.getWidth()/2) {
             canvas.begin(); // DO NOT SCALE
-            //canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
-            //canvas.drawText("u ded :(", displayFont, cam.position.x-140, cam.position.y+30);
-            //canvas.draw(background, Color.WHITE, x, y,canvas.getWidth(),canvas.getHeight());
-//            deathOp += 0.0001f;
-//            deathOp *= 1.05;
-            print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
+            //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
             Color drawColor = new Color(1,1,1, 1);
             canvas.draw(death, drawColor, deathPos.x + cam.position.x - canvas.getWidth()/2,
                     deathPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
