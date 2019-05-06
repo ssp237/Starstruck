@@ -1922,7 +1922,7 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         //Death phase 1: Move death screen into place
-        if (deathPos.x != -death.getWidth() && (deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) < canvas.getWidth()/2) {
+        if (deathPos.x != -death.getWidth() && (deathPos.x + death.getWidth()/2) < canvas.getWidth()/2) {
             canvas.begin(); // DO NOT SCALE
             //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
             Color drawColor = new Color(1,1,1, 1);
@@ -1941,7 +1941,7 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         //WIn phase 1: move win screen into place
-        if (winPos.x != -death.getWidth() && (winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) < canvas.getWidth()/2) {
+        if (winPos.x != -death.getWidth() && (winPos.x + death.getWidth()/2) < canvas.getWidth()/2) {
             canvas.begin(); // DO NOT SCALE
             //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
             Color drawColor = new Color(1,1,1, 1);
