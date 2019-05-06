@@ -423,7 +423,9 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
-        updateCamera();
+        if (winPos == null) {
+            updateCamera();
+        }
 
         if (isFailure()) return;
 
@@ -716,7 +718,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 canvas.end();
                 winSprite.tick();
                 if (winSprite.justReset()) animLoop++;
-                print("hit1");
             }
 
             // Do phase 3: move off screen
@@ -736,7 +737,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                     animLoop = 0;
                     winPos = null;
                 }
-                print("hit2");
             }
         }
     }
