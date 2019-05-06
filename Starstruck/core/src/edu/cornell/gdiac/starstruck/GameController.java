@@ -135,8 +135,10 @@ public class GameController extends WorldController implements ContactListener {
 
     private int totalStars;
 
-    private Music music = MenuMode.getMusic();
+    private static Music music = MenuMode.getMusic();
     private String music_name = "menu";
+
+    public static Music getMusic() {return music;}
 
     /**StarCount bar */
 
@@ -450,6 +452,12 @@ public class GameController extends WorldController implements ContactListener {
 
         displayFont = JsonAssetManager.getInstance().getEntry("retro game", BitmapFont.class);
 
+        music.stop();
+        music.dispose();
+        music = null;
+
+        MenuMode.getMusic().stop();
+        MenuMode.getMusic().dispose();
     }
 
     /**
@@ -1449,7 +1457,7 @@ public class GameController extends WorldController implements ContactListener {
                 music.stop();
                 music.dispose();
             }
-            if (!music.isPlaying()) {
+            if (music == null || !music.isPlaying()) {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/whirlpool_music.mp3"));
                 music.play();
                 music.setLooping(true);
@@ -1462,7 +1470,7 @@ public class GameController extends WorldController implements ContactListener {
                 music.stop();
                 music.dispose();
             }
-            if (!music.isPlaying()) {
+            if (music == null || !music.isPlaying()) {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/milky_way.mp3"));
                 music.play();
                 music.setLooping(true);

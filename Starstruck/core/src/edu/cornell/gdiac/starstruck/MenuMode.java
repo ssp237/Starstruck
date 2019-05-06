@@ -80,6 +80,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             //= GameController.getMusic();
 
 
+
             //
     private String music_name = "menu";
 
@@ -685,9 +686,17 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
      * This method disposes of the world and creates a new one.
      */
     public void reset() {
+
         Gdx.input.setInputProcessor(this);
 
         buttonId = 0;
         pressState = 0;
+        music.stop();
+        music.dispose();
+
+        GameController.getMusic().stop();
+        GameController.getMusic().dispose();
+
+
     }
 }
