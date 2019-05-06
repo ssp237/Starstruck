@@ -256,18 +256,19 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
 
 
-        if (MenuMode.getMusic() != null) {
+        if (MenuMode.menuIsPlaying()) {
             dont_play_music = true;
             System.out.println("dont play" + dont_play_music);
 //            MenuMode.getMusic().stop();
 //            MenuMode.getMusic().dispose();
 //            music.play();
 //            music.setLooping(true);
-        } else if (GameController.getMusic() != null) {
+        }
+         else if (GameController.getMusic() != null) {
             GameController.getMusic().stop();
             GameController.getMusic().dispose();
-//            music.play();
-//            music.setLooping(true);
+            music.play();
+            music.setLooping(true);
         }
     }
 
@@ -422,7 +423,9 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
-        updateCamera();
+        if (winPos == null) {
+            updateCamera();
+        }
 
         if (isFailure()) return;
 
@@ -715,7 +718,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 canvas.end();
                 winSprite.tick();
                 if (winSprite.justReset()) animLoop++;
-                print("hit1");
             }
 
             // Do phase 3: move off screen
@@ -735,7 +737,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                     animLoop = 0;
                     winPos = null;
                 }
-                print("hit2");
             }
         }
     }
