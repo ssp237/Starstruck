@@ -78,7 +78,8 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
     /** Settings button to display to edit settings */
     private Texture settingsButton;
     /** Loading audio */
-    private Music music;
+    public Music music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
+    //music.setLooping(true);
 
     /** Standard window size (for scaling) */
     private static int STANDARD_WIDTH  = 1280;
@@ -194,6 +195,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         buildButton = null;
         quitButton.dispose();
         quitButton = null;
+        music.dispose();
     }
 
     /**
@@ -216,6 +218,10 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 //        playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 //        SoundController.getInstance().play(MUSIC_FILE,MUSIC_FILE,true,VOLUME);
 //        SoundController.getInstance().update();
+        if (!music.isPlaying()) {
+            music.play();
+        }
+
     }
 
     /**
