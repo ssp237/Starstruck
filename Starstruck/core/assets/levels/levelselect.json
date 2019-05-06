@@ -48,7 +48,7 @@
     {
       "x": 18,
       "y": 8,
-      "r": 2.0,
+      "r": 3.5,
       "texture": "ls p3",
       "ring texture": "ls g3",
       "unlocked": "true",
@@ -68,7 +68,7 @@
     {
       "x": 31,
       "y": 5,
-      "r": 3,
+      "r": 3.5,
       "texture": "ls p5",
       "ring texture": "ls g5",
       "unlocked": "true",
@@ -78,7 +78,7 @@
     {
       "x": 38,
       "y": 10,
-      "r": 2,
+      "r": 3,
       "texture": "ls p6",
       "ring texture": "ls g5",
       "unlocked": "true",
@@ -88,7 +88,7 @@
     {
       "x": 43,
       "y": 18,
-      "r": 2,
+      "r": 3.5,
       "texture": "ls p7",
       "ring texture": "ls g7",
       "unlocked": "true",
@@ -108,7 +108,7 @@
     {
       "x": 55,
       "y": 13,
-      "r": 3,
+      "r": 4,
       "texture": "ls p9",
       "ring texture": "ls g7",
       "unlocked": "true",
