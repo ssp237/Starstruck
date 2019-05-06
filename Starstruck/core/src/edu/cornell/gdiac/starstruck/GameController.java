@@ -87,6 +87,7 @@ public class GameController extends WorldController implements ContactListener {
     private Vector2 winPos;
     private FilmStrip winSprite;
     private int winAnimLoop;
+    private boolean replaying = false;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -575,7 +576,7 @@ public class GameController extends WorldController implements ContactListener {
         super.setFailure(value);
         if (death != null && !isFailure() && !justDead) {
             deathPos = new Vector2(-death.getWidth(), 0);
-            print(deathPos);
+            //print(deathPos);
             deathAnimLoop = 0;
         }
     }
@@ -589,10 +590,20 @@ public class GameController extends WorldController implements ContactListener {
      */
     public void setComplete(boolean value) {
         super.setComplete(value);
-        if (death != null) {
+        if (death != null && !replaying) {
             winPos = new Vector2(-death.getWidth(), 0);
             winAnimLoop = 0;
         }
+    }
+
+    /**
+     * Set win position when replaying a level. Additionaly, set replaying to true in order to have the screen wipe.
+     * @param old Old win position
+     */
+    public void setWinPos(Vector2 old) {
+        winPos = old.cpy();
+        replaying = true;
+        winAnimLoop = MAX_ANIM;
     }
 
     /**
@@ -1967,7 +1978,7 @@ public class GameController extends WorldController implements ContactListener {
                     winPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
             canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
                     winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
-                    (winPos.y + cam.position.y ),0,1,1.0f);;
+                    (winPos.y + cam.position.y + 3 * (float) canvas.getHeight() / 4 - (float) canvas.getHeight()/2),0,1,1.0f);;
             canvas.end();
             winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
         }
@@ -1980,10 +1991,29 @@ public class GameController extends WorldController implements ContactListener {
                     winPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
             canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
                     winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
-                    (winPos.y + cam.position.y ),0,1,1.0f);
+                    (winPos.y + cam.position.y + 3 * (float) canvas.getHeight() / 4 - (float) canvas.getHeight()/2 ),0,1,1.0f);
             canvas.end();
             winSprite.tick();
             if (winSprite.justReset()) winAnimLoop++;
+        }
+
+        // Win phase 3: move off screen (if started from winning)
+        if (winAnimLoop >= MAX_ANIM) {
+            canvas.begin(); // DO NOT SCALE
+            //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
+            Color drawColor = new Color(1,1,1, 1);
+            canvas.draw(death, drawColor, winPos.x,
+                    winPos.y, death.getWidth(), death.getHeight());
+            canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
+                    winPos.x + death.getWidth()/2,
+                    (winPos.y + 3 * (float) canvas.getHeight() / 4 ),0,1,1.0f);;
+            canvas.end();
+            winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
+
+            if (winPos.x > death.getWidth()) {
+                winAnimLoop = 0;
+                replaying = false;
+            }
         }
 
         if(isDebug()){

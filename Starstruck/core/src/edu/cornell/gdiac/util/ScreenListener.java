@@ -63,4 +63,14 @@
       * @param exitCode The state of the screen upon exit
       */
      public void exitScreen(Screen screen, int exitCode, FilmStrip winStrip, int animDelay, Vector2 winPos);
+
+     /**
+      * The given screen has made a request to exit its player mode after winning.
+      *
+      * The value exitCode can be used to implement menu options. MUST BE LEVEL SELECT PLS TO NOT FUCK UP. (Might change later depending on where we go)
+      *
+      * @param screen   The screen requesting to exit
+      * @param exitCode The state of the screen upon exit
+      */
+     public void exitScreen(Screen screen, int exitCode, Vector2 winPos, String json);
  }

@@ -29,7 +29,9 @@ public class Level extends WheelObstacle {
     /** Boolean to check if mouse is hovering */
     protected boolean active;
     /** Name of json file associated with this level */
-    protected String jsonFile;
+    public String jsonFile;
+    /** Next level; null if none. (makes a linked list of levels basically */
+    public Level nextLevel;
 
     private float grscale;
 
@@ -186,6 +188,10 @@ public class Level extends WheelObstacle {
 
         out += "pos: " + getPosition() + ", ";
         out += "radius: " + getRadius() + ", ";
+        out += "file: " + jsonFile + ", ";
+        if (nextLevel != null) {
+            out += "next: " + nextLevel.jsonFile;
+        }
         out += "}";
 
         return out;

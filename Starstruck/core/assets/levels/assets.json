@@ -251,6 +251,30 @@
     "move": {
       "file": "tutorial/move.png",
       "wrap": false
+    },
+    "levels button": {
+      "file": "buttons/levels.png",
+      "wrap": false
+    },
+    "levels glow": {
+      "file": "buttons/levels hover.png",
+      "wrap": false
+    },
+    "next button": {
+      "file": "buttons/next level.png",
+      "wrap": false
+    },
+    "next glow": {
+      "file": "buttons/next level hover.png",
+      "wrap": false
+    },
+    "replay button": {
+      "file": "buttons/restart.png",
+      "wrap": false
+    },
+    "replay glow": {
+      "file": "buttons/restart hover.png",
+      "wrap": false
     }
   },
   "textures": {

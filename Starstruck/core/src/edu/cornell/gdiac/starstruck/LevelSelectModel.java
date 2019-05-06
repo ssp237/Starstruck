@@ -202,10 +202,13 @@ public class LevelSelectModel {
         objects.add(player);
 
         JsonValue levelVal = levelFormat.get("levels").child();
+        Level lastLevel = null;
         while (levelVal != null) {
             Level level = Level.fromJSON(levelVal, scale, world);
+            if (lastLevel != null) lastLevel.nextLevel = level;
             levels.add(level);
             levelVal = levelVal.next();
+            lastLevel = level;
         }
 
     }
