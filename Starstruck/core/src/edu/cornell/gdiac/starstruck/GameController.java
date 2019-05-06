@@ -81,9 +81,12 @@ public class GameController extends WorldController implements ContactListener {
     private boolean justDead;
     private Vector2 deathPos;
     private FilmStrip deathSprite;
-    private int animLoop = 0;
+    private int deathAnimLoop = 0;
     /**Maximum animation loops for death */
     private static int MAX_ANIM = 2;
+    private Vector2 winPos;
+    private FilmStrip winSprite;
+    private int winAnimLoop;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -212,6 +215,7 @@ public class GameController extends WorldController implements ContactListener {
 
         death = JsonAssetManager.getInstance().getEntry("dead background", Texture.class);
         deathSprite = JsonAssetManager.getInstance().getEntry("you dead", FilmStrip.class);
+        winSprite = JsonAssetManager.getInstance().getEntry("you win", FilmStrip.class);
 
         // TODO sound
         SoundController sounds = SoundController.getInstance();
@@ -563,7 +567,22 @@ public class GameController extends WorldController implements ContactListener {
         if (death != null && !isFailure() && !justDead) {
             deathPos = new Vector2(-death.getWidth(), 0);
             print(deathPos);
-            animLoop = 0;
+            deathAnimLoop = 0;
+        }
+    }
+
+    /**
+     * Sets whether the level is completed.
+     *
+     * If true, the level will advance after a countdown
+     *
+     * @param value whether the level is completed.
+     */
+    public void setComplete(boolean value) {
+        super.setFailure(value);
+        if (death != null) {
+            winPos = new Vector2(-death.getWidth(), 0);
+            winAnimLoop = 0;
         }
     }
 
@@ -1830,7 +1849,7 @@ public class GameController extends WorldController implements ContactListener {
 
         }
 
-        if (animLoop >= MAX_ANIM) {
+        if (deathAnimLoop >= MAX_ANIM) {
             canvas.begin(); // DO NOT SCALE
             //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
             Color drawColor = new Color(1,1,1, 1);
@@ -1843,12 +1862,12 @@ public class GameController extends WorldController implements ContactListener {
             deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
 
             if (deathPos.x > death.getWidth()) {
-                animLoop = 0;
+                deathAnimLoop = 0;
                 deathPos.x = -death.getWidth(); //Reset
             }
         }
 
-        print(animLoop);
+        //print(animLoop);
 
         if ((deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) >= canvas.getWidth()/2 && animLoop < MAX_ANIM) {
             canvas.begin(); // DO NOT SCALE
@@ -1860,7 +1879,7 @@ public class GameController extends WorldController implements ContactListener {
                     (deathPos.y + cam.position.y ),0,1,1.0f);
             canvas.end();
             deathSprite.tick();
-            if (deathSprite.justReset()) animLoop++;
+            if (deathSprite.justReset()) deathAnimLoop++;
         }
 
         if (deathPos.x != -death.getWidth() && (deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) < canvas.getWidth()/2) {
@@ -1878,7 +1897,7 @@ public class GameController extends WorldController implements ContactListener {
 
 
 
-        if (isComplete()){
+        if (isComplete() && winPos.x == -death.getWidth()){
             displayFont.setColor(Color.GREEN);
             canvas.begin();
             canvas.drawText("Yay! :):)", displayFont, cam.position.x-140, cam.position.y+30);
