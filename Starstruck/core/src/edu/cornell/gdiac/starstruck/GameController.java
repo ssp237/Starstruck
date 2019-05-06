@@ -11,6 +11,8 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
@@ -19,6 +21,7 @@ import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
+import java.awt.*;
 import java.util.*;
 
 //import edu.cornell.gdiac.physics.*;
@@ -26,6 +29,7 @@ import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Models.Bug;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
 import edu.cornell.gdiac.starstruck.Models.Worm;
+import edu.cornell.gdiac.starstruck.MenuMode;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -130,6 +134,9 @@ public class GameController extends WorldController implements ContactListener {
     private int heightY;
 
     private int totalStars;
+
+    private Music music = MenuMode.getMusic();
+    private String music_name = "menu";
 
     /**StarCount bar */
 
@@ -1432,6 +1439,36 @@ public class GameController extends WorldController implements ContactListener {
 
 //         If we use sound, we must remember this.
         SoundController.getInstance().update();
+
+
+
+        //MUSIC
+
+        if (level.getGalaxy() == Galaxy.WHIRLPOOL) {
+            if (music != null && music_name != "whirlpool") {
+                music.stop();
+                music.dispose();
+            }
+            if (!music.isPlaying()) {
+                music = Gdx.audio.newMusic(Gdx.files.internal("audio/whirlpool_music.mp3"));
+                music.play();
+                music.setLooping(true);
+                music_name = "whirlpool";
+            }
+
+        }
+        else if (level.getGalaxy() == Galaxy.MILKYWAY) {
+            if (music != null && music_name != "milkyway") {
+                music.stop();
+                music.dispose();
+            }
+            if (!music.isPlaying()) {
+                music = Gdx.audio.newMusic(Gdx.files.internal("audio/milky_way.mp3"));
+                music.play();
+                music.setLooping(true);
+                music_name = "milkyway";
+            }
+        }
     }
 
     /**

@@ -22,10 +22,7 @@
  */
 package edu.cornell.gdiac.starstruck;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.controllers.Controller;
@@ -78,8 +75,20 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
     /** Settings button to display to edit settings */
     private Texture settingsButton;
     /** Loading audio */
-    public Music music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
-    //music.setLooping(true);
+    public  static Music music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
+
+            //= GameController.getMusic();
+
+
+            //
+    private String music_name = "menu";
+
+                    //GameController.getMusicName();
+
+    //public Music from_GameController = GameController.getMusic();
+    //private String gameController_music_name = GameController.getMusicName();
+
+
 
     /** Standard window size (for scaling) */
     private static int STANDARD_WIDTH  = 1280;
@@ -130,6 +139,10 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
     private static boolean DOWN = false;
     /** button up */
     private static boolean UP = true;
+
+
+    public static Music getMusic() {return music;}
+
 
     /**
      * Returns true if all assets are loaded and the player is ready to go.
@@ -195,6 +208,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         buildButton = null;
         quitButton.dispose();
         quitButton = null;
+        music.stop();
         music.dispose();
     }
 
@@ -218,8 +232,27 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 //        playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 //        SoundController.getInstance().play(MUSIC_FILE,MUSIC_FILE,true,VOLUME);
 //        SoundController.getInstance().update();
+//        if (from_GameController != null) {
+//            if (from_GameController.isPlaying()){
+//                from_GameController.stop();
+//                from_GameController.dispose();
+//                from_GameController = null;
+//            }
+//        }
+
+//        if (music != null && music_name != "menu") {
+//            music.stop();
+//            music.dispose();
+//            music = null;
+//        }
+//        if (GameController.getMusic() != null) {
+//
+//        }
         if (!music.isPlaying()) {
+            //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
             music.play();
+            music.setLooping(true);
+            //music_name = "menu";
         }
 
     }

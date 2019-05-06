@@ -16,6 +16,8 @@
  */
 package edu.cornell.gdiac.starstruck;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -97,6 +99,8 @@ public class LevelModel {
     /** Bounds of play space in terms of screens */
     protected float xPlay;
     protected float yPlay;
+
+    Music music;
 
     /**
      * Returns the bounding rectangle for the physics world
@@ -351,6 +355,7 @@ public class LevelModel {
             planets.addPlanet(planet, world, vectorWorld, buggy);
 
             planet = planet.next();
+
         }
 
         //add stars
@@ -450,6 +455,7 @@ public class LevelModel {
         enemies.clear();
         portalpairs.clear();
         tutpoints.clear();
+        //MenuMode.getMusic().dispose();
         vectorWorld = new VectorWorld();
     }
 
