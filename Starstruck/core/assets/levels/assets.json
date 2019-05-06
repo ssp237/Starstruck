@@ -402,12 +402,12 @@
       "delay": 7
     },
     "you win": {
-      "file": "shared/animated_you.dead_screen.png",
+      "file": "shared/animated_you.win_screen.png",
       "wrap": false,
       "rows": 1,
       "cols": 25,
       "size": 25,
-      "delay": 1
+      "delay": 4
     }
   },
   "fonts": {

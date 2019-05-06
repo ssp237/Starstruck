@@ -81,9 +81,12 @@ public class GameController extends WorldController implements ContactListener {
     private boolean justDead;
     private Vector2 deathPos;
     private FilmStrip deathSprite;
-    private int animLoop = 0;
+    private int deathAnimLoop = 0;
     /**Maximum animation loops for death */
     private static int MAX_ANIM = 2;
+    private Vector2 winPos;
+    private FilmStrip winSprite;
+    private int winAnimLoop;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -212,6 +215,7 @@ public class GameController extends WorldController implements ContactListener {
 
         death = JsonAssetManager.getInstance().getEntry("dead background", Texture.class);
         deathSprite = JsonAssetManager.getInstance().getEntry("you dead", FilmStrip.class);
+        winSprite = JsonAssetManager.getInstance().getEntry("you win", FilmStrip.class);
 
         // TODO sound
         SoundController sounds = SoundController.getInstance();
@@ -567,7 +571,22 @@ public class GameController extends WorldController implements ContactListener {
         if (death != null && !isFailure() && !justDead) {
             deathPos = new Vector2(-death.getWidth(), 0);
             print(deathPos);
-            animLoop = 0; 
+            deathAnimLoop = 0;
+        }
+    }
+
+    /**
+     * Sets whether the level is completed.
+     *
+     * If true, the level will advance after a countdown
+     *
+     * @param value whether the level is completed.
+     */
+    public void setComplete(boolean value) {
+        super.setComplete(value);
+        if (death != null) {
+            winPos = new Vector2(-death.getWidth(), 0);
+            winAnimLoop = 0;
         }
     }
 
@@ -1189,8 +1208,41 @@ public class GameController extends WorldController implements ContactListener {
      * @return whether to process the update loop
      */
     public boolean preUpdate(float dt) {
-        if (!super.preUpdate(dt)) {
+        InputController input = InputController.getInstance();
+        input.readInput(bounds, scale);
+        if (listener == null) {
+            return true;
+        }
+
+        // Toggle debug
+        if (input.didDebug()) {
+            setDebug(!isDebug());
+        }
+
+        // Handle resets
+        if (input.didReset()) {
+            reset();
+        }
+
+        // Now it is time to maybe switch screens.
+        if (input.didExit()) {
+            listener.exitScreen(this, EXIT_QUIT);
             return false;
+        } else if (input.didAdvance()) {
+            listener.exitScreen(this, EXIT_SELECT);
+            return false;
+        } else if (input.didRetreat()) {
+            listener.exitScreen(this, EXIT_EDIT);
+            return false;
+        } else if (countdown > 0) {
+            countdown--;
+        } else if (countdown == 0) {
+            if (isFailure()) {
+                reset();
+            } else if (isComplete()) {
+                listener.exitScreen(this, EXIT_SELECT, winSprite, winAnimLoop, winPos);
+                return false;
+            }
         }
 
         // +/- 1 for a little bit of buffer space because astronaut position is at its center
@@ -1787,6 +1839,7 @@ public class GameController extends WorldController implements ContactListener {
         }
     }
 
+
     /**
      * Draw the physics objects to the canvas and the background
      *
@@ -1828,13 +1881,13 @@ public class GameController extends WorldController implements ContactListener {
         }
         canvas.end();
 
+        //Start death anim
         if (isFailure() && deathPos.x == -death.getWidth()) {
-            displayFont.setColor(Color.RED);
             deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
-
         }
 
-        if (animLoop >= MAX_ANIM) {
+        //Death phase 3: Move off screen if animation is done
+        if (deathAnimLoop >= MAX_ANIM) {
             canvas.begin(); // DO NOT SCALE
             //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
             Color drawColor = new Color(1,1,1, 1);
@@ -1847,14 +1900,15 @@ public class GameController extends WorldController implements ContactListener {
             deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
 
             if (deathPos.x > death.getWidth()) {
-                animLoop = 0;
+                deathAnimLoop = 0;
                 deathPos.x = -death.getWidth(); //Reset
             }
         }
 
         //print(animLoop);
 
-        if ((deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) >= canvas.getWidth()/2 && animLoop < MAX_ANIM) {
+        //Death phase 2: once death screen is in place, animate
+        if ((deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) >= canvas.getWidth()/2 && deathAnimLoop < MAX_ANIM) {
             canvas.begin(); // DO NOT SCALE
             Color drawColor = new Color(1,1,1, 1);
             canvas.draw(death, drawColor, deathPos.x + cam.position.x - canvas.getWidth()/2,
@@ -1864,9 +1918,10 @@ public class GameController extends WorldController implements ContactListener {
                     (deathPos.y + cam.position.y ),0,1,1.0f);
             canvas.end();
             deathSprite.tick();
-            if (deathSprite.justReset()) animLoop++;
+            if (deathSprite.justReset()) deathAnimLoop++;
         }
 
+        //Death phase 1: Move death screen into place
         if (deathPos.x != -death.getWidth() && (deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) < canvas.getWidth()/2) {
             canvas.begin(); // DO NOT SCALE
             //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
@@ -1880,13 +1935,37 @@ public class GameController extends WorldController implements ContactListener {
             deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
         }
 
+        //Start win anim
+        if (isComplete() && winPos.x == -death.getWidth()){
+            winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
+        }
 
-
-        if (isComplete()){
-            displayFont.setColor(Color.GREEN);
-            canvas.begin();
-            canvas.drawText("Yay! :):)", displayFont, cam.position.x-140, cam.position.y+30);
+        //WIn phase 1: move win screen into place
+        if (winPos.x != -death.getWidth() && (winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) < canvas.getWidth()/2) {
+            canvas.begin(); // DO NOT SCALE
+            //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
+            Color drawColor = new Color(1,1,1, 1);
+            canvas.draw(death, drawColor, winPos.x + cam.position.x - canvas.getWidth()/2,
+                    winPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
+                    winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+                    (winPos.y + cam.position.y ),0,1,1.0f);;
             canvas.end();
+            winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
+        }
+
+        //Win phase 2: Animate (will be cut off by screen swtich)
+        if ((winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) >= canvas.getWidth()/2 && winAnimLoop < MAX_ANIM) {
+            canvas.begin(); // DO NOT SCALE
+            Color drawColor = new Color(1,1,1, 1);
+            canvas.draw(death, drawColor, winPos.x + cam.position.x - canvas.getWidth()/2,
+                    winPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
+                    winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+                    (winPos.y + cam.position.y ),0,1,1.0f);
+            canvas.end();
+            winSprite.tick();
+            if (winSprite.justReset()) winAnimLoop++;
         }
 
         if(isDebug()){
