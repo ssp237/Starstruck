@@ -460,6 +460,11 @@ public class GameController extends WorldController implements ContactListener {
             MenuMode.getMusic().stop();
             MenuMode.getMusic().dispose();
         }
+
+        if (LevelSelect.getMusic() != null) {
+            LevelSelect.getMusic().stop();
+            LevelSelect.getMusic().dispose();
+        }
     }
 
     /**
@@ -1513,7 +1518,20 @@ public class GameController extends WorldController implements ContactListener {
 
         //MUSIC
 
-        if (level.getGalaxy() == Galaxy.WHIRLPOOL) {
+        if (level.getGalaxy() == Galaxy.DEFAULT) {
+            if (music != null && music_name != "tutorial") {
+                music.stop();
+                music.dispose();
+            }
+            if (music == null || !music.isPlaying()) {
+                music = Gdx.audio.newMusic(Gdx.files.internal("audio/tutorial_music.mp3"));
+                music.play();
+                music.setLooping(true);
+                music_name = "tutorial";
+            }
+        }
+
+        else if (level.getGalaxy() == Galaxy.WHIRLPOOL) {
             if (music != null && music_name != "whirlpool") {
                 music.stop();
                 music.dispose();

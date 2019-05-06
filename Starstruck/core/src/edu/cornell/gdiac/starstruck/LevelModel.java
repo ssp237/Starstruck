@@ -96,7 +96,10 @@ public class LevelModel {
     protected float xPlay;
     protected float yPlay;
 
-    Music music;
+    private boolean isTutorial = false;
+
+    public boolean getTutorial() {return isTutorial;}
+
 
     /**
      * Returns the bounding rectangle for the physics world
@@ -372,6 +375,9 @@ public class LevelModel {
         //add tutorial points
         i = 0;
         JsonValue tutorialVals = levelFormat.get("tutorialpoints").child();
+        if (tutorialVals != null) {
+            isTutorial = true;
+        }
         while (tutorialVals != null) {
             TutorialPoint tutpoint = TutorialPoint.fromJSON(tutorialVals, scale);
             activate(tutpoint.getPinkPoint());

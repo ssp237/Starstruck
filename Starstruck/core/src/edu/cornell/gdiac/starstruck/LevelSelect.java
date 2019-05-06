@@ -13,6 +13,7 @@ package edu.cornell.gdiac.starstruck;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
 
@@ -96,6 +97,15 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     private static int MAX_ANIM = 2;
     private int animLoop;
     private Texture death;
+
+    private static final String MUSIC_FILE = "audio/loading_screen.mp3";
+
+    public  static Music music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
+
+    public static Music getMusic() {return music;}
+
+    private boolean dont_play_music = false;
+
 
 
     /**
@@ -243,6 +253,22 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         pressState = 0;
         assignLevelFields();
         camOffsetX = 0;
+
+
+
+        if (MenuMode.getMusic() != null) {
+            dont_play_music = true;
+            System.out.println("dont play" + dont_play_music);
+//            MenuMode.getMusic().stop();
+//            MenuMode.getMusic().dispose();
+//            music.play();
+//            music.setLooping(true);
+        } else if (GameController.getMusic() != null) {
+            GameController.getMusic().stop();
+            GameController.getMusic().dispose();
+//            music.play();
+//            music.setLooping(true);
+        }
     }
 
     /**
@@ -419,6 +445,17 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
 //         If we use sound, we must remember this.
         SoundController.getInstance().update();
+
+        if (!dont_play_music) {
+            System.out.println("in here");
+            if (!music.isPlaying()) {
+                //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
+                System.out.println("in here if");
+                music.play();
+                music.setLooping(true);
+                //music_name = "menu";
+            }
+        }
     }
 
     /** Called when a key was pressed

@@ -144,6 +144,8 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 
     public static Music getMusic() {return music;}
 
+    public static boolean menuIsPlaying() {return music.isPlaying();}
+
 
     /**
      * Returns true if all assets are loaded and the player is ready to go.
