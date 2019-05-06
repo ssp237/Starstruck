@@ -1976,8 +1976,4 @@ public class GameController extends WorldController implements ContactListener {
             canvas.endDebug();
         }
     }
-
-
-
-
 }
