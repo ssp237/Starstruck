@@ -39,9 +39,9 @@ public class Enemy extends CapsuleObstacle {
 
     // This is to fit the image to a tigher hitbox
     /** The amount to shrink the body fixture (vertically) relative to the image */
-    private static final float DUDE_VSHRINK = 0.95f;
+    public static final float DUDE_VSHRINK = 0.95f;
     /** The amount to shrink the body fixture (horizontally) relative to the image */
-    private static final float DUDE_HSHRINK = 0.7f;
+    public static final float DUDE_HSHRINK = 0.7f;
     /** The amount to shrink the sensor fixture (horizontally) relative to the image */
     private static final float DUDE_SSHRINK = 0.6f;
 

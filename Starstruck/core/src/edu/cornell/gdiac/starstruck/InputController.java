@@ -123,6 +123,16 @@ public class InputController {
     private boolean anchor2Previous;
     private boolean lPressed;
     private boolean lPrevious;
+    private boolean tPressed;
+    private boolean tPrevious;
+    private boolean xboxDown;
+    private boolean xboxUp;
+    private boolean xboxDown2;
+    private boolean xboxUp2;
+    private boolean bPressed;
+    private boolean bPrevious;
+    private boolean iPressed;
+    private boolean iPrevious;
 
     /** Mouse's current position*/
     private float x_pos;
@@ -256,6 +266,8 @@ public class InputController {
 
     public boolean didL() { return lPressed && !lPrevious; }
 
+    public boolean didT() { return tPressed && !tPrevious; }
+
 
     /**
      * Returns true if the tertiary action button was pressed.
@@ -382,6 +394,14 @@ public class InputController {
         return uPressed && !uPrevious;
     }
 
+    public boolean didB() {
+        return bPressed && !bPrevious;
+    }
+
+    public boolean didI() {
+        return iPressed && !iPrevious;
+    }
+
     public boolean didSwitch() { return switchPressed && !switchPrevious; }
 
     public boolean didOne() { return onePressed && !onePrevious; }
@@ -393,6 +413,14 @@ public class InputController {
     public boolean didFour() { return fourPressed && !fourPrevious; }
 
     public boolean didFive() { return fivePressed && !fivePrevious; }
+
+    public boolean xboxDown() { return xboxDown; }
+
+    public boolean xboxUp() { return xboxUp; }
+
+    public boolean xboxDown2() { return xboxDown2; }
+
+    public boolean xboxUp2() { return xboxUp2; }
 
     public float xPos() {return Gdx.input.getX();}
 
@@ -418,6 +446,51 @@ public class InputController {
         xbox2 = new XboxController(1);
         crosshair = new Vector2();
         crosscache = new Vector2();
+    }
+
+    public ControllerType getControlType() {
+        if (xbox.isConnected() && xbox2.isConnected())
+            return ControllerType.CTRLTWO;
+        else if (xbox.isConnected())
+            return ControllerType.CTRLONE;
+        return ControllerType.KEY;
+    }
+
+    /**
+     * Get the angle of the first controller
+     *
+     * @return -1 if controller is not connected
+     */
+    public float getAngle() {
+        if (xbox.isConnected()) {
+            float x = xbox.getLeftX();
+            float y = -xbox.getLeftY();
+            Vector2 dir = new Vector2(x, y);
+            float angle = dir.angleRad();
+            if (angle < 0) {
+                angle = (float) (2*Math.PI + angle);
+            }
+//            System.out.println(angle * (180/Math.PI));
+            return angle;
+
+        }
+        return -1;
+    }
+
+    public float getAngle2() {
+        if (xbox2.isConnected()) {
+            float x = xbox2.getLeftX();
+            float y = -xbox2.getLeftY();
+            Vector2 dir = new Vector2(x, y);
+            float angle = dir.angleRad();
+            if (angle < 0) {
+                angle = (float) (2*Math.PI + angle);
+            }
+//            System.out.println(angle * (180/Math.PI));
+            return angle;
+
+        }
+        return -1;
     }
 
     /**
@@ -464,6 +537,9 @@ public class InputController {
         anchor1Previous = anchor1Pressed;
         anchor2Previous = anchor2Pressed;
         lPrevious = lPressed;
+        tPrevious = tPressed;
+        bPrevious = bPressed;
+        iPrevious = iPressed;
 
         // Check to see if a GamePad is connected
         if (xbox.isConnected() && xbox2.isConnected()) { // Both controllers connected
@@ -500,13 +576,16 @@ public class InputController {
 //        anchor1Pressed = xbox.getX();
         anchorPressed = xbox.getA();
         anchor1Pressed = xbox.getA();
-        switchPressed = xbox.getX(); //switch
+        switchPressed = xbox.getLeftTrigger() > 0.5 || xbox.getRightTrigger() > 0.5; //switch
         downPressed = xbox.getB(); //reel
         debugPressed  = xbox.getR3(); //debug
 
         // Increase animation frame, but only if trying to move
         horizontal = xbox.getLeftX();
         vertical   = xbox.getLeftY();
+
+        xboxDown = xbox.getLeftY() > 0.6;
+        xboxUp = xbox.getLeftY() < -0.6;
 
         // Move the crosshairs with the right stick.
         //tertiaryPressed = xbox.getA();
@@ -521,6 +600,7 @@ public class InputController {
 //            momentum = 0;
 //        }
 //        clampPosition(bounds);
+        getAngle();
     }
 
     /**
@@ -548,6 +628,9 @@ public class InputController {
         // Increase animation frame, but only if trying to move
         horizontal2 = xbox2.getLeftX();
         vertical2   = xbox2.getLeftY();
+
+        xboxDown2 = xbox2.getLeftY() > 0.6;
+        xboxUp2 = xbox2.getLeftY() < -0.6;
     }
 
     /**
@@ -591,6 +674,9 @@ public class InputController {
         anchor1Pressed = (secondary && anchor1Pressed) || (Gdx.input.isKeyPressed(Input.Keys.SLASH));
         anchor2Pressed = (secondary && anchor2Pressed) || (Gdx.input.isKeyPressed(Input.Keys.E));
         lPressed = (secondary && lPressed) || (Gdx.input.isKeyPressed(Input.Keys.L));
+        tPressed = (secondary && tPressed) || (Gdx.input.isKeyPressed(Input.Keys.T));
+        bPressed = (secondary && bPressed) || (Gdx.input.isKeyPressed(Input.Keys.B));
+        iPressed = (secondary && iPressed) || (Gdx.input.isKeyPressed(Input.Keys.I));
 
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);

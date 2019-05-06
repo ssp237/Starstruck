@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.Galaxy;
 import edu.cornell.gdiac.starstruck.GameCanvas;
+import edu.cornell.gdiac.starstruck.Models.Bug;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
 /** Representation of a planet in the game. Has its own mass, size, and range of effect for gravity.
@@ -17,7 +18,7 @@ import edu.cornell.gdiac.util.JsonAssetManager;
 public class Planet extends WheelObstacle {
 
     /** Number of possible planets */
-    public final int NUM_PLANETS = 4;
+    public static final int NUM_PLANETS = 4;
     /** The mass of a planet in [slightly arbitrary] units. */
     protected float mass;
     /** The range from which gravity is effective for this planet (physics units)*/
@@ -26,6 +27,10 @@ public class Planet extends WheelObstacle {
     protected TextureRegion ringTexture;
     /** Identifier for index of planet.*/
     private int ind;
+    /** True if this planet has a bug.*/
+    private boolean bug_bool;
+    private Bug buggy;
+
 
     /** Pre-set masses */
     private static float mass1 = 700;
@@ -49,12 +54,19 @@ public class Planet extends WheelObstacle {
      * @param mass The planet's mass
      */
     public Planet(float x, float y, float radius, float mass, float grange,
-                  TextureRegion texture, World world, Vector2 scale, TextureRegion ringTexture) {
+                  TextureRegion texture, World world, Vector2 scale, TextureRegion ringTexture, Bug bug) {
         super(x, y, radius);
         this.mass = mass;
         this.texture = texture;
         this.grange = grange;
         this.ringTexture = ringTexture;
+
+        if (bug == null) {
+            this.bug_bool = false;
+        }
+        else {
+            this.bug_bool = true;
+        }
 
         setBodyType(BodyDef.BodyType.StaticBody);
         setDensity(500f);
@@ -86,13 +98,21 @@ public class Planet extends WheelObstacle {
      * @param world World the planet exists in.
      * @param scale Draw scale for this planet.
      */
-    public Planet(float x, float y, int i, World world, Vector2 scale) {
+    public Planet(float x, float y, int i, World world, Vector2 scale, Bug bug) {
         super(x,y, 0);
 
         if (i > 0) {
             i = ((i - 1) % NUM_PLANETS) + 1;
         } else {
             i = ((i - 1) % NUM_PLANETS) + 1 + NUM_PLANETS;
+        }
+
+        if (bug == null) {
+            this.bug_bool = false;
+        }
+        else {
+            this.bug_bool = true;
+            buggy = bug;
         }
 
         String gal = galaxy.getChars();
@@ -126,6 +146,31 @@ public class Planet extends WheelObstacle {
         counter++;
 
         ind = i;
+    }
+
+    /**
+     * Set da bug
+     * @param bug da bug
+     */
+    public void setBug (Bug bug) {
+        buggy = bug;
+        bug_bool = true;
+    }
+
+    /**
+     * Get da bug (null if no bug)
+     * @return da bug
+     */
+    public Bug getBug(){
+        return buggy;
+    }
+
+    /**
+     * Remove da bug
+     */
+    public void removeBug() {
+        buggy = null;
+        bug_bool = false;
     }
 
     /**
@@ -210,6 +255,10 @@ public class Planet extends WheelObstacle {
 
         //System.out.println(json);
 
+        if (bug_bool) {
+            json.addChild("bug", buggy.toJson());
+        }
+
         return json;
     }
 
@@ -252,5 +301,19 @@ public class Planet extends WheelObstacle {
     }
 
     public ObstacleType getType() { return ObstacleType.PLANET;}
+
+
+    public static float getRadiusPrePlanet(int i, Vector2 scale) {
+        if (i > 0) {
+            i = ((i - 1) % NUM_PLANETS) + 1;
+        } else {
+            i = ((i - 1) % NUM_PLANETS) + 1 + NUM_PLANETS;
+        }
+
+        TextureRegion texture = JsonAssetManager.getInstance().getEntry(("wp p" + i), TextureRegion.class);
+
+        float radius = texture.getRegionWidth() / (scale.x * 2);
+        return radius;
+    }
 
 }

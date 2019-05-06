@@ -11,6 +11,8 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.*;
@@ -19,12 +21,15 @@ import com.badlogic.gdx.assets.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.physics.box2d.*;
 
+import java.awt.*;
 import java.util.*;
 
 //import edu.cornell.gdiac.physics.*;
 import edu.cornell.gdiac.starstruck.Models.AstronautModel;
+import edu.cornell.gdiac.starstruck.Models.Bug;
 import edu.cornell.gdiac.starstruck.Models.Enemy;
 import edu.cornell.gdiac.starstruck.Models.Worm;
+import edu.cornell.gdiac.starstruck.MenuMode;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -72,23 +77,19 @@ public class GameController extends WorldController implements ContactListener {
     private Texture death;
     /** Opacity countdown for death screen */
     private float deathOp = 0f;
-
-    /** Texture asset for the enemy */
-    private FilmStrip enemyTexture;
-    /** Texture asset for the enemy */
-    private FilmStrip pinkwormTexture;
-    /** Texture asset for the enemy */
-    private FilmStrip greenwormTexture;
-    /** Texture asset for rope */
-    //private TextureRegion ropeTexture;
+    /** Did we just die? (used to tell if we need to start loop with death screen) */
+    private boolean justDead;
+    private Vector2 deathPos;
+    private FilmStrip deathSprite;
+    private int deathAnimLoop = 0;
+    /**Maximum animation loops for death */
+    private static int MAX_ANIM = 2;
+    private Vector2 winPos;
+    private FilmStrip winSprite;
+    private int winAnimLoop;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
-
-    /** Location and animation information for enemy */
-    private Enemy enemy;
-    private Enemy pinkworm;
-    private Enemy greenworm;
 
     /** Texture file for star bar*/
     private static final String PROGRESS_FILE = "default/starbar.png";
@@ -129,6 +130,11 @@ public class GameController extends WorldController implements ContactListener {
     private int heightY;
 
     private int totalStars;
+
+    private static Music music = MenuMode.getMusic();
+    private String music_name = "menu";
+
+    public static Music getMusic() {return music;}
 
     /**StarCount bar */
 
@@ -207,11 +213,9 @@ public class GameController extends WorldController implements ContactListener {
         JsonAssetManager.getInstance().allocateDirectory();
 
 
-        death = JsonAssetManager.getInstance().getEntry("death screen", Texture.class);
-
-        enemyTexture = JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class);
-        pinkwormTexture = JsonAssetManager.getInstance().getEntry("pink worm", FilmStrip.class);
-        greenwormTexture = JsonAssetManager.getInstance().getEntry("green worm", FilmStrip.class);
+        death = JsonAssetManager.getInstance().getEntry("dead background", Texture.class);
+        deathSprite = JsonAssetManager.getInstance().getEntry("you dead", FilmStrip.class);
+        winSprite = JsonAssetManager.getInstance().getEntry("you win", FilmStrip.class);
 
         // TODO sound
         SoundController sounds = SoundController.getInstance();
@@ -290,6 +294,8 @@ public class GameController extends WorldController implements ContactListener {
     private ArrayList<Rope> ropes = new ArrayList<Rope>();
     /** List of PortalPairs */
     private ArrayList<PortalPair> portalpairs = new ArrayList<PortalPair>();
+    /** List of tutorial points */
+    private ArrayList<TutorialPoint> tutorialpoints = new ArrayList<TutorialPoint>();
     /** Planets */
     private PlanetList planets;
     /** Planets */
@@ -342,6 +348,11 @@ public class GameController extends WorldController implements ContactListener {
     private Vector2 reelCache;
     /** Obstacle cache */
     private Obstacle obstacleCache;
+    /** tutorial cache */
+    private TutorialPoint tutPointCache;
+    /** Whether tutorial needs to be drawn */
+    private boolean tutorial;
+
 
     /** Reference to the goalDoor (for collision detection) */
 //    private BoxObstacle goalDoor;
@@ -360,6 +371,7 @@ public class GameController extends WorldController implements ContactListener {
      * @return Return a reference to the secondary avatar.
      */
     public AstronautModel getAvatar2() { return avatar2; }
+
     /**
      * Creates and initialize a new instance of the platformer game
      *
@@ -376,7 +388,9 @@ public class GameController extends WorldController implements ContactListener {
         sensorFixtures = new ObjectSet<Fixture>();
         this.loadFile = loadFile;
         loader = new SaveListener();
+        deathPos = new Vector2(0,0);
     }
+
     /**
      * Creates and initialize a new instance of the platformer game
      *
@@ -393,6 +407,7 @@ public class GameController extends WorldController implements ContactListener {
         sensorFixtures = new ObjectSet<Fixture>();
         loadFile = "main/tutorial.json";
         loader = new SaveListener();
+        deathPos = new Vector2(0,0);
     }
 
     /**
@@ -407,6 +422,8 @@ public class GameController extends WorldController implements ContactListener {
         //levelFormat = jsonReadesystem.r.parse(Gdx.files.internal("levels/" + loadFile));
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
+
+        justDead = isFailure();
 
         setComplete(false);
         setFailure(false);
@@ -433,6 +450,21 @@ public class GameController extends WorldController implements ContactListener {
 
         displayFont = JsonAssetManager.getInstance().getEntry("retro game", BitmapFont.class);
 
+        if (music != null) {
+            music.stop();
+            music.dispose();
+            music = null;
+        }
+
+        if (MenuMode.getMusic() != null) {
+            MenuMode.getMusic().stop();
+            MenuMode.getMusic().dispose();
+        }
+
+        if (LevelSelect.getMusic() != null) {
+            LevelSelect.getMusic().stop();
+            LevelSelect.getMusic().dispose();
+        }
     }
 
     /**
@@ -446,10 +478,6 @@ public class GameController extends WorldController implements ContactListener {
         world = level.getWorld(); vectorWorld = level.getVectorWorld();
         enemies = level.getEnemies();
         goal = level.getGoal();
-        //System.out.println("here ye here ye");
-        //System.out.println(enemies);
-        //System.out.println(enemies.size());
-        //System.out.println(level.getEnemies());
     }
 
     /**
@@ -503,6 +531,9 @@ public class GameController extends WorldController implements ContactListener {
         stars = level.stars;
         anchors = level.anchors;
         portalpairs = level.portalpairs;
+        tutorialpoints = level.tutpoints;
+        tutorial = false;
+        tutPointCache = null;
 
         winCount = level.winCount;
         openGoal = false;
@@ -520,16 +551,6 @@ public class GameController extends WorldController implements ContactListener {
 
         //rope.setReelForce(REEL_FORCE);
         //setSettings();
-
-        // Create enemy TODO hardcoded bug enemy
-//        dwidth  = enemyTexture.getRegionWidth()/scale.x;
-//        dheight = enemyTexture.getRegionHeight()/scale.y;
-//        enemy = new Enemy(26 + 2, 8 + 2, dwidth, dheight);
-//        enemy.setDrawScale(scale);
-//        enemy.setTexture(enemyTexture, 3, 10);
-//        enemy.setName("bug");
-//        addObject(enemy);
-
     }
 
     /**
@@ -539,6 +560,39 @@ public class GameController extends WorldController implements ContactListener {
         twoplayer = false;
         switchOnJump = false;
         switchOnAnchor = false;
+    }
+
+    /**
+     * Sets whether the level is failed.
+     *
+     * If true, the level will reset after a countdown
+     *
+     * Additionally, set the value for the
+     *
+     * @param value whether the level is failed.
+     */
+    public void setFailure(boolean value) {
+        super.setFailure(value);
+        if (death != null && !isFailure() && !justDead) {
+            deathPos = new Vector2(-death.getWidth(), 0);
+            print(deathPos);
+            deathAnimLoop = 0;
+        }
+    }
+
+    /**
+     * Sets whether the level is completed.
+     *
+     * If true, the level will advance after a countdown
+     *
+     * @param value whether the level is completed.
+     */
+    public void setComplete(boolean value) {
+        super.setComplete(value);
+        if (death != null) {
+            winPos = new Vector2(-death.getWidth(), 0);
+            winAnimLoop = 0;
+        }
     }
 
     /**
@@ -705,6 +759,7 @@ public class GameController extends WorldController implements ContactListener {
                     avatar1.swing = true;
                     if (!avatar1.isActive() && !twoplayer)
                         avatar1.setFixedRotation(true);
+
                 }
             }
             if (InputController.getInstance().didPrimary() && avatar2.isActive() && !twoplayer
@@ -840,8 +895,8 @@ public class GameController extends WorldController implements ContactListener {
             if (input.didRight() || input.didLeft()) {
                 avatar.setPlanetMove(contactDir.scl(move));
                 avatar.setRight(input.didRight());
-
-                if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
+                if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious()
+                        || (input.getControlType() == ControllerType.CTRLONE && (input.xboxUp() || input.xboxDown())))
                     avatar.moving = true;
             }
 
@@ -859,9 +914,19 @@ public class GameController extends WorldController implements ContactListener {
         else if (twoplayer) {
             if (avatar == avatar2) {
                 float move = input.getHorizontal2();
-                if (input.heldD() || input.heldA()) {
+                if (input.heldD() || input.heldA()
+                        || (input.getControlType() == ControllerType.CTRLTWO && (input.xboxUp2() || input.xboxDown2()))) {
                     avatar.setPlanetMove(contactDir.scl(move));
                     avatar.setRight(input.heldD());
+                    if (input.getControlType() == ControllerType.CTRLTWO) {
+                        Vector2 dir = new Vector2(1,0).rotateRad(input.getAngle2());
+                        avatar.setPlanetMove(dir);
+                        avatar.moving = true;
+                        boolean vertical = avatar.getAngle() <= 0 && input.xboxDown2();
+                        boolean horizontal = avatar.getAngle() > -Math.PI/2 && avatar.getAngle() <= Math.PI/2 && input.heldD();
+                        avatar.setRight(vertical || horizontal);
+
+                    }
                     if (input.heldD() && !input.aPrevious() || input.heldA() && !input.dPrevious())
                         avatar.moving = true;
                 }
@@ -878,9 +943,19 @@ public class GameController extends WorldController implements ContactListener {
 
             if (avatar == this.avatar) {
                 float move = input.getHorizontal();
-                if (input.didRight() || input.didLeft()) {
+                if (input.didRight() || input.didLeft()
+                        || (input.getControlType() == ControllerType.CTRLTWO && (input.xboxUp() || input.xboxDown()))) {
                     avatar.setPlanetMove(contactDir.scl(move));
-                    avatar.setRight(input.didRight());
+                    //avatar.setRight(input.didRight());
+                    if (input.getControlType() == ControllerType.CTRLTWO) {
+                        Vector2 dir = new Vector2(1,0).rotateRad(input.getAngle());
+                        //print(dir.scl(10));
+                        avatar.setPlanetMove(dir);
+                        avatar.moving = true;
+                        boolean vertical = avatar.getAngle() <= 0 && input.xboxDown();
+                        boolean horizontal = avatar.getAngle() > -Math.PI/2 && avatar.getAngle() <= Math.PI/2 && input.didRight();
+                        avatar.setRight(vertical || horizontal);
+                    }
                     if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
                         avatar.moving = true;
                 }
@@ -897,6 +972,26 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
     }
+
+//    private void updateMovementBug(Bug buggy, Vector2 contactDir, Planet curPlanet, boolean auto) {
+//        //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
+//        contactDir.rotateRad(-(float) Math.PI / 2);
+//        //float move = InputController.getInstance().getHorizontal();
+//        //if (InputController.getInstance().didRight() || InputController.getInstance().didLeft()) {
+//            avatar.setPlanetMove(contactDir.scl(1));
+//            //avatar.moving = true;
+//        }
+//
+//        if (InputController.getInstance().didPrimary() && !auto && !testC) {
+//            //print(contactPoint);
+//            avatar.setJumping(true);
+//            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
+//            contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
+//            avatar.setPlanetJump(contactDir);
+//            avatar.setOnPlanet(false);
+//            avatar.moving = false;
+//        }
+//    }
 
     /**
      * Helper method to determine whether the rope is ok
@@ -980,6 +1075,19 @@ public class GameController extends WorldController implements ContactListener {
     }
 
     /**
+     * Find the Tutorial Point of this point. Returns null if portal can't be found, means something's wrong
+     * @param point
+     * @return
+     */
+    private TutorialPoint findTutPoint(Star point) {
+        for(TutorialPoint p : tutorialpoints) {
+            if (p.getName().equals(point.getTutName()))
+                return p;
+        }
+        return null;
+    }
+
+    /**
      * If settings were switched
      */
     private void updateSettings() {
@@ -1002,6 +1110,29 @@ public class GameController extends WorldController implements ContactListener {
             switchOnAnchor = !switchOnAnchor;
             print("Toggled setting switch on anchor: " + switchOnAnchor);
         }
+    }
+
+    private void updateTutorial() {
+        if (!tutorialpoints.isEmpty()) {
+            tutorial = true;
+            tutPointCache = tutorialpoints.get(0);
+            if (tutPointCache.complete()) {
+                Star pink = tutPointCache.getPinkPoint();
+                Star blue = tutPointCache.getBluePoint();
+                pink.deactivatePhysics(world);
+                blue.deactivatePhysics(world);
+                objects.remove(pink);
+                objects.remove(blue);
+                tutorialpoints.remove(tutPointCache);
+                if (!tutorialpoints.isEmpty()) {
+                    tutPointCache = tutorialpoints.get(0);
+                }
+                else
+                    tutorial = false;
+            }
+            //if (tutPointCache != null) tutPointCache.getTask().tick();
+        }
+        else tutorial = false;
     }
 
     /**
@@ -1082,8 +1213,41 @@ public class GameController extends WorldController implements ContactListener {
      * @return whether to process the update loop
      */
     public boolean preUpdate(float dt) {
-        if (!super.preUpdate(dt)) {
+        InputController input = InputController.getInstance();
+        input.readInput(bounds, scale);
+        if (listener == null) {
+            return true;
+        }
+
+        // Toggle debug
+        if (input.didDebug()) {
+            setDebug(!isDebug());
+        }
+
+        // Handle resets
+        if (input.didReset()) {
+            reset();
+        }
+
+        // Now it is time to maybe switch screens.
+        if (input.didExit()) {
+            listener.exitScreen(this, EXIT_QUIT);
             return false;
+        } else if (input.didAdvance()) {
+            listener.exitScreen(this, EXIT_SELECT);
+            return false;
+        } else if (input.didRetreat()) {
+            listener.exitScreen(this, EXIT_EDIT);
+            return false;
+        } else if (countdown > 0) {
+            countdown--;
+        } else if (countdown == 0) {
+            if (isFailure()) {
+                reset();
+            } else if (isComplete()) {
+                listener.exitScreen(this, EXIT_SELECT, winSprite, winAnimLoop, winPos);
+                return false;
+            }
         }
 
         // +/- 1 for a little bit of buffer space because astronaut position is at its center
@@ -1146,6 +1310,8 @@ public class GameController extends WorldController implements ContactListener {
 
         updateSettings();
 
+        updateTutorial();
+
         if (switched()) {
             avatar.setActive(!avatar.isActive());
             avatar2.setActive(!avatar2.isActive());
@@ -1164,9 +1330,9 @@ public class GameController extends WorldController implements ContactListener {
 //            setFailure(true);
 
         for (Enemy e : enemies) {
-            if (e.getType() == ObstacleType.WORM) {
-                ((Worm)e).setRight_bound(canvas.getCamera().position.x/scale.x + 640/scale.x);
-            }
+//            if (e.getType() == ObstacleType.WORM) {
+//                ((Worm)e).setRight_bound(canvas.getCamera().position.x/scale.x + 640/scale.x);
+//            }
         }
 
 //        avatar.setFixedRotation(false);
@@ -1213,13 +1379,12 @@ public class GameController extends WorldController implements ContactListener {
             if (!stars.remove(starCache)) print("star collection error in game controller");
             if (!objects.remove(starCache)) print("star collection error in game controller");
             starCount++;
-            if (starCount >= winCount && !openGoal) {
-                openGoal = true;
-                goal.getPortal1().setOpen(true);
-            }
             collection = false;
         }
-
+        if (starCount >= winCount && !openGoal && tutorialpoints.isEmpty()) {
+            openGoal = true;
+            goal.getPortal1().setOpen(true);
+        }
 
         //TODO win condition
 //        if (stars.isEmpty()) {
@@ -1348,6 +1513,49 @@ public class GameController extends WorldController implements ContactListener {
 
 //         If we use sound, we must remember this.
         SoundController.getInstance().update();
+
+
+
+        //MUSIC
+
+        if (level.getGalaxy() == Galaxy.DEFAULT) {
+            if (music != null && music_name != "tutorial") {
+                music.stop();
+                music.dispose();
+            }
+            if (music == null || !music.isPlaying()) {
+                music = Gdx.audio.newMusic(Gdx.files.internal("audio/tutorial_music.mp3"));
+                music.play();
+                music.setLooping(true);
+                music_name = "tutorial";
+            }
+        }
+
+        else if (level.getGalaxy() == Galaxy.WHIRLPOOL) {
+            if (music != null && music_name != "whirlpool") {
+                music.stop();
+                music.dispose();
+            }
+            if (music == null || !music.isPlaying()) {
+                music = Gdx.audio.newMusic(Gdx.files.internal("audio/whirlpool_music.mp3"));
+                music.play();
+                music.setLooping(true);
+                music_name = "whirlpool";
+            }
+
+        }
+        else if (level.getGalaxy() == Galaxy.MILKYWAY) {
+            if (music != null && music_name != "milkyway") {
+                music.stop();
+                music.dispose();
+            }
+            if (music == null || !music.isPlaying()) {
+                music = Gdx.audio.newMusic(Gdx.files.internal("audio/milky_way.mp3"));
+                music.play();
+                music.setLooping(true);
+                music_name = "milkyway";
+            }
+        }
     }
 
     /**
@@ -1444,6 +1652,17 @@ public class GameController extends WorldController implements ContactListener {
                 avatarCache = avatar2;
             }
 
+            //If there is an active task, has it been completed
+            if (tutorial) {
+                if (bd1 == avatar && bd2 == tutPointCache.getPinkPoint() || bd2 == avatar && bd1 == tutPointCache.getPinkPoint()) {
+                    tutPointCache.setPinkHit(true);
+                }
+                if (bd1 == avatar2 && bd2 == tutPointCache.getBluePoint() || bd2 == avatar2 && bd1 == tutPointCache.getBluePoint()) {
+                    tutPointCache.setBlueHit(true);
+                }
+                tutPointCache.setComplete(tutPointCache.pinkHit() && tutPointCache.blueHit());
+            }
+
             if ((bd1 == avatar || bd2 == avatar) && (bd1N.contains("planet") || bd2N.contains("planet")) && !barrier) {
                 avatar.curPlanet = (bd1 == avatar) ? bd2 : bd1;
                 if (!avatar.getOnPlanet()) {
@@ -1472,22 +1691,22 @@ public class GameController extends WorldController implements ContactListener {
                 }
             }
 
-            if ((bd1 == enemy || bd2 == enemy) && bd1 != avatar2 && bd2 !=avatar2 && bd1 != avatar && bd2 !=avatar) {
-                curPlanetEN = (bd1 == enemy) ? bd2 : bd1;
-                if (curPlanetEN.getName().contains("planet")) {
-                    contactPointEN.set(contact.getWorldManifold().getPoints()[0].cpy());
-                    enemy.setOnPlanet(true);
-                }
-                // See if we have landed on the ground.
-                if ((enemy.getSensorName().equals(fd2) && avatar != bd1 && avatar2 != bd1) ||
-                        (enemy.getSensorName().equals(fd1) && avatar != bd2 && avatar2 != bd2)) {
-                    enemy.setGrounded(true);
-                    enemy.setOnPlanet(true);
-                    contactPointEN.set(enemy.getPosition());
-                    sensorFixtures.add(enemy == bd1 ? fix2 : fix1); // Could have more than one ground
-                }
-
-            }
+//            if ((bd1 == enemy || bd2 == enemy) && bd1 != avatar2 && bd2 !=avatar2 && bd1 != avatar && bd2 !=avatar) {
+//                curPlanetEN = (bd1 == enemy) ? bd2 : bd1;
+//                if (curPlanetEN.getName().contains("planet")) {
+//                    contactPointEN.set(contact.getWorldManifold().getPoints()[0].cpy());
+//                    enemy.setOnPlanet(true);
+//                }
+//                // See if we have landed on the ground.
+//                if ((enemy.getSensorName().equals(fd2) && avatar != bd1 && avatar2 != bd1) ||
+//                        (enemy.getSensorName().equals(fd1) && avatar != bd2 && avatar2 != bd2)) {
+//                    enemy.setGrounded(true);
+//                    enemy.setOnPlanet(true);
+//                    contactPointEN.set(enemy.getPosition());
+//                    sensorFixtures.add(enemy == bd1 ? fix2 : fix1); // Could have more than one ground
+//                }
+//
+//            }
 
             // Check for win condition
 //            if ((bd1 == avatar   && bd2 == goalDoor) ||
@@ -1638,6 +1857,7 @@ public class GameController extends WorldController implements ContactListener {
         }
     }
 
+
     /**
      * Draw the physics objects to the canvas and the background
      *
@@ -1664,27 +1884,106 @@ public class GameController extends WorldController implements ContactListener {
 
         canvas.begin();
         drawStarBar(canvas);
+        if (tutorial) {
+            OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
+            TextureRegion text = tutPointCache.getTask();
+            float xPos = camera.position.x - text.getRegionWidth()/2;
+            float yPos = camera.position.y - camera.viewportHeight/2 + text.getRegionHeight()/2;
+            canvas.draw(text, Color.WHITE, 0, 0, xPos, yPos, 0, 1, 1);
+            if (!tutPointCache.pinkHit()) {
+                tutPointCache.getPinkPoint().draw(canvas);
+            }
+            if (!tutPointCache.blueHit()) {
+                tutPointCache.getBluePoint().draw(canvas);
+            }
+        }
         canvas.end();
 
-        if (isFailure()) {
-            displayFont.setColor(Color.RED);
-            canvas.begin(); // DO NOT SCALE
-            //canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
-            //canvas.drawText("u ded :(", displayFont, cam.position.x-140, cam.position.y+30);
-            //canvas.draw(background, Color.WHITE, x, y,canvas.getWidth(),canvas.getHeight());
-//            deathOp += 0.0001f;
-//            deathOp *= 1.05;
-            deathOp += 0.01f;
-            Color drawColor = new Color(1,1,1, deathOp);
-            canvas.draw(death, drawColor, cam.position.x - canvas.getWidth()/2, cam.position.y - canvas.getHeight()/2, canvas.getWidth(), canvas.getHeight());
-            canvas.end();
+        //Start death anim
+        if (isFailure() && deathPos.x == -death.getWidth()) {
+            deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
         }
 
-        if (isComplete()){
-            displayFont.setColor(Color.GREEN);
-            canvas.begin();
-            canvas.drawText("Yay! :):)", displayFont, cam.position.x-140, cam.position.y+30);
+        //Death phase 3: Move off screen if animation is done
+        if (deathAnimLoop >= MAX_ANIM) {
+            canvas.begin(); // DO NOT SCALE
+            //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
+            Color drawColor = new Color(1,1,1, 1);
+            canvas.draw(death, drawColor, deathPos.x + cam.position.x - canvas.getWidth()/2,
+                    deathPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(deathSprite, Color.WHITE,deathSprite.getRegionWidth()/2,deathSprite.getRegionHeight()/2,
+                    deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+                    (deathPos.y + cam.position.y ),0,1,1.0f);;
             canvas.end();
+            deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
+
+            if (deathPos.x > death.getWidth()) {
+                deathAnimLoop = 0;
+                deathPos.x = -death.getWidth(); //Reset
+            }
+        }
+
+        //print(animLoop);
+
+        //Death phase 2: once death screen is in place, animate
+        if ((deathPos.x + death.getWidth()/2) >= canvas.getWidth()/2 && deathAnimLoop < MAX_ANIM) {
+            canvas.begin(); // DO NOT SCALE
+            Color drawColor = new Color(1,1,1, 1);
+            canvas.draw(death, drawColor, deathPos.x + cam.position.x - canvas.getWidth()/2,
+                    deathPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(deathSprite, Color.WHITE,deathSprite.getRegionWidth()/2,deathSprite.getRegionHeight()/2,
+                    deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+                    (deathPos.y + cam.position.y ),0,1,1.0f);
+            canvas.end();
+            deathSprite.tick();
+            if (deathSprite.justReset()) deathAnimLoop++;
+        }
+
+        //Death phase 1: Move death screen into place
+        if (deathPos.x != -death.getWidth() && (deathPos.x + death.getWidth()/2) < canvas.getWidth()/2) {
+            canvas.begin(); // DO NOT SCALE
+            //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
+            Color drawColor = new Color(1,1,1, 1);
+            canvas.draw(death, drawColor, deathPos.x + cam.position.x - canvas.getWidth()/2,
+                    deathPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(deathSprite, Color.WHITE,deathSprite.getRegionWidth()/2,deathSprite.getRegionHeight()/2,
+                    deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+                    (deathPos.y + cam.position.y ),0,1,1.0f);;
+            canvas.end();
+            deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
+        }
+
+        //Start win anim
+        if (isComplete() && winPos.x == -death.getWidth()){
+            winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
+        }
+
+        //WIn phase 1: move win screen into place
+        if (winPos.x != -death.getWidth() && (winPos.x + death.getWidth()/2) < canvas.getWidth()/2) {
+            canvas.begin(); // DO NOT SCALE
+            //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
+            Color drawColor = new Color(1,1,1, 1);
+            canvas.draw(death, drawColor, winPos.x + cam.position.x - canvas.getWidth()/2,
+                    winPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
+                    winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+                    (winPos.y + cam.position.y ),0,1,1.0f);;
+            canvas.end();
+            winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
+        }
+
+        //Win phase 2: Animate (will be cut off by screen swtich)
+        if ((winPos.x + death.getWidth()/2) >= canvas.getWidth()/2 && winAnimLoop < MAX_ANIM) {
+            canvas.begin(); // DO NOT SCALE
+            Color drawColor = new Color(1,1,1, 1);
+            canvas.draw(death, drawColor, winPos.x + cam.position.x - canvas.getWidth()/2,
+                    winPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
+                    winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+                    (winPos.y + cam.position.y ),0,1,1.0f);
+            canvas.end();
+            winSprite.tick();
+            if (winSprite.justReset()) winAnimLoop++;
         }
 
         if(isDebug()){
@@ -1695,8 +1994,4 @@ public class GameController extends WorldController implements ContactListener {
             canvas.endDebug();
         }
     }
-
-
-
-
 }

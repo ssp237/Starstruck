@@ -24,6 +24,7 @@
  package edu.cornell.gdiac.util;
 
  import com.badlogic.gdx.Screen;
+ import com.badlogic.gdx.math.Vector2;
 
  /**
   * A listener class for responding to a screen's request to exit.
@@ -42,6 +43,7 @@
       * @param json The name of the file to load
       */
      public void exitScreen(Screen screen, int exitCode, String json);
+
      /**
       * The given screen has made a request to exit its player mode.
       *
@@ -51,4 +53,14 @@
       * @param exitCode The state of the screen upon exit
       */
      public void exitScreen(Screen screen, int exitCode);
+
+     /**
+      * The given screen has made a request to exit its player mode after winning.
+      *
+      * The value exitCode can be used to implement menu options. MUST BE LEVEL SELECT PLS TO NOT FUCK UP. (Might change later depending on where we go)
+      *
+      * @param screen   The screen requesting to exit
+      * @param exitCode The state of the screen upon exit
+      */
+     public void exitScreen(Screen screen, int exitCode, FilmStrip winStrip, int animDelay, Vector2 winPos);
  }

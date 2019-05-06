@@ -200,6 +200,38 @@
       "file": "enemies/static_spike_bottom.png",
       "wrap": false
     },
+    "pink dot": {
+      "file": "tutorial/tutorial_pink_dot.png",
+      "wrap": false
+    },
+    "blue dot": {
+      "file": "tutorial/tutorial_blue_dot.png",
+      "wrap": false
+    },
+    "jump": {
+      "file": "tutorial/jump.png",
+      "wrap": false
+    },
+    "jump anchor pink": {
+      "file": "tutorial/jump_anchor_pink.png",
+      "wrap": false
+    },
+    "jump pink reel blue": {
+      "file": "tutorial/jump_pink_reel_blue.png",
+      "wrap": false
+    },
+    "switch jump blue": {
+      "file": "tutorial/switch_jump_blue.png",
+      "wrap": false
+    },
+    "switch": {
+      "file": "tutorial/switch.png",
+      "wrap": false
+    },
+    "move": {
+      "file": "tutorial/move.png",
+      "wrap": false
+    }
   },
   "textures": {
     "wp background": {
@@ -215,7 +247,7 @@
       "wrap": false
     },
     "de background": {
-      "file": "default/background_default_v1.png",
+      "file": "default/background_default.png",
       "wrap": false
     },
     "ls background": {
@@ -224,6 +256,10 @@
     },
     "death screen": {
       "file": "backgrounds/you_dead_1.png",
+      "wrap": false
+    },
+    "dead background": {
+      "file": "shared/dead_background.png",
       "wrap": false
     },
     "play": {
@@ -245,6 +281,7 @@
     "starbar": {
       "file": "default/starbar.png",
       "wrap": false
+
     },
     "starbarglow": {
       "file": "default/starbarglow.png",
@@ -322,7 +359,7 @@
       "rows": 1,
       "cols": 3,
       "size": 3,
-      "delay": 10
+      "delay": 20
     },
     "pink berry": {
       "file": "milky way/enemies/berries/animated_mwenemy(sberry)_biting.png",
@@ -331,6 +368,14 @@
       "cols": 10,
       "size": 10,
       "delay": 3
+    },
+    "ice cream": {
+      "file": "milky way/enemies/ice cream/static_mwenemy(icecream)_v1.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 1,
+      "size": 1,
+      "delay": 0
     },
     "static portal": {
       "file": "shared/animated_portal_turning.png",
@@ -347,6 +392,22 @@
       "cols": 1,
       "size": 1,
       "delay": 0
+    },
+    "you dead": {
+      "file": "shared/animated_you.dead_screen.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 18,
+      "size": 18,
+      "delay": 7
+    },
+    "you win": {
+      "file": "shared/animated_you.win_screen.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 25,
+      "size": 25,
+      "delay": 4
     }
   },
   "fonts": {

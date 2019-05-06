@@ -15,10 +15,7 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.JsonValue.PrettyPrintSettings;
 import com.badlogic.gdx.utils.JsonWriter;
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
-import edu.cornell.gdiac.starstruck.Models.AstronautModel;
-import edu.cornell.gdiac.starstruck.Models.Enemy;
-import edu.cornell.gdiac.starstruck.Models.Urchin;
-import edu.cornell.gdiac.starstruck.Models.Worm;
+import edu.cornell.gdiac.starstruck.Models.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
@@ -39,6 +36,7 @@ public class EditController extends WorldController implements ContactListener {
     private float winCond;
 
     private int portalPair = 1;
+    private int task = 1;
 
     /** Current obstacle */
     private Obstacle current;
@@ -165,6 +163,11 @@ public class EditController extends WorldController implements ContactListener {
                 screenY = yBound;
                 level.xPlay = screenX;
                 level.yPlay = screenY;
+                for (Enemy e : level.enemies) {
+                    if (e.getType() == ObstacleType.ICE_CREAM) {
+                        ((IceCream) e).setUpBound(level.getBounds().getHeight() * yBound);
+                    }
+                }
 
             } catch (Exception e) {
                 System.out.println("Error setting bounds");
@@ -259,6 +262,7 @@ public class EditController extends WorldController implements ContactListener {
         camOffsetY = 0;
 
         portalPair = 1;
+        task = 1;
 
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         camera.viewportWidth = canvas.getWidth();
@@ -330,20 +334,36 @@ public class EditController extends WorldController implements ContactListener {
      */
     private void updatePlanet() {
         InputController input = InputController.getInstance();
+        OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
 
         if (input.didPrimary()){
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
-            current = new Planet(pos.x, pos.y, p.getInd() + 1, world, scale);
+
+            current = new Planet(pos.x, pos.y, p.getInd() + 1, world, scale, null);
+
             level.add(current);
         } else if (input.didDown()) {
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
-            current = new Planet(pos.x, pos.y, p.getInd() - 1, world, scale);
+
+            current = new Planet(pos.x, pos.y, p.getInd() - 1, world, scale, null);
+
             level.add(current);
-        }
+        } else if (input.didB()){
+            float camScaleX = camOffsetX / scale.x;
+            float camScaleY = camOffsetY / scale.y;
+            float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
+            float h = (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y;
+            Vector2 pos = input.getCrossHair();
+            Bug bugger = new Bug(pos.x + camScaleX + w, pos.y + camScaleY + h,
+                JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class), scale);
+            ((Planet) current).setBug(bugger);
+            bugger.setPlanet((Planet) current);
+            level.add(bugger);
+    }
     }
 
     /**
@@ -369,7 +389,7 @@ public class EditController extends WorldController implements ContactListener {
             level.remove(u);
             Vector2 pos = u.getPosition();
             CapsuleObstacle.Orientation orie = u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL ? CapsuleObstacle.Orientation.HORIZONTAL : CapsuleObstacle.Orientation.VERTICAL;
-            current = new Urchin(pos.x, pos.y, scale, u.getLength(), orie);
+            current = new Urchin(pos.x, pos.y, u.getHeight() / Enemy.DUDE_HSHRINK, u.getWidth() / Enemy.DUDE_VSHRINK, scale, u.getLength(), orie);
             level.add(current);
         }
     }
@@ -427,6 +447,20 @@ public class EditController extends WorldController implements ContactListener {
         }
         return null;
     }
+
+    /**
+     * Find the TutorialPoint of the point. Returns null if can't be found, means something's wrong
+     * @param tutorial
+     * @return
+     */
+    private TutorialPoint findTutPoint(Star tutorial) {
+        for(TutorialPoint p : level.tutpoints) {
+            if (tutorial.getTutName().equals(p.getName()))
+                return p;
+        }
+        return null;
+    }
+
 
     /**
      * Helper function to process clicking
@@ -495,6 +529,7 @@ public class EditController extends WorldController implements ContactListener {
             levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + load.file));
             level.populate(levelFormat);
             loadFile = load.file;
+            galaxy = level.getGalaxy();
             load.file = null;
 
             return true;
@@ -509,7 +544,7 @@ public class EditController extends WorldController implements ContactListener {
         OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
         //System.out.println(wormListener.worm);
         //System.out.println(current);
-        int i = 0;
+        //int i = 0;
 //        for (Obstacle obj : level.getAllObjects()) {
 //            i += obj.getType() == ObstacleType.ANCHOR ? 1 : 0;
 //        }
@@ -554,6 +589,13 @@ public class EditController extends WorldController implements ContactListener {
                     level.portalpairs.remove(port);
                     current = null;
                 }
+                else if (current.getType() == ObstacleType.TUTORIAL) {
+                    TutorialPoint tutorial = findTutPoint((Star)current);
+                    level.remove(tutorial.getPinkPoint());
+                    level.remove(tutorial.getBluePoint());
+                    level.tutpoints.remove(tutorial);
+                    current = null;
+                }
                 else {
                     level.remove(current);
                     current = null;
@@ -586,7 +628,7 @@ public class EditController extends WorldController implements ContactListener {
                 return;
             } else if (input.didP()) {
                 Vector2 pos = input.getCrossHair();
-                current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, 1, world, scale);
+                current = new Planet(pos.x + camScaleX + w, pos.y + camScaleY + h, 1, world, scale, null);
                 level.add(current);
             } else if (input.didA()) {
                 Vector2 pos = input.getCrossHair();
@@ -598,10 +640,15 @@ public class EditController extends WorldController implements ContactListener {
                 current = new Star(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry("star", TextureRegion.class), scale);
                 level.add(current);
-            } else if (input.didW()){
+            } else if (input.didW()) {
                 Vector2 pos = input.getCrossHair();
                 current = new Worm(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[0], FilmStrip.class), scale, 0);
+                level.add(current);
+            }  else if (input.didI()) {
+                Vector2 pos = input.getCrossHair();
+                current = new IceCream(pos.x + camScaleX + w, pos.y + camScaleY + h,
+                        JsonAssetManager.getInstance().getEntry("ice cream", FilmStrip.class), scale, 0);
                 level.add(current);
             } else if (input.didD()) {
                 Vector2 pos = input.getCrossHair();
@@ -614,11 +661,22 @@ public class EditController extends WorldController implements ContactListener {
                 level.add(portal.getPortal2());
                 level.portalpairs.add(portal);
                 current = portal.getPortal1();
+            } else if (input.didT()) {
+                Vector2 pos = input.getCrossHair();
+                float x = pos.x + camScaleX + w;
+                float y = pos.y + camScaleY + h;
+                TutorialPoint tutorial = new TutorialPoint(x, y, x+2, y,
+                        JsonAssetManager.getInstance().getEntry("anchor", FilmStrip.class), scale, "task"+task);
+                task++;
+                level.add(tutorial.getPinkPoint());
+                level.add(tutorial.getBluePoint());
+                level.tutpoints.add(tutorial);
+                current = tutorial.getPinkPoint();
             } else if (input.didU()) {
-            Vector2 pos = input.getCrossHair();
-            current = new Urchin(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, 1, CapsuleObstacle.Orientation.VERTICAL);
-            level.add(current);
-        }
+                Vector2 pos = input.getCrossHair();
+                current = new Urchin(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, 1, CapsuleObstacle.Orientation.VERTICAL);
+                level.add(current);
+            }
             if (input.mouseDragged()) {
                 updateCamera();
             }
@@ -650,6 +708,10 @@ public class EditController extends WorldController implements ContactListener {
         Texture background = JsonAssetManager.getInstance().getEntry(gal + " background", Texture.class);
         canvas.begin();
         canvas.draw(background, 0, 0, canvas.getWidth()*screenX, canvas.getHeight()*screenY);
+        for (TutorialPoint p : level.tutpoints) {
+            p.getPinkPoint().draw(canvas);
+            p.getBluePoint().draw(canvas);
+        }
         canvas.end();
 
         level.draw(canvas, 'e');

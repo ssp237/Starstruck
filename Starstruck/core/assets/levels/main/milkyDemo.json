@@ -21,6 +21,7 @@
 		"texture": "rope",
 		"rope width": 6.0
 	},
+	"tutorialpoints": [],
 	"planet specs": [ 700.0, 800.0, 900.0, 1000.0 ],
 	"planets": [
 		{
@@ -123,5 +124,6 @@
 			"y": 14.25,
 			"length": 6
 		}
-	]
+	],
+	"ice cream": []
 }

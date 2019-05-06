@@ -16,6 +16,8 @@
  */
 package edu.cornell.gdiac.starstruck;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -24,10 +26,7 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
-import edu.cornell.gdiac.starstruck.Models.AstronautModel;
-import edu.cornell.gdiac.starstruck.Models.Enemy;
-import edu.cornell.gdiac.starstruck.Models.Urchin;
-import edu.cornell.gdiac.starstruck.Models.Worm;
+import edu.cornell.gdiac.starstruck.Models.*;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 
@@ -81,6 +80,8 @@ public class LevelModel {
     protected ArrayList<Star> stars = new ArrayList<Star>();
     /** List of anchors in the world */
     protected ArrayList<Anchor> anchors = new ArrayList<Anchor>();
+    /** List of tutorial points in this level */
+    protected ArrayList<TutorialPoint> tutpoints = new ArrayList<TutorialPoint>();
     /** Rope texture for extension method */
     //protected TextureRegion ropeTexture;
     /** List of enemies in the world */
@@ -94,6 +95,11 @@ public class LevelModel {
     /** Bounds of play space in terms of screens */
     protected float xPlay;
     protected float yPlay;
+
+    private boolean isTutorial = false;
+
+    public boolean getTutorial() {return isTutorial;}
+
 
     /**
      * Returns the bounding rectangle for the physics world
@@ -328,9 +334,27 @@ public class LevelModel {
         planets = new PlanetList(scale);
 
         JsonValue planet = levelFormat.get("planets").child();
-        while (planet != null) {
-            planets.addPlanet(planet, world, vectorWorld);
+        while(planet != null) {
+            float x = planet.getFloat("x");
+            float y = planet.getFloat("y");
+            int i = planet.getInt("i");
+            Bug buggy = null;
+            try {
+                JsonValue bug = planet.get("bug");
+                float radius = Planet.getRadiusPrePlanet(i, scale);
+                key = bug.get("texture").asString();
+                FilmStrip bugtexture = JsonAssetManager.getInstance().getEntry(key, FilmStrip.class);
+                buggy = new Bug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, scale);
+                activate(buggy);
+                enemies.add(buggy);
+            } catch (Exception e) {
+
+            }
+
+            planets.addPlanet(planet, world, vectorWorld, buggy);
+
             planet = planet.next();
+
         }
 
         //add stars
@@ -347,6 +371,20 @@ public class LevelModel {
         winPercent = levelFormat.get("win").asFloat();
         int numStars = stars.size();
         winCount = (int)(numStars * winPercent);
+
+        //add tutorial points
+        i = 0;
+        JsonValue tutorialVals = levelFormat.get("tutorialpoints").child();
+        if (tutorialVals != null) {
+            isTutorial = true;
+        }
+        while (tutorialVals != null) {
+            TutorialPoint tutpoint = TutorialPoint.fromJSON(tutorialVals, scale);
+            activate(tutpoint.getPinkPoint());
+            activate(tutpoint.getBluePoint());
+            tutpoints.add(tutpoint);
+            tutorialVals = tutorialVals.next;
+        }
 
 
         //add anchors
@@ -394,9 +432,20 @@ public class LevelModel {
             urchinVals = urchinVals.next;
         }
 
+        //add ice cream
+        JsonValue creamVals = levelFormat.get("ice cream").child();
+        while(creamVals != null) {
+            IceCream iceCream = IceCream.fromJSON(creamVals, scale);
+            iceCream.setUpBound(bounds.getHeight() * yPlay);
+            activate(iceCream);
+            enemies.add(iceCream);
+            creamVals = creamVals.next;
+        }
+
 //        System.out.println("here i am enemy list");
 //        System.out.println(enemies);
 //        System.out.println(enemies.size());
+
     }
 
     public void dispose() {
@@ -417,6 +466,8 @@ public class LevelModel {
         anchors.clear();
         enemies.clear();
         portalpairs.clear();
+        tutpoints.clear();
+        //MenuMode.getMusic().dispose();
         vectorWorld = new VectorWorld();
     }
 
@@ -432,8 +483,13 @@ public class LevelModel {
             case PLAYER: addPlayer((AstronautModel) obj); break;
             case ROPE: objects.add(0, obj); obj.activatePhysics(world); rope = (Rope) obj; break;
             case WORM: activate(obj); enemies.add((Worm) obj); break;
+            case BUG: activate(obj); enemies.add((Bug) obj); break;
             case PORTAL: activate(obj); break;
             case URCHIN: activate(obj); enemies.add((Urchin) obj); break;
+            case TUTORIAL: activate(obj); break;
+            case ICE_CREAM:
+                ((IceCream) obj).setUpBound(bounds.getHeight() * yPlay);
+                activate(obj); enemies.add((IceCream) obj); break;
         }
     }
 
@@ -445,12 +501,20 @@ public class LevelModel {
      */
     public void remove(Obstacle obj) {
         switch (obj.getType()) {
-            case PLANET: obj.deactivatePhysics(world); planets.remove((Planet) obj); break;
+            case PLANET:
+                Bug bugger = ((Planet) obj).getBug();
+                if ( bugger != null) {
+                    remove(bugger);
+                }
+                obj.deactivatePhysics(world); planets.remove((Planet) obj); break;
             case ANCHOR: deactivate(obj); break;
             case STAR: deactivate(obj); break;
             case WORM: deactivate(obj); enemies.remove((Worm) obj); break;
+            case BUG: deactivate(obj); enemies.remove((Bug) obj); break;
             case PORTAL: deactivate(obj); break;
             case URCHIN: deactivate(obj); enemies.remove((Urchin) obj); break;
+            case TUTORIAL: deactivate(obj); break;
+            case ICE_CREAM: deactivate(obj); enemies.remove((IceCream) obj); break;
         }
     }
 
@@ -560,7 +624,9 @@ public class LevelModel {
         JsonValue stars = new JsonValue(JsonValue.ValueType.array);
         JsonValue worms = new JsonValue(JsonValue.ValueType.array);
         JsonValue portalPairs = new JsonValue(JsonValue.ValueType.array);
+        JsonValue tutorialPoints = new JsonValue(JsonValue.ValueType.array);
         JsonValue urchins = new JsonValue(JsonValue.ValueType.array);
+        JsonValue iceCreams = new JsonValue(JsonValue.ValueType.array);
 
         for (Obstacle obj : objects) {
             switch (obj.getType()) {
@@ -568,6 +634,7 @@ public class LevelModel {
                 case ANCHOR: anchors.addChild(((Anchor) obj).toJson()); break;
                 case WORM: worms.addChild(((Worm) obj).toJson()); break;
                 case URCHIN: urchins.addChild(((Urchin) obj).toJson()); break;
+                case ICE_CREAM: iceCreams.addChild(((IceCream) obj).toJson()); break;
             }
         }
 
@@ -575,20 +642,28 @@ public class LevelModel {
             portalPairs.addChild(port.toJson());
         }
 
+        for (TutorialPoint tutorial : tutpoints) {
+            tutorialPoints.addChild(tutorial.toJson());
+        }
 
         out.addChild("anchors", anchors);
         out.addChild("stars", stars);
 
         //Add enemies
-
         out.addChild("worms", worms);
 
         //Add portals
         out.addChild("portalpairs", portalPairs);
 
+        //Add tutorial points
+        out.addChild("tutorialpoints", tutorialPoints);
+
         //Add urchins
         out.addChild("urchin texture", new JsonValue(Urchin.getTexturePrefix()));
         out.addChild("urchins", urchins);
+
+        //add ice cream
+        out.addChild("ice cream", iceCreams);
 
 
         return out;
@@ -620,7 +695,8 @@ public class LevelModel {
             p.draw(canvas);
         }
         for(Obstacle obj : objects) {
-            if (obj.getType() != ObstacleType.PLAYER) obj.draw(canvas);
+            if (obj.getType() != ObstacleType.PLAYER && obj.getType() != ObstacleType.TUTORIAL)
+                obj.draw(canvas);
         }
         if (player1.isActive()) { player2.draw(canvas); player1.draw(canvas); }
         else { player1.draw(canvas); player2.draw(canvas); }
@@ -667,7 +743,8 @@ public class LevelModel {
             p.draw(canvas);
         }
         for(Obstacle obj : objects) {
-            if (obj.getType() != ObstacleType.PLAYER) obj.draw(canvas);
+            if (obj.getType() != ObstacleType.PLAYER && obj.getType() != ObstacleType.TUTORIAL)
+                obj.draw(canvas);
         }
         if (player1.isActive()) { player2.draw(canvas); player1.draw(canvas); }
         else { player1.draw(canvas); player2.draw(canvas); }

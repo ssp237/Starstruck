@@ -5,6 +5,7 @@
 	"win": "0.5",
 	"galaxy": "milky way",
 	"background": "mw background",
+	"tutorialpoints": [],
 	"astronaut 1": {
 		"pos": [ 2.353402853012085, 5.047036647796631 ],
 		"size": [ 0.9000000357627869, 1.290000081062317 ],
@@ -198,5 +199,6 @@
 			"y": 5.326799392700195,
 			"length": 3
 		}
-	]
+	],
+	"ice cream": []
 }

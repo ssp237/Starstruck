@@ -199,7 +199,7 @@ public abstract class WorldController implements Screen {
     /** Queue for adding objects */
     protected PooledList<Obstacle> addQueue = new PooledList<Obstacle>();
     /** Listener that will update the player mode when we are done */
-    private ScreenListener listener;
+    protected ScreenListener listener;
 
     /** The VectorWorld containing the Box2D world and the custom "gravity" */
     protected VectorWorld vectorWorld;
@@ -219,7 +219,7 @@ public abstract class WorldController implements Screen {
     /** Whether or not debug mode is active */
     private boolean debug;
     /** Countdown active for winning or losing */
-    private int countdown;
+    protected int countdown;
 
     /**
      * Returns true if debug mode is active.

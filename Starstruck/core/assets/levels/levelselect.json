@@ -27,22 +27,22 @@
       "x": 5,
       "y": 6,
       "r": 2.0,
-		"texture": "ls p1",
-		"ring texture": "ls g1",
-		"unlocked": "true",
-		"completed": "false",
-		"json file": "main/tutorial.json"
+      "texture": "ls p1",
+      "ring texture": "ls g1",
+      "unlocked": "true",
+      "completed": "false",
+      "json file": "main/tutorial.json"
     },
 
-	  {
-		  "x": 12,
-		  "y": 15,
-		  "r": 3.0,
-		  "texture": "ls p2",
-		  "ring texture": "ls g2",
-		  "unlocked": "true",
-		  "completed": "false",
-		  "json file": "main/milkyDemo.json"
+    {
+      "x": 12,
+      "y": 15,
+      "r": 3.0,
+      "texture": "ls p2",
+      "ring texture": "ls g2",
+      "unlocked": "true",
+      "completed": "false",
+      "json file": "milky/levelOne.json"
 	  },
 
     {
@@ -53,7 +53,7 @@
       "ring texture": "ls g3",
       "unlocked": "true",
       "completed": "false",
-      "json file": "main/milkyDemo2.json"
+      "json file": "milky/level1.json"
     },
     {
       "x": 25,
@@ -63,7 +63,7 @@
       "ring texture": "ls g4",
       "unlocked": "true",
       "completed": "false",
-      "json file": "main/whirlpoolDemo2.json"
+      "json file": "milky/levelTwo.json"
     },
     {
       "x": 31,
@@ -73,7 +73,47 @@
       "ring texture": "ls g5",
       "unlocked": "true",
       "completed": "false",
-      "json file": "test/2playersplit.json"
+      "json file": "milky/levelThree.json"
+    },
+    {
+      "x": 38,
+      "y": 10,
+      "r": 2,
+      "texture": "ls p5",
+      "ring texture": "ls g5",
+      "unlocked": "true",
+      "completed": "false",
+      "json file": "main/milkyDemo2.json"
+    },
+    {
+      "x": 43,
+      "y": 18,
+      "r": 2,
+      "texture": "ls p5",
+      "ring texture": "ls g5",
+      "unlocked": "true",
+      "completed": "false",
+      "json file": "main/tutorial2.json"
+    },
+    {
+      "x": 47,
+      "y": 6,
+      "r": 3,
+      "texture": "ls p5",
+      "ring texture": "ls g5",
+      "unlocked": "true",
+      "completed": "false",
+      "json file": "main/whirlpoolDemo2.json"
+    },
+    {
+      "x": 55,
+      "y": 13,
+      "r": 3,
+      "texture": "ls p5",
+      "ring texture": "ls g5",
+      "unlocked": "true",
+      "completed": "false",
+      "json file": "whirlpool/levelOne.json"
     }
   ]
 }
