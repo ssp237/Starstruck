@@ -876,11 +876,15 @@ public class GameController extends WorldController implements ContactListener {
                 if (input.heldD() || input.heldA()
                         || (input.getControlType() == ControllerType.CTRLTWO && (input.xboxUp2() || input.xboxDown2()))) {
                     avatar.setPlanetMove(contactDir.scl(move));
-                    //avatar.setRight(input.heldD());
+                    avatar.setRight(input.heldD());
                     if (input.getControlType() == ControllerType.CTRLTWO) {
                         Vector2 dir = new Vector2(1,0).rotateRad(input.getAngle2());
                         avatar.setPlanetMove(dir);
                         avatar.moving = true;
+                        boolean vertical = avatar.getAngle() <= 0 && input.xboxDown2();
+                        boolean horizontal = avatar.getAngle() > -Math.PI/2 && avatar.getAngle() <= Math.PI/2 && input.heldD();
+                        avatar.setRight(vertical || horizontal);
+
                     }
                     if (input.heldD() && !input.aPrevious() || input.heldA() && !input.dPrevious())
                         avatar.moving = true;
@@ -907,6 +911,9 @@ public class GameController extends WorldController implements ContactListener {
                         //print(dir.scl(10));
                         avatar.setPlanetMove(dir);
                         avatar.moving = true;
+                        boolean vertical = avatar.getAngle() <= 0 && input.xboxDown();
+                        boolean horizontal = avatar.getAngle() > -Math.PI/2 && avatar.getAngle() <= Math.PI/2 && input.didRight();
+                        avatar.setRight(vertical || horizontal);
                     }
                     if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
                         avatar.moving = true;
