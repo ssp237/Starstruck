@@ -583,7 +583,7 @@ public class GameController extends WorldController implements ContactListener {
      * @param value whether the level is completed.
      */
     public void setComplete(boolean value) {
-        super.setFailure(value);
+        super.setComplete(value);
         if (death != null) {
             winPos = new Vector2(-death.getWidth(), 0);
             winAnimLoop = 0;
@@ -1848,9 +1848,7 @@ public class GameController extends WorldController implements ContactListener {
         canvas.end();
 
         if (isFailure() && deathPos.x == -death.getWidth()) {
-            displayFont.setColor(Color.RED);
             deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
-
         }
 
         if (deathAnimLoop >= MAX_ANIM) {
@@ -1873,7 +1871,7 @@ public class GameController extends WorldController implements ContactListener {
 
         //print(animLoop);
 
-        if ((deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) >= canvas.getWidth()/2 && animLoop < MAX_ANIM) {
+        if ((deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) >= canvas.getWidth()/2 && deathAnimLoop < MAX_ANIM) {
             canvas.begin(); // DO NOT SCALE
             Color drawColor = new Color(1,1,1, 1);
             canvas.draw(death, drawColor, deathPos.x + cam.position.x - canvas.getWidth()/2,
@@ -1899,13 +1897,21 @@ public class GameController extends WorldController implements ContactListener {
             deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
         }
 
-
-
         if (isComplete() && winPos.x == -death.getWidth()){
-            displayFont.setColor(Color.GREEN);
-            canvas.begin();
-            canvas.drawText("Yay! :):)", displayFont, cam.position.x-140, cam.position.y+30);
+            winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
+        }
+
+        if (winPos.x != -death.getWidth() && (winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) < canvas.getWidth()/2) {
+            canvas.begin(); // DO NOT SCALE
+            //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
+            Color drawColor = new Color(1,1,1, 1);
+            canvas.draw(death, drawColor, winPos.x + cam.position.x - canvas.getWidth()/2,
+                    winPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(winSprite, Color.WHITE,deathSprite.getRegionWidth()/2,deathSprite.getRegionHeight()/2,
+                    winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+                    (winPos.y + cam.position.y ),0,1,1.0f);;
             canvas.end();
+            winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
         }
 
         if(isDebug()){

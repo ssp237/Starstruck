@@ -370,7 +370,7 @@
       "delay": 7
     },
     "you win": {
-      "file": "shared/animated_you.dead_screen.png",
+      "file": "shared/animated_you.win_screen.png",
       "wrap": false,
       "rows": 1,
       "cols": 25,
