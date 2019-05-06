@@ -116,6 +116,26 @@
       "file": "levelselect/ring5.png",
       "wrap": false
     },
+    "ls p6": {
+      "file": "levelselect/lvl6.png",
+      "wrap": false
+    },
+    "ls p7": {
+      "file": "levelselect/lvl7.png",
+      "wrap": false
+    },
+    "ls g7": {
+      "file": "levelselect/ring7.png",
+      "wrap": false
+    },
+    "ls p8": {
+      "file": "levelselect/lvl8.png",
+      "wrap": false
+    },
+    "ls p9": {
+      "file": "levelselect/lvl9.png",
+      "wrap": false
+    },
     "de p1": {
       "file": "default/planets/static_default.planet1_v1.png",
       "wrap": false
