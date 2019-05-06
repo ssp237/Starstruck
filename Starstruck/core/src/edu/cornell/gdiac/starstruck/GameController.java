@@ -1848,7 +1848,7 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
-        print(animLoop);
+        //print(animLoop);
 
         if ((deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) >= canvas.getWidth()/2 && animLoop < MAX_ANIM) {
             canvas.begin(); // DO NOT SCALE
