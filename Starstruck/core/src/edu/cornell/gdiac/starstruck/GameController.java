@@ -446,12 +446,16 @@ public class GameController extends WorldController implements ContactListener {
 
         displayFont = JsonAssetManager.getInstance().getEntry("retro game", BitmapFont.class);
 
-        music.stop();
-        music.dispose();
-        music = null;
+        if (music != null) {
+            music.stop();
+            music.dispose();
+            music = null;
+        }
 
-        MenuMode.getMusic().stop();
-        MenuMode.getMusic().dispose();
+        if (MenuMode.getMusic() != null) {
+            MenuMode.getMusic().stop();
+            MenuMode.getMusic().dispose();
+        }
     }
 
     /**
