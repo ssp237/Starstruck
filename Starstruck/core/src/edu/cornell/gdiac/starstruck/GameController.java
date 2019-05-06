@@ -1256,9 +1256,9 @@ public class GameController extends WorldController implements ContactListener {
 //            setFailure(true);
 
         for (Enemy e : enemies) {
-            if (e.getType() == ObstacleType.WORM) {
-                ((Worm)e).setRight_bound(canvas.getCamera().position.x/scale.x + 640/scale.x);
-            }
+//            if (e.getType() == ObstacleType.WORM) {
+//                ((Worm)e).setRight_bound(canvas.getCamera().position.x/scale.x + 640/scale.x);
+//            }
         }
 
 //        avatar.setFixedRotation(false);

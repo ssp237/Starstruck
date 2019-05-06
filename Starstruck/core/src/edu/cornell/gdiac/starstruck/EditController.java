@@ -163,6 +163,11 @@ public class EditController extends WorldController implements ContactListener {
                 screenY = yBound;
                 level.xPlay = screenX;
                 level.yPlay = screenY;
+                for (Enemy e : level.enemies) {
+                    if (e.getType() == ObstacleType.ICE_CREAM) {
+                        ((IceCream) e).setUpBound(level.getBounds().getHeight() * yBound);
+                    }
+                }
 
             } catch (Exception e) {
                 System.out.println("Error setting bounds");
@@ -639,6 +644,11 @@ public class EditController extends WorldController implements ContactListener {
                 Vector2 pos = input.getCrossHair();
                 current = new Worm(pos.x + camScaleX + w, pos.y + camScaleY + h,
                         JsonAssetManager.getInstance().getEntry(FISH_TEXTURES[0], FilmStrip.class), scale, 0);
+                level.add(current);
+            }  else if (input.didI()) {
+                Vector2 pos = input.getCrossHair();
+                current = new IceCream(pos.x + camScaleX + w, pos.y + camScaleY + h,
+                        JsonAssetManager.getInstance().getEntry("ice cream", FilmStrip.class), scale, 0);
                 level.add(current);
             } else if (input.didD()) {
                 Vector2 pos = input.getCrossHair();

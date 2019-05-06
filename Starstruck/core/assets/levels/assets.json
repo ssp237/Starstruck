@@ -337,6 +337,14 @@
       "size": 10,
       "delay": 3
     },
+    "ice cream": {
+      "file": "milky way/enemies/ice cream/static_mwenemy(icecream)_v1.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 1,
+      "size": 1,
+      "delay": 0
+    },
     "static portal": {
       "file": "shared/animated_portal_turning.png",
       "wrap": false,

@@ -100,5 +100,13 @@
 ],
 "tutorialpoints": [],
 "urchin texture": "spike",
-"urchins": []
+"urchins": [],
+"ice cream": [
+	{
+		"texture": "ice cream",
+		"x": 19,
+		"y": 9.09000015258789,
+		"velocity": 2.0
+	}
+]
 }
