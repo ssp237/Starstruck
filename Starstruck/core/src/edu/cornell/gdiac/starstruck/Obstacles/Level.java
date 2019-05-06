@@ -61,7 +61,7 @@ public class Level extends WheelObstacle {
 
         grscale = (float) texture.getRegionWidth() / (float) ringTexture.getRegionWidth();
 
-        setName("level" + counter);
+        setName("Level" + counter);
         counter++;
     }
 

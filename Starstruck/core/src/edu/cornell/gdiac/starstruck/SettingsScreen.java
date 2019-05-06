@@ -35,6 +35,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
+import edu.cornell.gdiac.starstruck.Obstacles.Button;
+import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
 
 /**
@@ -61,17 +63,6 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
 
     private static final float VOLUME = 0.3f;
 
-
-    /** Background texture for start-up */
-    private Texture background;
-    /** Play button to display to go to level select*/
-    private Texture playButton;
-    /** Build button to display to go to build mode */
-    private Texture buildButton;
-    /** Quit button to display to exit the window */
-    private Texture quitButton;
-    /** Settings button to display to edit settings */
-    private Texture settingsButton;
     /** Loading audio */
     private Music music;
 
@@ -80,7 +71,6 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
     /** Standard window height (for scaling) */
     private static int STANDARD_HEIGHT = 720;
     /** Amount to scale the play button */
-    private static float BUTTON_SCALE  = 0.75f;
 
     /** Start button for XBox controller on Windows */
     private static int WINDOWS_START = 7;
@@ -105,25 +95,16 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
     /** Scaling factor for when the student changes the resolution. */
     private float scale;
 
-    /** The current state of the play button */
+    /** The current state of a button */
     private int pressState;
     /** Button down */
-    private int buttonId;
-    /** Support for the X-Box start button in place of play button */
-    private int   startButton;
+    private String buttonId;
     /** Whether or not this player mode is still active */
     private boolean active;
+    /** All the buttons in the world. */
+    protected PooledList<Button> buttons  = new PooledList<Button>();
 
-    /** Play button down */
-    private static int PLAY = 1;
-    /** Build button down */
-    private static int BUILD = 2;
-    /** Quit button down */
-    private static int QUIT = 3;
-    /** button down */
-    private static boolean DOWN = false;
-    /** button up */
-    private static boolean UP = true;
+
 
     /**
      * Returns true if all assets are loaded and the player is ready to go.
@@ -149,31 +130,11 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
         // Compute the dimensions from the canvas
         resize(canvas.getWidth(),canvas.getHeight());
 
-        // Load the next two images immediately.
-//        playButton = JsonAssetManager.getInstance().getEntry("play",
-//                Texture.class);
-//        buildButton = JsonAssetManager.getInstance().getEntry("build", Texture.class);
-//        quitButton = JsonAssetManager.getInstance().getEntry("quit", Texture.class);
-//        background = JsonAssetManager.getInstance().getEntry("loading", Texture.class);
-
-        playButton = new Texture(PLAY_BTN_FILE);
-        buildButton = new Texture(BUILD_BTN_FILE);
-        background = new Texture(BACKGROUND_FILE);
-        quitButton = new Texture(QUIT_BTN_FILE);;
-
-//        music = JsonAssetManager.getInstance().getEntry("menu", Music.class);
-
         // No progress so far.
         pressState = 0;
         active = false;
-        buttonId = 0;
+        buttonId = null;
 
-        startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
-        Gdx.input.setInputProcessor(this);
-        // Let ANY connected controller start the game.
-        for(Controller controller : Controllers.getControllers()) {
-            controller.addListener(this);
-        }
         active = true;
     }
 
@@ -181,14 +142,8 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
      * Called when this screen should release all resources.
      */
     public void dispose() {
-        background.dispose();
-        background = null;
-        playButton.dispose();
-        playButton = null;
-        buildButton.dispose();
-        buildButton = null;
-        quitButton.dispose();
-        quitButton = null;
+        objects.clear();
+
     }
 
     /**
@@ -201,16 +156,6 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
      * @param delta Number of seconds since last animation frame
      */
     public void update(float delta) {
-//        playButton = new Texture(PLAY_BTN_FILE);
-//        playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-//
-//        playButton = new Texture(PLAY_BTN_FILE);
-//        playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-//
-//        playButton = new Texture(PLAY_BTN_FILE);
-//        playButton.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-//        SoundController.getInstance().play(MUSIC_FILE,MUSIC_FILE,true,VOLUME);
-//        SoundController.getInstance().update();
     }
 
     /**
@@ -227,15 +172,9 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
             cam.update();
         }
         canvas.begin();
-        canvas.draw(background, 0, 0, canvas.getWidth(), canvas.getHeight());
-        Color tint = (pressState == 1 ? Color.GRAY: Color.WHITE);
-        canvas.draw(playButton, tint, playButton.getWidth()/2, playButton.getHeight()/2,
-                centerX, centerY, 0, scale, scale);
-        canvas.draw(buildButton, tint, buildButton.getWidth()/2, buildButton.getHeight()/2,
-                centerX, centerY-playButton.getHeight()-OFFSET1, 0, scale, scale);
-        canvas.draw(quitButton, tint, quitButton.getWidth()/2, quitButton.getHeight()/2,
-                centerX, centerY-playButton.getHeight()-OFFSET1-buildButton.getHeight()-OFFSET2,
-                0, scale, scale);
+        for(Button btn : buttons) {
+            btn.draw(canvas);
+        }
         canvas.end();
     }
 
@@ -255,22 +194,22 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
 //            if (!music.isPlaying()) { music.play();}
             // We are are ready, notify our listener
 
-            if (isReady() && listener != null && buttonId == PLAY) {
+            if (isReady() && listener != null && buttonId == "play") {
                 pressState = 0;
-                buttonId = 0;
+                buttonId = null;
                 System.out.println("play");
                 listener.exitScreen(this, WorldController.EXIT_SELECT);
             }
-            if (isReady() && listener != null && buttonId == BUILD) {
+            if (isReady() && listener != null && buttonId == "build") {
                 pressState = 0;
-                buttonId = 0;
+                buttonId = null;
                 System.out.println("build");
 
                 listener.exitScreen(this, WorldController.EXIT_EDIT);
             }
-            if (isReady() && listener != null && buttonId == QUIT) {
+            if (isReady() && listener != null && buttonId == "quit") {
                 pressState = 0;
-                buttonId = 0;
+                buttonId = null;
                 System.out.println("exit");
                 listener.exitScreen(this, WorldController.EXIT_QUIT);
             }
@@ -357,30 +296,6 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
      * @return whether to hand the event to other listeners.
      */
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (playButton == null || buildButton == null || quitButton == null || pressState == 2) {
-            buttonId = 0;
-            return true;
-        }
-
-        // Flip to match graphics coordinates
-        screenY = heightY-screenY;
-
-        float xdist = Math.abs(screenX-centerX);
-        float ydist = Math.abs(screenY-centerY);
-        if (xdist < playButton.getWidth()/2 && ydist < playButton.getHeight()/2) {
-            pressState = 1;
-            buttonId = PLAY;
-        }
-        ydist = Math.abs(screenY - centerY + playButton.getHeight() + OFFSET1);
-        if (xdist < buildButton.getWidth()/2 && ydist < buildButton.getHeight()/2) {
-            pressState = 1;
-            buttonId = BUILD;
-        }
-        ydist = Math.abs(screenY - centerY + playButton.getHeight() + OFFSET1 + buildButton.getHeight() + OFFSET2);
-        if (xdist < quitButton.getWidth()/2 && ydist < quitButton.getHeight()/2) {
-            pressState = 1;
-            buttonId = QUIT;
-        }
 
         return false;
     }
@@ -398,31 +313,6 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
      */
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
 
-        // Flip to match graphics coordinates
-        screenY = heightY-screenY;
-
-        float xdist = Math.abs(screenX-centerX);
-        float ydist = Math.abs(screenY-centerY);
-        if (pressState == 1 && buttonId == PLAY && xdist < playButton.getWidth()/2 && ydist < playButton.getHeight()/2) {
-            pressState = 2;
-            return false;
-        }
-        ydist = Math.abs(screenY - centerY + playButton.getHeight() + OFFSET1);
-        if (pressState == 1 && buttonId == BUILD && xdist < buildButton.getWidth()/2 && ydist < buildButton.getHeight()/2) {
-            pressState = 2;
-            return false;
-        }
-        ydist = Math.abs(screenY - centerY + playButton.getHeight() + OFFSET1 + buildButton.getHeight() + OFFSET2);
-        if (pressState == 1 && buttonId == QUIT && xdist < quitButton.getWidth()/2 && ydist < quitButton.getHeight()/2) {
-            pressState = 2;
-            return false;
-        }
-
-        if (pressState == 1) {
-            pressState = 0;
-            buttonId = 0;
-        }
-
         return true;
     }
 
@@ -438,11 +328,7 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
      * @return whether to hand the event to other listeners.
      */
     public boolean buttonDown (Controller controller, int buttonCode) {
-        if (buttonCode == startButton && pressState == 0) {
-            pressState = 1;
-            buttonId = PLAY;
-            return false;
-        }
+
         return true;
     }
 
@@ -458,10 +344,7 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
      * @return whether to hand the event to other listeners.
      */
     public boolean buttonUp (Controller controller, int buttonCode) {
-        if (pressState == 1 && buttonCode == startButton) {
-            pressState = 2;
-            return false;
-        }
+
         return true;
     }
 
@@ -474,14 +357,6 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
      * @return whether to hand the event to other listeners.
      */
     public boolean keyDown(int keycode) {
-        if (pressState == 0 && keycode == Input.Keys.N) {
-            pressState = 1;
-            buttonId = PLAY;
-            return false;
-        } else if (pressState == 0 && keycode == Input.Keys.P) {
-            pressState = 1;
-            buttonId = BUILD;
-        }
         return true;
     }
 
@@ -503,14 +378,7 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
      * @return whether to hand the event to other listeners.
      */
     public boolean keyUp(int keycode) {
-        if (pressState == 1 && keycode == Input.Keys.N || keycode == Input.Keys.P) {
-            pressState = 2;
-            buttonId = PLAY;
-            return false;
-        } else if (pressState == 1 && keycode == Input.Keys.P) {
-            pressState = 2;
-            return false;
-        }
+
         return true;
     }
 
@@ -643,7 +511,7 @@ public class SettingsScreen extends WorldController implements Screen, InputProc
     public void reset() {
         Gdx.input.setInputProcessor(this);
 
-        buttonId = 0;
+        buttonId = null;
         pressState = 0;
     }
 }
