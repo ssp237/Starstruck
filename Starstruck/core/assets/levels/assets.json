@@ -226,6 +226,10 @@
       "file": "backgrounds/you_dead_1.png",
       "wrap": false
     },
+    "dead background": {
+      "file": "shared/dead_background.png",
+      "wrap": false
+    },
     "play": {
       "file": "buttons/play.png",
       "wrap": false
@@ -348,6 +352,22 @@
       "cols": 1,
       "size": 1,
       "delay": 0
+    },
+    "you dead": {
+      "file": "shared/animated_you.dead_screen.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 18,
+      "size": 18,
+      "delay": 7
+    },
+    "you win": {
+      "file": "shared/animated_you.dead_screen.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 25,
+      "size": 25,
+      "delay": 1
     }
   },
   "fonts": {

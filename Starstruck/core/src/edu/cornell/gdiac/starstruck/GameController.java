@@ -73,6 +73,10 @@ public class GameController extends WorldController implements ContactListener {
     private Texture death;
     /** Opacity countdown for death screen */
     private float deathOp = 0f;
+    /** Did we just die? (used to tell if we need to start loop with death screen) */
+    private boolean justDead;
+    private Vector2 deathPos;
+    private FilmStrip deathSprite;
 
     /** Texture asset for the enemy */
     private FilmStrip enemyTexture;
@@ -85,11 +89,6 @@ public class GameController extends WorldController implements ContactListener {
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
-
-    /** Location and animation information for enemy */
-    private Enemy enemy;
-    private Enemy pinkworm;
-    private Enemy greenworm;
 
     /** Texture file for star bar*/
     private static final String PROGRESS_FILE = "default/starbar.png";
@@ -208,7 +207,8 @@ public class GameController extends WorldController implements ContactListener {
         JsonAssetManager.getInstance().allocateDirectory();
 
 
-        death = JsonAssetManager.getInstance().getEntry("death screen", Texture.class);
+        death = JsonAssetManager.getInstance().getEntry("dead background", Texture.class);
+        deathSprite = JsonAssetManager.getInstance().getEntry("you dead", FilmStrip.class);
 
         enemyTexture = JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class);
         pinkwormTexture = JsonAssetManager.getInstance().getEntry("pink worm", FilmStrip.class);
@@ -385,6 +385,7 @@ public class GameController extends WorldController implements ContactListener {
         sensorFixtures = new ObjectSet<Fixture>();
         this.loadFile = loadFile;
         loader = new SaveListener();
+        deathPos = new Vector2(0,0);
     }
 
     /**
@@ -403,6 +404,7 @@ public class GameController extends WorldController implements ContactListener {
         sensorFixtures = new ObjectSet<Fixture>();
         loadFile = "main/tutorial.json";
         loader = new SaveListener();
+        deathPos = new Vector2(0,0);
     }
 
     /**
@@ -417,6 +419,8 @@ public class GameController extends WorldController implements ContactListener {
         //levelFormat = jsonReadesystem.r.parse(Gdx.files.internal("levels/" + loadFile));
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
+
+        justDead = isFailure();
 
         setComplete(false);
         setFailure(false);
@@ -456,10 +460,6 @@ public class GameController extends WorldController implements ContactListener {
         world = level.getWorld(); vectorWorld = level.getVectorWorld();
         enemies = level.getEnemies();
         goal = level.getGoal();
-        //System.out.println("here ye here ye");
-        //System.out.println(enemies);
-        //System.out.println(enemies.size());
-        //System.out.println(level.getEnemies());
     }
 
     /**
@@ -533,16 +533,6 @@ public class GameController extends WorldController implements ContactListener {
 
         //rope.setReelForce(REEL_FORCE);
         //setSettings();
-
-        // Create enemy TODO hardcoded bug enemy
-//        dwidth  = enemyTexture.getRegionWidth()/scale.x;
-//        dheight = enemyTexture.getRegionHeight()/scale.y;
-//        enemy = new Enemy(26 + 2, 8 + 2, dwidth, dheight);
-//        enemy.setDrawScale(scale);
-//        enemy.setTexture(enemyTexture, 3, 10);
-//        enemy.setName("bug");
-//        addObject(enemy);
-
     }
 
     /**
@@ -552,6 +542,23 @@ public class GameController extends WorldController implements ContactListener {
         twoplayer = false;
         switchOnJump = false;
         switchOnAnchor = false;
+    }
+
+    /**
+     * Sets whether the level is failed.
+     *
+     * If true, the level will reset after a countdown
+     *
+     * Additionally, set the value for the
+     *
+     * @param value whether the level is failed.
+     */
+    public void setFailure(boolean value) {
+        super.setFailure(value);
+        if (death != null && !isFailure() && !justDead) {
+            deathPos = new Vector2(-death.getWidth(), 0);
+            print(deathPos);
+        }
     }
 
     /**
@@ -1567,22 +1574,22 @@ public class GameController extends WorldController implements ContactListener {
                 }
             }
 
-            if ((bd1 == enemy || bd2 == enemy) && bd1 != avatar2 && bd2 !=avatar2 && bd1 != avatar && bd2 !=avatar) {
-                curPlanetEN = (bd1 == enemy) ? bd2 : bd1;
-                if (curPlanetEN.getName().contains("planet")) {
-                    contactPointEN.set(contact.getWorldManifold().getPoints()[0].cpy());
-                    enemy.setOnPlanet(true);
-                }
-                // See if we have landed on the ground.
-                if ((enemy.getSensorName().equals(fd2) && avatar != bd1 && avatar2 != bd1) ||
-                        (enemy.getSensorName().equals(fd1) && avatar != bd2 && avatar2 != bd2)) {
-                    enemy.setGrounded(true);
-                    enemy.setOnPlanet(true);
-                    contactPointEN.set(enemy.getPosition());
-                    sensorFixtures.add(enemy == bd1 ? fix2 : fix1); // Could have more than one ground
-                }
-
-            }
+//            if ((bd1 == enemy || bd2 == enemy) && bd1 != avatar2 && bd2 !=avatar2 && bd1 != avatar && bd2 !=avatar) {
+//                curPlanetEN = (bd1 == enemy) ? bd2 : bd1;
+//                if (curPlanetEN.getName().contains("planet")) {
+//                    contactPointEN.set(contact.getWorldManifold().getPoints()[0].cpy());
+//                    enemy.setOnPlanet(true);
+//                }
+//                // See if we have landed on the ground.
+//                if ((enemy.getSensorName().equals(fd2) && avatar != bd1 && avatar2 != bd1) ||
+//                        (enemy.getSensorName().equals(fd1) && avatar != bd2 && avatar2 != bd2)) {
+//                    enemy.setGrounded(true);
+//                    enemy.setOnPlanet(true);
+//                    contactPointEN.set(enemy.getPosition());
+//                    sensorFixtures.add(enemy == bd1 ? fix2 : fix1); // Could have more than one ground
+//                }
+//
+//            }
 
             // Check for win condition
 //            if ((bd1 == avatar   && bd2 == goalDoor) ||
@@ -1774,19 +1781,43 @@ public class GameController extends WorldController implements ContactListener {
         }
         canvas.end();
 
-        if (isFailure()) {
+        if (isFailure() && deathPos.x == -death.getWidth()) {
             displayFont.setColor(Color.RED);
+            deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
+
+        }
+
+        if ((deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) >= canvas.getWidth()/2) {
+            canvas.begin(); // DO NOT SCALE
+            Color drawColor = new Color(1,1,1, 1);
+            canvas.draw(death, drawColor, deathPos.x + cam.position.x - canvas.getWidth()/2,
+                    deathPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(deathSprite, Color.WHITE,deathSprite.getRegionWidth()/2,deathSprite.getRegionHeight()/2,
+                    deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+                    (deathPos.y + cam.position.y ),0,1,1.0f);
+            canvas.end();
+            deathSprite.tick();
+        }
+
+        if (deathPos.x != -death.getWidth() && (deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) < canvas.getWidth()/2) {
             canvas.begin(); // DO NOT SCALE
             //canvas.drawTextCentered("u ded :(", displayFont, 0.0f);
             //canvas.drawText("u ded :(", displayFont, cam.position.x-140, cam.position.y+30);
             //canvas.draw(background, Color.WHITE, x, y,canvas.getWidth(),canvas.getHeight());
 //            deathOp += 0.0001f;
 //            deathOp *= 1.05;
-            deathOp += 0.01f;
-            Color drawColor = new Color(1,1,1, deathOp);
-            canvas.draw(death, drawColor, cam.position.x - canvas.getWidth()/2, cam.position.y - canvas.getHeight()/2, canvas.getWidth(), canvas.getHeight());
+            print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
+            Color drawColor = new Color(1,1,1, 1);
+            canvas.draw(death, drawColor, deathPos.x + cam.position.x - canvas.getWidth()/2,
+                    deathPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(deathSprite, Color.WHITE,deathSprite.getRegionWidth()/2,deathSprite.getRegionHeight()/2,
+                    deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+                    (deathPos.y + cam.position.y ),0,1,1.0f);;
             canvas.end();
+            deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
         }
+
+
 
         if (isComplete()){
             displayFont.setColor(Color.GREEN);

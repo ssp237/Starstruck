@@ -1,0 +1,104 @@
+{
+"physicsSize": [ 38.400001525878906, 21.600000381469727 ],
+"graphicSize": [ 1280, 720 ],
+"playSize": [ 1.5, 1.5 ],
+"win": "0.5",
+"galaxy": "milky way",
+"background": "mw background",
+"astronaut 1": {
+	"pos": [ 3.9300448894500732, 7.920078277587891 ],
+	"size": [ 0.9000000357627869, 1.290000081062317 ],
+	"texture": "astronaut 1",
+	"glow texture": "glow"
+},
+"astronaut 2": {
+	"pos": [ 4.799198627471924, 7.423313140869141 ],
+	"size": [ 0.9000000357627869, 1.290000081062317 ],
+	"texture": "astronaut 2",
+	"glow texture": "glow"
+},
+"rope": {
+	"texture": "rope",
+	"rope width": 6.0
+},
+"planet specs": [ 700.0, 800.0, 900.0, 1000.0 ],
+"planets": [
+	{
+		"x": 4.019999980926514,
+		"y": 5.190000534057617,
+		"i": 2
+	},
+	{
+		"x": 11.520000457763672,
+		"y": 14.130000114440918,
+		"i": 3
+	},
+	{
+		"x": 26.73000144958496,
+		"y": 14.220000267028809,
+		"i": 3
+	}
+],
+"anchors": [],
+"stars": [
+	{
+		"x": 11.640000343322754,
+		"y": 19.200000762939453,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 26.760000228881836,
+		"y": 7.949999809265137,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 26.940000534057617,
+		"y": 19.80000114440918,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 9.15000057220459,
+		"y": 18.450000762939453,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 10.289999961853027,
+		"y": 18.989999771118164,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 8.220000267028809,
+		"y": 17.760000228881836,
+		"texture": "star",
+		"location": "space"
+	}
+],
+"worms": [
+	{
+		"texture": "pink berry",
+		"x": 11.700000762939453,
+		"y": 9.09000015258789,
+		"velocity": 2.0
+	}
+],
+"portalpairs": [
+	{
+		"x1": 33.630001068115234,
+		"y1": 14.34000015258789,
+		"x2": 1000.0,
+		"y2": 1000.0,
+		"name": "portalpair1",
+		"color": "0",
+		"texture": "goal",
+		"goal": "yes"
+	}
+],
+"tutorialpoints": [],
+"urchin texture": "spike",
+"urchins": []
+}

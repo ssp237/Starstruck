@@ -384,7 +384,7 @@ public class EditController extends WorldController implements ContactListener {
             level.remove(u);
             Vector2 pos = u.getPosition();
             CapsuleObstacle.Orientation orie = u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL ? CapsuleObstacle.Orientation.HORIZONTAL : CapsuleObstacle.Orientation.VERTICAL;
-            current = new Urchin(pos.x, pos.y, scale, u.getLength(), orie);
+            current = new Urchin(pos.x, pos.y, u.getHeight() / Enemy.DUDE_HSHRINK, u.getWidth() / Enemy.DUDE_VSHRINK, scale, u.getLength(), orie);
             level.add(current);
         }
     }
