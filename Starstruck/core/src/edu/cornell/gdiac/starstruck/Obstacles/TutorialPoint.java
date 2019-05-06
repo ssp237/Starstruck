@@ -32,7 +32,7 @@ public class TutorialPoint {
     /** Point for blue astronaut */
     private Star bluePoint;
     /** Instruction associated with these tasks */
-    private FilmStrip task;
+    private TextureRegion task;
     /** Name of this tutorial */
     private String name;
     /** Whether pinkPoint was completed */
@@ -46,19 +46,18 @@ public class TutorialPoint {
      * Create new tutorial points with the given texture and draw scale.
      * @param x1, x2 X coord of the new star
      * @param y1, x2 Y coord of the new star
-     * @param texture Texture for the new star
      * @param scale Draw scale for the new star
      */
-    public TutorialPoint(float x1, float y1, float x2, float y2, TextureRegion texture, Vector2 scale) {
+    public TutorialPoint(float x1, float y1, float x2, float y2, Vector2 scale) {
         //pinkPoint = new Star(x1, y1, texture.getRegionWidth(), texture.getRegionHeight());
-        pinkPoint = new Star(x1, y1, texture, scale);
+        pinkPoint = new Star(x1, y1, JsonAssetManager.getInstance().getEntry("pink dot", TextureRegion.class), scale);
         pinkPoint.setColor("pink");
 //        pinkPoint.setTexture(texture);
 //        pinkPoint.setDrawScale(scale);
         pinkPoint.setType(ObstacleType.TUTORIAL);
         pinkHit = false;
         //bluePoint = new Star(x2, y2, texture.getRegionWidth(), texture.getRegionHeight());
-        bluePoint = new Star(x2, y2, texture, scale);
+        bluePoint = new Star(x2, y2, JsonAssetManager.getInstance().getEntry("blue dot", TextureRegion.class), scale);
         bluePoint.setColor("blue");
         //bluePoint.setTexture(texture);
         //bluePoint.setDrawScale(scale);
@@ -67,13 +66,13 @@ public class TutorialPoint {
         complete = false;
     }
 
-    public TutorialPoint(float x1, float y1, float x2, float y2, TextureRegion texture, FilmStrip taskText, Vector2 scale) {
-        this(x1, y1, x2, y2, texture, scale);
+    public TutorialPoint(float x1, float y1, float x2, float y2, TextureRegion taskText, Vector2 scale) {
+        this(x1, y1, x2, y2, scale);
         task = taskText;
     }
 
-    public TutorialPoint(float x1, float y1, float x2, float y2, TextureRegion texture, FilmStrip taskText, Vector2 scale, String name) {
-        this(x1, y1, x2, y2, texture, taskText, scale);
+    public TutorialPoint(float x1, float y1, float x2, float y2, TextureRegion taskText, Vector2 scale, String name) {
+        this(x1, y1, x2, y2, taskText, scale);
         this.name = name;
         pinkPoint.setTutName(name);
         bluePoint.setTutName(name);
@@ -85,7 +84,7 @@ public class TutorialPoint {
 
     public String getName() { return name; }
 
-    public FilmStrip getTask() { return task; }
+    public TextureRegion getTask() { return task; }
 
     public boolean pinkHit() { return pinkHit; }
 
@@ -112,12 +111,10 @@ public class TutorialPoint {
      * @return A star created according to the specifications in the JSON
      */
     public static TutorialPoint fromJSON(JsonValue json, Vector2 scale) {
-        String key = json.get("texture").asString();
-        TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
-        key = json.get("taskText").asString();
-        FilmStrip taskText = JsonAssetManager.getInstance().getEntry(key, FilmStrip.class);
+        String key = json.get("taskText").asString();
+        TextureRegion taskText = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
         String name = json.get("name").asString();
-        TutorialPoint out = new TutorialPoint(json.get("x1").asFloat(), json.get("y1").asFloat(), json.get("x2").asFloat(), json.get("y2").asFloat(), texture, taskText, scale, name);
+        TutorialPoint out = new TutorialPoint(json.get("x1").asFloat(), json.get("y1").asFloat(), json.get("x2").asFloat(), json.get("y2").asFloat(), taskText, scale, name);
         return out;
     }
 
@@ -138,7 +135,6 @@ public class TutorialPoint {
         json.addChild("y2", new JsonValue(p2.y));
 
         //Add textures
-        json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(pinkPoint.getTexture())));
         json.addChild("taskText", new JsonValue(JsonAssetManager.getInstance().getKey(task)));
 
         //Add name

@@ -199,6 +199,38 @@
     "spike bottom": {
       "file": "enemies/static_spike_bottom.png",
       "wrap": false
+    },
+    "pink dot": {
+      "file": "tutorial/tutorial_pink_dot.png",
+      "wrap": false
+    },
+    "blue dot": {
+      "file": "tutorial/tutorial_blue_dot.png",
+      "wrap": false
+    },
+    "jump": {
+      "file": "tutorial/jump.png",
+      "wrap": false
+    },
+    "jump anchor pink": {
+      "file": "tutorial/jump_anchor_pink.png",
+      "wrap": false
+    },
+    "jump pink reel blue": {
+      "file": "tutorial/jump_pink_reel_blue.png",
+      "wrap": false
+    },
+    "switch jump blue": {
+      "file": "tutorial/switch_jump_blue.png",
+      "wrap": false
+    },
+    "switch": {
+      "file": "tutorial/switch.png",
+      "wrap": false
+    },
+    "move": {
+      "file": "tutorial/move.png",
+      "wrap": false
     }
   },
   "textures": {

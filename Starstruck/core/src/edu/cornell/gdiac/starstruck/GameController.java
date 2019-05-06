@@ -1106,7 +1106,7 @@ public class GameController extends WorldController implements ContactListener {
                 else
                     tutorial = false;
             }
-            if (tutPointCache != null) tutPointCache.getTask().tick();
+            //if (tutPointCache != null) tutPointCache.getTask().tick();
         }
         else tutorial = false;
     }
@@ -1815,9 +1815,9 @@ public class GameController extends WorldController implements ContactListener {
         drawStarBar(canvas);
         if (tutorial) {
             OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
-            FilmStrip text = tutPointCache.getTask();
+            TextureRegion text = tutPointCache.getTask();
             float xPos = camera.position.x - text.getRegionWidth()/2;
-            float yPos = camera.position.y - camera.viewportHeight/2 + 2;
+            float yPos = camera.position.y - camera.viewportHeight/2 + text.getRegionHeight()/2;
             canvas.draw(text, Color.WHITE, 0, 0, xPos, yPos, 0, 1, 1);
             if (!tutPointCache.pinkHit()) {
                 tutPointCache.getPinkPoint().draw(canvas);

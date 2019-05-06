@@ -85,8 +85,7 @@
 		"y1": 6.868800163269043,
 		"x2": 10.66560173034668,
 		"y2": 5.659200668334961,
-		"texture": "anchor",
-		"taskText": "static portal",
+		"taskText": "switch",
 		"name": "task3"
 	},
 	{
@@ -94,8 +93,7 @@
 		"y1": 12.076799392700195,
 		"x2": 14.160000801086426,
 		"y2": 11.471999168395996,
-		"texture": "anchor",
-		"taskText": "static portal",
+		"taskText": "move",
 		"name": "task4"
 	},
 	{
@@ -103,8 +101,7 @@
 		"y1": 15.302399635314941,
 		"x2": 20.174400329589844,
 		"y2": 14.831999778747559,
-		"texture": "anchor",
-		"taskText": "static portal",
+		"taskText": "jump",
 		"name": "task5"
 	},
 	{
@@ -112,8 +109,7 @@
 		"y1": 15.270000457763672,
 		"x2": 29.43360137939453,
 		"y2": 13.55519962310791,
-		"texture": "anchor",
-		"taskText": "static portal",
+		"taskText": "jump anchor pink",
 		"name": "task6"
 	},
 	{
@@ -121,8 +117,7 @@
 		"y1": 16.17599868774414,
 		"x2": 29.46000099182129,
 		"y2": 13.529999732971191,
-		"texture": "anchor",
-		"taskText": "static portal",
+		"taskText": "switch jump blue",
 		"name": "task7"
 	},
 	{
@@ -130,8 +125,7 @@
 		"y1": 19.19999885559082,
 		"x2": 36.22560119628906,
 		"y2": 15.20159912109375,
-		"texture": "anchor",
-		"taskText": "static portal",
+		"taskText": "switch jump blue",
 		"name": "task8"
 	},
 	{
@@ -139,8 +133,7 @@
 		"y1": 12.869999885559082,
 		"x2": 37.11000061035156,
 		"y2": 11.789999961853027,
-		"texture": "anchor",
-		"taskText": "static portal",
+		"taskText": "jump pink reel blue",
 		"name": "task9"
 	}
 ],

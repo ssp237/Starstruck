@@ -666,8 +666,7 @@ public class EditController extends WorldController implements ContactListener {
                 float x = pos.x + camScaleX + w;
                 float y = pos.y + camScaleY + h;
                 TutorialPoint tutorial = new TutorialPoint(x, y, x+2, y,
-                        JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class),
-                        JsonAssetManager.getInstance().getEntry("static portal", FilmStrip.class), scale, "task"+task);
+                        JsonAssetManager.getInstance().getEntry("anchor", FilmStrip.class), scale, "task"+task);
                 task++;
                 level.add(tutorial.getPinkPoint());
                 level.add(tutorial.getBluePoint());

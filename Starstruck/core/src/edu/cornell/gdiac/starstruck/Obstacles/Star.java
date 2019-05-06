@@ -309,12 +309,13 @@ public class Star extends BoxObstacle {
      * @param canvas Drawing context
      */
     public void draw(GameCanvas canvas) {
-        if (getType() == ObstacleType.TUTORIAL && !hit) { //TODO
-            if (getColor().equals("pink"))
-                canvas.draw(texture, Color.PINK,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),2f,2f);
-            else if (color.equals("blue"))
-                canvas.draw(texture, Color.TEAL,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),2f,2f);
-            else System.out.println("Didn't draw tutorial point");
+        if (getType() == ObstacleType.TUTORIAL && !hit) {
+            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+//            if (getColor().equals("pink"))
+//                canvas.draw(texture, Color.PINK,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),2f,2f);
+//            else if (color.equals("blue"))
+//                canvas.draw(texture, Color.TEAL,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),2f,2f);
+//            else System.out.println("Didn't draw tutorial point");
         }
         else if (getType() == ObstacleType.STAR){
             canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
