@@ -19,5 +19,6 @@ public enum ObstacleType {
     GOAL,
     LEVEL,
     URCHIN,
-    TUTORIAL
+    TUTORIAL,
+    ICE_CREAM
 }

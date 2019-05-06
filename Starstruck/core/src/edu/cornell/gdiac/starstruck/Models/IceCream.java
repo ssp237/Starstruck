@@ -22,9 +22,13 @@ public class IceCream extends Enemy {
     /** Counter for names */
     private static int icecream_count = 1;
     /** Delay for wormie to come back on screen */
-    private int delay_pos = 1000;
+    private static int MAX_DELAY = 10;
+    private int delay_pos = MAX_DELAY;
 
     private float x_original;
+
+    /**Top of the screen */
+    private float upBound = 0;
 
 
     /**
@@ -47,6 +51,14 @@ public class IceCream extends Enemy {
         setName("IceCream" + icecream_count);
         icecream_count++;
         x_original = x;
+    }
+
+    /**
+     * Set the upper bound of the screen for this ice cream
+     * @param bound The upper bound of the screen.
+     */
+    public void setUpBound(float bound){
+        upBound = bound;
     }
 
     /**
@@ -101,7 +113,7 @@ public class IceCream extends Enemy {
         json.addChild("y", new JsonValue(pos.y));
 
         //Write velocity
-        json.addChild("velocity", new JsonValue(getVX()));
+        json.addChild("velocity", new JsonValue(getVY() == 0 ? 1 : getVY()));
 
         //System.out.println(json);
 
@@ -125,11 +137,13 @@ public class IceCream extends Enemy {
         super.update(dt);
         //System.out.println(getVX());
 
-        if (this.getPosition().y < getHeight()) {
+        //System.out.println(upBound);
+        if (getPosition().y > upBound + getHeight()/2) {
             delay_pos--;
+            System.out.println(delay_pos);
             if (delay_pos == 0) {
-                delay_pos = 1000;
-                this.setPosition(x_original, 0);
+                delay_pos = MAX_DELAY;
+                setPosition(x_original, -getHeight()/2);
             }
         }
 //        if (this.getPosition().x < x_original - 5) {
@@ -153,7 +167,7 @@ public class IceCream extends Enemy {
         canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 
-    public ObstacleType getType() { return ObstacleType.WORM;}
+    public ObstacleType getType() { return ObstacleType.ICE_CREAM;}
 
 
     /** Sets the place where the worm re-enters to the rightmost bound of the level*/

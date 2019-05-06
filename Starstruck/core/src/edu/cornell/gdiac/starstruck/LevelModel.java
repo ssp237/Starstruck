@@ -26,11 +26,7 @@ import com.badlogic.gdx.utils.*;
 import com.badlogic.gdx.physics.box2d.*;
 
 import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
-import edu.cornell.gdiac.starstruck.Models.AstronautModel;
-import edu.cornell.gdiac.starstruck.Models.Bug;
-import edu.cornell.gdiac.starstruck.Models.Enemy;
-import edu.cornell.gdiac.starstruck.Models.Urchin;
-import edu.cornell.gdiac.starstruck.Models.Worm;
+import edu.cornell.gdiac.starstruck.Models.*;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 
@@ -430,6 +426,16 @@ public class LevelModel {
             urchinVals = urchinVals.next;
         }
 
+        //add ice cream
+        JsonValue creamVals = levelFormat.get("ice cream").child();
+        while(creamVals != null) {
+            IceCream iceCream = IceCream.fromJSON(creamVals, scale);
+            iceCream.setUpBound(bounds.getHeight() * yPlay);
+            activate(iceCream);
+            enemies.add(iceCream);
+            creamVals = creamVals.next;
+        }
+
 //        System.out.println("here i am enemy list");
 //        System.out.println(enemies);
 //        System.out.println(enemies.size());
@@ -475,6 +481,9 @@ public class LevelModel {
             case PORTAL: activate(obj); break;
             case URCHIN: activate(obj); enemies.add((Urchin) obj); break;
             case TUTORIAL: activate(obj); break;
+            case ICE_CREAM:
+                ((IceCream) obj).setUpBound(bounds.getHeight() * yPlay);
+                activate(obj); enemies.add((IceCream) obj); break;
         }
     }
 
@@ -499,6 +508,7 @@ public class LevelModel {
             case PORTAL: deactivate(obj); break;
             case URCHIN: deactivate(obj); enemies.remove((Urchin) obj); break;
             case TUTORIAL: deactivate(obj); break;
+            case ICE_CREAM: deactivate(obj); enemies.remove((IceCream) obj); break;
         }
     }
 
@@ -610,6 +620,7 @@ public class LevelModel {
         JsonValue portalPairs = new JsonValue(JsonValue.ValueType.array);
         JsonValue tutorialPoints = new JsonValue(JsonValue.ValueType.array);
         JsonValue urchins = new JsonValue(JsonValue.ValueType.array);
+        JsonValue iceCreams = new JsonValue(JsonValue.ValueType.array);
 
         for (Obstacle obj : objects) {
             switch (obj.getType()) {
@@ -617,6 +628,7 @@ public class LevelModel {
                 case ANCHOR: anchors.addChild(((Anchor) obj).toJson()); break;
                 case WORM: worms.addChild(((Worm) obj).toJson()); break;
                 case URCHIN: urchins.addChild(((Urchin) obj).toJson()); break;
+                case ICE_CREAM: iceCreams.addChild(((IceCream) obj).toJson()); break;
             }
         }
 
@@ -632,7 +644,6 @@ public class LevelModel {
         out.addChild("stars", stars);
 
         //Add enemies
-
         out.addChild("worms", worms);
 
         //Add portals
@@ -644,6 +655,9 @@ public class LevelModel {
         //Add urchins
         out.addChild("urchin texture", new JsonValue(Urchin.getTexturePrefix()));
         out.addChild("urchins", urchins);
+
+        //add ice cream
+        out.addChild("ice cream", iceCreams);
 
 
         return out;

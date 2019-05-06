@@ -1,0 +1,41 @@
+{
+"physicsSize": [ 38.400001525878906, 21.600000381469727 ],
+"graphicSize": [ 1280, 720 ],
+"playSize": [ 1.5, 1.5 ],
+"win": "0.5",
+"galaxy": "whirlpool",
+"background": "wp background",
+"astronaut 1": {
+	"pos": [ 2.710181951522827, 5.076745510101318 ],
+	"size": [ 0.9000000357627869, 1.290000081062317 ],
+	"texture": "astronaut 1",
+	"glow texture": "glow"
+},
+"astronaut 2": {
+	"pos": [ 4.446835517883301, 6.317370891571045 ],
+	"size": [ 0.9000000357627869, 1.290000081062317 ],
+	"texture": "astronaut 2",
+	"glow texture": "glow"
+},
+"rope": {
+	"texture": "rope",
+	"rope width": 6.0
+},
+"planet specs": [ 700.0, 800.0, 900.0, 1000.0 ],
+"planets": [],
+"anchors": [],
+"stars": [],
+"worms": [],
+"portalpairs": [],
+"tutorialpoints": [],
+"urchin texture": "spike",
+"urchins": [],
+"ice cream": [
+	{
+		"texture": "ice cream",
+		"x": 19.290000915527344,
+		"y": 11.460000038146973,
+		"velocity": 1.0
+	}
+]
+}
