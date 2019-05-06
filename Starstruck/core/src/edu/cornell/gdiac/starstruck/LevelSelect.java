@@ -90,6 +90,13 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     /** Whether or not this player mode is still active */
     private boolean active;
 
+    /**Needed to finish win screen**/
+    private FilmStrip winSprite;
+    private Vector2 winPos;
+    private static int MAX_ANIM = 2;
+    private int animLoop;
+    private Texture death;
+
 
     /**
      * Load the assets for this controller.
@@ -116,6 +123,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         super.loadContent(manager);
 
         levels = new PooledList<Level>();
+
+        death = JsonAssetManager.getInstance().getEntry("dead background", Texture.class);
     }
 
     // Physics constants for initialization
@@ -244,6 +253,18 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         objects = level.objects;
         levels = level.getLevels();
         world = level.getWorld();
+    }
+
+    /**
+     * Assign the fields needed to finish the win screen animation.
+     * @param winStrip Strip to animate winning
+     * @param animDelay Current number of loops completed.
+     * @param winPos The current position of the win screen.
+     */
+    public void assignWinScreenFields(FilmStrip winStrip, int animDelay, Vector2 winPos) {
+        winSprite = winStrip;
+        animLoop = animDelay;
+        this.winPos = winPos;
     }
 
     /**
@@ -493,19 +514,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @return whether the input was processed. */
     public boolean scrolled (int amount) {
         return true;
-    };
-
-    /**
-     * Draw the physics objects to the canvas and the background
-     *
-     * The method draws all objects in the order that they weret added.
-     *
-     * @param delta The delay in seconds since the last update
-     */
-    public void draw(float delta) {
-        canvas.clear();
-
-        level.draw(canvas);
     }
 
     /**
@@ -645,5 +653,52 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param value
      * @return whether to hand the event to other listeners. */
     public boolean accelerometerMoved (Controller controller, int accelerometerCode, Vector3 value) { return true; }
+
+    /**
+     * Draw the physics objects to the canvas and the background
+     *
+     * The method draws all objects in the order that they weret added.
+     *
+     * @param delta The delay in seconds since the last update
+     */
+    public void draw(float delta) {
+        canvas.clear();
+
+        level.draw(canvas);
+        if (winPos != null) {
+            // Finish phase 2: animate the people
+            if ((winPos.x + death.getWidth() / 2) >= canvas.getWidth() / 2 && animLoop < MAX_ANIM) {
+                canvas.begin(); // DO NOT SCALE
+                Color drawColor = new Color(1, 1, 1, 1);
+                canvas.draw(death, drawColor, winPos.x,
+                        winPos.y, death.getWidth(), death.getHeight());
+                canvas.draw(winSprite, Color.WHITE, winSprite.getRegionWidth() / 2, winSprite.getRegionHeight() / 2,
+                        winPos.x + death.getWidth() / 2,
+                        winPos.y + canvas.getHeight() / 2, 0, 1, 1.0f);
+                canvas.end();
+                winSprite.tick();
+                if (winSprite.justReset()) animLoop++;
+            }
+
+            // Do phase 3: move off screen
+            if (animLoop >= MAX_ANIM) {
+                canvas.begin(); // DO NOT SCALE
+                //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
+                Color drawColor = new Color(1,1,1, 1);
+                canvas.draw(death, drawColor, winPos.x,
+                        winPos.y, death.getWidth(), death.getHeight());
+                canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
+                        winPos.x + death.getWidth()/2,
+                        (winPos.y + canvas.getHeight()/2 ),0,1,1.0f);;
+                canvas.end();
+                winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
+
+                if (winPos.x > death.getWidth()) {
+                    animLoop = 0;
+                    winPos = null;
+                }
+            }
+        }
+    }
 
 }

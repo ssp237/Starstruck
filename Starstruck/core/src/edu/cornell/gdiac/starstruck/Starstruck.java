@@ -14,7 +14,9 @@
 package edu.cornell.gdiac.starstruck;
 
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
 import edu.cornell.gdiac.util.ScreenListener;
 
@@ -188,6 +190,29 @@ public class Starstruck extends Game implements ScreenListener {
 		} else if (exitCode == WorldController.EXIT_PLAY) {
 			current = WorldController.EXIT_PLAY;
 			controllers[current].reset();
+			setScreen(controllers[current]);
+		}
+	}
+
+	/**
+	 * The given screen has made a request to exit its player mode after winning.
+	 *
+	 * The value exitCode can be used to implement menu options. MUST BE LEVEL SELECT PLS TO NOT FUCK UP. (Might change later depending on where we go)
+	 *
+	 * @param screen   The screen requesting to exit
+	 * @param exitCode The state of the screen upon exit
+	 */
+	public void exitScreen(Screen screen, int exitCode, FilmStrip winStrip, int animDelay, Vector2 winPos) {
+		canvas.getCamera().position.set(camPos);
+		//System.out.println(camPos);
+		canvas.getCamera().update();
+		//System.out.println(canvas.getCamera().position);
+
+		canvas.resetCamera();
+		if (exitCode == WorldController.EXIT_SELECT) {
+			current = WorldController.EXIT_SELECT;
+			controllers[current].reset();
+			((LevelSelect) controllers[current]).assignWinScreenFields(winStrip, animDelay, winPos);
 			setScreen(controllers[current]);
 		}
 	}
