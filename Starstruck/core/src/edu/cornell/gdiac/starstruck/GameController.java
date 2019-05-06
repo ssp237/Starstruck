@@ -1908,7 +1908,7 @@ public class GameController extends WorldController implements ContactListener {
         //print(animLoop);
 
         //Death phase 2: once death screen is in place, animate
-        if ((deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) >= canvas.getWidth()/2 && deathAnimLoop < MAX_ANIM) {
+        if ((deathPos.x + death.getWidth()/2) >= canvas.getWidth()/2 && deathAnimLoop < MAX_ANIM) {
             canvas.begin(); // DO NOT SCALE
             Color drawColor = new Color(1,1,1, 1);
             canvas.draw(death, drawColor, deathPos.x + cam.position.x - canvas.getWidth()/2,
@@ -1955,7 +1955,7 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         //Win phase 2: Animate (will be cut off by screen swtich)
-        if ((winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2) >= canvas.getWidth()/2 && winAnimLoop < MAX_ANIM) {
+        if ((winPos.x + death.getWidth()/2) >= canvas.getWidth()/2 && winAnimLoop < MAX_ANIM) {
             canvas.begin(); // DO NOT SCALE
             Color drawColor = new Color(1,1,1, 1);
             canvas.draw(death, drawColor, winPos.x + cam.position.x - canvas.getWidth()/2,
