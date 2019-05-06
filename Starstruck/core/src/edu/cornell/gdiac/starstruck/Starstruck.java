@@ -150,7 +150,7 @@ public class Starstruck extends Game implements ScreenListener {
 	 * @param exitCode The state of the screen upon exit
 	 */
 	public void exitScreen(Screen screen, int exitCode) {
-		System.out.println(exitCode);
+		System.out.println("hit1");
 		canvas.getCamera().position.set(camPos);
 		//System.out.println(camPos);
 		canvas.getCamera().update();
@@ -203,6 +203,7 @@ public class Starstruck extends Game implements ScreenListener {
 	 * @param exitCode The state of the screen upon exit
 	 */
 	public void exitScreen(Screen screen, int exitCode, FilmStrip winStrip, int animDelay, Vector2 winPos) {
+		System.out.println(winPos);
 		canvas.getCamera().position.set(camPos);
 		//System.out.println(camPos);
 		canvas.getCamera().update();

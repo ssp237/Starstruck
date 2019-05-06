@@ -667,7 +667,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         level.draw(canvas);
         if (winPos != null) {
             // Finish phase 2: animate the people
-            if ((winPos.x + death.getWidth() / 2) >= canvas.getWidth() / 2 && animLoop < MAX_ANIM) {
+            if (animLoop < MAX_ANIM) {
                 canvas.begin(); // DO NOT SCALE
                 Color drawColor = new Color(1, 1, 1, 1);
                 canvas.draw(death, drawColor, winPos.x,
@@ -678,6 +678,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 canvas.end();
                 winSprite.tick();
                 if (winSprite.justReset()) animLoop++;
+                print("hit1");
             }
 
             // Do phase 3: move off screen
@@ -697,6 +698,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                     animLoop = 0;
                     winPos = null;
                 }
+                print("hit2");
             }
         }
     }
