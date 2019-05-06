@@ -548,7 +548,7 @@ public class GameController extends WorldController implements ContactListener {
         if (death != null && !isFailure() && !justDead) {
             deathPos = new Vector2(-death.getWidth(), 0);
             print(deathPos);
-            animLoop = 0; 
+            animLoop = 0;
         }
     }
 
