@@ -475,7 +475,7 @@
       "rows": 1,
       "cols": 18,
       "size": 18,
-      "delay": 7
+      "delay": 5
     },
     "you win": {
       "file": "shared/animated_you.win_screen.png",
