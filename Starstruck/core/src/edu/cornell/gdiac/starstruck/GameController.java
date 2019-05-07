@@ -344,7 +344,7 @@ public class GameController extends WorldController implements ContactListener {
     private Star starCache;
     /** Astronaut cache for portals*/
     private AstronautModel avatarCache;
-    /** cache for reel directrion */
+    /** cache for reel direction */
     private Vector2 reelCache;
     /** Obstacle cache */
     private Obstacle obstacleCache;
@@ -352,10 +352,6 @@ public class GameController extends WorldController implements ContactListener {
     private TutorialPoint tutPointCache;
     /** Whether tutorial needs to be drawn */
     private boolean tutorial;
-
-
-    /** Reference to the goalDoor (for collision detection) */
-//    private BoxObstacle goalDoor;
 
     /** Mark set to handle more sophisticated collision callbacks */
     protected ObjectSet<Fixture> sensorFixtures;
@@ -419,7 +415,6 @@ public class GameController extends WorldController implements ContactListener {
         level.dispose();
         //enemies.clear();
         levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
-        //levelFormat = jsonReadesystem.r.parse(Gdx.files.internal("levels/" + loadFile));
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
 
