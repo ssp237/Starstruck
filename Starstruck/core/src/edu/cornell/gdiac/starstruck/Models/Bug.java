@@ -28,7 +28,7 @@ public class Bug extends Enemy {
     private Planet curPlanetEN;
 
     /** Speed of bug */
-    private static final float BUG_SPEED = 0.00001f;
+    protected float BUG_SPEED = 0.00001f;
 
     private Vector2 contactPointEN = new Vector2(x, y);
 
@@ -142,6 +142,17 @@ public class Bug extends Enemy {
             e.printStackTrace();
         }
 
+    }
+
+    public String toString(){
+        String out = "Bug with {texture: ";
+        //System.out.println(texture);
+        out += JsonAssetManager.getInstance().getKey(texture);
+
+        out += "}";
+
+        //"Worm with { velocity " + getVX() + " and position " + getPosition() +"}";
+        return out;
     }
 
 }

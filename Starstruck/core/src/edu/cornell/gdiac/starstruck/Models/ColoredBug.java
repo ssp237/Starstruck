@@ -4,7 +4,9 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import edu.cornell.gdiac.starstruck.GameCanvas;
+import edu.cornell.gdiac.starstruck.Obstacles.ObstacleType;
 import edu.cornell.gdiac.util.FilmStrip;
+import edu.cornell.gdiac.util.JsonAssetManager;
 
 public class ColoredBug extends Bug {
 
@@ -36,6 +38,15 @@ public class ColoredBug extends Bug {
         this.color = color;
         setSleepingTexture(sleepTexture);
         sleeping = true;
+        System.out.println(this);
+        this.BUG_SPEED = 0.01f;
+    }
+
+    public void setSpeedSign( int i){
+        BUG_SPEED = Math.abs(BUG_SPEED);
+        if (i < 0) {
+           BUG_SPEED = -BUG_SPEED;
+        }
     }
 
     public boolean isSleeping() {
@@ -45,6 +56,9 @@ public class ColoredBug extends Bug {
     public void setSleeping(boolean value) {
         if (value) {
             sleepTexture.setFrame(texture.getFrame());
+            setBodyType(BodyDef.BodyType.StaticBody);
+        } else {
+            setBodyType(BodyDef.BodyType.DynamicBody);
         }
         sleeping = value;
     }
@@ -66,6 +80,21 @@ public class ColoredBug extends Bug {
 
     public ModelColor getColor() {
         return color;
+    }
+
+    public ObstacleType getType() {
+        return ObstacleType.COLORED_BUG;
+    }
+
+    public String toString(){
+        String out = "Colored Bug with {texture: ";
+        //System.out.println(texture);
+        out += JsonAssetManager.getInstance().getKey(texture) + ", ";
+        out += "color: " + (color == ModelColor.PINK ? "pink" : "blue");
+        out += "}";
+
+        //"Worm with { velocity " + getVX() + " and position " + getPosition() +"}";
+        return out;
     }
 
     public void draw(GameCanvas canvas) {

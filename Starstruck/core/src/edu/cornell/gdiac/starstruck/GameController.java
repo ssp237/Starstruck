@@ -1343,10 +1343,16 @@ public class GameController extends WorldController implements ContactListener {
 //            }
             if (e.getType() == ObstacleType.COLORED_BUG) {
                 ColoredBug bug = (ColoredBug) e;
+                AstronautModel astro = avatar;
                 switch (bug.getColor()) {
-                    case BLUE: bug.setSleeping(dist(avatar.getPosition(), bug.getPosition()) > bug.range);
+                    case BLUE: bug.setSleeping(dist(avatar.getPosition(), bug.getPosition()) > bug.range); break;
                     case PINK: bug.setSleeping(dist(avatar2.getPosition(), bug.getPosition()) > bug.range);
+                        astro = avatar2;
+                        print (dist(avatar2.getPosition(), bug.getPosition()) > bug.range); break;
                 }
+//                if (!bug.isSleeping()) {
+//                    bug.setSpeedSign(astro.getPosition().x < bug.getPosition().x ? -1 : 1);
+//                }
             }
         }
 
