@@ -344,7 +344,15 @@ public class LevelModel {
                 float radius = Planet.getRadiusPrePlanet(i, scale);
                 key = bug.get("texture").asString();
                 FilmStrip bugtexture = JsonAssetManager.getInstance().getEntry(key, FilmStrip.class);
-                buggy = new Bug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, scale);
+                try {
+                    key = bug.get("color").asString();
+                    FilmStrip sleeptexture = JsonAssetManager.getInstance().getEntry(key + " bug asleep", FilmStrip.class);
+                    ModelColor modelColor = key.equals("pink") ? ModelColor.PINK : ModelColor.BLUE;
+                    buggy = new ColoredBug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, sleeptexture, scale, modelColor);
+                } catch (Exception e) {
+                    buggy = new Bug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, scale);
+                }
+
                 activate(buggy);
                 enemies.add(buggy);
             } catch (Exception e) {

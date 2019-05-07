@@ -22,6 +22,8 @@ public class Button extends BoxObstacle {
     /** string with name of button */
     protected String name;
 
+    public boolean pushed;
+
     /**
      * Constructor. Creates a planet centered at (x,y) with the specified radius, mass and galaxy.
      * @param x The x coordinate of the button's center
@@ -35,6 +37,7 @@ public class Button extends BoxObstacle {
         this.texture = texture;
         this.hoverTexture = hoverTexture;
         this.name = name;
+        pushed = false;
 
         setBodyType(BodyDef.BodyType.StaticBody);
 
@@ -88,6 +91,9 @@ public class Button extends BoxObstacle {
 
     public String toString() {
         String out = "Button with {";
+        if (active) {
+            out = "Active Button with {";
+        }
 
         out += "pos: " + getPosition() + ", ";
         out += "width: " + getWidth() + ", ";

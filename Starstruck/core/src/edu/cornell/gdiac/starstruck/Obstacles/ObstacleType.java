@@ -20,5 +20,6 @@ public enum ObstacleType {
     LEVEL,
     URCHIN,
     TUTORIAL,
-    ICE_CREAM
+    ICE_CREAM,
+    COLORED_BUG
 }

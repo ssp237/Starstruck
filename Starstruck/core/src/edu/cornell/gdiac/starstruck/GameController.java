@@ -25,10 +25,7 @@ import java.awt.*;
 import java.util.*;
 
 //import edu.cornell.gdiac.physics.*;
-import edu.cornell.gdiac.starstruck.Models.AstronautModel;
-import edu.cornell.gdiac.starstruck.Models.Bug;
-import edu.cornell.gdiac.starstruck.Models.Enemy;
-import edu.cornell.gdiac.starstruck.Models.Worm;
+import edu.cornell.gdiac.starstruck.Models.*;
 import edu.cornell.gdiac.starstruck.MenuMode;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
@@ -83,10 +80,11 @@ public class GameController extends WorldController implements ContactListener {
     private FilmStrip deathSprite;
     private int deathAnimLoop = 0;
     /**Maximum animation loops for death */
-    private static int MAX_ANIM = 2;
+    private static int MAX_ANIM = 1;
     private Vector2 winPos;
     private FilmStrip winSprite;
     private int winAnimLoop;
+    private boolean replaying = false;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -280,6 +278,7 @@ public class GameController extends WorldController implements ContactListener {
     private boolean switchOnJump = false;
     private boolean switchOnAnchor = false;
     private boolean twoplayer = false;
+    private boolean useController = true;
 
     // Physics objects for the game
     /** Reference to the character avatar */
@@ -570,7 +569,7 @@ public class GameController extends WorldController implements ContactListener {
         super.setFailure(value);
         if (death != null && !isFailure() && !justDead) {
             deathPos = new Vector2(-death.getWidth(), 0);
-            print(deathPos);
+            //print(deathPos);
             deathAnimLoop = 0;
         }
     }
@@ -584,10 +583,20 @@ public class GameController extends WorldController implements ContactListener {
      */
     public void setComplete(boolean value) {
         super.setComplete(value);
-        if (death != null) {
+        if (death != null && !replaying) {
             winPos = new Vector2(-death.getWidth(), 0);
             winAnimLoop = 0;
         }
+    }
+
+    /**
+     * Set win position when replaying a level. Additionaly, set replaying to true in order to have the screen wipe.
+     * @param old Old win position
+     */
+    public void setWinPos(Vector2 old) {
+        winPos = old.cpy();
+        replaying = true;
+        winAnimLoop = MAX_ANIM;
     }
 
     /**
@@ -891,7 +900,7 @@ public class GameController extends WorldController implements ContactListener {
                 avatar.setPlanetMove(contactDir.scl(move));
                 avatar.setRight(input.didRight());
                 if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious()
-                        || (input.getControlType() == ControllerType.CTRLONE && (input.xboxUp() || input.xboxDown())))
+                        || (input.getControlType() == ControllerType.CTRLONE && useController && (input.xboxUp() || input.xboxDown())))
                     avatar.moving = true;
             }
 
@@ -910,10 +919,10 @@ public class GameController extends WorldController implements ContactListener {
             if (avatar == avatar2) {
                 float move = input.getHorizontal2();
                 if (input.heldD() || input.heldA()
-                        || (input.getControlType() == ControllerType.CTRLTWO && (input.xboxUp2() || input.xboxDown2()))) {
+                        || (input.getControlType() == ControllerType.CTRLTWO && useController && (input.xboxUp2() || input.xboxDown2()))) {
                     avatar.setPlanetMove(contactDir.scl(move));
                     avatar.setRight(input.heldD());
-                    if (input.getControlType() == ControllerType.CTRLTWO) {
+                    if (input.getControlType() == ControllerType.CTRLTWO && useController) {
                         Vector2 dir = new Vector2(1,0).rotateRad(input.getAngle2());
                         avatar.setPlanetMove(dir);
                         avatar.moving = true;
@@ -939,10 +948,10 @@ public class GameController extends WorldController implements ContactListener {
             if (avatar == this.avatar) {
                 float move = input.getHorizontal();
                 if (input.didRight() || input.didLeft()
-                        || (input.getControlType() == ControllerType.CTRLTWO && (input.xboxUp() || input.xboxDown()))) {
+                        || (input.getControlType() == ControllerType.CTRLTWO && useController && (input.xboxUp() || input.xboxDown()))) {
                     avatar.setPlanetMove(contactDir.scl(move));
                     //avatar.setRight(input.didRight());
-                    if (input.getControlType() == ControllerType.CTRLTWO) {
+                    if (input.getControlType() == ControllerType.CTRLTWO && useController) {
                         Vector2 dir = new Vector2(1,0).rotateRad(input.getAngle());
                         //print(dir.scl(10));
                         avatar.setPlanetMove(dir);
@@ -1104,6 +1113,10 @@ public class GameController extends WorldController implements ContactListener {
         if (input.didThree() && !twoplayer) {
             switchOnAnchor = !switchOnAnchor;
             print("Toggled setting switch on anchor: " + switchOnAnchor);
+        }
+        if (input.didFour()) {
+            useController = !useController;
+            print("Toggled setting use controller: " + useController);
         }
     }
 
@@ -1328,6 +1341,13 @@ public class GameController extends WorldController implements ContactListener {
 //            if (e.getType() == ObstacleType.WORM) {
 //                ((Worm)e).setRight_bound(canvas.getCamera().position.x/scale.x + 640/scale.x);
 //            }
+            if (e.getType() == ObstacleType.COLORED_BUG) {
+                ColoredBug bug = (ColoredBug) e;
+                switch (bug.getColor()) {
+                    case BLUE: bug.setSleeping(dist(avatar.getPosition(), bug.getPosition()) > bug.range);
+                    case PINK: bug.setSleeping(dist(avatar2.getPosition(), bug.getPosition()) > bug.range);
+                }
+            }
         }
 
 //        avatar.setFixedRotation(false);
@@ -1395,7 +1415,9 @@ public class GameController extends WorldController implements ContactListener {
         }
         if (portalpairCache != null && portalpairCache.isActive()) {
             if (portalpairCache.isGoal() && !isFailure()) { //By this point we have already confirmed that goal is open
-                setComplete(true);
+                if (!isComplete()) {
+                    setComplete(true);
+                }
             }
             if (avatarCache == avatar) {
                 avatar2.setOnPlanet(false);
@@ -1427,6 +1449,7 @@ public class GameController extends WorldController implements ContactListener {
 //                avatar2.getBody().applyForceToCenter(reelCache, true);
                 rope.reel(true, reelCache);
             }
+            else rope.setLinearVelocity(reset);
             updateHelp(avatar, avatar2, dt);
 
             if (reeled2() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
@@ -1435,6 +1458,7 @@ public class GameController extends WorldController implements ContactListener {
 //                avatar.getBody().applyForceToCenter(reelCache, true);
                 rope.reel(false, reelCache);
             }
+            else rope.setLinearVelocity(reset);
             updateHelp(avatar2, avatar, dt);
         }
 
@@ -1444,12 +1468,14 @@ public class GameController extends WorldController implements ContactListener {
                     reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
                     rope.reel(true, reelCache);
                 }
+                else rope.setLinearVelocity(reset);
             }
             else if (avatar2.getOnPlanet() && !avatar.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
                     rope.reel(false, reelCache);
                 }
+                else rope.setLinearVelocity(reset);
             }
 
             if (avatar.isActive()) {
@@ -1599,8 +1625,8 @@ public class GameController extends WorldController implements ContactListener {
                 setFailure(true);
             }
 
-            if (!isComplete() && ((bd1 == avatar || bd1 == avatar2)&& bd2 instanceof Enemy
-                    || (bd2 == avatar || bd2 == avatar2) && bd1 instanceof Enemy)) {
+            if (!isComplete() && ((bd1 == avatar || bd1 == avatar2)&& (bd2 instanceof Enemy && !((Enemy) bd2).isSleeping())
+                    || (bd2 == avatar || bd2 == avatar2) && (bd1 instanceof Enemy && !((Enemy) bd1).isSleeping()))) {
                 setFailure(true);
             }
 
@@ -1962,7 +1988,7 @@ public class GameController extends WorldController implements ContactListener {
                     winPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
             canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
                     winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
-                    (winPos.y + cam.position.y ),0,1,1.0f);;
+                    (winPos.y + cam.position.y + 3 * (float) canvas.getHeight() / 4 - (float) canvas.getHeight()/2),0,1,1.0f);;
             canvas.end();
             winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
         }
@@ -1975,10 +2001,30 @@ public class GameController extends WorldController implements ContactListener {
                     winPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
             canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
                     winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
-                    (winPos.y + cam.position.y ),0,1,1.0f);
+                    (winPos.y + cam.position.y + 3 * (float) canvas.getHeight() / 4 - (float) canvas.getHeight()/2 ),0,1,1.0f);
             canvas.end();
             winSprite.tick();
             if (winSprite.justReset()) winAnimLoop++;
+        }
+
+        // Win phase 3: move off screen (if started from winning)
+        if (winAnimLoop >= MAX_ANIM) {
+            canvas.begin(); // DO NOT SCALE
+            //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
+            Color drawColor = new Color(1,1,1, 1);
+            canvas.draw(death, drawColor, winPos.x,
+                    winPos.y, death.getWidth(), death.getHeight());
+            canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
+                    winPos.x + death.getWidth()/2,
+                    (winPos.y + 3 * (float) canvas.getHeight() / 4 ),0,1,1.0f);;
+            canvas.end();
+            winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
+
+            if (winPos.x > death.getWidth()) {
+                winAnimLoop = 0;
+                replaying = false;
+                winPos = new Vector2(-death.getWidth(), 0);
+            }
         }
 
         if(isDebug()){

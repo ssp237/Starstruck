@@ -160,7 +160,8 @@ public class Rope extends ComplexObstacle {
         initLinks = nLinks;
         initPlankSize = bodies.size();
 
-        setReelForce(1.8f);
+//        setReelForce(1.8f);
+        setReelForce(7.5f);
     }
 
     /**
@@ -575,11 +576,13 @@ public class Rope extends ComplexObstacle {
                 dirCache = plank.getPosition().cpy().sub(plank0.getPosition());
                 dirCache.setLength(reel_force);
                 if (i >= bodies.size()/2) {
-                    plank.getBody().applyForceToCenter(dir, true);
+                    plank.setLinearVelocity(dir);
+//                    plank.getBody().applyForceToCenter(dir, true);
                     //i--;
                 }
                 else {
-                    plank.getBody().applyForceToCenter(dirCache, true);
+                    plank.setLinearVelocity(dirCache);
+//                    plank.getBody().applyForceToCenter(dirCache, true);
                     //plank.getBody().applyForceToCenter(dir, true);
                     //i--;
                 }
@@ -592,11 +595,13 @@ public class Rope extends ComplexObstacle {
                 dirCache = plank.getPosition().cpy().sub(plank0.getPosition());
                 dirCache.setLength(reel_force);
                 if (i <= bodies.size()/2) {
-                    plank.getBody().applyForceToCenter(dir, true);
+                    plank.setLinearVelocity(dir);
+//                    plank.getBody().applyForceToCenter(dir, true);
                     //i++;
                 }
                 else {
-                    plank.getBody().applyForceToCenter(dirCache, true);
+                    plank.setLinearVelocity(dirCache);
+//                    plank.getBody().applyForceToCenter(dirCache, true);
                     //plank.getBody().applyForceToCenter(dir, true);
                     //i++;
                 }

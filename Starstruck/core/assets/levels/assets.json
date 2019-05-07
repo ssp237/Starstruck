@@ -251,6 +251,30 @@
     "move": {
       "file": "tutorial/move.png",
       "wrap": false
+    },
+    "levels button": {
+      "file": "buttons/levels.png",
+      "wrap": false
+    },
+    "levels glow": {
+      "file": "buttons/levels hover.png",
+      "wrap": false
+    },
+    "next button": {
+      "file": "buttons/next level.png",
+      "wrap": false
+    },
+    "next glow": {
+      "file": "buttons/next level hover.png",
+      "wrap": false
+    },
+    "replay button": {
+      "file": "buttons/restart.png",
+      "wrap": false
+    },
+    "replay glow": {
+      "file": "buttons/restart hover.png",
+      "wrap": false
     }
   },
   "textures": {
@@ -381,6 +405,38 @@
       "size": 3,
       "delay": 20
     },
+    "pink bug awake": {
+      "file": "enemies/bugs/pink_open_filmstrip_SMALL.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 3,
+      "size": 3,
+      "delay": 20
+    },
+    "pink bug asleep": {
+      "file": "enemies/bugs/pink_closed_filmstrip_small.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 3,
+      "size": 3,
+      "delay": 20
+    },
+    "blue bug awake": {
+      "file": "enemies/bugs/blue_open_filmstrip_SMALL.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 3,
+      "size": 3,
+      "delay": 20
+    },
+    "blue bug asleep": {
+      "file": "enemies/bugs/blue_closed_filmstrip_small.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 3,
+      "size": 3,
+      "delay": 20
+    },
     "pink berry": {
       "file": "milky way/enemies/berries/animated_mwenemy(sberry)_biting.png",
       "wrap": false,
@@ -419,7 +475,7 @@
       "rows": 1,
       "cols": 18,
       "size": 18,
-      "delay": 7
+      "delay": 5
     },
     "you win": {
       "file": "shared/animated_you.win_screen.png",
