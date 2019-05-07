@@ -1447,6 +1447,7 @@ public class GameController extends WorldController implements ContactListener {
 //                avatar2.getBody().applyForceToCenter(reelCache, true);
                 rope.reel(true, reelCache);
             }
+            else rope.setLinearVelocity(reset);
             updateHelp(avatar, avatar2, dt);
 
             if (reeled2() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
@@ -1455,6 +1456,7 @@ public class GameController extends WorldController implements ContactListener {
 //                avatar.getBody().applyForceToCenter(reelCache, true);
                 rope.reel(false, reelCache);
             }
+            else rope.setLinearVelocity(reset);
             updateHelp(avatar2, avatar, dt);
         }
 
@@ -1464,12 +1466,14 @@ public class GameController extends WorldController implements ContactListener {
                     reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
                     rope.reel(true, reelCache);
                 }
+                else rope.setLinearVelocity(reset);
             }
             else if (avatar2.getOnPlanet() && !avatar.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
                     rope.reel(false, reelCache);
                 }
+                else rope.setLinearVelocity(reset);
             }
 
             if (avatar.isActive()) {

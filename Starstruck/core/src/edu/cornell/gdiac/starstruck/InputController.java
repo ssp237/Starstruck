@@ -134,6 +134,8 @@ public class InputController {
     private boolean iPressed;
     private boolean iPrevious;
 
+    public boolean isController = false;
+
     /** Mouse's current position*/
     private float x_pos;
     private float y_pos;
@@ -600,7 +602,6 @@ public class InputController {
 //            momentum = 0;
 //        }
 //        clampPosition(bounds);
-        getAngle();
     }
 
     /**
