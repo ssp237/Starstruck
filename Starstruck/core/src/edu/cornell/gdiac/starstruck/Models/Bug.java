@@ -60,6 +60,10 @@ public class Bug extends Enemy {
 //        }
     }
 
+    public Planet getCurPlanet() {
+        return curPlanetEN;
+    }
+
     /**
      * Sets the texture to the given filmstrip with size size and delay animDelay between frames.
      * @param texture The filmstrip to set

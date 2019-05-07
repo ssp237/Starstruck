@@ -823,7 +823,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 canvas.end();
                 winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
 
-                if (winPos.x > death.getWidth()) {
+                if (winPos.x > canvas.getWidth()) {
                     animLoop = 0;
                     winPos = null;
                 }

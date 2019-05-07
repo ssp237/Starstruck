@@ -1226,6 +1226,9 @@ public class GameController extends WorldController implements ContactListener {
      * @return whether to process the update loop
      */
     public boolean preUpdate(float dt) {
+
+        //if (justDead) return false;
+
         InputController input = InputController.getInstance();
         input.readInput(bounds, scale);
         if (listener == null) {
@@ -1274,6 +1277,41 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         return true;
+    }
+
+    /**
+     * Processes physics
+     *
+     * Once the update phase is over, but before we draw, we are ready to handle
+     * physics.  The primary method is the step() method in world.  This implementation
+     * works for all applications and should not need to be overwritten.
+     *
+     * @param dt Number of seconds since last animation frame
+     */
+    public void postUpdate(float dt) {
+        // Add any objects created by actions
+        while (!addQueue.isEmpty()) {
+            addObject(addQueue.poll());
+        }
+
+        // Turn the physics engine crank.
+        if (!justDead) world.step(WORLD_STEP,WORLD_VELOC,WORLD_POSIT);
+
+        // Garbage collect the deleted objects.
+        // Note how we use the linked list nodes to delete O(1) in place.
+        // This is O(n) without copying.
+        Iterator<PooledList<Obstacle>.Entry> iterator = objects.entryIterator();
+        while (iterator.hasNext()) {
+            PooledList<Obstacle>.Entry entry = iterator.next();
+            Obstacle obj = entry.getValue();
+            if (obj.isRemoved()) {
+                obj.deactivatePhysics(world);
+                entry.remove();
+            } else {
+                // Note that update is called last!
+                obj.update(dt);
+            }
+        }
     }
 
     /**
@@ -1350,8 +1388,12 @@ public class GameController extends WorldController implements ContactListener {
                 ColoredBug bug = (ColoredBug) e;
                 AstronautModel astro = avatar;
                 switch (bug.getColor()) {
-                    case BLUE: bug.setSleeping(dist(avatar.getPosition(), bug.getPosition()) > bug.range); break;
-                    case PINK: bug.setSleeping(dist(avatar2.getPosition(), bug.getPosition()) > bug.range);
+                    case BLUE:
+                        bug.setSleeping(dist(avatar.getPosition(), bug.getPosition()) > bug.range &&
+                                (!avatar.getOnPlanet() || avatar.getCurPlanet() != bug.getCurPlanet()));
+                        break;
+                    case PINK: bug.setSleeping(dist(avatar2.getPosition(), bug.getPosition()) > bug.range &&
+                            (!avatar2.getOnPlanet() || avatar2.getCurPlanet() != bug.getCurPlanet()));
                         astro = avatar2;
                         print (dist(avatar2.getPosition(), bug.getPosition()) > bug.range); break;
                 }
@@ -1949,7 +1991,8 @@ public class GameController extends WorldController implements ContactListener {
             canvas.end();
             deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
 
-            if (deathPos.x > death.getWidth()) {
+            if (deathPos.x > canvas.getWidth()/15) justDead = false;
+            if (deathPos.x > canvas.getWidth()) {
                 deathAnimLoop = 0;
                 deathPos.x = -death.getWidth(); //Reset
             }
@@ -2031,7 +2074,7 @@ public class GameController extends WorldController implements ContactListener {
             canvas.end();
             winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
 
-            if (winPos.x > death.getWidth()) {
+            if (winPos.x > canvas.getWidth()) {
                 winAnimLoop = 0;
                 replaying = false;
                 winPos = new Vector2(-death.getWidth(), 0);

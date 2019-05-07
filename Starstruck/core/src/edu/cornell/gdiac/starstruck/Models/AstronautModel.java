@@ -825,6 +825,16 @@ public class AstronautModel extends CapsuleObstacle {
 
     }
 
+    public Planet getCurPlanet() {
+        try {
+            return (Planet) curPlanet;
+        } catch (ClassCastException e) {
+            return null;
+        } catch (NullPointerException n) {
+            return null;
+        }
+    }
+
     /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *
