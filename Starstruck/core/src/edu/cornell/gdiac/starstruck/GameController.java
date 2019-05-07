@@ -25,10 +25,7 @@ import java.awt.*;
 import java.util.*;
 
 //import edu.cornell.gdiac.physics.*;
-import edu.cornell.gdiac.starstruck.Models.AstronautModel;
-import edu.cornell.gdiac.starstruck.Models.Bug;
-import edu.cornell.gdiac.starstruck.Models.Enemy;
-import edu.cornell.gdiac.starstruck.Models.Worm;
+import edu.cornell.gdiac.starstruck.Models.*;
 import edu.cornell.gdiac.starstruck.MenuMode;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
@@ -83,7 +80,7 @@ public class GameController extends WorldController implements ContactListener {
     private FilmStrip deathSprite;
     private int deathAnimLoop = 0;
     /**Maximum animation loops for death */
-    private static int MAX_ANIM = 2;
+    private static int MAX_ANIM = 1;
     private Vector2 winPos;
     private FilmStrip winSprite;
     private int winAnimLoop;
@@ -1344,6 +1341,13 @@ public class GameController extends WorldController implements ContactListener {
 //            if (e.getType() == ObstacleType.WORM) {
 //                ((Worm)e).setRight_bound(canvas.getCamera().position.x/scale.x + 640/scale.x);
 //            }
+            if (e.getType() == ObstacleType.COLORED_BUG) {
+                ColoredBug bug = (ColoredBug) e;
+                switch (bug.getColor()) {
+                    case BLUE: bug.setSleeping(dist(avatar.getPosition(), bug.getPosition()) > bug.range);
+                    case PINK: bug.setSleeping(dist(avatar2.getPosition(), bug.getPosition()) > bug.range);
+                }
+            }
         }
 
 //        avatar.setFixedRotation(false);
@@ -1615,8 +1619,8 @@ public class GameController extends WorldController implements ContactListener {
                 setFailure(true);
             }
 
-            if (!isComplete() && ((bd1 == avatar || bd1 == avatar2)&& bd2 instanceof Enemy
-                    || (bd2 == avatar || bd2 == avatar2) && bd1 instanceof Enemy)) {
+            if (!isComplete() && ((bd1 == avatar || bd1 == avatar2)&& (bd2 instanceof Enemy && !((Enemy) bd2).isSleeping())
+                    || (bd2 == avatar || bd2 == avatar2) && (bd1 instanceof Enemy && !((Enemy) bd1).isSleeping()))) {
                 setFailure(true);
             }
 

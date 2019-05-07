@@ -33,6 +33,16 @@
       "completed": "false",
       "json file": "test/easyWin.json"
     },
+    {
+      "x": 6,
+      "y": 18,
+      "r": 3,
+      "texture": "ls p1",
+      "ring texture": "ls g1",
+      "unlocked": "true",
+      "completed": "false",
+      "json file": "main/tutorial2.json"
+    },
 
     {
       "x": 12,
