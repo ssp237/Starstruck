@@ -278,6 +278,7 @@ public class GameController extends WorldController implements ContactListener {
     private boolean switchOnJump = false;
     private boolean switchOnAnchor = false;
     private boolean twoplayer = false;
+    private boolean useController = true;
 
     // Physics objects for the game
     /** Reference to the character avatar */
@@ -904,7 +905,7 @@ public class GameController extends WorldController implements ContactListener {
                 avatar.setPlanetMove(contactDir.scl(move));
                 avatar.setRight(input.didRight());
                 if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious()
-                        || (input.getControlType() == ControllerType.CTRLONE && (input.xboxUp() || input.xboxDown())))
+                        || (input.getControlType() == ControllerType.CTRLONE && useController && (input.xboxUp() || input.xboxDown())))
                     avatar.moving = true;
             }
 
@@ -923,10 +924,10 @@ public class GameController extends WorldController implements ContactListener {
             if (avatar == avatar2) {
                 float move = input.getHorizontal2();
                 if (input.heldD() || input.heldA()
-                        || (input.getControlType() == ControllerType.CTRLTWO && (input.xboxUp2() || input.xboxDown2()))) {
+                        || (input.getControlType() == ControllerType.CTRLTWO && useController && (input.xboxUp2() || input.xboxDown2()))) {
                     avatar.setPlanetMove(contactDir.scl(move));
                     avatar.setRight(input.heldD());
-                    if (input.getControlType() == ControllerType.CTRLTWO) {
+                    if (input.getControlType() == ControllerType.CTRLTWO && useController) {
                         Vector2 dir = new Vector2(1,0).rotateRad(input.getAngle2());
                         avatar.setPlanetMove(dir);
                         avatar.moving = true;
@@ -952,10 +953,10 @@ public class GameController extends WorldController implements ContactListener {
             if (avatar == this.avatar) {
                 float move = input.getHorizontal();
                 if (input.didRight() || input.didLeft()
-                        || (input.getControlType() == ControllerType.CTRLTWO && (input.xboxUp() || input.xboxDown()))) {
+                        || (input.getControlType() == ControllerType.CTRLTWO && useController && (input.xboxUp() || input.xboxDown()))) {
                     avatar.setPlanetMove(contactDir.scl(move));
                     //avatar.setRight(input.didRight());
-                    if (input.getControlType() == ControllerType.CTRLTWO) {
+                    if (input.getControlType() == ControllerType.CTRLTWO && useController) {
                         Vector2 dir = new Vector2(1,0).rotateRad(input.getAngle());
                         //print(dir.scl(10));
                         avatar.setPlanetMove(dir);
@@ -1117,6 +1118,10 @@ public class GameController extends WorldController implements ContactListener {
         if (input.didThree() && !twoplayer) {
             switchOnAnchor = !switchOnAnchor;
             print("Toggled setting switch on anchor: " + switchOnAnchor);
+        }
+        if (input.didFour()) {
+            useController = !useController;
+            print("Toggled setting use controller: " + useController);
         }
     }
 
@@ -1455,6 +1460,7 @@ public class GameController extends WorldController implements ContactListener {
 //                avatar2.getBody().applyForceToCenter(reelCache, true);
                 rope.reel(true, reelCache);
             }
+            else rope.setLinearVelocity(reset);
             updateHelp(avatar, avatar2, dt);
 
             if (reeled2() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
@@ -1463,6 +1469,7 @@ public class GameController extends WorldController implements ContactListener {
 //                avatar.getBody().applyForceToCenter(reelCache, true);
                 rope.reel(false, reelCache);
             }
+            else rope.setLinearVelocity(reset);
             updateHelp(avatar2, avatar, dt);
         }
 
@@ -1472,12 +1479,14 @@ public class GameController extends WorldController implements ContactListener {
                     reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
                     rope.reel(true, reelCache);
                 }
+                else rope.setLinearVelocity(reset);
             }
             else if (avatar2.getOnPlanet() && !avatar.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
                     rope.reel(false, reelCache);
                 }
+                else rope.setLinearVelocity(reset);
             }
 
             if (avatar.isActive()) {
