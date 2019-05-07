@@ -1415,7 +1415,9 @@ public class GameController extends WorldController implements ContactListener {
         }
         if (portalpairCache != null && portalpairCache.isActive()) {
             if (portalpairCache.isGoal() && !isFailure()) { //By this point we have already confirmed that goal is open
-                setComplete(true);
+                if (!isComplete()) {
+                    setComplete(true);
+                }
             }
             if (avatarCache == avatar) {
                 avatar2.setOnPlanet(false);
@@ -2021,6 +2023,7 @@ public class GameController extends WorldController implements ContactListener {
             if (winPos.x > death.getWidth()) {
                 winAnimLoop = 0;
                 replaying = false;
+                winPos = new Vector2(-death.getWidth(), 0);
             }
         }
 
