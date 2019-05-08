@@ -139,7 +139,7 @@ public class GameController extends WorldController implements ContactListener {
     private void drawStarBar(GameCanvas canvas) {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
 
-        float centerY = camera.position.y - ((float) canvas.getHeight())/2 + 3;
+        float centerY = camera.position.y + ((float) canvas.getHeight())/2 - 60;
         float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 10;
 
         if (starCount != totalStars) {
