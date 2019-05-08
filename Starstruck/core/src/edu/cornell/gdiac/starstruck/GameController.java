@@ -1450,7 +1450,7 @@ public class GameController extends WorldController implements ContactListener {
             }
             anchorMove(avatar, avatar2, dt);
         }
-        
+
         angVel = 0.1f;
         if (avatar2.isAnchored()) {
             if ((!avatar2.isActive() && !twoplayer) || avatar2.getRotation() == 0) { //Dampen
