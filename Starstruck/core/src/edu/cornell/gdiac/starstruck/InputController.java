@@ -668,7 +668,7 @@ public class InputController {
         onePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_1); //Used for settings
         twoPressed = Gdx.input.isKeyPressed(Input.Keys.NUM_2); //Used for settings
         threePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_3); //Used for settings
-        fourPressed = (secondary && fourPressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_4);
+        fourPressed = Gdx.input.isKeyPressed(Input.Keys.NUM_4);
         fivePressed = (secondary && fivePressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_5);
         resetPressed = (secondary && resetPressed) || Gdx.input.isKeyPressed(Input.Keys.R);
         anchorPressed = (secondary && anchorPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));

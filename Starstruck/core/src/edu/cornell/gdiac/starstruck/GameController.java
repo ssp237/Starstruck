@@ -891,6 +891,10 @@ public class GameController extends WorldController implements ContactListener {
         camera.update();
     }
 
+    private boolean controllerConnected(InputController input) {
+        return input.getControlType() == ControllerType.CTRLONE || input.getControlType() == ControllerType.CTRLTWO;
+    }
+
     /**
      * Helper for update for control on planet
      *
@@ -905,9 +909,25 @@ public class GameController extends WorldController implements ContactListener {
         contactDir.rotateRad(-(float) Math.PI / 2);
         if (!twoplayer) {
             float move = input.getHorizontal();
-            if (input.didRight() || input.didLeft()) {
+            if (input.didRight() || input.didLeft() || (controllerConnected(input) && useController && (input.xboxUp() || input.xboxDown()))) {
                 avatar.setPlanetMove(contactDir.scl(move));
                 avatar.setRight(input.didRight());
+                if (controllerConnected(input) && useController) {
+                    if (!auto) {
+                        Vector2 dir = new Vector2(1, 0).rotateRad(input.getAngle());
+                        avatar.setPlanetMove(dir);
+                        avatar.moving = true;
+                        boolean vertical = avatar.getAngle() <= 0 && input.xboxDown();
+                        boolean horizontal = avatar.getAngle() > -Math.PI / 2 && avatar.getAngle() <= Math.PI / 2 && input.didRight();
+                        avatar.setRight(vertical || horizontal);
+                    }
+                    else {
+                        Vector2 dir = rope.getCenterPlank().getPosition().cpy().sub(avatar.getPosition());
+                        if (Math.abs(contactDir.angle(dir)) > 90) {
+                            avatar.setPlanetMove(contactDir.cpy().scl(-1));
+                        }
+                    }
+                }
                 if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious()
                         || (input.getControlType() == ControllerType.CTRLONE && useController && (input.xboxUp() || input.xboxDown())))
                     avatar.moving = true;
