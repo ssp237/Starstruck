@@ -20,7 +20,9 @@ public class ColoredBug extends Bug {
     /**Are we sleeping?*/
     private boolean sleeping;
 
-    public int range = 4;
+    public int range = 1;
+
+    private static int bugCount;
 
     /**
      * Creates a new dude avatar at the given position.
@@ -40,6 +42,9 @@ public class ColoredBug extends Bug {
         sleeping = true;
         System.out.println(this);
         this.BUG_SPEED = 0.01f;
+        String name = "cbug" + (color == ModelColor.PINK ? "pink" : "blue") + bugCount;
+        bugCount++;
+        setName(name);
     }
 
     public void setSpeedSign( int i){

@@ -120,6 +120,10 @@ public class Bug extends Enemy {
         return json;
     }
 
+    public FilmStrip getTexture() {
+        return texture;
+    }
+
     public void beginContact(Contact contact) {
         Fixture fix1 = contact.getFixtureA();
         Fixture fix2 = contact.getFixtureB();
