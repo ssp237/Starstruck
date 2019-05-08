@@ -24,16 +24,35 @@
   },
   "levels": [
     {
-      "x": 5,
-      "y": 6,
-      "r": 2.0,
+      "x": 4,
+      "y": 4,
+      "r": 3,
       "texture": "ls p1",
       "ring texture": "ls g1",
       "unlocked": "true",
       "completed": "false",
-      "json file": "main/tutorial.json"
+      "json file": "main/tutorial1.json"
     },
-
+    {
+      "x": 8,
+      "y": 10,
+      "r": 3,
+      "texture": "ls p1",
+      "ring texture": "ls g1",
+      "unlocked": "true",
+      "completed": "false",
+      "json file": "main/tutorial2.json"
+    },
+    {
+      "x": 6,
+      "y": 18,
+      "r": 3,
+      "texture": "ls p1",
+      "ring texture": "ls g1",
+      "unlocked": "true",
+      "completed": "false",
+      "json file": "main/tutorial3.json"
+    },
     {
       "x": 12,
       "y": 15,
@@ -48,7 +67,7 @@
     {
       "x": 18,
       "y": 8,
-      "r": 2.0,
+      "r": 3.5,
       "texture": "ls p3",
       "ring texture": "ls g3",
       "unlocked": "true",
@@ -68,7 +87,7 @@
     {
       "x": 31,
       "y": 5,
-      "r": 3,
+      "r": 3.5,
       "texture": "ls p5",
       "ring texture": "ls g5",
       "unlocked": "true",
@@ -78,8 +97,8 @@
     {
       "x": 38,
       "y": 10,
-      "r": 2,
-      "texture": "ls p5",
+      "r": 3,
+      "texture": "ls p6",
       "ring texture": "ls g5",
       "unlocked": "true",
       "completed": "false",
@@ -88,19 +107,19 @@
     {
       "x": 43,
       "y": 18,
-      "r": 2,
-      "texture": "ls p5",
-      "ring texture": "ls g5",
+      "r": 3.5,
+      "texture": "ls p7",
+      "ring texture": "ls g7",
       "unlocked": "true",
       "completed": "false",
-      "json file": "main/tutorial2.json"
+      "json file": "whirlpool/oldTutorial.json"
     },
     {
       "x": 47,
       "y": 6,
       "r": 3,
-      "texture": "ls p5",
-      "ring texture": "ls g5",
+      "texture": "ls p8",
+      "ring texture": "ls g7",
       "unlocked": "true",
       "completed": "false",
       "json file": "main/whirlpoolDemo2.json"
@@ -108,9 +127,9 @@
     {
       "x": 55,
       "y": 13,
-      "r": 3,
-      "texture": "ls p5",
-      "ring texture": "ls g5",
+      "r": 4,
+      "texture": "ls p9",
+      "ring texture": "ls g7",
       "unlocked": "true",
       "completed": "false",
       "json file": "whirlpool/levelOne.json"

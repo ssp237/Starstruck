@@ -419,6 +419,12 @@ public class Enemy extends CapsuleObstacle {
     }
 
     /**
+     * Are we sleeping?
+     * @return Are we sleeping?
+     */
+    public boolean isSleeping() {return false;}
+
+    /**
      * Draws the physics object.
      *
      * @param canvas Drawing context

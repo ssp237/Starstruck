@@ -18,11 +18,7 @@ public class Bug extends Enemy {
 
 
     /** Overrides texture with a filmstrip */
-    private FilmStrip texture;
-    /** Current animation frame */
-    private int animeframe;
-    /** Counter for animation delay */
-    private int delay;
+    public FilmStrip texture;
 
     /** position */
     private float x;
@@ -32,9 +28,9 @@ public class Bug extends Enemy {
     private Planet curPlanetEN;
 
     /** Speed of bug */
-    private static final float BUG_SPEED = 0.00001f;
+    protected float BUG_SPEED = 0.00001f;
 
-    Vector2 contactPointEN = new Vector2(x, y);
+    private Vector2 contactPointEN = new Vector2(x, y);
 
     private static int counter = 0;
 
@@ -59,6 +55,13 @@ public class Bug extends Enemy {
         this.setBodyType(BodyDef.BodyType.DynamicBody);
         counter++;
         setName("bug " + counter);
+//        for (int i = 0; i < 100; i++){
+//            update(0.015f);
+//        }
+    }
+
+    public Planet getCurPlanet() {
+        return curPlanetEN;
     }
 
     /**
@@ -117,6 +120,10 @@ public class Bug extends Enemy {
         return json;
     }
 
+    public FilmStrip getTexture() {
+        return texture;
+    }
+
     public void beginContact(Contact contact) {
         Fixture fix1 = contact.getFixtureA();
         Fixture fix2 = contact.getFixtureB();
@@ -143,6 +150,17 @@ public class Bug extends Enemy {
             e.printStackTrace();
         }
 
+    }
+
+    public String toString(){
+        String out = "Bug with {texture: ";
+        //System.out.println(texture);
+        out += JsonAssetManager.getInstance().getKey(texture);
+
+        out += "}";
+
+        //"Worm with { velocity " + getVX() + " and position " + getPosition() +"}";
+        return out;
     }
 
 }

@@ -164,6 +164,11 @@ public class AstronautModel extends CapsuleObstacle {
         glowOrigin = new Vector2(glowTexture.getRegionWidth()/2.0f, glowTexture.getRegionHeight()/2.0f);
     }
 
+    public ModelColor getColor() {
+        if (isPlayerOne) return ModelColor.PINK;
+        return ModelColor.BLUE;
+    }
+
     /**
      * Returns left/right movement of this character.
      *
@@ -818,6 +823,16 @@ public class AstronautModel extends CapsuleObstacle {
             body.setLinearVelocity(forceCache.scl(4));
         }
 
+    }
+
+    public Planet getCurPlanet() {
+        try {
+            return (Planet) curPlanet;
+        } catch (ClassCastException e) {
+            return null;
+        } catch (NullPointerException n) {
+            return null;
+        }
     }
 
     /**

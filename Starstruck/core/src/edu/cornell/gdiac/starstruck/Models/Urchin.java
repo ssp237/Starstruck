@@ -203,8 +203,9 @@ public class Urchin extends Enemy {
 
 
     public String toString(){
-        String out = "Urchin with { texture: ";
-        out += JsonAssetManager.getInstance().getKey(texture) + "}";
+        String out = "urch";
+//        String out = "Urchin with { texture: ";
+//        out += JsonAssetManager.getInstance().getKey(texture) + "}";
         return out;
     }
 

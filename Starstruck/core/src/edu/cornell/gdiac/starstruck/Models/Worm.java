@@ -163,7 +163,7 @@ public class Worm extends Enemy{
     public void setRight_bound(float r_bound) {right_bound = r_bound;}
 
     public String toString(){
-        String out = "{texture: ";
+        String out = "Worm with {texture: ";
         //System.out.println(texture);
         out += JsonAssetManager.getInstance().getKey(texture) + ", ";
         out += "rightbound: " + right_bound +"}";

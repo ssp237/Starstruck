@@ -188,35 +188,6 @@ public class Star extends BoxObstacle {
         return json;
     }
 
-
-    /**
-     * Creates the joints for this object.
-     *
-     * We implement our custom logic here.
-     *
-     * world Box2D world to store joints
-     *
-     * @return true if object allocation succeeded
-     */
-//    protected boolean createJoints(World world) {
-//        assert bodies.size() > 0;
-//
-//        //#region INSERT CODE HERE
-//        // Attach the barrier to the pin here
-//
-//        RevoluteJointDef jointDef = new RevoluteJointDef();
-//
-//        jointDef.bodyA = barrier.getBody();
-//        jointDef.bodyB = pivot.getBody();
-//        jointDef.collideConnected = false;
-//        Joint joint = world.createJoint(jointDef);
-//        joints.add(joint);
-//
-//        //#endregion
-//
-//        return true;
-//    }
-
     public String toString() {
         String out = "Star with {";
 

@@ -24,6 +24,7 @@ import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.*;
@@ -106,6 +107,16 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
     private boolean dont_play_music = false;
 
+    private Button allLevels;
+    private Button replayButton;
+    private Button nextButton;
+
+    /** Buttons to display upon winning a level */
+    private PooledList<Button> winButtons;
+
+    /**Last level to be played; next level to play */
+    private Level lastLevel, nextLevel;
+
 
 
     /**
@@ -135,6 +146,24 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         levels = new PooledList<Level>();
 
         death = JsonAssetManager.getInstance().getEntry("dead background", Texture.class);
+
+        winButtons = new PooledList<Button>();
+
+        TextureRegion levelButton = JsonAssetManager.getInstance().getEntry("levels button", TextureRegion.class);
+        allLevels = new Button(0,0, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("levels glow", TextureRegion.class), "all levels");
+
+        levelButton = JsonAssetManager.getInstance().getEntry("replay button", TextureRegion.class);
+        replayButton = new Button(0,0, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("replay glow", TextureRegion.class), "all levels");
+
+        levelButton = JsonAssetManager.getInstance().getEntry("next button", TextureRegion.class);
+        nextButton = new Button(0,0, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("next glow", TextureRegion.class), "all levels");
+
+        winButtons.add(allLevels);
+        winButtons.add(replayButton);
+        winButtons.add(nextButton);
     }
 
     // Physics constants for initialization
@@ -246,6 +275,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
         levelFormat = jsonReader.parse(Gdx.files.internal("levels/levelselect.json"));
         level.populate(levelFormat);
+        levels = level.getLevels();
+        //print(levels);
 
         setComplete(false);
         setFailure(false);
@@ -254,11 +285,16 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         assignLevelFields();
         camOffsetX = 0;
 
+        for (Button b : winButtons) {
+            b.setDrawScale(level.scale);
+            b.pushed = false;
+        }
+
 
 
         if (MenuMode.menuIsPlaying()) {
             dont_play_music = true;
-            System.out.println("dont play" + dont_play_music);
+            //System.out.println("dont play" + dont_play_music);
 //            MenuMode.getMusic().stop();
 //            MenuMode.getMusic().dispose();
 //            music.play();
@@ -292,6 +328,13 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         winSprite = winStrip;
         animLoop = animDelay;
         this.winPos = winPos;
+
+        allLevels.setPosition(((float) canvas.getWidth()/2 - allLevels.getWidth()/2)/level.scale.x,
+                ((float) canvas.getHeight()/6)/level.scale.y);
+        replayButton.setPosition(((float) canvas.getWidth()/4 - replayButton.getWidth()/2)/level.scale.x,
+                ((float) canvas.getHeight()/6)/level.scale.y);
+        nextButton.setPosition(((float) 3 * canvas.getWidth()/4 - nextButton.getWidth()/2)/level.scale.x,
+                ((float) canvas.getHeight()/6)/level.scale.y);
     }
 
     /**
@@ -423,7 +466,9 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param dt Number of seconds since last animation frame
      */
     public void update(float dt) {
-        updateCamera();
+        if (winPos == null) {
+            updateCamera();
+        }
 
         if (isFailure()) return;
 
@@ -448,10 +493,10 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         SoundController.getInstance().update();
 
         if (!dont_play_music) {
-            System.out.println("in here");
+            //System.out.println("in here");
             if (!music.isPlaying()) {
                 //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
-                System.out.println("in here if");
+                //System.out.println("in here if");
                 music.play();
                 music.setLooping(true);
                 //music_name = "menu";
@@ -502,16 +547,27 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @return whether the input was processed */
     public boolean touchUp (int screenX, int screenY, int pointer, int button) {
 
-        if (currentLevel != null) {
-            screenY = heightY - screenY;
-            Vector2 scale = level.getScale();
-            Vector2 camOffset = new Vector2(camOffsetX/scale.x, 0);
-            Vector2 mouse = new Vector2(screenX/scale.x, screenY/scale.y);
-            Vector2 center = currentLevel.getPosition();
-            float dist = dist(center,mouse.cpy().add(camOffset));
-            if (dist <= currentLevel.getRadius()) {
-               pressState = 2;
+        if (winPos == null) {
+            if (currentLevel != null) {
+                screenY = heightY - screenY;
+                Vector2 scale = level.getScale();
+                Vector2 camOffset = new Vector2(camOffsetX / scale.x, 0);
+                Vector2 mouse = new Vector2(screenX / scale.x, screenY / scale.y);
+                Vector2 center = currentLevel.getPosition();
+                float dist = dist(center, mouse.cpy().add(camOffset));
+                if (dist <= currentLevel.getRadius()) {
+                    pressState = 2;
+                }
             }
+        } else {
+            if (allLevels.getActive()) {
+                animLoop++;
+            } else if (replayButton.getActive()) {
+                replayButton.pushed = true;
+            } else if (nextButton.getActive()) {
+                nextButton.pushed = true;
+            }
+
         }
         return true;
     };
@@ -535,13 +591,27 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
         Vector2 camOffset = new Vector2(camOffsetX/scale.x, 0);
 
-        for (Level l : levels) {
-            l.setActive(false);
-            center = l.getPosition();
-            dist = dist(center, mouse.cpy().add(camOffset));
-            if (dist <= l.getRadius()) {
-                l.setActive(true);
-                currentLevel = l;
+        if (winPos == null) {
+            for (Level l : levels) {
+                l.setActive(false);
+                center = l.getPosition();
+                dist = dist(center, mouse.cpy().add(camOffset));
+                if (dist <= l.getRadius()) {
+                    l.setActive(true);
+                    currentLevel = l;
+                }
+            }
+        } else {
+            for (Button b : winButtons) {
+                b.setActive(false);
+                center = b.getPosition();
+                center.x += b.getWidth()/(2*level.scale.x); center.y += b.getHeight()/(2 * level.scale.y);
+                dist = dist(center, mouse.cpy().add(camOffset));
+                //print(dist);
+                if (dist <= b.getHeight()/level.scale.y) {
+                    b.setActive(true);
+                    //print(dist);
+                }
             }
         }
         return true;
@@ -569,7 +639,20 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 //            if (!music.isPlaying()) { music.play();}
             // We are are ready, notify our listener
             if (currentLevel != null && isReady() && currentLevel.getUnlocked()) {
+                lastLevel = currentLevel;
+                nextLevel = currentLevel.nextLevel;
                 listener.exitScreen(this, WorldController.EXIT_PLAY, currentLevel.getFile());
+            } else if (replayButton.pushed && lastLevel != null && winSprite.justReset()) {
+                Vector2 temp = winPos.cpy();
+                winPos = null;
+                listener.exitScreen(this, WorldController.EXIT_PLAY, temp, lastLevel.jsonFile);
+            } else if (nextButton.pushed && nextLevel != null && winSprite.justReset()) {
+                lastLevel = lastLevel.nextLevel;
+                nextLevel = lastLevel.nextLevel;
+                Vector2 temp = winPos.cpy();
+                winPos = null;
+                print(lastLevel.jsonFile);
+                listener.exitScreen(this, WorldController.EXIT_PLAY, temp, lastLevel.jsonFile);
             }
         }
     }
@@ -712,13 +795,21 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                         winPos.y, death.getWidth(), death.getHeight());
                 canvas.draw(winSprite, Color.WHITE, winSprite.getRegionWidth() / 2, winSprite.getRegionHeight() / 2,
                         winPos.x + death.getWidth() / 2,
-                        winPos.y + canvas.getHeight() / 2, 0, 1, 1.0f);
-                canvas.end();
-                winSprite.tick();
-                if (winSprite.justReset()) animLoop++;
-                print("hit1");
-            }
+                        winPos.y + 3 * (float) canvas.getHeight() / 4, 0, 1, 1.0f);
 
+                if (animLoop >= 1){
+                    for (Button b : winButtons) {
+                        if (b != nextButton || nextLevel != null) {
+                            b.draw(canvas);
+                        }
+                    }
+                }
+                canvas.end();
+
+                winSprite.tick();
+
+                if (winSprite.justReset() && animLoop < 1) animLoop++;
+            }
             // Do phase 3: move off screen
             if (animLoop >= MAX_ANIM) {
                 canvas.begin(); // DO NOT SCALE
@@ -728,15 +819,14 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                         winPos.y, death.getWidth(), death.getHeight());
                 canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
                         winPos.x + death.getWidth()/2,
-                        (winPos.y + canvas.getHeight()/2 ),0,1,1.0f);;
+                        (winPos.y + 3 * (float) canvas.getHeight() / 4 ),0,1,1.0f);;
                 canvas.end();
                 winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
 
-                if (winPos.x > death.getWidth()) {
+                if (winPos.x > canvas.getWidth()) {
                     animLoop = 0;
                     winPos = null;
                 }
-                print("hit2");
             }
         }
     }

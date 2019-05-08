@@ -211,12 +211,12 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     private void update(float delta) {
         angle += 0.03f;
 
-        for(String s : manager.getAssetNames()) {
-            if (manager.isLoaded(s) && !loaded.contains(s)){
-                //System.out.println(s);
-                loaded.add(s);
-            }
-        }
+//        for(String s : manager.getAssetNames()) {
+//            if (manager.isLoaded(s) && !loaded.contains(s)){
+//                System.out.println(s);
+//                loaded.add(s);
+//            }
+//        }
         manager.update(budget);
         this.progress = manager.getProgress();
         if (progress >= 1.0f) {

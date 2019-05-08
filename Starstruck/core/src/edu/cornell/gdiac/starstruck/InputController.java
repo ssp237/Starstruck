@@ -134,6 +134,8 @@ public class InputController {
     private boolean iPressed;
     private boolean iPrevious;
 
+    public boolean isController = false;
+
     /** Mouse's current position*/
     private float x_pos;
     private float y_pos;
@@ -582,7 +584,11 @@ public class InputController {
 
         // Increase animation frame, but only if trying to move
         horizontal = xbox.getLeftX();
-        vertical   = xbox.getLeftY();
+        if (Math.abs(xbox.getLeftX()) < 0.6)
+            horizontal = 0;
+        vertical = xbox.getLeftY();
+        if (Math.abs(xbox.getLeftY()) < 0.6)
+            vertical = 0;
 
         xboxDown = xbox.getLeftY() > 0.6;
         xboxUp = xbox.getLeftY() < -0.6;
@@ -600,7 +606,6 @@ public class InputController {
 //            momentum = 0;
 //        }
 //        clampPosition(bounds);
-        getAngle();
     }
 
     /**
@@ -627,7 +632,11 @@ public class InputController {
 
         // Increase animation frame, but only if trying to move
         horizontal2 = xbox2.getLeftX();
-        vertical2   = xbox2.getLeftY();
+        if (Math.abs(xbox2.getLeftX()) < 0.6)
+            horizontal2 = 0;
+        vertical2 = xbox2.getLeftY();
+        if (Math.abs(xbox2.getLeftY()) < 0.6)
+            vertical2 = 0;
 
         xboxDown2 = xbox2.getLeftY() > 0.6;
         xboxUp2 = xbox2.getLeftY() < -0.6;
@@ -667,7 +676,7 @@ public class InputController {
         onePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_1); //Used for settings
         twoPressed = Gdx.input.isKeyPressed(Input.Keys.NUM_2); //Used for settings
         threePressed = Gdx.input.isKeyPressed(Input.Keys.NUM_3); //Used for settings
-        fourPressed = (secondary && fourPressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_4);
+        fourPressed = Gdx.input.isKeyPressed(Input.Keys.NUM_4);
         fivePressed = (secondary && fivePressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_5);
         resetPressed = (secondary && resetPressed) || Gdx.input.isKeyPressed(Input.Keys.R);
         anchorPressed = (secondary && anchorPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));

@@ -116,6 +116,26 @@
       "file": "levelselect/ring5.png",
       "wrap": false
     },
+    "ls p6": {
+      "file": "levelselect/lvl6.png",
+      "wrap": false
+    },
+    "ls p7": {
+      "file": "levelselect/lvl7.png",
+      "wrap": false
+    },
+    "ls g7": {
+      "file": "levelselect/ring7.png",
+      "wrap": false
+    },
+    "ls p8": {
+      "file": "levelselect/lvl8.png",
+      "wrap": false
+    },
+    "ls p9": {
+      "file": "levelselect/lvl9.png",
+      "wrap": false
+    },
     "de p1": {
       "file": "default/planets/static_default.planet1_v1.png",
       "wrap": false
@@ -208,28 +228,52 @@
       "file": "tutorial/tutorial_blue_dot.png",
       "wrap": false
     },
-    "jump": {
-      "file": "tutorial/jump.png",
+    "transparent": {
+      "file": "tutorial/transparent.png",
       "wrap": false
     },
-    "jump anchor pink": {
-      "file": "tutorial/jump_anchor_pink.png",
+    "anchor keyone": {
+      "file": "tutorial/static_keyboard_anchor.png",
       "wrap": false
     },
-    "jump pink reel blue": {
-      "file": "tutorial/jump_pink_reel_blue.png",
+    "jump keyone": {
+      "file": "tutorial/static_keyboard_jump.png",
       "wrap": false
     },
-    "switch jump blue": {
-      "file": "tutorial/switch_jump_blue.png",
+    "reel keyone": {
+      "file": "tutorial/static_keyboard_reel.png",
       "wrap": false
     },
-    "switch": {
-      "file": "tutorial/switch.png",
+    "switch keyone": {
+      "file": "tutorial/static_keyboard_switch.png",
       "wrap": false
     },
-    "move": {
-      "file": "tutorial/move.png",
+    "move keyone": {
+      "file": "tutorial/static_keyboard_move.png",
+      "wrap": false
+    },
+    "levels button": {
+      "file": "buttons/levels.png",
+      "wrap": false
+    },
+    "levels glow": {
+      "file": "buttons/levels hover.png",
+      "wrap": false
+    },
+    "next button": {
+      "file": "buttons/next level.png",
+      "wrap": false
+    },
+    "next glow": {
+      "file": "buttons/next level hover.png",
+      "wrap": false
+    },
+    "replay button": {
+      "file": "buttons/restart.png",
+      "wrap": false
+    },
+    "replay glow": {
+      "file": "buttons/restart hover.png",
       "wrap": false
     }
   },
@@ -361,6 +405,38 @@
       "size": 3,
       "delay": 20
     },
+    "pink bug awake": {
+      "file": "enemies/bugs/pink_open_filmstrip_SMALL.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 3,
+      "size": 3,
+      "delay": 5
+    },
+    "pink bug asleep": {
+      "file": "enemies/bugs/pink_closed_filmstrip_small.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 3,
+      "size": 3,
+      "delay": 5
+    },
+    "blue bug awake": {
+      "file": "enemies/bugs/blue_open_filmstrip_SMALL.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 3,
+      "size": 3,
+      "delay": 5
+    },
+    "blue bug asleep": {
+      "file": "enemies/bugs/blue_closed_filmstrip_small.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 3,
+      "size": 3,
+      "delay": 5
+    },
     "pink berry": {
       "file": "milky way/enemies/berries/animated_mwenemy(sberry)_biting.png",
       "wrap": false,
@@ -399,7 +475,7 @@
       "rows": 1,
       "cols": 18,
       "size": 18,
-      "delay": 7
+      "delay": 5
     },
     "you win": {
       "file": "shared/animated_you.win_screen.png",
