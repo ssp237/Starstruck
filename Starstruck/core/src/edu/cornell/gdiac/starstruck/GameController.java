@@ -141,26 +141,19 @@ public class GameController extends WorldController implements ContactListener {
 
         float centerY = camera.position.y + ((float) canvas.getHeight())/2 - 60;
         float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 10;
+        canvas.draw(statusBkgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        canvas.draw(statusBkgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + (widthBar /2) - PROGRESS_CAP_RIGHT*0.56f*scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+        canvas.draw(statusBkgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
 
-        if (starCount != totalStars) {
-            canvas.draw(statusBkgLeft, Color.WHITE, centerX - widthBar / (2 * scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
-            canvas.draw(statusBkgRight, Color.WHITE, initCenterX * scale.x + (camera.position.x - (float) canvas.getWidth() / 2) + (widthBar / 2) - PROGRESS_CAP_RIGHT * 0.56f * scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
-            canvas.draw(statusBkgMiddle, Color.WHITE, centerX - widthBar / (2 * scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
-            canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2 * scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
-        }
-
-        if (starCount > 0 && starCount < winCount) {
-            float span = starCount * ((PROGRESS_MIDDLE - 2 * PROGRESS_CAP_RIGHT)) / winCount;
+        canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        if (starCount > 0 && starCount != totalStars) {
+            float span = starCount * ((PROGRESS_MIDDLE - 2 * PROGRESS_CAP_RIGHT)) / totalStars;
             //canvas.draw(statusFrgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + span/scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
             canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, span, PROGRESS_HEIGHT);
-        }
-        else if (starCount >= winCount && starCount < totalStars) {
+        } else if (starCount == totalStars) {
             canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
             canvas.draw(statusFrgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + (widthBar /2) - PROGRESS_CAP_RIGHT*0.56f*scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
             canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
-        }
-        else if (starCount == totalStars) {
-            canvas.draw(statusGlow, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, statusGlow.getWidth(), statusGlow.getHeight());
         }
         else {
             canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
