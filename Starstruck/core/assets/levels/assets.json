@@ -411,7 +411,7 @@
       "rows": 1,
       "cols": 3,
       "size": 3,
-      "delay": 20
+      "delay": 5
     },
     "pink bug asleep": {
       "file": "enemies/bugs/pink_closed_filmstrip_small.png",
@@ -419,7 +419,7 @@
       "rows": 1,
       "cols": 3,
       "size": 3,
-      "delay": 20
+      "delay": 5
     },
     "blue bug awake": {
       "file": "enemies/bugs/blue_open_filmstrip_SMALL.png",
@@ -427,7 +427,7 @@
       "rows": 1,
       "cols": 3,
       "size": 3,
-      "delay": 20
+      "delay": 5
     },
     "blue bug asleep": {
       "file": "enemies/bugs/blue_closed_filmstrip_small.png",
@@ -435,7 +435,7 @@
       "rows": 1,
       "cols": 3,
       "size": 3,
-      "delay": 20
+      "delay": 5
     },
     "pink berry": {
       "file": "milky way/enemies/berries/animated_mwenemy(sberry)_biting.png",

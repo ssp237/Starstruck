@@ -1400,7 +1400,7 @@ public class GameController extends WorldController implements ContactListener {
                     case PINK: bug.setSleeping(dist(avatar2.getPosition(), bug.getPosition()) > bug.range &&
                             (!avatar2.getOnPlanet() || avatar2.getCurPlanet() != bug.getCurPlanet()));
                         astro = avatar2;
-                        print (dist(avatar2.getPosition(), bug.getPosition()) > bug.range); break;
+                        break;
                 }
 //                if (!bug.isSleeping()) {
 //                    bug.setSpeedSign(astro.getPosition().x < bug.getPosition().x ? -1 : 1);
