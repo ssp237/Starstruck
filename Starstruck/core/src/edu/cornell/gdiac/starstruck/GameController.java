@@ -1391,7 +1391,7 @@ public class GameController extends WorldController implements ContactListener {
             if (avatar2.isActive() && avatar2.getOnPlanet()) {
                 avatar2.setLinearVelocity(reset);
             }
-            SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
+            //SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
         }
 
         //TODO hardcoded bug enemy
@@ -1463,6 +1463,7 @@ public class GameController extends WorldController implements ContactListener {
 
         //Collect star
         if (collection) {
+            SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
             starCache.deactivatePhysics(world);
             if (!stars.remove(starCache)) print("star collection error in game controller");
             if (!objects.remove(starCache)) print("star collection error in game controller");
