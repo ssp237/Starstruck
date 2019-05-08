@@ -2075,10 +2075,10 @@ public class GameController extends WorldController implements ContactListener {
             //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
             Color drawColor = new Color(1,1,1, 1);
             canvas.draw(death, drawColor, winPos.x,
-                    winPos.y, death.getWidth(), death.getHeight());
+                    winPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
             canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
                     winPos.x + death.getWidth()/2,
-                    (winPos.y + 3 * (float) canvas.getHeight() / 4 ),0,1,1.0f);;
+                    (winPos.y + 3 * (float) canvas.getHeight() / 4 ) + cam.position.y - canvas.getHeight()/2,0,1,1.0f);;
             canvas.end();
             winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
 
