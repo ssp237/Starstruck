@@ -349,8 +349,11 @@ public class GameController extends WorldController implements ContactListener {
     private Obstacle obstacleCache;
     /** tutorial cache */
     private TutorialPoint tutPointCache;
-    /** Whether tutorial needs to be drawn */
+    /** The task to currently draw */
+    private TutorialPoint tutDrawCache;
+    /** Whether tutorial is active */
     private boolean tutorial;
+
 
 
     /** Reference to the goalDoor (for collision detection) */
@@ -533,6 +536,7 @@ public class GameController extends WorldController implements ContactListener {
         tutorialpoints = level.tutpoints;
         tutorial = false;
         tutPointCache = null;
+        tutDrawCache = null;
 
         winCount = level.winCount;
         openGoal = false;
@@ -1130,13 +1134,14 @@ public class GameController extends WorldController implements ContactListener {
             tutorial = true;
             tutPointCache = tutorialpoints.get(0);
             if (tutPointCache.complete()) {
-                Star pink = tutPointCache.getPinkPoint();
-                Star blue = tutPointCache.getBluePoint();
+                tutDrawCache = tutPointCache;
+                Star pink = tutDrawCache.getPinkPoint();
+                Star blue = tutDrawCache.getBluePoint();
                 pink.deactivatePhysics(world);
                 blue.deactivatePhysics(world);
                 objects.remove(pink);
                 objects.remove(blue);
-                tutorialpoints.remove(tutPointCache);
+                tutorialpoints.remove(tutDrawCache);
                 if (!tutorialpoints.isEmpty()) {
                     tutPointCache = tutorialpoints.get(0);
                 }
@@ -1449,7 +1454,7 @@ public class GameController extends WorldController implements ContactListener {
             starCount++;
             collection = false;
         }
-        if (starCount >= winCount && !openGoal && tutorialpoints.isEmpty()) {
+        if (starCount >= winCount && !openGoal) { //&& tutorialpoints.isEmpty()
             openGoal = true;
             goal.getPortal1().setOpen(true);
         }
@@ -1726,17 +1731,6 @@ public class GameController extends WorldController implements ContactListener {
                 avatarCache = avatar2;
             }
 
-            //If there is an active task, has it been completed
-            if (tutorial) {
-                if (bd1 == avatar && bd2 == tutPointCache.getPinkPoint() || bd2 == avatar && bd1 == tutPointCache.getPinkPoint()) {
-                    tutPointCache.setPinkHit(true);
-                }
-                if (bd1 == avatar2 && bd2 == tutPointCache.getBluePoint() || bd2 == avatar2 && bd1 == tutPointCache.getBluePoint()) {
-                    tutPointCache.setBlueHit(true);
-                }
-                tutPointCache.setComplete(tutPointCache.pinkHit() && tutPointCache.blueHit());
-            }
-
             if ((bd1 == avatar || bd2 == avatar) && (bd1N.contains("planet") || bd2N.contains("planet")) && !barrier) {
                 avatar.curPlanet = (bd1 == avatar) ? bd2 : bd1;
                 if (!avatar.getOnPlanet()) {
@@ -1926,6 +1920,17 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(false);
             }
 
+            //If there is an active task
+            if (tutorial) {
+                if (bd1 == avatar && bd2 == tutPointCache.getPinkPoint() || bd2 == avatar && bd1 == tutPointCache.getPinkPoint()) {
+                    tutPointCache.setPinkHit(true);
+                }
+                if (bd1 == avatar2 && bd2 == tutPointCache.getBluePoint() || bd2 == avatar2 && bd1 == tutPointCache.getBluePoint()) {
+                    tutPointCache.setBlueHit(true);
+                }
+                tutPointCache.setComplete(tutPointCache.pinkHit() && tutPointCache.blueHit());
+            }
+
             //Turns off enemy avatar collisions entirely for testing
             if (testE) {
                 if ((bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))
@@ -1966,12 +1971,14 @@ public class GameController extends WorldController implements ContactListener {
 
         canvas.begin();
         drawStarBar(canvas);
-        if (tutorial) {
-            OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
-            TextureRegion text = tutPointCache.getTask();
-            float xPos = camera.position.x - text.getRegionWidth()/2;
-            float yPos = camera.position.y - camera.viewportHeight/2 + text.getRegionHeight()/2;
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
+        if (tutDrawCache != null) {
+            TextureRegion text = tutDrawCache.getTask();
+            float xPos = camera.position.x - text.getRegionWidth() / 2;
+            float yPos = camera.position.y - camera.viewportHeight / 2 + text.getRegionHeight() / 2;
             canvas.draw(text, Color.WHITE, 0, 0, xPos, yPos, 0, 1, 1);
+        }
+        if (tutorial) {
             if (!tutPointCache.pinkHit()) {
                 tutPointCache.getPinkPoint().draw(canvas);
             }

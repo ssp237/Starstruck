@@ -228,28 +228,28 @@
       "file": "tutorial/tutorial_blue_dot.png",
       "wrap": false
     },
-    "jump": {
-      "file": "tutorial/jump.png",
+    "transparent": {
+      "file": "tutorial/transparent.png",
       "wrap": false
     },
-    "jump anchor pink": {
-      "file": "tutorial/jump_anchor_pink.png",
+    "anchor keyone": {
+      "file": "tutorial/static_keyboard_anchor.png",
       "wrap": false
     },
-    "jump pink reel blue": {
-      "file": "tutorial/jump_pink_reel_blue.png",
+    "jump keyone": {
+      "file": "tutorial/static_keyboard_jump.png",
       "wrap": false
     },
-    "switch jump blue": {
-      "file": "tutorial/switch_jump_blue.png",
+    "reel keyone": {
+      "file": "tutorial/static_keyboard_reel.png",
       "wrap": false
     },
-    "switch": {
-      "file": "tutorial/switch.png",
+    "switch keyone": {
+      "file": "tutorial/static_keyboard_switch.png",
       "wrap": false
     },
-    "move": {
-      "file": "tutorial/move.png",
+    "move keyone": {
+      "file": "tutorial/static_keyboard_move.png",
       "wrap": false
     },
     "levels button": {
