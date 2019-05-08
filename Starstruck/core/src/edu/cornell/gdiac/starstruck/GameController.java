@@ -924,6 +924,7 @@ public class GameController extends WorldController implements ContactListener {
                     else {
                         Vector2 dir = rope.getCenterPlank().getPosition().cpy().sub(avatar.getPosition());
                         if (Math.abs(contactDir.angle(dir)) > 90) {
+                            print("here");
                             avatar.setPlanetMove(contactDir.cpy().scl(-1));
                         }
                     }

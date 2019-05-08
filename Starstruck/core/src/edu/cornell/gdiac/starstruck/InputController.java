@@ -584,7 +584,11 @@ public class InputController {
 
         // Increase animation frame, but only if trying to move
         horizontal = xbox.getLeftX();
-        vertical   = xbox.getLeftY();
+        if (Math.abs(xbox.getLeftX()) < 0.6)
+            horizontal = 0;
+        vertical = xbox.getLeftY();
+        if (Math.abs(xbox.getLeftY()) < 0.6)
+            vertical = 0;
 
         xboxDown = xbox.getLeftY() > 0.6;
         xboxUp = xbox.getLeftY() < -0.6;
@@ -628,7 +632,11 @@ public class InputController {
 
         // Increase animation frame, but only if trying to move
         horizontal2 = xbox2.getLeftX();
-        vertical2   = xbox2.getLeftY();
+        if (Math.abs(xbox2.getLeftX()) < 0.6)
+            horizontal2 = 0;
+        vertical2 = xbox2.getLeftY();
+        if (Math.abs(xbox2.getLeftY()) < 0.6)
+            vertical2 = 0;
 
         xboxDown2 = xbox2.getLeftY() > 0.6;
         xboxUp2 = xbox2.getLeftY() < -0.6;
