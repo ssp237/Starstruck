@@ -376,13 +376,35 @@ public class EditController extends WorldController implements ContactListener {
             Urchin u = (Urchin) current;
             level.remove(u);
             Vector2 pos = u.getPosition();
-            current = new Urchin(pos.x , pos.y , scale, u.getLength() + 1, u.getOrientation());
+            if (u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL) {
+                current = new Urchin(pos.x, pos.y, scale, u.getLength() + 1, u.getOrientation());
+            } else {
+                if (u.getLength() > 1) {
+                    current = new Urchin(pos.x, pos.y, (u.getWidth() + u.midHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, u.getLength() + 1, u.getOrientation());
+                } else {
+                    current = new Urchin(pos.x, pos.y, (u.topHeight() + u.botHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, u.getLength() + 1, u.getOrientation());
+                }
+            }
             level.add(current);
         } else if (input.didDown()) {
             Urchin u = (Urchin) current;
             level.remove(u);
             Vector2 pos = u.getPosition();
-            current = new Urchin(pos.x, pos.y, scale, Math.max(u.getLength() - 1,1), u.getOrientation());
+            if (u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL) {
+                current = new Urchin(pos.x, pos.y, scale, Math.max(u.getLength() - 1, 1), u.getOrientation());
+            } else {
+                if (u.getLength() <= 2) {
+                    current = new Urchin(pos.x, pos.y, scale, 1, u.getOrientation());
+                } else if (u.getLength() == 3)  {
+                    current = new Urchin(pos.x, pos.y, (u.topHeight() + u.botHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, 2, u.getOrientation());
+                } else {
+                    current = new Urchin(pos.x, pos.y, (u.getWidth() - u.midHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, u.getLength() - 1, u.getOrientation());
+                }
+            }
             level.add(current);
         } else if ((input.didLeft() && !input.leftPrevious()) || (input.didRight() && !input.rightPrevious())) {
             Urchin u = (Urchin) current;

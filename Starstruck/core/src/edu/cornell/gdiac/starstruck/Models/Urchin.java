@@ -58,7 +58,7 @@ public class Urchin extends Enemy {
         setName("urchin" + urchin_count);
         urchin_count++;
         setDrawScale(scale);
-        System.out.println("height: " + getHeight() + ", width: " + getWidth());
+        //System.out.println("height: " + getHeight() + ", width: " + getWidth());
 
     }
 
@@ -97,6 +97,38 @@ public class Urchin extends Enemy {
     }
 
     public int getLength() {return length;}
+
+    /**
+     * Return the height of the top segment [of a vertical urchin with length >1). Assumes textures have been set.
+     * @return Return the height of the top segment [of a vertical urchin with length >1).
+     */
+    public float topHeight() {
+        return (textures[1].getRegionHeight()) /  getDrawScale().y;
+    }
+
+    /**
+     * Return the height of the bottom segment [of a vertical urchin with length >1). Assumes textures have been set.
+     * @return Return the height of the bottom segment [of a vertical urchin with length >1).
+     */
+    public float botHeight() {
+        return (textures[3].getRegionHeight()) /  getDrawScale().y;
+    }
+
+    /**
+     * Return the height of the middle segment [of a vertical urchin with length >2). Assumes textures have been set.
+     * @return Return the height of the middle segment [of a vertical urchin with length >1).
+     */
+    public float midHeight() {
+        return (textures[2].getRegionHeight()) /  getDrawScale().y;
+    }
+
+    /**
+     * Return the height of the single segment urchin. Assumes textures have been set.
+     * @return The height of a single segment urchin.
+     */
+    public float singleHeight() {
+        return (textures[0].getRegionHeight()) /  getDrawScale().y;
+    }
 
     /**
      * Return a new star with parameters specified by the JSON
