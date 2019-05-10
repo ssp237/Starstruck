@@ -131,7 +131,7 @@ public class EditController extends WorldController implements ContactListener {
             switch (gal) {
                 case WHIRLPOOL: FISH_TEXTURES = WORM_TEXTURES; break;
                 case MILKYWAY: FISH_TEXTURES = BERRY_TEXTURES; break;
-                case SOMBRERO: FISH_TEXTURES = CACTI_TEXTURES; break; 
+                case SOMBRERO: FISH_TEXTURES = CACTI_TEXTURES; break;
                 default: FISH_TEXTURES = WORM_TEXTURES;
             }
 

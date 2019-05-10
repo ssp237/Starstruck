@@ -22,7 +22,7 @@ public class Urchin extends Enemy {
     /** Prefix of all texture names */
     private static String pre;
     /**Textures for drawing. In order, single - top - middle - bottom.*/
-    private static TextureRegion[] textures;
+    private static FilmStrip[] textures;
     /** Number of body segments */
     private int length;
     /** Position of center of top chunk of the urchin (left if orientation is horizontal) */
@@ -81,11 +81,18 @@ public class Urchin extends Enemy {
     public static void setTextures(String prefix) {
         //System.out.println("hi");
         pre = prefix;
-        textures = new TextureRegion[4];
-        textures[0] = JsonAssetManager.getInstance().getEntry(prefix + " single", TextureRegion.class);
-        textures[1] = JsonAssetManager.getInstance().getEntry(prefix + " top", TextureRegion.class);
-        textures[2] = JsonAssetManager.getInstance().getEntry(prefix + " center", TextureRegion.class);
-        textures[3] = JsonAssetManager.getInstance().getEntry(prefix + " bottom", TextureRegion.class);
+        textures = new FilmStrip[4];
+        textures[0] = JsonAssetManager.getInstance().getEntry(prefix + " single", FilmStrip.class);
+        textures[1] = JsonAssetManager.getInstance().getEntry(prefix + " top", FilmStrip.class);
+        textures[2] = JsonAssetManager.getInstance().getEntry(prefix + " center", FilmStrip.class);
+        textures[3] = JsonAssetManager.getInstance().getEntry(prefix + " bottom", FilmStrip.class);
+    }
+
+    /**Tick all textures used for the urchin. Behaves statically. */
+    public static void tickTextures(){
+        for (FilmStrip f : textures) {
+            f.tick();
+        }
     }
 
     public static String getTexturePrefix(){

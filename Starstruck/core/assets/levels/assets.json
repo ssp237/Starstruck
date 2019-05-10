@@ -525,9 +525,41 @@
       "file": "shared/animated_you.win_screen.png",
       "wrap": false,
       "rows": 1,
-      "cols": 25,
-      "size": 25,
+      "cols": 17,
+      "size": 17,
       "delay": 4
+    },
+    "spike single": {
+      "file": "enemies/animated_spike_circle.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 12,
+      "size": 12,
+      "delay": 7
+    },
+    "spike top": {
+      "file": "enemies/animated_spike_top.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 12,
+      "size": 12,
+      "delay": 7
+    },
+    "spike center": {
+      "file": "enemies/animated_spike_middle.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 12,
+      "size": 12,
+      "delay": 7
+    },
+    "spike bottom": {
+      "file": "enemies/animated_spike_bottom.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 12,
+      "size": 12,
+      "delay": 7
     }
   },
   "fonts": {

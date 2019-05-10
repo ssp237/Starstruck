@@ -1368,6 +1368,7 @@ public class GameController extends WorldController implements ContactListener {
      */
     public void update(float dt) {
         updateCamera();
+        Urchin.tickTextures();
 
         if (isFailure()) return;
 
