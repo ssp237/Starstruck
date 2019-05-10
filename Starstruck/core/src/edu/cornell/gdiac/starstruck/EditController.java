@@ -28,12 +28,12 @@ public class EditController extends WorldController implements ContactListener {
     private static final float PAN_CONST = 8;
     private static final float ZOOM_FACTOR = 0.02f;
     /** Bounds of this level */
-    private float screenX;
-    private float screenY;
+//    private float screenX;
+//    private float screenY;
 //    private float xBound = (1280*screenX) / scale.x;
 //    private float yBound = (720*screenY) / scale.y;
     /** Percentage of stars needed to open end portal */
-    private float winCond;
+    //private float winCond;
 
     private int portalPair = 1;
     private int task = 1;
@@ -144,10 +144,12 @@ public class EditController extends WorldController implements ContactListener {
         public float yBound;
 
         public BoundsListener(){
-            screenX = 1.5f;
-            screenY = 1.5f;
-            level.xPlay = screenX;
-            level.yPlay = screenY;
+//            screenX = 1.5f;
+//            screenY = 1.5f;
+            xBound = 1.5f;
+            yBound = 1.5f;
+            level.xPlay = xBound;
+            level.yPlay = yBound;
         }
 
         public void input (String text) {
@@ -159,10 +161,10 @@ public class EditController extends WorldController implements ContactListener {
                 }
                 xBound = Float.parseFloat(bounds[0].trim());
                 yBound = Float.parseFloat(bounds[1].trim());
-                screenX = xBound;
-                screenY = yBound;
-                level.xPlay = screenX;
-                level.yPlay = screenY;
+//                screenX = xBound;
+//                screenY = yBound;
+                level.xPlay = xBound;
+                level.yPlay = yBound;
                 for (Enemy e : level.enemies) {
                     if (e.getType() == ObstacleType.ICE_CREAM) {
                         ((IceCream) e).setUpBound(level.getBounds().getHeight() * yBound);
@@ -183,15 +185,16 @@ public class EditController extends WorldController implements ContactListener {
         public float winPer;
 
         public WinListener(){
-            winCond = 0.5f;
-            level.winPercent = winCond;
+            //winCond = 0.5f;
+            winPer = 0.5f;
+            level.winPercent = winPer;
         }
 
         public void input (String text) {
             try {
                 winPer = Float.parseFloat(text);
-                winCond = winPer;
-                level.winPercent = winCond;
+                //winCond = winPer;
+                level.winPercent = winPer;
 
             } catch (Exception e) {
                 System.out.println("Error setting win condition");
@@ -619,9 +622,9 @@ public class EditController extends WorldController implements ContactListener {
             } else if (input.shiftHeld() && input.didG()) {
                 Gdx.input.getTextInput(galListener, "Switch to what galaxy?", "whirlpool", "");
             } else if (input.shiftHeld() && input.didL()) {
-                Gdx.input.getTextInput(boundListener, "Size of level", screenX + ", " + screenY, "");
+                Gdx.input.getTextInput(boundListener, "Size of level", level.xPlay + ", " + level.yPlay, "");
             } else if (input.shiftHeld() && input.didW()) {
-                Gdx.input.getTextInput(winListener, "Win condition", winCond + "", "");
+                Gdx.input.getTextInput(winListener, "Win condition", level.winPercent + "", "");
             } else if (input.shiftHeld() && input.didD()) {
                 loadFile = null;
                 reset();
@@ -707,7 +710,7 @@ public class EditController extends WorldController implements ContactListener {
         String gal = galaxy.getChars();
         Texture background = JsonAssetManager.getInstance().getEntry(gal + " background", Texture.class);
         canvas.begin();
-        canvas.draw(background, 0, 0, canvas.getWidth()*screenX, canvas.getHeight()*screenY);
+        canvas.draw(background, 0, 0, canvas.getWidth()*level.xPlay, canvas.getHeight()*level.yPlay);
         for (TutorialPoint p : level.tutpoints) {
             p.getPinkPoint().draw(canvas);
             p.getBluePoint().draw(canvas);
