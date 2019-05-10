@@ -13,7 +13,7 @@ import edu.cornell.gdiac.starstruck.Obstacles.CapsuleObstacle;
 import edu.cornell.gdiac.util.FilmStrip;
 
 
-public class Enemy extends CapsuleObstacle {
+public abstract class Enemy extends CapsuleObstacle {
     // Physics constants
     /** The density of the character */
     private static final float DUDE_DENSITY = 1.0f;
@@ -25,13 +25,6 @@ public class Enemy extends CapsuleObstacle {
     private static final float DUDE_FRICTION = 0.0f;
     /** The maximum character speed */
     private static final float DUDE_MAXSPEED = 5.0f;
-    private static final float DUDE_MAXROT = (float) Math.PI/16;
-    /** The impulse for the character jump */
-    private static final float DUDE_JUMP = 5.5f;
-    /** Cooldown (in animation frames) for jumping */
-    private static final int JUMP_COOLDOWN = 30;
-    /** Cooldown (in animation frames) for shooting */
-    private static final int SHOOT_COOLDOWN = 40;
     /** Height of the sensor attached to the player's feet */
     private static final float SENSOR_HEIGHT = 0.05f;
     /** Identifier to allow us to track the sensor in ContactListener */
@@ -50,41 +43,14 @@ public class Enemy extends CapsuleObstacle {
     private float rotation;
     /** Which direction is the character facing */
     private boolean faceRight;
-    /** How long until we can jump again */
-    private int jumpCooldown;
-    /** Whether we are actively jumping */
-    private boolean isJumping;
-    /** How long until we can shoot again */
-    private int shootCooldown;
     /** Whether our feet are on the ground */
     private boolean isGrounded;
-    /** Whether we are actively shooting */
-    private boolean isShooting;
     /** Ground sensor to represent our feet */
     private Fixture sensorFixture;
     private PolygonShape sensorShape;
     private Vector2 gravity = new Vector2();
     /** Indicates whether astronaut is on planet */
     private boolean onPlanet = false;
-    /** Direction the dude should go when jumping off a planet */
-    public Vector2 dudeJump = new Vector2();
-    public boolean isAnchored = false;
-
-    /** Cache for internal force calculations */
-    private Vector2 forceCache = new Vector2();
-
-    /** Is the texture a filmstrip? */
-    private boolean isFilm;
-    /** Filmstrip size (if you are a filmstrip, otherwise arbitrary) */
-    private int animationFrames;
-    /** Filmstrip to use if relevant */
-    private FilmStrip animator;
-    /** Current animation frame */
-    private int animeframe;
-    /** Delay between animation frames */
-    private int animDelay;
-    /** Frames since last animation */
-    private int animFrames;
 
     /**
      * Returns left/right movement of this character.
@@ -118,24 +84,6 @@ public class Enemy extends CapsuleObstacle {
 
     public void setRotation(float value) {
         rotation = value;
-    }
-
-    /**
-     * Returns true if the dude is actively jumping.
-     *
-     * @return true if the dude is actively jumping.
-     */
-    public boolean isJumping() {
-        return isJumping && isGrounded && jumpCooldown <= 0;
-    }
-
-    /**
-     * Sets whether the dude is actively jumping.
-     *
-     * @param value whether the dude is actively jumping.
-     */
-    public void setJumping(boolean value) {
-        isJumping = value;
     }
 
     /**
@@ -252,19 +200,8 @@ public class Enemy extends CapsuleObstacle {
 
         // Gameplay attributes
         isGrounded = false;
-        isShooting = false;
-        isJumping = false;
         faceRight = true;
 
-        shootCooldown = 0;
-        jumpCooldown = 0;
-        isFilm = false;
-        animationFrames = 1;
-        animator = null;
-        animeframe = 0;
-        animDelay = 0;
-        animFrames = 0;
-        //setName("dude");
     }
 
     /**
@@ -306,93 +243,6 @@ public class Enemy extends CapsuleObstacle {
 
 
     /**
-     * Applies the force to the body of this dude
-     *
-     * This method should be called after the force attribute is set.
-     */
-    public void applyForce() {
-        if (!isActive()) {
-            return;
-        }
-
-        // Don't want to be moving. Damp out player motion
-//        if (getMovement() == 0f) {
-//            forceCache.set(-getDamping()*getVX(),0);
-//            body.applyForce(forceCache,getPosition(),true);
-//        }
-
-//        if (getOnPlanet()) {
-//            if (movement > 0) {
-//
-//            }
-//        }
-
-        if (!getOnPlanet()) {
-            // Velocity too high, clamp it
-//            if (Math.abs(getVX()) >= getMaxSpeed()) {
-//                if (getVX() * movement > 0) {
-//                    setVX(Math.signum(getVX()) * getMaxSpeed());
-//                } else {
-//                    forceCache.set(getMovement(), 0);
-//                    body.applyForce(forceCache, getPosition(), true);
-//                }
-//
-//            } else {
-//                forceCache.set(getMovement(), 0);
-//                body.applyForce(forceCache, getPosition(), true);
-//            }
-
-            if (Math.abs(getAngularVelocity()) >= DUDE_MAXSPEED) {
-                setAngularVelocity(Math.signum(getVX()) * getMaxSpeed());
-            } else {
-                body.applyTorque(-getRotation(), true);
-            }
-        }
-
-        // Jump!
-        if (isJumping()) {
-            forceCache.set(dudeJump.setLength(DUDE_JUMP));
-            body.setLinearVelocity(forceCache);//,getPosition(),true);
-            body.setAwake(true);
-        }
-
-        // Gravity from planets
-        //System.out.println(gravity);
-        if (!getOnPlanet()) {
-            body.applyForce(gravity, getPosition(), true);
-            //System.out.println(body.getLinearVelocity() + ", " + gravity);
-        }
-        //System.out.println(body.getLinearVelocity());
-
-    }
-
-    /**
-     * Set the texture region to a non-filmstrip value.
-     * @param texture the texture to set
-     */
-    public void setTexture(TextureRegion texture){
-        super.setTexture(texture);
-        isFilm = false;
-        animator = null;
-        animationFrames = 1;
-    }
-
-    /**
-     * Sets the texture to the given filmstrip with size size and delay animDelay between frames.
-     * @param texture The filmstrip to set
-     * @param size The size of the filmstrip
-     * @param animDelay The delay between animation frames
-     */
-    public void setTexture(FilmStrip texture, int size, int animDelay) {
-        animator = texture;
-        animationFrames = size;
-        this.texture = animator;
-        isFilm = true;
-        this.animDelay = animDelay;
-        origin = new Vector2(animator.getRegionWidth()/2.0f, animator.getRegionHeight()/2.0f);
-    }
-
-    /**
      * Updates the object's physics state (NOT GAME LOGIC).
      *
      * We use this method to reset cooldowns.
@@ -402,20 +252,8 @@ public class Enemy extends CapsuleObstacle {
     public void update(float dt) {
         // Apply cooldowns
 
-        // Increase animation frame, but only if trying to move
-        if (isFilm) {
-            animator.tick();
-        }
-
         faceRight = getVX() > 0;
 
-        if (isJumping()) {
-            jumpCooldown = JUMP_COOLDOWN;
-        } else {
-            jumpCooldown = Math.max(0, jumpCooldown - 1);
-        }
-
-        super.update(dt);
     }
 
     /**
@@ -424,19 +262,6 @@ public class Enemy extends CapsuleObstacle {
      */
     public boolean isSleeping() {return false;}
 
-    /**
-     * Draws the physics object.
-     *
-     * @param canvas Drawing context
-     */
-    public void draw(GameCanvas canvas) {
-        float effect = faceRight ? -1.0f : 1.0f;
-        if (isFilm) {
-            canvas.draw(animator, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
-        }
-
-        canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
-    }
 
     /**
      * Draws the outline of the physics body.
