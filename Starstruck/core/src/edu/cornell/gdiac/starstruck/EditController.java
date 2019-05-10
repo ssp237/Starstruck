@@ -78,6 +78,8 @@ public class EditController extends WorldController implements ContactListener {
     private static final String[] WORM_TEXTURES = { "blue worm", "green worm", "pink worm", "purple worm", "red worm", "yellow worm"};
     /** Possible berry textures */
     private static final String[] BERRY_TEXTURES = { "pink berry"};
+    /** Possible cacti textures */
+    private static final String[] CACTI_TEXTURES = { "cactus"};
     /** Current horizontally moving enemy textures */
     private String[] FISH_TEXTURES;
 
@@ -129,6 +131,7 @@ public class EditController extends WorldController implements ContactListener {
             switch (gal) {
                 case WHIRLPOOL: FISH_TEXTURES = WORM_TEXTURES; break;
                 case MILKYWAY: FISH_TEXTURES = BERRY_TEXTURES; break;
+                case SOMBRERO: FISH_TEXTURES = CACTI_TEXTURES; break; 
                 default: FISH_TEXTURES = WORM_TEXTURES;
             }
 

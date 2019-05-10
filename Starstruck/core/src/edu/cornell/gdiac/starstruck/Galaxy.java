@@ -8,6 +8,7 @@ public enum Galaxy {
     DEFAULT("de"), //Galaxy from first game play prototype.
     WHIRLPOOL("wp"),
     MILKYWAY("mw"),
+    SOMBRERO("so"),
     LEVELSELECT("ls");
 
     private final String chars;
@@ -30,6 +31,8 @@ public enum Galaxy {
             return WHIRLPOOL;
         } else if (chars.equals("milky way")) {
             return MILKYWAY;
+        } else if (chars.equals("sombrero")) {
+            return SOMBRERO;
         } else if (chars.equals("level select")) {
             return LEVELSELECT;
         }
@@ -40,6 +43,7 @@ public enum Galaxy {
         switch (this) {
             case WHIRLPOOL: return "whirlpool";
             case MILKYWAY: return "milky way";
+            case SOMBRERO: return "sombrero";
             case LEVELSELECT: return "level select";
             default: return "default";
         }
