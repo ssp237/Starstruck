@@ -1266,12 +1266,15 @@ public class GameController extends WorldController implements ContactListener {
 
         // Now it is time to maybe switch screens.
         if (input.didExit()) {
+            setFailure(false);
             listener.exitScreen(this, EXIT_QUIT);
             return false;
         } else if (input.didAdvance()) {
+            setFailure(false);
             listener.exitScreen(this, EXIT_SELECT);
             return false;
         } else if (input.didRetreat()) {
+            setFailure(false);
             listener.exitScreen(this, EXIT_EDIT);
             return false;
         } else if (countdown > 0) {
