@@ -196,11 +196,6 @@ public class Urchin extends Enemy {
             if (getOrientation() == Orientation.VERTICAL) {
                 t_y = getY() + getHeight()/2f - (textures[1].getRegionHeight()/(2f*getDrawScale().y));
                 t_x = getX();
-            } else {
-                t_y = getY();
-                t_x = getX() + getWidth ()/2f - (textures[1].getRegionWidth()/(2f*getDrawScale().x));
-            }
-            if (getOrientation() == Orientation.VERTICAL) {
                 float x = t_x;
                 float y = t_y;
                 canvas.draw(textures[1], Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 1, 1.0f);
@@ -214,13 +209,15 @@ public class Urchin extends Enemy {
 
                 canvas.draw(textures[3], Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 1, 1.0f);
             } else {
+                t_y = getY();
+                t_x = getX() + getWidth ()/2f - (textures[1].getRegionHeight()/(2f*getDrawScale().x));
                 float angle = (float) (3 * Math.PI / 2);
                 float x = t_x;
                 float y = t_y;
                 canvas.draw(textures[1], Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle() + angle, 1, 1.0f);
 
                 for (int i = 2; i < length; i++) {
-                    x -= textures[2].getRegionWidth() / getDrawScale().x;
+                    x -= textures[2].getRegionHeight() / getDrawScale().x;
                     canvas.draw(textures[2], Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle() + angle, 1, 1.0f);
                 }
 
