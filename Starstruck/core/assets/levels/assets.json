@@ -366,6 +366,10 @@
     "starbarglow": {
       "file": "default/starbarglow.png",
       "wrap": false
+    },
+    "octoboss": {
+      "file": "whirlpool/octoboss.png",
+      "wrap": false
     }
   },
   "filmstrips" : {
