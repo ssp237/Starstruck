@@ -917,6 +917,8 @@ public class GameController extends WorldController implements ContactListener {
                 }
                 else {
                     Vector2 dir = rope.getCenterPlank().getPosition().cpy().sub(avatar.getPosition());
+                    float vertMove = input.getVertical();
+                    avatar.setPlanetMove(contactDir.scl((float)Math.sqrt(move * move + vertMove * vertMove)));
                     if (Math.abs(contactDir.angle(dir)) > 90) {
                         //print("here");
                         avatar.setPlanetMove(contactDir.cpy().scl(-1));
@@ -1258,7 +1260,7 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         // Handle resets
-        if (input.didReset()) {
+        if (input.didGameReset()) {
             reset();
         }
 

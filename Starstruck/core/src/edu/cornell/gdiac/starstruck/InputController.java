@@ -49,6 +49,8 @@ public class InputController {
     /** Whether the reset button was pressed. */
     private boolean resetPressed;
     private boolean resetPrevious;
+    private boolean gameResetPress;
+    private boolean gameResetPrev;
     /** Whether the button to advanced worlds was pressed. */
     private boolean nextPressed;
     private boolean nextPrevious;
@@ -137,8 +139,6 @@ public class InputController {
     private boolean bPrevious;
     private boolean iPressed;
     private boolean iPrevious;
-
-    public boolean isController = false;
 
     /** Mouse's current position*/
     private float x_pos;
@@ -301,6 +301,10 @@ public class InputController {
      */
     public boolean didReset() {
         return resetPressed && !resetPrevious;
+    }
+
+    public boolean didGameReset() {
+        return gameResetPress && !gameResetPrev;
     }
 
     /**
@@ -531,6 +535,7 @@ public class InputController {
         primePrevious  = primePressed;
         secondPrevious = secondPressed;
         resetPrevious  = resetPressed;
+        gameResetPrev = gameResetPress;
         debugPrevious  = debugPressed;
         exitPrevious = exitPressed;
         nextPrevious = nextPressed;
@@ -589,7 +594,7 @@ public class InputController {
      * @param scale  The drawing scale
      */
     private void readGamepad(Rectangle bounds, Vector2 scale) {
-        resetPressed = xbox.getStart(); //restart
+        gameResetPress = xbox.getStart(); //restart
         exitPressed  = xbox.getBack(); //esc
 //        leftPressed = xbox.getLeftX() < -0.6; //left
 //        rightPressed = xbox.getLeftX() > 0.6; //right
@@ -641,7 +646,7 @@ public class InputController {
      * @param scale  The drawing scale
      */
     private void readGamepad2(Rectangle bounds, Vector2 scale) {
-        resetPressed = xbox2.getStart(); //restart
+        gameResetPress = xbox2.getStart(); //restart
         exitPressed  = xbox2.getBack(); //esc
 //        aPressed = xbox2.getLeftX() < -0.6; //left
 //        dPressed = xbox2.getLeftX() > 0.6; //right
@@ -705,6 +710,7 @@ public class InputController {
         fourPressed = Gdx.input.isKeyPressed(Input.Keys.NUM_4);
         fivePressed = (secondary && fivePressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_5);
         resetPressed = (secondary && resetPressed) || Gdx.input.isKeyPressed(Input.Keys.R);
+        gameResetPress = (secondary && gameResetPress) || Gdx.input.isKeyPressed(Input.Keys.BACKSPACE);
         anchorPressed = (secondary && anchorPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
         anchor1Pressed = (secondary && anchor1Pressed) || (Gdx.input.isKeyPressed(Input.Keys.SLASH));
         anchor2Pressed = (secondary && anchor2Pressed) || (Gdx.input.isKeyPressed(Input.Keys.E));
