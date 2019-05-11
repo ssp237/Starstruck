@@ -651,7 +651,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 nextLevel = lastLevel.nextLevel;
                 Vector2 temp = winPos.cpy();
                 winPos = null;
-                print(lastLevel.jsonFile);
+                //print(lastLevel.jsonFile);
                 listener.exitScreen(this, WorldController.EXIT_PLAY, temp, lastLevel.jsonFile);
             }
         }

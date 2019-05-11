@@ -44,6 +44,38 @@
       "file": "whirlpool/planets/static_gravity.ring4_v0.png",
       "wrap": false
     },
+    "so p1": {
+      "file": "sombrero/planets/static_planet1_v1.png",
+      "wrap": false
+    },
+    "so g1": {
+      "file": "sombrero/planets/static_gravity.ring1_v1.png",
+      "wrap": false
+    },
+    "so p2": {
+      "file": "sombrero/planets/static_planet2_v1.png",
+      "wrap": false
+    },
+    "so g2": {
+      "file": "sombrero/planets/static_gravity.ring2_v1.png",
+      "wrap": false
+    },
+    "so p3": {
+      "file": "sombrero/planets/static_planet3_v1.png",
+      "wrap": false
+    },
+    "so g3": {
+      "file": "sombrero/planets/static_gravity.ring3_v1.png",
+      "wrap": false
+    },
+    "so p4": {
+      "file": "sombrero/planets/static_planet4_v1.png",
+      "wrap": false
+    },
+    "so g4": {
+      "file": "sombrero/planets/static_gravity.ring4_v1.png",
+      "wrap": false
+    },
     "mw p1": {
       "file": "milky way/planets/static_planet1_v1.png",
       "wrap": false
@@ -290,6 +322,10 @@
       "file": "milky way/background_milkyway_v1.png",
       "wrap": false
     },
+    "so background": {
+      "file": "sombrero/background_sombrero_v1.png",
+      "wrap": false
+    },
     "de background": {
       "file": "default/background_default.png",
       "wrap": false
@@ -445,6 +481,14 @@
       "size": 10,
       "delay": 3
     },
+    "cactus": {
+      "file": "sombrero/enemies/cacti/animated_cactus_spikes.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 14,
+      "size": 14,
+      "delay": 3
+    },
     "ice cream": {
       "file": "milky way/enemies/ice cream/static_mwenemy(icecream)_v1.png",
       "wrap": false,
@@ -481,9 +525,41 @@
       "file": "shared/animated_you.win_screen.png",
       "wrap": false,
       "rows": 1,
-      "cols": 25,
-      "size": 25,
+      "cols": 17,
+      "size": 17,
       "delay": 4
+    },
+    "spike single": {
+      "file": "enemies/animated_spike_circle.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 12,
+      "size": 12,
+      "delay": 7
+    },
+    "spike top": {
+      "file": "enemies/animated_spike_top.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 12,
+      "size": 12,
+      "delay": 7
+    },
+    "spike center": {
+      "file": "enemies/animated_spike_middle.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 12,
+      "size": 12,
+      "delay": 7
+    },
+    "spike bottom": {
+      "file": "enemies/animated_spike_bottom.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 12,
+      "size": 12,
+      "delay": 7
     }
   },
   "fonts": {

@@ -40,7 +40,7 @@ public class ColoredBug extends Bug {
         this.color = color;
         setSleepingTexture(sleepTexture);
         sleeping = true;
-        System.out.println(this);
+        //System.out.println(this);
         this.BUG_SPEED = 0.01f;
         String name = "cbug" + (color == ModelColor.PINK ? "pink" : "blue") + bugCount;
         bugCount++;

@@ -78,6 +78,8 @@ public class EditController extends WorldController implements ContactListener {
     private static final String[] WORM_TEXTURES = { "blue worm", "green worm", "pink worm", "purple worm", "red worm", "yellow worm"};
     /** Possible berry textures */
     private static final String[] BERRY_TEXTURES = { "pink berry"};
+    /** Possible cacti textures */
+    private static final String[] CACTI_TEXTURES = { "cactus"};
     /** Current horizontally moving enemy textures */
     private String[] FISH_TEXTURES;
 
@@ -129,6 +131,7 @@ public class EditController extends WorldController implements ContactListener {
             switch (gal) {
                 case WHIRLPOOL: FISH_TEXTURES = WORM_TEXTURES; break;
                 case MILKYWAY: FISH_TEXTURES = BERRY_TEXTURES; break;
+                case SOMBRERO: FISH_TEXTURES = CACTI_TEXTURES; break;
                 default: FISH_TEXTURES = WORM_TEXTURES;
             }
 
@@ -379,13 +382,35 @@ public class EditController extends WorldController implements ContactListener {
             Urchin u = (Urchin) current;
             level.remove(u);
             Vector2 pos = u.getPosition();
-            current = new Urchin(pos.x , pos.y , scale, u.getLength() + 1, u.getOrientation());
+            if (u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL) {
+                current = new Urchin(pos.x, pos.y, scale, u.getLength() + 1, u.getOrientation());
+            } else {
+                if (u.getLength() > 1) {
+                    current = new Urchin(pos.x, pos.y, (u.getWidth() + u.midHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, u.getLength() + 1, u.getOrientation());
+                } else {
+                    current = new Urchin(pos.x, pos.y, (u.topHeight() + u.botHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, u.getLength() + 1, u.getOrientation());
+                }
+            }
             level.add(current);
         } else if (input.didDown()) {
             Urchin u = (Urchin) current;
             level.remove(u);
             Vector2 pos = u.getPosition();
-            current = new Urchin(pos.x, pos.y, scale, Math.max(u.getLength() - 1,1), u.getOrientation());
+            if (u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL) {
+                current = new Urchin(pos.x, pos.y, scale, Math.max(u.getLength() - 1, 1), u.getOrientation());
+            } else {
+                if (u.getLength() <= 2) {
+                    current = new Urchin(pos.x, pos.y, scale, 1, u.getOrientation());
+                } else if (u.getLength() == 3)  {
+                    current = new Urchin(pos.x, pos.y, (u.topHeight() + u.botHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, 2, u.getOrientation());
+                } else {
+                    current = new Urchin(pos.x, pos.y, (u.getWidth() - u.midHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, u.getLength() - 1, u.getOrientation());
+                }
+            }
             level.add(current);
         } else if ((input.didLeft() && !input.leftPrevious()) || (input.didRight() && !input.rightPrevious())) {
             Urchin u = (Urchin) current;
