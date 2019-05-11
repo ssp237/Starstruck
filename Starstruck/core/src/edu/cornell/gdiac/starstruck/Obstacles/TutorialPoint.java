@@ -50,14 +50,14 @@ public class TutorialPoint {
      */
     public TutorialPoint(float x1, float y1, float x2, float y2, Vector2 scale) {
         //pinkPoint = new Star(x1, y1, texture.getRegionWidth(), texture.getRegionHeight());
-        pinkPoint = new Star(x1, y1, JsonAssetManager.getInstance().getEntry("pink dot", TextureRegion.class), scale);
+        pinkPoint = new Star(x1, y1, JsonAssetManager.getInstance().getEntry("pink dot animated", FilmStrip.class), scale);
         pinkPoint.setColor("pink");
 //        pinkPoint.setTexture(texture);
 //        pinkPoint.setDrawScale(scale);
         pinkPoint.setType(ObstacleType.TUTORIAL);
         pinkHit = false;
         //bluePoint = new Star(x2, y2, texture.getRegionWidth(), texture.getRegionHeight());
-        bluePoint = new Star(x2, y2, JsonAssetManager.getInstance().getEntry("blue dot", TextureRegion.class), scale);
+        bluePoint = new Star(x2, y2, JsonAssetManager.getInstance().getEntry("blue dot animated", FilmStrip.class), scale);
         bluePoint.setColor("blue");
         //bluePoint.setTexture(texture);
         //bluePoint.setDrawScale(scale);

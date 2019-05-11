@@ -560,6 +560,22 @@
       "cols": 12,
       "size": 12,
       "delay": 7
+    },
+    "pink dot animated": {
+      "file": "tutorial/animated_tutorial_pink.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 8,
+      "size": 8,
+      "delay": 20
+    },
+    "blue dot animated": {
+      "file": "tutorial/animated_tutorial_blue.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 8,
+      "size": 8,
+      "delay": 20
     }
   },
   "fonts": {
