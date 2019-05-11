@@ -742,10 +742,10 @@ public class AstronautModel extends CapsuleObstacle {
     public void applyForce() {
 
         if (!getOnPlanet()) {
-            if (Math.abs(getAngularVelocity()) >= DUDE_MAXROT) {
+            if (Math.abs(getAngularVelocity()) >= DUDE_MAXROT && !(isAnchored && !isActive)) {
                 body.setAngularVelocity(Math.signum(getAngularVelocity()) * DUDE_MAXROT);
             }
-            else {
+            else if (!(isAnchored && !isActive)) {
                 //body.applyTorque(-getRotation(), true);
                 body.setAngularVelocity(getAngularVelocity() - 0.1f * getRotation());
             }
