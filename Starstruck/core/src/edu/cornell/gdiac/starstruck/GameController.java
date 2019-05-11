@@ -1617,6 +1617,12 @@ public class GameController extends WorldController implements ContactListener {
 
         //MUSIC
 
+        if (music != null && music.isPlaying()) {
+            System.out.println("game controller music is playing");
+        } else {
+            System.out.println("game controller music not playing");
+        }
+
         if (level.getGalaxy() == Galaxy.DEFAULT) {
             if (music != null && music_name != "tutorial") {
                 music.stop();
