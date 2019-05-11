@@ -1733,6 +1733,7 @@ public class GameController extends WorldController implements ContactListener {
             //Portal stuff
             if (bd1 == avatar && bd2.getType() == ObstacleType.PORTAL) {
                 portal = true;
+                portalCache = (Portal)bd2;
                 avatarCache = avatar;
             }
             if (bd1.getType() == ObstacleType.PORTAL && bd2 == avatar) {
