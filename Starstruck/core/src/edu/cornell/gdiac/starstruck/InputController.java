@@ -686,8 +686,10 @@ public class InputController {
         spacePressed = (secondary && spacePressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
         shiftPressed = (secondary && shiftPressed) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT)) || (Gdx.input.isKeyPressed(Input.Keys.SHIFT_RIGHT));
         backspacePressed = (secondary && backspacePressed) || (Gdx.input.isKeyPressed(Input.Keys.BACKSPACE));
-        rightPressed = (secondary && rightPressed) || Gdx.input.isKeyPressed (Input.Keys.RIGHT);
-        leftPressed = (secondary && leftPressed) || Gdx.input.isKeyPressed (Input.Keys.LEFT);
+        //rightPressed = (secondary && rightPressed) || Gdx.input.isKeyPressed (Input.Keys.RIGHT);
+        //leftPressed = (secondary && leftPressed) || Gdx.input.isKeyPressed (Input.Keys.LEFT);
+        rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT); //ONLY FOR KEYBOARD
+        leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT); //ONLY FOR KEYBOARD
         downPressed = (secondary && downPressed) || Gdx.input.isKeyPressed (Input.Keys.DOWN);
         aPressed = (secondary && aPressed) || Gdx.input.isKeyPressed (Input.Keys.A);
         sPressed = (secondary && sPressed) || Gdx.input.isKeyPressed (Input.Keys.S);
@@ -710,6 +712,7 @@ public class InputController {
         tPressed = (secondary && tPressed) || (Gdx.input.isKeyPressed(Input.Keys.T));
         bPressed = (secondary && bPressed) || (Gdx.input.isKeyPressed(Input.Keys.B));
         iPressed = (secondary && iPressed) || (Gdx.input.isKeyPressed(Input.Keys.I));
+        //ONLY FOR XBOX
         xboxLeft = secondary && xboxLeft; //|| false;
         xboxRight = secondary && xboxRight; //|| false;
         xboxUp = secondary && xboxUp;
