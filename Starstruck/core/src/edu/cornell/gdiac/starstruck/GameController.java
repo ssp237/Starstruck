@@ -271,7 +271,7 @@ public class GameController extends WorldController implements ContactListener {
     private boolean switchOnJump = false;
     private boolean switchOnAnchor = false;
     private boolean twoplayer = false;
-    private boolean useController = true;
+    //private boolean useController = true;
 
     // Physics objects for the game
     /** Reference to the character avatar */
@@ -902,31 +902,31 @@ public class GameController extends WorldController implements ContactListener {
         contactDir.rotateRad(-(float) Math.PI / 2);
         if (!twoplayer) {
             float move = input.getHorizontal();
-            if (input.didRight() || input.didLeft() || (controllerConnected(input) && useController && (input.xboxUp() || input.xboxDown()))) {
+            if (input.didRight() || input.didLeft()) {
                 avatar.setPlanetMove(contactDir.scl(move));
                 avatar.setRight(input.didRight());
-                if (controllerConnected(input) && useController) {
-                    if (!auto) {
-                        Vector2 dir = new Vector2(1, 0).rotateRad(input.getAngle());
-                        avatar.setPlanetMove(dir);
-                        avatar.moving = true;
-                        boolean vertical = avatar.getAngle() <= 0 && input.xboxDown();
-                        boolean horizontal = avatar.getAngle() > -Math.PI / 2 && avatar.getAngle() <= Math.PI / 2 && input.didRight();
-                        avatar.setRight(vertical || horizontal);
-                    }
-                    else {
-                        Vector2 dir = rope.getCenterPlank().getPosition().cpy().sub(avatar.getPosition());
-                        if (Math.abs(contactDir.angle(dir)) > 90) {
-                            print("here");
-                            avatar.setPlanetMove(contactDir.cpy().scl(-1));
-                        }
+            }
+            if (input.didXbox()) {
+                if (!auto) {
+                    Vector2 dir = new Vector2(1, 0).rotateRad(input.getAngle());
+                    avatar.setPlanetMove(dir);
+                    avatar.moving = true;
+                    boolean vertical = avatar.getAngle() <= 0 && input.xboxDown();
+                    boolean horizontal = avatar.getAngle() > -Math.PI / 2 && avatar.getAngle() <= Math.PI / 2 && input.didRight();
+                    avatar.setRight(vertical || horizontal);
+                }
+                else {
+                    Vector2 dir = rope.getCenterPlank().getPosition().cpy().sub(avatar.getPosition());
+                    if (Math.abs(contactDir.angle(dir)) > 90) {
+                        //print("here");
+                        avatar.setPlanetMove(contactDir.cpy().scl(-1));
                     }
                 }
-                if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious()
-                        || (input.getControlType() == ControllerType.CTRLONE && useController && (input.xboxUp() || input.xboxDown())))
-                    avatar.moving = true;
+                avatar.moving = true;
             }
-
+            if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious()) {
+                avatar.moving = true;
+            }
             if (input.didPrimary() && !auto && !testC) {
                 //print(contactPoint);
                 avatar.setJumping(true);
@@ -941,23 +941,22 @@ public class GameController extends WorldController implements ContactListener {
         else if (twoplayer) {
             if (avatar == avatar2) {
                 float move = input.getHorizontal2();
-                if (input.heldD() || input.heldA()
-                        || (input.getControlType() == ControllerType.CTRLTWO && useController && (input.xboxUp2() || input.xboxDown2()))) {
+                if (input.heldD() || input.heldA()) {
                     avatar.setPlanetMove(contactDir.scl(move));
                     avatar.setRight(input.heldD());
-                    if (input.getControlType() == ControllerType.CTRLTWO && useController) {
-                        Vector2 dir = new Vector2(1,0).rotateRad(input.getAngle2());
-                        avatar.setPlanetMove(dir);
-                        avatar.moving = true;
-                        boolean vertical = avatar.getAngle() <= 0 && input.xboxDown2();
-                        boolean horizontal = avatar.getAngle() > -Math.PI/2 && avatar.getAngle() <= Math.PI/2 && input.heldD();
-                        avatar.setRight(vertical || horizontal);
-
-                    }
-                    if (input.heldD() && !input.aPrevious() || input.heldA() && !input.dPrevious())
-                        avatar.moving = true;
                 }
+                if (input.didXbox2()) {
+                    Vector2 dir = new Vector2(1,0).rotateRad(input.getAngle2());
+                    avatar.setPlanetMove(dir);
+                    avatar.moving = true;
+                    boolean vertical = avatar.getAngle() <= 0 && input.xboxDown2();
+                    boolean horizontal = avatar.getAngle() > -Math.PI/2 && avatar.getAngle() <= Math.PI/2 && input.heldD();
+                    avatar.setRight(vertical || horizontal);
 
+                }
+                if (input.heldD() && !input.aPrevious() || input.heldA() && !input.dPrevious()) {
+                    avatar.moving = true;
+                }
                 if (input.didW()) {
                     avatar.setJumping(true);
                     SoundController.getInstance().play(JUMP_FILE, JUMP_FILE, false, EFFECT_VOLUME);
@@ -970,23 +969,22 @@ public class GameController extends WorldController implements ContactListener {
 
             if (avatar == this.avatar) {
                 float move = input.getHorizontal();
-                if (input.didRight() || input.didLeft()
-                        || (input.getControlType() == ControllerType.CTRLTWO && useController && (input.xboxUp() || input.xboxDown()))) {
+                if (input.didRight() || input.didLeft()) {
                     avatar.setPlanetMove(contactDir.scl(move));
-                    //avatar.setRight(input.didRight());
-                    if (input.getControlType() == ControllerType.CTRLTWO && useController) {
-                        Vector2 dir = new Vector2(1,0).rotateRad(input.getAngle());
-                        //print(dir.scl(10));
-                        avatar.setPlanetMove(dir);
-                        avatar.moving = true;
-                        boolean vertical = avatar.getAngle() <= 0 && input.xboxDown();
-                        boolean horizontal = avatar.getAngle() > -Math.PI/2 && avatar.getAngle() <= Math.PI/2 && input.didRight();
-                        avatar.setRight(vertical || horizontal);
-                    }
-                    if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious())
-                        avatar.moving = true;
+                    avatar.setRight(input.didRight());
                 }
-
+                if (input.didXbox()) {
+                    Vector2 dir = new Vector2(1,0).rotateRad(input.getAngle());
+                    //print(dir.scl(10));
+                    avatar.setPlanetMove(dir);
+                    avatar.moving = true;
+                    boolean vertical = avatar.getAngle() <= 0 && input.xboxDown();
+                    boolean horizontal = avatar.getAngle() > -Math.PI/2 && avatar.getAngle() <= Math.PI/2 && input.didRight();
+                    avatar.setRight(vertical || horizontal);
+                }
+                if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious()) {
+                    avatar.moving = true;
+                }
                 if (input.didPrimary()) {
                     //print(contactPoint);
                     avatar.setJumping(true);
@@ -1137,10 +1135,10 @@ public class GameController extends WorldController implements ContactListener {
             switchOnAnchor = !switchOnAnchor;
             print("Toggled setting switch on anchor: " + switchOnAnchor);
         }
-        if (input.didFour()) {
-            useController = !useController;
-            print("Toggled setting use controller: " + useController);
-        }
+//        if (input.didFour()) {
+//            useController = !useController;
+//            print("Toggled setting use controller: " + useController);
+//        }
     }
 
     private void updateTutorial() {

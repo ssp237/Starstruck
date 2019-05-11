@@ -125,10 +125,14 @@ public class InputController {
     private boolean lPrevious;
     private boolean tPressed;
     private boolean tPrevious;
-    private boolean xboxDown;
+    private boolean xboxLeft;
+    private boolean xboxRight;
     private boolean xboxUp;
-    private boolean xboxDown2;
+    private boolean xboxDown;
     private boolean xboxUp2;
+    private boolean xboxDown2;
+    private boolean xboxLeft2;
+    private boolean xboxRight2;
     private boolean bPressed;
     private boolean bPrevious;
     private boolean iPressed;
@@ -420,9 +424,25 @@ public class InputController {
 
     public boolean xboxUp() { return xboxUp; }
 
+    public boolean xboxLeft() { return xboxLeft; }
+
+    public boolean xboxRight() { return xboxRight; }
+
+    public boolean didXbox() {
+        return xboxRight || xboxLeft || xboxUp || xboxDown;
+    }
+
     public boolean xboxDown2() { return xboxDown2; }
 
     public boolean xboxUp2() { return xboxUp2; }
+
+    public boolean xboxLeft2(){ return xboxLeft2; }
+
+    public boolean xboxRight2() { return xboxRight2; }
+
+    public boolean didXbox2() {
+        return xboxLeft2 || xboxRight2 || xboxUp2 || xboxDown2;
+    }
 
     public float xPos() {return Gdx.input.getX();}
 
@@ -571,8 +591,8 @@ public class InputController {
     private void readGamepad(Rectangle bounds, Vector2 scale) {
         resetPressed = xbox.getStart(); //restart
         exitPressed  = xbox.getBack(); //esc
-        leftPressed = xbox.getLeftX() < -0.6; //left
-        rightPressed = xbox.getLeftX() > 0.6; //right
+//        leftPressed = xbox.getLeftX() < -0.6; //left
+//        rightPressed = xbox.getLeftX() > 0.6; //right
         primePressed = xbox.getA(); //jump
 //        anchorPressed = xbox.getX();
 //        anchor1Pressed = xbox.getX();
@@ -592,6 +612,8 @@ public class InputController {
 
         xboxDown = xbox.getLeftY() > 0.6;
         xboxUp = xbox.getLeftY() < -0.6;
+        xboxLeft = xbox.getLeftX() < -0.6; //left
+        xboxRight = xbox.getLeftX() > 0.6; //right
 
         // Move the crosshairs with the right stick.
         //tertiaryPressed = xbox.getA();
@@ -621,8 +643,8 @@ public class InputController {
     private void readGamepad2(Rectangle bounds, Vector2 scale) {
         resetPressed = xbox2.getStart(); //restart
         exitPressed  = xbox2.getBack(); //esc
-        aPressed = xbox2.getLeftX() < -0.6; //left
-        dPressed = xbox2.getLeftX() > 0.6; //right
+//        aPressed = xbox2.getLeftX() < -0.6; //left
+//        dPressed = xbox2.getLeftX() > 0.6; //right
         wPressed = xbox2.getA(); //jump
 //        anchor2Pressed = xbox2.getX();
         anchor2Pressed = xbox2.getA();
@@ -640,6 +662,8 @@ public class InputController {
 
         xboxDown2 = xbox2.getLeftY() > 0.6;
         xboxUp2 = xbox2.getLeftY() < -0.6;
+        xboxLeft2 = xbox2.getLeftX() < -0.6; //left
+        xboxRight2 = xbox2.getLeftX() > 0.6; //right
     }
 
     /**
@@ -686,6 +710,14 @@ public class InputController {
         tPressed = (secondary && tPressed) || (Gdx.input.isKeyPressed(Input.Keys.T));
         bPressed = (secondary && bPressed) || (Gdx.input.isKeyPressed(Input.Keys.B));
         iPressed = (secondary && iPressed) || (Gdx.input.isKeyPressed(Input.Keys.I));
+        xboxLeft = secondary && xboxLeft; //|| false;
+        xboxRight = secondary && xboxRight; //|| false;
+        xboxUp = secondary && xboxUp;
+        xboxDown = secondary && xboxDown;
+        xboxLeft2 = secondary && xboxLeft2;
+        xboxRight2 = secondary && xboxRight2;
+        xboxUp2 = secondary && xboxUp2;
+        xboxDown2 = secondary && xboxDown2;
 
         // Directional controls
         horizontal = (secondary ? horizontal : 0.0f);
