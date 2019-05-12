@@ -228,7 +228,7 @@ public class Urchin extends Enemy {
                     canvas.draw(textures[2], Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle() + angle, 1, 1.0f);
                 }
 
-                x -= textures[2].getRegionWidth() / getDrawScale().x;
+                x -= textures[2].getRegionHeight() / getDrawScale().x;
 
                 canvas.draw(textures[3], Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle() + angle, 1, 1.0f);
             }
