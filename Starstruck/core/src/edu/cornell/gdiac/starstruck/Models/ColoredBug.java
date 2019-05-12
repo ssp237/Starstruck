@@ -47,6 +47,32 @@ public class ColoredBug extends Bug {
         setName(name);
     }
 
+    /**
+     * Set the speed of the bug (only for edit controller to make output useable)
+     * @param speed The new speed of this bug
+     */
+    public void setSpeed(float speed) {
+        BUG_SPEED = speed;
+    }
+
+    /**
+     * Creates a new dude avatar at the given position.
+     *
+     * The size is expressed in physics units NOT pixels.  In order for
+     * drawing to work properly, you MUST set the drawScale. The drawScale
+     * drawing to work properly, you MUST set the drawScale. The drawScaled
+     * converts the physics units to pixels.
+     *
+     * @param x  		Initial x position of the avatar center
+     * @param y  		Initial y position of the avatar center
+     * @param scale     Drawscale for this bug
+     * @param color  	Color of this bug (PINK or BLUE)
+     */
+    public ColoredBug(float x, float y, Vector2 scale, ModelColor color) {
+        this(x,y, JsonAssetManager.getInstance().getEntry(color.getName() + " bug awake", FilmStrip.class),
+                JsonAssetManager.getInstance().getEntry(color.getName() + " bug asleep", FilmStrip.class), scale, color);
+    }
+
     public void setSpeedSign( int i){
         BUG_SPEED = Math.abs(BUG_SPEED);
         if (i < 0) {
@@ -83,6 +109,10 @@ public class ColoredBug extends Bug {
         super.update(dt);
     }
 
+    /**
+     * Get the color of this bug
+     * @return The color of this bug
+     */
     public ModelColor getColor() {
         return color;
     }
@@ -95,7 +125,9 @@ public class ColoredBug extends Bug {
         String out = "Colored Bug with {texture: ";
         //System.out.println(texture);
         out += JsonAssetManager.getInstance().getKey(texture) + ", ";
-        out += "color: " + (color == ModelColor.PINK ? "pink" : "blue");
+        out += "sleep texture " + JsonAssetManager.getInstance().getKey(sleepTexture) + ", ";
+        out += "color: " + (color == ModelColor.PINK ? "pink," : "blue,");
+        out += "planet " + getCurPlanet();
         out += "}";
 
         //"Worm with { velocity " + getVX() + " and position " + getPosition() +"}";

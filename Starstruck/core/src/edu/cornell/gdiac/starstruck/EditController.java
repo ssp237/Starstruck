@@ -343,6 +343,7 @@ public class EditController extends WorldController implements ContactListener {
         OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
 
         if (input.didPrimary()){
+            //Scroll through planets
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
@@ -359,6 +360,7 @@ public class EditController extends WorldController implements ContactListener {
 
             level.add(current);
         } else if (input.didB()){
+            //Add a bug
             float camScaleX = camOffsetX / scale.x;
             float camScaleY = camOffsetY / scale.y;
             float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
@@ -369,7 +371,29 @@ public class EditController extends WorldController implements ContactListener {
             ((Planet) current).setBug(bugger);
             bugger.setPlanet((Planet) current);
             level.add(bugger);
-    }
+        } else if (((Planet) current).getBug() != null) {
+            //Switch bug type
+            if ((input.didLeft() && !input.leftPrevious()) || (input.didRight() && !input.rightPrevious())){
+                Planet p = (Planet) current;
+                Bug b = p.getBug();
+                level.remove(b);
+                switch (b.getType()) {
+                    case BUG: b = new ColoredBug(b.getX(), b.getY(), scale, ModelColor.PINK);
+                        ((ColoredBug) b).setSleeping(false); ((ColoredBug) b).setSpeed(0.0001f); break;
+                    case COLORED_BUG:
+                        switch (((ColoredBug) b).getColor())  {
+                            case PINK: b = new ColoredBug(b.getX(), b.getY(), scale, ModelColor.BLUE);
+                                ((ColoredBug) b).setSleeping(false); ((ColoredBug) b).setSpeed(0.0001f); break;
+                            case BLUE: b = new Bug(b.getX(), b.getY(),
+                                    JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class), scale); break;
+                        }
+                }
+                System.out.println(b);
+                level.add(b);
+                b.setPlanet(p);
+                p.setBug(b);
+            }
+        }
     }
 
     /**
@@ -586,6 +610,8 @@ public class EditController extends WorldController implements ContactListener {
 
         float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
         float h = (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y;
+
+        Urchin.tickTextures();
 
         if (current == null)
             updateCamera();

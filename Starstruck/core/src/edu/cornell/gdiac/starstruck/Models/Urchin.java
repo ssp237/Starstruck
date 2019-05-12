@@ -190,12 +190,6 @@ public class Urchin extends Enemy {
         return json;
     }
 
-    public void update(float dt) {
-        super.update(dt);
-        //System.out.println(getVX());
-
-    }
-
     public void draw(GameCanvas canvas) {
         if (length == 1) {
             canvas.draw(textures[0], Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),1,1.0f);

@@ -156,6 +156,7 @@ public class Bug extends Enemy {
         String out = "Bug with {texture: ";
         //System.out.println(texture);
         out += JsonAssetManager.getInstance().getKey(texture);
+        out += ", planet " + curPlanetEN;
 
         out += "}";
 
