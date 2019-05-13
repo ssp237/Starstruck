@@ -304,7 +304,7 @@ public class LevelModel {
         yPlay = playSize[1];
 
         TextureRegion textureboss = JsonAssetManager.getInstance().getEntry("octoboss talk", TextureRegion.class);
-        talkingboss = new TalkingBoss(3.5f, 17, textureboss, scale, 0);
+        talkingboss = new TalkingBoss(3.5f, 14, textureboss, scale, 0);
         activate(talkingboss);
         System.out.println(scale);
 
