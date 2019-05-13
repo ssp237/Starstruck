@@ -102,6 +102,8 @@ public class LevelModel {
 
     private TalkingBoss talkingboss;
 
+    public TalkingBoss getTalkingBoss() {return talkingboss;}
+
     /**
      * Returns the bounding rectangle for the physics world
      *
@@ -289,10 +291,6 @@ public class LevelModel {
 
 
 
-        TextureRegion textureboss = JsonAssetManager.getInstance().getEntry("octoboss talk", TextureRegion.class);
-        talkingboss = new TalkingBoss(50, 100, textureboss, scale, 0);
-
-
         String key = levelFormat.get("background").asString();
         background = JsonAssetManager.getInstance().getEntry(key, Texture.class);
 
@@ -304,6 +302,11 @@ public class LevelModel {
         scale.y = gSize[1]/pSize[1];
         xPlay = playSize[0];
         yPlay = playSize[1];
+
+        TextureRegion textureboss = JsonAssetManager.getInstance().getEntry("octoboss talk", TextureRegion.class);
+        talkingboss = new TalkingBoss(3.5f, 17, textureboss, scale, 0);
+        activate(talkingboss);
+        System.out.println(scale);
 
         player1 = AstronautModel.fromJson(levelFormat.get("astronaut 1"), scale, true);
         player1.setName("avatar");
@@ -475,6 +478,7 @@ public class LevelModel {
             world.dispose();
             world = new World(new Vector2(0,0), false);
         }
+        talkingboss = null;
         objects.clear();
         planets.clear();
         stars.clear();
@@ -532,6 +536,7 @@ public class LevelModel {
             case URCHIN: deactivate(obj); enemies.remove((Urchin) obj); break;
             case TUTORIAL: deactivate(obj); break;
             case ICE_CREAM: deactivate(obj); enemies.remove((IceCream) obj); break;
+            case TALKING_BOSS: deactivate(obj); talkingboss = null; break;
         }
     }
 
@@ -700,7 +705,7 @@ public class LevelModel {
 
         canvas.begin();
 
-        System.out.println("in here ag");
+        //System.out.println(talkingboss);
         float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
         float y = (float) Math.floor((canvas.getCamera().position.y - canvas.getHeight()/2)/canvas.getHeight()) * canvas.getHeight();
 
@@ -708,8 +713,6 @@ public class LevelModel {
         canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y,canvas.getWidth(),canvas.getHeight());
         canvas.draw(background, Color.WHITE, x, y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
         canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
-
-        talkingboss.draw(canvas);
 
         for(Planet p : planets.getPlanets()){
             p.draw(canvas);
@@ -727,6 +730,7 @@ public class LevelModel {
 
         if (debug) {
             canvas.beginDebug();
+            talkingboss.drawDebug(canvas);
             for(Planet p : planets.getPlanets()){
                 p.drawDebug(canvas);
             }

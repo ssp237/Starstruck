@@ -1668,6 +1668,12 @@ public class GameController extends WorldController implements ContactListener {
                 music_name = "milkyway";
             }
         }
+
+        if (level.getTalkingBoss() != null) {
+            if (level.getTalkingBoss().getPosition().x + level.getTalkingBoss().getWidth()/2 + 4 < 0){
+                level.remove(level.getTalkingBoss());
+            }
+        }
     }
 
     /**
@@ -1895,6 +1901,11 @@ public class GameController extends WorldController implements ContactListener {
 
             //Disable all collisions with portal
             if (bd1.getType() == ObstacleType.PORTAL || bd2.getType() == ObstacleType.PORTAL) {
+                contact.setEnabled(false);
+            }
+
+            //Disable all collisions with talking boss
+            if (bd1.getType() == ObstacleType.TALKING_BOSS || bd2.getType() == ObstacleType.TALKING_BOSS) {
                 contact.setEnabled(false);
             }
 

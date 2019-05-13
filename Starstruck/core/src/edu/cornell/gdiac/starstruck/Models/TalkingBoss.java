@@ -24,7 +24,7 @@ public class TalkingBoss extends Enemy {
     /** Counter for names */
     private static int worm_count = 1;
     /** Delay for talking boss to stay on screen */
-    private int delay_time = 1000;
+    private int delay_time = 100;
 
     private float x_original;
 
@@ -111,6 +111,9 @@ public class TalkingBoss extends Enemy {
     }
 
 
+    public boolean isSleeping() {return true;}
+
+
     /**
      * Sets the texture to the given filmstrip with size size and delay animDelay between frames.
      * @param texture The filmstrip to set
@@ -145,12 +148,14 @@ public class TalkingBoss extends Enemy {
         //System.out.println(this);
         //System.out.println(this);
 
-//        if (delay_time > 1) {
-//            delay_time--;
-//        }
-//        else {
-//            this.setVX(-1f);
-//        }
+        System.out.println("in talking boss update");
+
+        if (delay_time > 1) {
+            delay_time--;
+        }
+        else {
+            this.setVX(-2f);
+        }
 
     }
 
@@ -160,10 +165,11 @@ public class TalkingBoss extends Enemy {
 
     public void draw(GameCanvas canvas) {
         float effect = 1.0f;
+        //System.out.println(drawScale);
         canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),effect,1.0f);
     }
 
-    public ObstacleType getType() { return ObstacleType.WORM;}
+    public ObstacleType getType() { return ObstacleType.TALKING_BOSS;}
 
 
     /** Sets the place where the worm re-enters to the rightmost bound of the level*/
