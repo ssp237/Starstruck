@@ -100,6 +100,7 @@ public class LevelModel {
 
     public boolean getTutorial() {return isTutorial;}
 
+    private TalkingBoss talkingboss;
 
     /**
      * Returns the bounding rectangle for the physics world
@@ -285,6 +286,12 @@ public class LevelModel {
         float[] pSize = levelFormat.get("physicsSize").asFloatArray();
         int[] gSize = levelFormat.get("graphicSize").asIntArray();
         float[] playSize = levelFormat.get("playSize").asFloatArray();
+
+
+
+        TextureRegion textureboss = JsonAssetManager.getInstance().getEntry("octoboss talk", TextureRegion.class);
+        talkingboss = new TalkingBoss(50, 100, textureboss, scale, 0);
+
 
         String key = levelFormat.get("background").asString();
         background = JsonAssetManager.getInstance().getEntry(key, Texture.class);
@@ -693,6 +700,7 @@ public class LevelModel {
 
         canvas.begin();
 
+        System.out.println("in here ag");
         float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
         float y = (float) Math.floor((canvas.getCamera().position.y - canvas.getHeight()/2)/canvas.getHeight()) * canvas.getHeight();
 
@@ -700,6 +708,8 @@ public class LevelModel {
         canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y,canvas.getWidth(),canvas.getHeight());
         canvas.draw(background, Color.WHITE, x, y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
         canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
+
+        talkingboss.draw(canvas);
 
         for(Planet p : planets.getPlanets()){
             p.draw(canvas);
@@ -749,6 +759,7 @@ public class LevelModel {
 //        canvas.draw(background, Color.WHITE, x, y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
 //        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
 
+
         for(Planet p : planets.getPlanets()){
             p.draw(canvas);
         }
@@ -761,6 +772,7 @@ public class LevelModel {
         for (Enemy e: enemies) {
             e.draw(canvas);
         }
+        System.out.println("in here skgfh");
         canvas.end();
 
         if (debug) {
