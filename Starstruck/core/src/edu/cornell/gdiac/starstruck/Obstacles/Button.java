@@ -98,7 +98,7 @@ public class Button extends BoxObstacle {
         out += "pos: " + getPosition() + ", ";
         out += "width: " + getWidth() + ", ";
         out += "height: " + getHeight() + ", ";
-        out += "texture: " + getTexture() + ", ";
+        out += "texture: " + JsonAssetManager.getInstance().getKey(texture) + ", ";
         out += "}";
 
         return out;

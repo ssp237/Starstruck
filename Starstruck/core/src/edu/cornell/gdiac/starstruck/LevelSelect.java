@@ -111,6 +111,9 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     private Button replayButton;
     private Button nextButton;
 
+    /** Current selected button */
+    private int curButton = -1;
+
     /** Buttons to display upon winning a level */
     private PooledList<Button> winButtons;
 
@@ -161,9 +164,15 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         nextButton = new Button(0,0, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
                 world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("next glow", TextureRegion.class), "all levels");
 
-        winButtons.add(allLevels);
-        winButtons.add(replayButton);
-        winButtons.add(nextButton);
+        winButtons.add(0, replayButton);
+        winButtons.add(1, allLevels);
+        winButtons.add(2, nextButton);
+
+        print(winButtons.get(0) == winButtons.get(1));
+        print(replayButton == allLevels);
+        for (int i = 0; i < winButtons.size(); i++) {
+            print(winButtons.get(i));
+        }
 
         level.dispose();
 
@@ -520,29 +529,65 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param keycode one of the constants in {@link Input.Keys}
      * @return whether the input was processed */
     public boolean keyUp (int keycode) {
-        if (keycode == Input.Keys.RIGHT) {
-            //pressState = 0;
-            //print(currentLevel);
-            if (currentLevel == null) {
-                currentLevel = level.firstLevel;
-            } else if (currentLevel.nextLevel != null){
+        if (winPos == null) {
+            if (keycode == Input.Keys.RIGHT) {
+                //pressState = 0;
+                //print(currentLevel);
+                if (currentLevel == null) {
+                    currentLevel = level.firstLevel;
+                } else if (currentLevel.nextLevel != null) {
+                    currentLevel.setActive(false);
+                    currentLevel = currentLevel.nextLevel;
+                }
+                currentLevel.setActive(true);
+            } else if (keycode == Input.Keys.LEFT) {
+                //pressState = 0;
+                //print(currentLevel);
+                if (currentLevel == null) {
+                    currentLevel = level.firstLevel;
+                } else if (currentLevel.lastLevel != null) {
+                    currentLevel.setActive(false);
+                    currentLevel = currentLevel.lastLevel;
+                }
+                currentLevel.setActive(true);
+            } else if ((keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) && currentLevel != null) {
                 currentLevel.setActive(false);
-                currentLevel = currentLevel.nextLevel;
+                pressState = 2;
             }
-            currentLevel.setActive(true);
-        } else if (keycode == Input.Keys.LEFT) {
-            //pressState = 0;
-            //print(currentLevel);
-            if (currentLevel == null) {
-                currentLevel = level.firstLevel;
-            } else if (currentLevel.lastLevel != null){
-                currentLevel.setActive(false);
-                currentLevel = currentLevel.lastLevel;
+        } else {
+            if (keycode == Input.Keys.RIGHT) {
+                //pressState = 0;
+                //print(currentLevel);
+                if (curButton == -1) {
+                    curButton = 0;
+                } else {
+                    winButtons.get(curButton).setActive(false);
+                    curButton = (curButton + 1) % winButtons.size();
+                }
+                winButtons.get(curButton).setActive(true);
+            } else if (keycode == Input.Keys.LEFT) {
+                //pressState = 0;
+                //print(currentLevel);
+                if (curButton == -1) {
+                    curButton = 0;
+                } else {
+                    winButtons.get(curButton).setActive(false);
+                    curButton = (curButton - 1) % winButtons.size();
+                    if (curButton < 0) curButton += winButtons.size();
+                }
+                winButtons.get(curButton).setActive(true);
+            } else if ((keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) && curButton != -1) {
+                if (allLevels.getActive()) {
+                    animLoop++;
+                } else if (replayButton.getActive()) {
+                    replayButton.pushed = true;
+                } else if (nextButton.getActive()) {
+                    nextButton.pushed = true;
+                }
             }
-            currentLevel.setActive(true);
-        } else if ((keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) && currentLevel != null) {
-            currentLevel.setActive(false);
-            pressState = 2;
+//            print(curButton);
+//            print(winButtons);
+//            print(winButtons.get(curButton));
         }
         return true;
     };

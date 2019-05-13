@@ -325,7 +325,7 @@
              return tail.value;
          } else {
              Entry curr = head;
-             for (int ii = 1; ii < index; ii++) {
+             for (int ii = 0; ii < index; ii++) {
                  curr = curr.next;
              }
              return curr.value;
