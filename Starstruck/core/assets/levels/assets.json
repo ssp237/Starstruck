@@ -366,6 +366,10 @@
     "starbarglow": {
       "file": "default/starbarglow.png",
       "wrap": false
+    },
+    "starglow" : {
+      "file": "default/star_glow.png",
+      "wrap": false
     }
   },
   "filmstrips" : {

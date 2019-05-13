@@ -119,6 +119,8 @@ public class GameController extends WorldController implements ContactListener {
     private TextureRegion statusFrgRight;
     /** All stars collected glow for status bar */
     private Texture statusGlow;
+    /** Star glow asset for star bar */
+    private Texture starGlow;
 
     /** The width of the progress bar */
     private int widthBar = 448;
@@ -139,10 +141,10 @@ public class GameController extends WorldController implements ContactListener {
     private void drawStarBar(GameCanvas canvas) {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
 
-        float centerY = camera.position.y + ((float) canvas.getHeight())/2 - 60;
-        float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 10;
+        float centerY = camera.position.y + ((float) canvas.getHeight())/2 - 80;
+        float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 45;
         canvas.draw(statusBkgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
-        canvas.draw(statusBkgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + (widthBar /2) - PROGRESS_CAP_RIGHT*0.56f*scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+        canvas.draw(statusBkgRight, Color.WHITE, centerX + statusBkgMiddle.getRegionWidth() + 23, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
         canvas.draw(statusBkgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
 
         canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
@@ -152,11 +154,14 @@ public class GameController extends WorldController implements ContactListener {
             canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, span, PROGRESS_HEIGHT);
         } else if (starCount == totalStars) {
             canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
-            canvas.draw(statusFrgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + (widthBar /2) - PROGRESS_CAP_RIGHT*0.56f*scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+            canvas.draw(statusFrgRight, Color.WHITE, centerX + statusBkgMiddle.getRegionWidth() + 23, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
             canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
         }
         else {
             canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        }
+        if (openGoal) {
+            canvas.draw(starGlow, centerX-16, centerY-8);
         }
     }
 
@@ -440,6 +445,8 @@ public class GameController extends WorldController implements ContactListener {
         statusFrgLeft   = new TextureRegion(statusBar,0,offset,PROGRESS_CAP_LEFT,PROGRESS_HEIGHT);
         statusFrgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP_RIGHT,offset,PROGRESS_CAP_RIGHT,PROGRESS_HEIGHT);
         statusFrgMiddle = new TextureRegion(statusBar,PROGRESS_CAP_LEFT,offset,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
+
+        starGlow = JsonAssetManager.getInstance().getEntry("starglow", Texture.class);
 
         statusGlow = JsonAssetManager.getInstance().getEntry("starbarglow", Texture.class);
 
