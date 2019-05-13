@@ -531,6 +531,8 @@ public class GameController extends WorldController implements ContactListener {
         tutPointCache = null;
         tutDrawCache = null;
 
+        if (!anchors.isEmpty())
+            ANCHOR_DIST = anchors.get(0).getRadius()*2;
         winCount = level.winCount;
         openGoal = false;
 
@@ -689,12 +691,14 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void updateAnchor(AstronautModel avatar1, AstronautModel avatar2, float dt) {
         //If unanchored and anchor is hit
-        if (avatar1.isActive() && !avatar1.getOnPlanet() && !avatar1.isAnchored() && anchord() && !twoplayer
-                || twoplayer && !avatar1.getOnPlanet() && !avatar1.isAnchored() && anchord1()) {
-            for (Anchor a : anchors) {
-                SPIN_POS.set(a.getPosition());
+        if (avatar1.anchorHit()) {
+            avatar.setAnchorHit(false);
+            if (avatar1.isActive() && !avatar1.getOnPlanet() && !avatar1.isAnchored() && anchord() && !twoplayer
+                    || twoplayer && !avatar1.getOnPlanet() && !avatar1.isAnchored() && anchord1()) {
+                //print(avatar1.anchorHit());
+                SPIN_POS.set(avatar1.getCurAnchor().getPosition());
                 if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                    anchorHelp(avatar1, avatar2, a);
+                    anchorHelp(avatar1, avatar2, avatar1.getCurAnchor());
                     if (switchOnAnchor && !twoplayer) {
                         avatar1.setActive(false);
                         avatar2.setActive(true);
@@ -704,12 +708,13 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
-        if (avatar2.isActive() && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord() && !twoplayer
-                || twoplayer && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord2()) {
-            for (Anchor a : anchors) {
-                SPIN_POS.set(a.getPosition());
+        if (avatar2.anchorHit()) {
+            avatar2.setAnchorHit(false);
+            if (avatar2.isActive() && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord() && !twoplayer
+                    || twoplayer && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord2()) {
+                SPIN_POS.set(avatar2.getCurAnchor().getPosition());
                 if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                    anchorHelp(avatar2, avatar1, a);
+                    anchorHelp(avatar2, avatar1, avatar2.getCurAnchor());
                     if (switchOnAnchor && !twoplayer) {
                         avatar1.setActive(true);
                         avatar2.setActive(false);
@@ -1521,20 +1526,28 @@ public class GameController extends WorldController implements ContactListener {
         portal = false;
 
         if (twoplayer) {
+            Vector2 offset = new Vector2();
             if (reeled() && !avatar2.getOnPlanet() && !avatar2.isAnchored()) {
                 reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
 //                reelCache.setLength(REEL_FORCE);
 //                avatar2.getBody().applyForceToCenter(reelCache, true);
-                rope.reel(true, reelCache);
+                if (!avatar.getOnPlanet()) {
+                    offset = avatar2.getLinearVelocity().cpy().add(avatar.getLinearVelocity()).scl(0.5f);
+                }
+                rope.reel(true, reelCache, offset);
             }
             else rope.setLinearVelocity(reset);
             updateHelp(avatar, avatar2, dt);
 
+            offset.set(reset);
             if (reeled2() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
                 reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
 //                reelCache.setLength(REEL_FORCE);
 //                avatar.getBody().applyForceToCenter(reelCache, true);
-                rope.reel(false, reelCache);
+                if (!avatar2.getOnPlanet()) {
+                    offset = avatar.getLinearVelocity().cpy().add(avatar2.getLinearVelocity()).scl(0.5f);
+                }
+                rope.reel(false, reelCache, offset);
             }
             else rope.setLinearVelocity(reset);
             updateHelp(avatar2, avatar, dt);
@@ -1544,14 +1557,14 @@ public class GameController extends WorldController implements ContactListener {
             if (avatar.getOnPlanet() && !avatar2.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
-                    rope.reel(true, reelCache);
+                    rope.reel(true, reelCache, reset);
                 }
                 else rope.setLinearVelocity(reset);
             }
             else if (avatar2.getOnPlanet() && !avatar.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
-                    rope.reel(false, reelCache);
+                    rope.reel(false, reelCache, reset);
                 }
                 else rope.setLinearVelocity(reset);
             }
@@ -1940,6 +1953,31 @@ public class GameController extends WorldController implements ContactListener {
                     bd1N.equals("rope_plank"+n) || bd2N.equals("rope_plank"+n))) {
                 contact.setEnabled(false);
             }
+
+            //If astronaut 1 hits an anchor
+            if (bd1 == avatar && bd2.getType() == ObstacleType.ANCHOR) {
+                avatar.setAnchorHit(true);
+                avatar.setCurAnchor((Anchor)bd2);
+            }
+            else if (bd1.getType() == ObstacleType.ANCHOR && bd2 == avatar) {
+                avatar.setAnchorHit(true);
+                avatar.setCurAnchor((Anchor)bd1);
+            }
+//            else {
+//                avatar.setAnchorHit(false);
+//            }
+            //If astronaut 2 hits an anchor
+            if (bd1 == avatar2 && bd2.getType() == ObstacleType.ANCHOR) {
+                avatar2.setAnchorHit(true);
+                avatar2.setCurAnchor((Anchor)bd2);
+            }
+            else if (bd1.getType() == ObstacleType.ANCHOR && bd2 == avatar2) {
+                avatar2.setAnchorHit(true);
+                avatar2.setCurAnchor((Anchor)bd1);
+            }
+//            else {
+//                avatar2.setAnchorHit(false);
+//            }
 
             //If there is an active task
             if (tutorial) {

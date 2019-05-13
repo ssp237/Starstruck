@@ -569,16 +569,18 @@ public class Rope extends ComplexObstacle {
      *
      * @param isAvatar2 is avatar2 the one to be reeled
      */
-    public void reel(boolean isAvatar2, Vector2 dir) {
+    public void reel(boolean isAvatar2, Vector2 dir, Vector2 offset) {
         BoxObstacle plank;
         BoxObstacle plank0;
         dir.setLength(reel_force);
+        dir.add(offset);
         if (isAvatar2) {
             for (int i = bodies.size()-2; i >= 0; i--) { //i = bodies.size()-2;
                 plank = (BoxObstacle)bodies.get(i);
                 plank0 = (BoxObstacle)bodies.get(i+1);
                 dirCache = plank.getPosition().cpy().sub(plank0.getPosition());
                 dirCache.setLength(reel_force);
+                dirCache.add(offset);
                 if (i >= bodies.size()/2) {
                     plank.setLinearVelocity(dir);
 //                    plank.getBody().applyForceToCenter(dir, true);
@@ -590,14 +592,16 @@ public class Rope extends ComplexObstacle {
                     //plank.getBody().applyForceToCenter(dir, true);
                     //i--;
                 }
+                i--;
             }
         }
         else {
-            for (int i = 1; i < bodies.size()/2; i++) { //i < bodies.size()
+            for (int i = 1; i < bodies.size(); i++) { //i < bodies.size()/2
                 plank = (BoxObstacle) bodies.get(i);
                 plank0 = (BoxObstacle) bodies.get(i-1);
                 dirCache = plank.getPosition().cpy().sub(plank0.getPosition());
                 dirCache.setLength(reel_force);
+                dirCache.add(offset);
                 if (i <= bodies.size()/2) {
                     plank.setLinearVelocity(dir);
 //                    plank.getBody().applyForceToCenter(dir, true);
@@ -609,6 +613,7 @@ public class Rope extends ComplexObstacle {
                     //plank.getBody().applyForceToCenter(dir, true);
                     //i++;
                 }
+                i++;
             }
         }
     }
