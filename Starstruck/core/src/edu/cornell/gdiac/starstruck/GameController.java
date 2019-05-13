@@ -232,7 +232,7 @@ public class GameController extends WorldController implements ContactListener {
     /** The volume for music */
     private static final float MUSIC_VOLUME = 0.3f;
     /** The distance from an anchor at which an astronaut will be able to anchor */
-    private static float ANCHOR_DIST;// = 1f;
+    private static float ANCHOR_DIST = 1f;
     /** Speed of bug */
     private static final float BUG_SPEED = 0.01f;
     /** Speed of astronaut on planet */
@@ -531,7 +531,8 @@ public class GameController extends WorldController implements ContactListener {
         tutPointCache = null;
         tutDrawCache = null;
 
-        ANCHOR_DIST = anchors.get(0).getRadius()*2;
+        if (!anchors.isEmpty())
+            ANCHOR_DIST = anchors.get(0).getRadius()*2;
         winCount = level.winCount;
         openGoal = false;
 
