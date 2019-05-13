@@ -28,12 +28,12 @@ public class EditController extends WorldController implements ContactListener {
     private static final float PAN_CONST = 8;
     private static final float ZOOM_FACTOR = 0.02f;
     /** Bounds of this level */
-    private float screenX;
-    private float screenY;
+//    private float screenX;
+//    private float screenY;
 //    private float xBound = (1280*screenX) / scale.x;
 //    private float yBound = (720*screenY) / scale.y;
     /** Percentage of stars needed to open end portal */
-    private float winCond;
+    //private float winCond;
 
     private int portalPair = 1;
     private int task = 1;
@@ -78,6 +78,8 @@ public class EditController extends WorldController implements ContactListener {
     private static final String[] WORM_TEXTURES = { "blue worm", "green worm", "pink worm", "purple worm", "red worm", "yellow worm"};
     /** Possible berry textures */
     private static final String[] BERRY_TEXTURES = { "pink berry"};
+    /** Possible cacti textures */
+    private static final String[] CACTI_TEXTURES = { "cactus"};
     /** Current horizontally moving enemy textures */
     private String[] FISH_TEXTURES;
 
@@ -129,6 +131,7 @@ public class EditController extends WorldController implements ContactListener {
             switch (gal) {
                 case WHIRLPOOL: FISH_TEXTURES = WORM_TEXTURES; break;
                 case MILKYWAY: FISH_TEXTURES = BERRY_TEXTURES; break;
+                case SOMBRERO: FISH_TEXTURES = CACTI_TEXTURES; break;
                 default: FISH_TEXTURES = WORM_TEXTURES;
             }
 
@@ -144,10 +147,12 @@ public class EditController extends WorldController implements ContactListener {
         public float yBound;
 
         public BoundsListener(){
-            screenX = 1.5f;
-            screenY = 1.5f;
-            level.xPlay = screenX;
-            level.yPlay = screenY;
+//            screenX = 1.5f;
+//            screenY = 1.5f;
+            xBound = 1.5f;
+            yBound = 1.5f;
+            level.xPlay = xBound;
+            level.yPlay = yBound;
         }
 
         public void input (String text) {
@@ -159,10 +164,10 @@ public class EditController extends WorldController implements ContactListener {
                 }
                 xBound = Float.parseFloat(bounds[0].trim());
                 yBound = Float.parseFloat(bounds[1].trim());
-                screenX = xBound;
-                screenY = yBound;
-                level.xPlay = screenX;
-                level.yPlay = screenY;
+//                screenX = xBound;
+//                screenY = yBound;
+                level.xPlay = xBound;
+                level.yPlay = yBound;
                 for (Enemy e : level.enemies) {
                     if (e.getType() == ObstacleType.ICE_CREAM) {
                         ((IceCream) e).setUpBound(level.getBounds().getHeight() * yBound);
@@ -183,15 +188,16 @@ public class EditController extends WorldController implements ContactListener {
         public float winPer;
 
         public WinListener(){
-            winCond = 0.5f;
-            level.winPercent = winCond;
+            //winCond = 0.5f;
+            winPer = 0.5f;
+            level.winPercent = winPer;
         }
 
         public void input (String text) {
             try {
                 winPer = Float.parseFloat(text);
-                winCond = winPer;
-                level.winPercent = winCond;
+                //winCond = winPer;
+                level.winPercent = winPer;
 
             } catch (Exception e) {
                 System.out.println("Error setting win condition");
@@ -337,6 +343,7 @@ public class EditController extends WorldController implements ContactListener {
         OrthographicCamera camera = (OrthographicCamera)canvas.getCamera();
 
         if (input.didPrimary()){
+            //Scroll through planets
             Planet p = (Planet) current;
             level.remove(p);
             Vector2 pos = p.getPosition();
@@ -353,6 +360,7 @@ public class EditController extends WorldController implements ContactListener {
 
             level.add(current);
         } else if (input.didB()){
+            //Add a bug
             float camScaleX = camOffsetX / scale.x;
             float camScaleY = camOffsetY / scale.y;
             float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
@@ -363,7 +371,29 @@ public class EditController extends WorldController implements ContactListener {
             ((Planet) current).setBug(bugger);
             bugger.setPlanet((Planet) current);
             level.add(bugger);
-    }
+        } else if (((Planet) current).getBug() != null) {
+            //Switch bug type
+            if ((input.didLeft() && !input.leftPrevious()) || (input.didRight() && !input.rightPrevious())){
+                Planet p = (Planet) current;
+                Bug b = p.getBug();
+                level.remove(b);
+                switch (b.getType()) {
+                    case BUG: b = new ColoredBug(b.getX(), b.getY(), scale, ModelColor.PINK);
+                        ((ColoredBug) b).setSleeping(false); ((ColoredBug) b).setSpeed(0.0001f); break;
+                    case COLORED_BUG:
+                        switch (((ColoredBug) b).getColor())  {
+                            case PINK: b = new ColoredBug(b.getX(), b.getY(), scale, ModelColor.BLUE);
+                                ((ColoredBug) b).setSleeping(false); ((ColoredBug) b).setSpeed(0.0001f); break;
+                            case BLUE: b = new Bug(b.getX(), b.getY(),
+                                    JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class), scale); break;
+                        }
+                }
+                System.out.println(b);
+                level.add(b);
+                b.setPlanet(p);
+                p.setBug(b);
+            }
+        }
     }
 
     /**
@@ -376,13 +406,35 @@ public class EditController extends WorldController implements ContactListener {
             Urchin u = (Urchin) current;
             level.remove(u);
             Vector2 pos = u.getPosition();
-            current = new Urchin(pos.x , pos.y , scale, u.getLength() + 1, u.getOrientation());
+            if (u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL) {
+                current = new Urchin(pos.x, pos.y, scale, u.getLength() + 1, u.getOrientation());
+            } else {
+                if (u.getLength() > 1) {
+                    current = new Urchin(pos.x, pos.y, (u.getWidth() + u.midHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, u.getLength() + 1, u.getOrientation());
+                } else {
+                    current = new Urchin(pos.x, pos.y, (u.topHeight() + u.botHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, u.getLength() + 1, u.getOrientation());
+                }
+            }
             level.add(current);
         } else if (input.didDown()) {
             Urchin u = (Urchin) current;
             level.remove(u);
             Vector2 pos = u.getPosition();
-            current = new Urchin(pos.x, pos.y, scale, Math.max(u.getLength() - 1,1), u.getOrientation());
+            if (u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL) {
+                current = new Urchin(pos.x, pos.y, scale, Math.max(u.getLength() - 1, 1), u.getOrientation());
+            } else {
+                if (u.getLength() <= 2) {
+                    current = new Urchin(pos.x, pos.y, scale, 1, u.getOrientation());
+                } else if (u.getLength() == 3)  {
+                    current = new Urchin(pos.x, pos.y, (u.topHeight() + u.botHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, 2, u.getOrientation());
+                } else {
+                    current = new Urchin(pos.x, pos.y, (u.getWidth() - u.midHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, u.getLength() - 1, u.getOrientation());
+                }
+            }
             level.add(current);
         } else if ((input.didLeft() && !input.leftPrevious()) || (input.didRight() && !input.rightPrevious())) {
             Urchin u = (Urchin) current;
@@ -559,6 +611,8 @@ public class EditController extends WorldController implements ContactListener {
         float w = (input.xPos() - canvas.getWidth()/2) * (camera.zoom-1) / scale.x;
         float h = (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y;
 
+        Urchin.tickTextures();
+
         if (current == null)
             updateCamera();
         if (save.file != null) {
@@ -619,9 +673,9 @@ public class EditController extends WorldController implements ContactListener {
             } else if (input.shiftHeld() && input.didG()) {
                 Gdx.input.getTextInput(galListener, "Switch to what galaxy?", "whirlpool", "");
             } else if (input.shiftHeld() && input.didL()) {
-                Gdx.input.getTextInput(boundListener, "Size of level", screenX + ", " + screenY, "");
+                Gdx.input.getTextInput(boundListener, "Size of level", level.xPlay + ", " + level.yPlay, "");
             } else if (input.shiftHeld() && input.didW()) {
-                Gdx.input.getTextInput(winListener, "Win condition", winCond + "", "");
+                Gdx.input.getTextInput(winListener, "Win condition", level.winPercent + "", "");
             } else if (input.shiftHeld() && input.didD()) {
                 loadFile = null;
                 reset();
@@ -707,7 +761,7 @@ public class EditController extends WorldController implements ContactListener {
         String gal = galaxy.getChars();
         Texture background = JsonAssetManager.getInstance().getEntry(gal + " background", Texture.class);
         canvas.begin();
-        canvas.draw(background, 0, 0, canvas.getWidth()*screenX, canvas.getHeight()*screenY);
+        canvas.draw(background, 0, 0, canvas.getWidth()*level.xPlay, canvas.getHeight()*level.yPlay);
         for (TutorialPoint p : level.tutpoints) {
             p.getPinkPoint().draw(canvas);
             p.getBluePoint().draw(canvas);

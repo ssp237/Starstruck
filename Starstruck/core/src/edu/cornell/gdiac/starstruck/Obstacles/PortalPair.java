@@ -41,7 +41,7 @@ public class PortalPair {
     private PortalPair(float width, float height, float p1x, float p1y, float p2x, float p2y, boolean goal) {
         portal1 = new Portal(p1x, p1y, width, height, 1, goal);
         if (goal)
-            portal2 = new Portal(1000, 1000, width, height, 2, goal);
+            portal2 = new Portal(200, 200, width, height, 2, goal);
         else
             portal2 = new Portal(p2x, p2y, width, height, 2, goal);
         portal1.setBodyType(BodyDef.BodyType.StaticBody);
@@ -174,7 +174,7 @@ public class PortalPair {
 
     /**
      * Return a new anchor with parameters specified by the JSON
-     * @param json A JSON containing data for one anchor
+     * @param json A JSON containing data for one portal pair
      * @param scale The scale to convert physics units to drawing units
      * @return A star created according to the specifications in the JSON
      */

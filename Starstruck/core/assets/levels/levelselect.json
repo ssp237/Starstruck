@@ -24,14 +24,24 @@
   },
   "levels": [
     {
-      "x": 5,
-      "y": 6,
+      "x": 4,
+      "y": 4,
       "r": 3,
       "texture": "ls p1",
       "ring texture": "ls g1",
       "unlocked": "true",
       "completed": "false",
       "json file": "main/tutorial1.json"
+    },
+    {
+      "x": 8,
+      "y": 10,
+      "r": 3,
+      "texture": "ls p1",
+      "ring texture": "ls g1",
+      "unlocked": "true",
+      "completed": "false",
+      "json file": "main/tutorial2.json"
     },
     {
       "x": 6,
@@ -41,9 +51,8 @@
       "ring texture": "ls g1",
       "unlocked": "true",
       "completed": "false",
-      "json file": "main/tutorial2.json"
+      "json file": "main/tutorial3.json"
     },
-
     {
       "x": 12,
       "y": 15,
@@ -103,7 +112,7 @@
       "ring texture": "ls g7",
       "unlocked": "true",
       "completed": "false",
-      "json file": "main/tutorial2.json"
+      "json file": "whirlpool/oldTutorial.json"
     },
     {
       "x": 47,

@@ -140,7 +140,7 @@ public class IceCream extends Enemy {
         //System.out.println(upBound);
         if (getPosition().y > upBound + getHeight()/2) {
             delay_pos--;
-            System.out.println(delay_pos);
+            //System.out.println(delay_pos);
             if (delay_pos == 0) {
                 delay_pos = MAX_DELAY;
                 setPosition(x_original, -getHeight()/2);

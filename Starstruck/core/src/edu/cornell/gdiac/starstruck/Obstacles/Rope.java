@@ -251,6 +251,10 @@ public class Rope extends ComplexObstacle {
 
     public void setReelForce(float value) { reel_force = value; }
 
+    public Obstacle getCenterPlank() {
+        return bodies.get(bodies.size()/2);
+    }
+
     /**
      * Extends the rope
      *

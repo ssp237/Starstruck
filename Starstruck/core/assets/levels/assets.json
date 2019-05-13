@@ -44,6 +44,38 @@
       "file": "whirlpool/planets/static_gravity.ring4_v0.png",
       "wrap": false
     },
+    "so p1": {
+      "file": "sombrero/planets/static_planet1_v1.png",
+      "wrap": false
+    },
+    "so g1": {
+      "file": "sombrero/planets/static_gravity.ring1_v1.png",
+      "wrap": false
+    },
+    "so p2": {
+      "file": "sombrero/planets/static_planet2_v1.png",
+      "wrap": false
+    },
+    "so g2": {
+      "file": "sombrero/planets/static_gravity.ring2_v1.png",
+      "wrap": false
+    },
+    "so p3": {
+      "file": "sombrero/planets/static_planet3_v1.png",
+      "wrap": false
+    },
+    "so g3": {
+      "file": "sombrero/planets/static_gravity.ring3_v1.png",
+      "wrap": false
+    },
+    "so p4": {
+      "file": "sombrero/planets/static_planet4_v1.png",
+      "wrap": false
+    },
+    "so g4": {
+      "file": "sombrero/planets/static_gravity.ring4_v1.png",
+      "wrap": false
+    },
     "mw p1": {
       "file": "milky way/planets/static_planet1_v1.png",
       "wrap": false
@@ -228,28 +260,28 @@
       "file": "tutorial/tutorial_blue_dot.png",
       "wrap": false
     },
-    "jump": {
-      "file": "tutorial/jump.png",
+    "transparent": {
+      "file": "tutorial/transparent.png",
       "wrap": false
     },
-    "jump anchor pink": {
-      "file": "tutorial/jump_anchor_pink.png",
+    "anchor keyone": {
+      "file": "tutorial/static_keyboard_anchor.png",
       "wrap": false
     },
-    "jump pink reel blue": {
-      "file": "tutorial/jump_pink_reel_blue.png",
+    "jump keyone": {
+      "file": "tutorial/static_keyboard_jump.png",
       "wrap": false
     },
-    "switch jump blue": {
-      "file": "tutorial/switch_jump_blue.png",
+    "reel keyone": {
+      "file": "tutorial/static_keyboard_reel.png",
       "wrap": false
     },
-    "switch": {
-      "file": "tutorial/switch.png",
+    "switch keyone": {
+      "file": "tutorial/static_keyboard_switch.png",
       "wrap": false
     },
-    "move": {
-      "file": "tutorial/move.png",
+    "move keyone": {
+      "file": "tutorial/static_keyboard_move.png",
       "wrap": false
     },
     "levels button": {
@@ -288,6 +320,10 @@
     },
     "mw background": {
       "file": "milky way/background_milkyway_v1.png",
+      "wrap": false
+    },
+    "so background": {
+      "file": "sombrero/background_sombrero_v1.png",
       "wrap": false
     },
     "de background": {
@@ -411,7 +447,7 @@
       "rows": 1,
       "cols": 3,
       "size": 3,
-      "delay": 20
+      "delay": 5
     },
     "pink bug asleep": {
       "file": "enemies/bugs/pink_closed_filmstrip_small.png",
@@ -419,7 +455,7 @@
       "rows": 1,
       "cols": 3,
       "size": 3,
-      "delay": 20
+      "delay": 5
     },
     "blue bug awake": {
       "file": "enemies/bugs/blue_open_filmstrip_SMALL.png",
@@ -427,7 +463,7 @@
       "rows": 1,
       "cols": 3,
       "size": 3,
-      "delay": 20
+      "delay": 5
     },
     "blue bug asleep": {
       "file": "enemies/bugs/blue_closed_filmstrip_small.png",
@@ -435,7 +471,7 @@
       "rows": 1,
       "cols": 3,
       "size": 3,
-      "delay": 20
+      "delay": 5
     },
     "pink berry": {
       "file": "milky way/enemies/berries/animated_mwenemy(sberry)_biting.png",
@@ -443,6 +479,14 @@
       "rows": 1,
       "cols": 10,
       "size": 10,
+      "delay": 3
+    },
+    "cactus": {
+      "file": "sombrero/enemies/cacti/animated_cactus_spikes.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 14,
+      "size": 14,
       "delay": 3
     },
     "ice cream": {
@@ -481,9 +525,57 @@
       "file": "shared/animated_you.win_screen.png",
       "wrap": false,
       "rows": 1,
-      "cols": 25,
-      "size": 25,
+      "cols": 17,
+      "size": 17,
       "delay": 4
+    },
+    "spike single": {
+      "file": "enemies/animated_spike_circle.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 12,
+      "size": 12,
+      "delay": 7
+    },
+    "spike top": {
+      "file": "enemies/animated_spike_top.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 12,
+      "size": 12,
+      "delay": 7
+    },
+    "spike center": {
+      "file": "enemies/animated_spike_middle.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 12,
+      "size": 12,
+      "delay": 7
+    },
+    "spike bottom": {
+      "file": "enemies/animated_spike_bottom.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 12,
+      "size": 12,
+      "delay": 7
+    },
+    "pink dot animated": {
+      "file": "tutorial/animated_tutorial_pink.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 8,
+      "size": 8,
+      "delay": 20
+    },
+    "blue dot animated": {
+      "file": "tutorial/animated_tutorial_blue.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 8,
+      "size": 8,
+      "delay": 20
     }
   },
   "fonts": {

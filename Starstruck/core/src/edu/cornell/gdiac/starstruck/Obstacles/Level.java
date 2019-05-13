@@ -32,6 +32,8 @@ public class Level extends WheelObstacle {
     public String jsonFile;
     /** Next level; null if none. (makes a linked list of levels basically */
     public Level nextLevel;
+    /** Previous level; null if none. (makes a DOUBLY linked list of levels basically */
+    public Level lastLevel;
 
     private float grscale;
 
@@ -190,7 +192,10 @@ public class Level extends WheelObstacle {
         out += "radius: " + getRadius() + ", ";
         out += "file: " + jsonFile + ", ";
         if (nextLevel != null) {
-            out += "next: " + nextLevel.jsonFile;
+            out += "next: " + nextLevel.jsonFile + ", ";
+        }
+        if (lastLevel != null) {
+            out += "previous: " + lastLevel.jsonFile;
         }
         out += "}";
 

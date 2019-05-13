@@ -164,6 +164,12 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         winButtons.add(allLevels);
         winButtons.add(replayButton);
         winButtons.add(nextButton);
+
+        level.dispose();
+
+        levelFormat = jsonReader.parse(Gdx.files.internal("levels/levelselect.json"));
+        level.populate(levelFormat);
+        levels = level.getLevels();
     }
 
     // Physics constants for initialization
@@ -271,11 +277,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     public void reset() {
         Gdx.input.setInputProcessor(this);
 
-        level.dispose();
 
-        levelFormat = jsonReader.parse(Gdx.files.internal("levels/levelselect.json"));
-        level.populate(levelFormat);
-        levels = level.getLevels();
         //print(levels);
 
         setComplete(false);
@@ -347,15 +349,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     }
 
     /**
-     * Lays out the game geography.
-     */
-    private void populateLevel() {
-        // Add level goal
-        float dwidth;
-        float dheight;
-    }
-
-    /**
      * print method
      *
      * @param s what to print
@@ -387,6 +380,16 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
             camOffsetX = camOffsetX + PAN_CONST;
         }
         if (Gdx.input.getX() <= left && camera.position.x - camera.viewportWidth/2 > 0) {
+            camera.position.sub(new Vector3(PAN_CONST, 0, 0));
+            camOffsetX = camOffsetX - PAN_CONST;
+        }
+        if (currentLevel != null && currentLevel.getPosition().x * level.scale.x >= right + camera.position.x - canvas.getWidth()/2
+                && camera.position.x + camera.viewportWidth/2 < rightBound) {
+            camera.position.add(new Vector3(PAN_CONST, 0, 0));
+            camOffsetX = camOffsetX + PAN_CONST;
+        }
+        if (currentLevel != null && currentLevel.getPosition().x * level.scale.x <= left + camera.position.x - canvas.getWidth()/2
+                && camera.position.x - camera.viewportWidth/2 > 0) {
             camera.position.sub(new Vector3(PAN_CONST, 0, 0));
             camOffsetX = camOffsetX - PAN_CONST;
         }
@@ -517,6 +520,30 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param keycode one of the constants in {@link Input.Keys}
      * @return whether the input was processed */
     public boolean keyUp (int keycode) {
+        if (keycode == Input.Keys.RIGHT) {
+            //pressState = 0;
+            //print(currentLevel);
+            if (currentLevel == null) {
+                currentLevel = level.firstLevel;
+            } else if (currentLevel.nextLevel != null){
+                currentLevel.setActive(false);
+                currentLevel = currentLevel.nextLevel;
+            }
+            currentLevel.setActive(true);
+        } else if (keycode == Input.Keys.LEFT) {
+            //pressState = 0;
+            //print(currentLevel);
+            if (currentLevel == null) {
+                currentLevel = level.firstLevel;
+            } else if (currentLevel.lastLevel != null){
+                currentLevel.setActive(false);
+                currentLevel = currentLevel.lastLevel;
+            }
+            currentLevel.setActive(true);
+        } else if ((keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) && currentLevel != null) {
+            currentLevel.setActive(false);
+            pressState = 2;
+        }
         return true;
     };
 
@@ -642,16 +669,18 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 lastLevel = currentLevel;
                 nextLevel = currentLevel.nextLevel;
                 listener.exitScreen(this, WorldController.EXIT_PLAY, currentLevel.getFile());
-            } else if (replayButton.pushed && lastLevel != null && winSprite.justReset()) {
+            } else if (replayButton.pushed && lastLevel != null) {
                 Vector2 temp = winPos.cpy();
                 winPos = null;
+                winSprite.reset();
                 listener.exitScreen(this, WorldController.EXIT_PLAY, temp, lastLevel.jsonFile);
-            } else if (nextButton.pushed && nextLevel != null && winSprite.justReset()) {
+            } else if (nextButton.pushed && nextLevel != null) {
                 lastLevel = lastLevel.nextLevel;
                 nextLevel = lastLevel.nextLevel;
                 Vector2 temp = winPos.cpy();
                 winPos = null;
-                print(lastLevel.jsonFile);
+                winSprite.reset();
+                //print(lastLevel.jsonFile);
                 listener.exitScreen(this, WorldController.EXIT_PLAY, temp, lastLevel.jsonFile);
             }
         }
@@ -823,7 +852,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 canvas.end();
                 winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
 
-                if (winPos.x > death.getWidth()) {
+                if (winPos.x > canvas.getWidth()) {
                     animLoop = 0;
                     winPos = null;
                 }

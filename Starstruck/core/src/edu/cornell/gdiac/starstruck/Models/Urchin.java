@@ -22,7 +22,7 @@ public class Urchin extends Enemy {
     /** Prefix of all texture names */
     private static String pre;
     /**Textures for drawing. In order, single - top - middle - bottom.*/
-    private static TextureRegion[] textures;
+    private static FilmStrip[] textures;
     /** Number of body segments */
     private int length;
     /** Position of center of top chunk of the urchin (left if orientation is horizontal) */
@@ -58,7 +58,7 @@ public class Urchin extends Enemy {
         setName("urchin" + urchin_count);
         urchin_count++;
         setDrawScale(scale);
-        System.out.println("height: " + getHeight() + ", width: " + getWidth());
+        //System.out.println("height: " + getHeight() + ", width: " + getWidth());
 
     }
 
@@ -81,11 +81,18 @@ public class Urchin extends Enemy {
     public static void setTextures(String prefix) {
         //System.out.println("hi");
         pre = prefix;
-        textures = new TextureRegion[4];
-        textures[0] = JsonAssetManager.getInstance().getEntry(prefix + " single", TextureRegion.class);
-        textures[1] = JsonAssetManager.getInstance().getEntry(prefix + " top", TextureRegion.class);
-        textures[2] = JsonAssetManager.getInstance().getEntry(prefix + " center", TextureRegion.class);
-        textures[3] = JsonAssetManager.getInstance().getEntry(prefix + " bottom", TextureRegion.class);
+        textures = new FilmStrip[4];
+        textures[0] = JsonAssetManager.getInstance().getEntry(prefix + " single", FilmStrip.class);
+        textures[1] = JsonAssetManager.getInstance().getEntry(prefix + " top", FilmStrip.class);
+        textures[2] = JsonAssetManager.getInstance().getEntry(prefix + " center", FilmStrip.class);
+        textures[3] = JsonAssetManager.getInstance().getEntry(prefix + " bottom", FilmStrip.class);
+    }
+
+    /**Tick all textures used for the urchin. Behaves statically. */
+    public static void tickTextures(){
+        for (FilmStrip f : textures) {
+            f.tick();
+        }
     }
 
     public static String getTexturePrefix(){
@@ -97,6 +104,38 @@ public class Urchin extends Enemy {
     }
 
     public int getLength() {return length;}
+
+    /**
+     * Return the height of the top segment [of a vertical urchin with length >1). Assumes textures have been set.
+     * @return Return the height of the top segment [of a vertical urchin with length >1).
+     */
+    public float topHeight() {
+        return (textures[1].getRegionHeight()) /  getDrawScale().y;
+    }
+
+    /**
+     * Return the height of the bottom segment [of a vertical urchin with length >1). Assumes textures have been set.
+     * @return Return the height of the bottom segment [of a vertical urchin with length >1).
+     */
+    public float botHeight() {
+        return (textures[3].getRegionHeight()) /  getDrawScale().y;
+    }
+
+    /**
+     * Return the height of the middle segment [of a vertical urchin with length >2). Assumes textures have been set.
+     * @return Return the height of the middle segment [of a vertical urchin with length >1).
+     */
+    public float midHeight() {
+        return (textures[2].getRegionHeight()) /  getDrawScale().y;
+    }
+
+    /**
+     * Return the height of the single segment urchin. Assumes textures have been set.
+     * @return The height of a single segment urchin.
+     */
+    public float singleHeight() {
+        return (textures[0].getRegionHeight()) /  getDrawScale().y;
+    }
 
     /**
      * Return a new star with parameters specified by the JSON
@@ -151,12 +190,6 @@ public class Urchin extends Enemy {
         return json;
     }
 
-    public void update(float dt) {
-        super.update(dt);
-        //System.out.println(getVX());
-
-    }
-
     public void draw(GameCanvas canvas) {
         if (length == 1) {
             canvas.draw(textures[0], Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.y,getAngle(),1,1.0f);
@@ -164,11 +197,6 @@ public class Urchin extends Enemy {
             if (getOrientation() == Orientation.VERTICAL) {
                 t_y = getY() + getHeight()/2f - (textures[1].getRegionHeight()/(2f*getDrawScale().y));
                 t_x = getX();
-            } else {
-                t_y = getY();
-                t_x = getX() + getWidth ()/2f - (textures[1].getRegionWidth()/(2f*getDrawScale().x));
-            }
-            if (getOrientation() == Orientation.VERTICAL) {
                 float x = t_x;
                 float y = t_y;
                 canvas.draw(textures[1], Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 1, 1.0f);
@@ -182,17 +210,19 @@ public class Urchin extends Enemy {
 
                 canvas.draw(textures[3], Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 1, 1.0f);
             } else {
+                t_y = getY();
+                t_x = getX() + getWidth ()/2f - (textures[1].getRegionHeight()/(2f*getDrawScale().x));
                 float angle = (float) (3 * Math.PI / 2);
                 float x = t_x;
                 float y = t_y;
                 canvas.draw(textures[1], Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle() + angle, 1, 1.0f);
 
                 for (int i = 2; i < length; i++) {
-                    x -= textures[2].getRegionWidth() / getDrawScale().x;
+                    x -= textures[2].getRegionHeight() / getDrawScale().x;
                     canvas.draw(textures[2], Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle() + angle, 1, 1.0f);
                 }
 
-                x -= textures[2].getRegionWidth() / getDrawScale().x;
+                x -= textures[2].getRegionHeight() / getDrawScale().x;
 
                 canvas.draw(textures[3], Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle() + angle, 1, 1.0f);
             }
@@ -203,8 +233,9 @@ public class Urchin extends Enemy {
 
 
     public String toString(){
-        String out = "Urchin with { texture: ";
-        out += JsonAssetManager.getInstance().getKey(texture) + "}";
+        String out = "urch";
+//        String out = "Urchin with { texture: ";
+//        out += JsonAssetManager.getInstance().getKey(texture) + "}";
         return out;
     }
 

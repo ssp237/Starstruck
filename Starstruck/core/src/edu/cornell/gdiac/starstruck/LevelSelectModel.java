@@ -69,6 +69,9 @@ public class LevelSelectModel {
     /** List of portal pairs */
     protected ArrayList<PortalPair> portalpairs = new ArrayList<PortalPair>();
 
+    /**Pointer to the first level */
+    public Level firstLevel;
+
     /**
      * Returns the bounding rectangle for the physics world
      *
@@ -206,6 +209,8 @@ public class LevelSelectModel {
         while (levelVal != null) {
             Level level = Level.fromJSON(levelVal, scale, world);
             if (lastLevel != null) lastLevel.nextLevel = level;
+            else firstLevel = level;
+            level.lastLevel = lastLevel;
             levels.add(level);
             levelVal = levelVal.next();
             lastLevel = level;

@@ -22,6 +22,7 @@ import com.badlogic.gdx.physics.box2d.joints.*;
 import com.badlogic.gdx.math.collision.*;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.GameCanvas;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
 public class Star extends BoxObstacle {
@@ -54,6 +55,8 @@ public class Star extends BoxObstacle {
     private String tutName;
     /** For tutorial, is this object hit */
     private boolean hit;
+    /** The asset for tutorial points */
+    private FilmStrip tutText;
 
 
     /**
@@ -120,6 +123,12 @@ public class Star extends BoxObstacle {
         this(x,y,texture.getRegionWidth()/scale.x,texture.getRegionHeight()/scale.y);
         setDrawScale(scale);
         setTexture(texture);
+    }
+
+    public Star(float x, float y, FilmStrip texture, Vector2 scale) {
+        this(x, y, texture.getRegionWidth() / scale.x, texture.getRegionHeight()/scale.y);
+        setDrawScale(scale);
+        tutText = texture;
     }
 
     /**
@@ -281,7 +290,7 @@ public class Star extends BoxObstacle {
      */
     public void draw(GameCanvas canvas) {
         if (getType() == ObstacleType.TUTORIAL && !hit) {
-            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+            canvas.draw(tutText, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
 //            if (getColor().equals("pink"))
 //                canvas.draw(texture, Color.PINK,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),2f,2f);
 //            else if (color.equals("blue"))
