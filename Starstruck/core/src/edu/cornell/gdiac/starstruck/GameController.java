@@ -1521,20 +1521,28 @@ public class GameController extends WorldController implements ContactListener {
         portal = false;
 
         if (twoplayer) {
+            Vector2 offset = new Vector2();
             if (reeled() && !avatar2.getOnPlanet() && !avatar2.isAnchored()) {
                 reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
 //                reelCache.setLength(REEL_FORCE);
 //                avatar2.getBody().applyForceToCenter(reelCache, true);
-                rope.reel(true, reelCache);
+                if (!avatar.getOnPlanet()) {
+                    offset = avatar2.getLinearVelocity().cpy().add(avatar.getLinearVelocity()).scl(0.5f);
+                }
+                rope.reel(true, reelCache, offset);
             }
             else rope.setLinearVelocity(reset);
             updateHelp(avatar, avatar2, dt);
 
+            offset.set(reset);
             if (reeled2() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
                 reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
 //                reelCache.setLength(REEL_FORCE);
 //                avatar.getBody().applyForceToCenter(reelCache, true);
-                rope.reel(false, reelCache);
+                if (!avatar2.getOnPlanet()) {
+                    offset = avatar.getLinearVelocity().cpy().add(avatar2.getLinearVelocity()).scl(0.5f);
+                }
+                rope.reel(false, reelCache, offset);
             }
             else rope.setLinearVelocity(reset);
             updateHelp(avatar2, avatar, dt);
@@ -1544,14 +1552,14 @@ public class GameController extends WorldController implements ContactListener {
             if (avatar.getOnPlanet() && !avatar2.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
-                    rope.reel(true, reelCache);
+                    rope.reel(true, reelCache, reset);
                 }
                 else rope.setLinearVelocity(reset);
             }
             else if (avatar2.getOnPlanet() && !avatar.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
-                    rope.reel(false, reelCache);
+                    rope.reel(false, reelCache, reset);
                 }
                 else rope.setLinearVelocity(reset);
             }
