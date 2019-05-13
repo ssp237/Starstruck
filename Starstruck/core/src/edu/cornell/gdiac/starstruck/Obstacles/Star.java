@@ -271,7 +271,7 @@ public class Star extends BoxObstacle {
 
     public void update(float dt) {
         if (getType() == ObstacleType.TUTORIAL) {
-
+            tutText.tick();
         }
     }
 
