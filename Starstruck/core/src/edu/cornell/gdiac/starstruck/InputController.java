@@ -139,6 +139,16 @@ public class InputController {
     private boolean bPrevious;
     private boolean iPressed;
     private boolean iPrevious;
+    private boolean selUp;
+    private boolean selUpPrev;
+    private boolean selDown;
+    private boolean selDownPrev;
+    private boolean selLeft;
+    private boolean selLeftPrev;
+    private boolean selRight;
+    private boolean selRightPrev;
+    private boolean selectPressed;
+    private boolean selectPrevious;
 
     /** Mouse's current position*/
     private float x_pos;
@@ -448,9 +458,19 @@ public class InputController {
         return xboxLeft2 || xboxRight2 || xboxUp2 || xboxDown2;
     }
 
-    public float xPos() {return Gdx.input.getX();}
+    public boolean selUp() { return selUp && !selUpPrev; }
 
-    public float yPos() {return Gdx.input.getY();}
+    public boolean selDown() { return selDown && !selDownPrev; }
+
+    public boolean selLeft() { return selLeft && !selLeftPrev; }
+
+    public boolean selRight() { return selRight && !selRightPrev; }
+
+    private boolean didSelect() { return selectPressed && !selectPrevious; }
+
+    public float xPos() {return Gdx.input.getX(); }
+
+    public float yPos() {return Gdx.input.getY(); }
 
     /**
      * Is shift being held down?
@@ -567,6 +587,11 @@ public class InputController {
         tPrevious = tPressed;
         bPrevious = bPressed;
         iPrevious = iPressed;
+        selUpPrev = selUp;
+        selDownPrev = selDown;
+        selLeftPrev = selLeft;
+        selRightPrev = selRight;
+        selectPrevious = selectPressed;
 
         // Check to see if a GamePad is connected
         if (xbox.isConnected() && xbox2.isConnected()) { // Both controllers connected
@@ -620,6 +645,12 @@ public class InputController {
         xboxLeft = xbox.getLeftX() < -0.6; //left
         xboxRight = xbox.getLeftX() > 0.6; //right
 
+        selUp = xbox.getLeftY() < -0.6;
+        selDown = xbox.getLeftY() > 0.6;
+        selLeft = xbox.getLeftX() < -0.6;
+        selRight = xbox.getLeftX() > 0.6;
+        selectPressed = xbox.getA();
+
         // Move the crosshairs with the right stick.
         //tertiaryPressed = xbox.getA();
 //        crosscache.set(xbox.getLeftX(), xbox.getLeftY());
@@ -669,6 +700,12 @@ public class InputController {
         xboxUp2 = xbox2.getLeftY() < -0.6;
         xboxLeft2 = xbox2.getLeftX() < -0.6; //left
         xboxRight2 = xbox2.getLeftX() > 0.6; //right
+
+        selUp = xbox2.getLeftY() < -0.6;
+        selDown = xbox2.getLeftY() > 0.6;
+        selLeft = xbox2.getLeftX() < -0.6;
+        selRight = xbox2.getLeftX() > 0.6;
+        selectPressed = xbox2.getA();
     }
 
     /**
@@ -681,6 +718,7 @@ public class InputController {
      * @param secondary true if the keyboard should give priority to a gamepad
      */
     private void readKeyboard(Rectangle bounds, Vector2 scale, boolean secondary) {
+        Input input = Gdx.input;
         // Give priority to gamepad results
         debugPressed = (secondary && debugPressed) || (Gdx.input.isKeyPressed(Input.Keys.Y));
         primePressed = (secondary && primePressed) || (Gdx.input.isKeyPressed(Input.Keys.UP));
@@ -710,14 +748,19 @@ public class InputController {
         fourPressed = Gdx.input.isKeyPressed(Input.Keys.NUM_4);
         fivePressed = (secondary && fivePressed) || Gdx.input.isKeyPressed(Input.Keys.NUM_5);
         resetPressed = (secondary && resetPressed) || Gdx.input.isKeyPressed(Input.Keys.R);
-        gameResetPress = (secondary && gameResetPress) || Gdx.input.isKeyPressed(Input.Keys.BACKSPACE);
-        anchorPressed = (secondary && anchorPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE));
-        anchor1Pressed = (secondary && anchor1Pressed) || (Gdx.input.isKeyPressed(Input.Keys.SLASH));
-        anchor2Pressed = (secondary && anchor2Pressed) || (Gdx.input.isKeyPressed(Input.Keys.E));
+        gameResetPress = (secondary && gameResetPress) || Gdx.input.isKeyPressed(Input.Keys.R);
+        anchorPressed = (secondary && anchorPressed) || (Gdx.input.isKeyPressed(Input.Keys.SPACE) || input.isKeyJustPressed(Input.Keys.UP));
+        anchor1Pressed = (secondary && anchor1Pressed) || (Gdx.input.isKeyPressed(Input.Keys.UP));
+        anchor2Pressed = (secondary && anchor2Pressed) || (Gdx.input.isKeyPressed(Input.Keys.W));
         lPressed = (secondary && lPressed) || (Gdx.input.isKeyPressed(Input.Keys.L));
         tPressed = (secondary && tPressed) || (Gdx.input.isKeyPressed(Input.Keys.T));
         bPressed = (secondary && bPressed) || (Gdx.input.isKeyPressed(Input.Keys.B));
         iPressed = (secondary && iPressed) || (Gdx.input.isKeyPressed(Input.Keys.I));
+        selUp = (secondary && selUp) || (input.isKeyPressed(Input.Keys.UP));
+        selDown = (secondary && selDown) || (input.isKeyPressed(Input.Keys.DOWN));
+        selLeft = (secondary && selLeft) || (input.isKeyPressed(Input.Keys.LEFT));
+        selRight = (secondary && selRight) || (input.isKeyPressed(Input.Keys.RIGHT));
+        selectPressed = (secondary && selectPressed) || (input.isKeyPressed(Input.Keys.SPACE));
         //ONLY FOR XBOX
         xboxLeft = secondary && xboxLeft; //|| false;
         xboxRight = secondary && xboxRight; //|| false;

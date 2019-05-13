@@ -728,7 +728,7 @@ public class GameController extends WorldController implements ContactListener {
                         avatar2.setFixedRotation(true);
                 }
             }
-            if (InputController.getInstance().didPrimary() && avatar1.isActive() && !twoplayer
+            if (anchord() && avatar1.isActive() && !twoplayer
                     || twoplayer && InputController.getInstance().didPrimary()) { //If anchored was hit unanchor, uananchor and move
                 //avatar1.setUnAnchored();
                 //avatar2.swing = false;
@@ -768,7 +768,7 @@ public class GameController extends WorldController implements ContactListener {
 
                 }
             }
-            if (InputController.getInstance().didPrimary() && avatar2.isActive() && !twoplayer
+            if (anchord() && avatar2.isActive() && !twoplayer
                     || twoplayer && InputController.getInstance().didW()) { //If anchored was hit unanchor, uananchor and move
                 //avatar2.setUnAnchored();
                 //avatar1.swing = false;
@@ -929,7 +929,7 @@ public class GameController extends WorldController implements ContactListener {
             if (input.didRight() && !input.leftPrevious() || input.didLeft() && !input.rightPrevious()) {
                 avatar.moving = true;
             }
-            if (input.didPrimary() && !auto && !testC) {
+            if (anchord() && !auto && !testC) {
                 //print(contactPoint);
                 avatar.setJumping(true);
                 SoundController.getInstance().play(JUMP_FILE, JUMP_FILE, false, EFFECT_VOLUME);
