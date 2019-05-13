@@ -822,8 +822,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 Color drawColor = new Color(1, 1, 1, 1);
                 canvas.draw(death, drawColor, winPos.x,
                         winPos.y, death.getWidth(), death.getHeight());
-                canvas.draw(winSprite, Color.WHITE, winSprite.getRegionWidth() / 2, winSprite.getRegionHeight() / 2,
-                        winPos.x + death.getWidth() / 2,
+                canvas.draw(winSprite, Color.WHITE, (float) winSprite.getRegionWidth() / 2, (float) winSprite.getRegionHeight() / 2,
+                        winPos.x + (float) death.getWidth() / 2,
                         winPos.y + 3 * (float) canvas.getHeight() / 4, 0, 1, 1.0f);
 
                 if (animLoop >= 1){
@@ -846,8 +846,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 Color drawColor = new Color(1,1,1, 1);
                 canvas.draw(death, drawColor, winPos.x,
                         winPos.y, death.getWidth(), death.getHeight());
-                canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
-                        winPos.x + death.getWidth()/2,
+                canvas.draw(winSprite, Color.WHITE,(float) winSprite.getRegionWidth()/2,(float) winSprite.getRegionHeight()/2,
+                        winPos.x + (float) death.getWidth()/2,
                         (winPos.y + 3 * (float) canvas.getHeight() / 4 ),0,1,1.0f);;
                 canvas.end();
                 winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
