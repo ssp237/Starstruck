@@ -120,6 +120,19 @@ public class GameController extends WorldController implements ContactListener {
     /** All stars collected glow for status bar */
     private Texture statusGlow;
 
+    /**whirlpool galaxy talking octoboss texture (filmstrip)*/
+    private FilmStrip octobossTexture;// = JsonAssetManager.getInstance().getEntry("octoboss", FilmStrip.class);
+    /** whirlpool galaxy boss talking */
+    private TalkingBoss octoboss;// = new TalkingBoss(-1f, ((float) (canvas.getHeight()/2)), octobossTexture, scale);
+
+    /** true if is a boss level */
+    private boolean isBossLevel = true;
+    public void setIsBossLevel(boolean boss) {
+        isBossLevel = boss;
+    }
+    private int bossDelay = 10;
+
+
     /** The width of the progress bar */
     private int widthBar = 448;
     /** The x-coordinate of the center of the progress bar */
@@ -158,6 +171,17 @@ public class GameController extends WorldController implements ContactListener {
         else {
             canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
         }
+    }
+
+    private void drawTalkingOctoBoss(GameCanvas canvas) {
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
+
+        float centerY = camera.position.y + ((float) canvas.getHeight())/2;
+        float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 10;
+
+        //canvas.draw(octoboss, centerX, centerY);
+
+
     }
 
         /**
@@ -444,6 +468,11 @@ public class GameController extends WorldController implements ContactListener {
         statusGlow = JsonAssetManager.getInstance().getEntry("starbarglow", Texture.class);
 
         displayFont = JsonAssetManager.getInstance().getEntry("retro game", BitmapFont.class);
+
+        //octoboss = JsonAssetManager.getInstance().getEntry("octoboss", Texture.class);
+
+       octobossTexture = JsonAssetManager.getInstance().getEntry("octoboss", FilmStrip.class);
+       octoboss = new TalkingBoss(-1f, ((float) (canvas.getHeight()/2)), octobossTexture, scale);
 
         if (music != null) {
             music.stop();
@@ -1630,6 +1659,12 @@ public class GameController extends WorldController implements ContactListener {
 
         //MUSIC
 
+        if (music != null && music.isPlaying()) {
+            System.out.println("game controller music is playing");
+        } else {
+            System.out.println("game controller music not playing");
+        }
+
         if (level.getGalaxy() == Galaxy.DEFAULT) {
             if (music != null && music_name != "tutorial") {
                 music.stop();
@@ -2030,6 +2065,19 @@ public class GameController extends WorldController implements ContactListener {
 
         canvas.begin();
         drawStarBar(canvas);
+        octoboss.draw(canvas);
+
+        //TALKING BOSS
+        if(isBossLevel) {
+            if (galaxy == Galaxy.WHIRLPOOL) {
+                drawTalkingOctoBoss(canvas);
+                if (bossDelay < 1) {
+                    isBossLevel = false;
+                }
+            }
+        }
+
+
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         if (tutDrawCache != null) {
             TextureRegion text = tutDrawCache.getTask();

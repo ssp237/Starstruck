@@ -251,6 +251,13 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 //        if (GameController.getMusic() != null) {
 //
 //        }
+        if (music != null && music.isPlaying()) {
+            System.out.println("menu mode music is playing");
+        } else {
+            System.out.println("menu mode music not playing");
+        }
+
+
         if (!music.isPlaying()) {
             //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
             music.play();
