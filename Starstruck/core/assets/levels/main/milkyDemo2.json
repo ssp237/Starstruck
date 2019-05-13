@@ -4,6 +4,7 @@
 	"playSize": [1.5, 1.5],
 	"win": "0.5",
 	"galaxy": "milky way",
+	"has boss": false,
 	"background": "mw background",
 	"tutorialpoints": [],
 	"astronaut 1": {

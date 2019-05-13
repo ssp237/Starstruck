@@ -96,6 +96,9 @@ public class LevelModel {
     protected float xPlay;
     protected float yPlay;
 
+    /**Is there a boss in this level?*/
+    private boolean hasBoss;
+
     private boolean isTutorial = false;
 
     public boolean getTutorial() {return isTutorial;}
@@ -264,6 +267,7 @@ public class LevelModel {
         this.scale = scale;
         debug  = false;
         planets = new PlanetList(scale);
+        hasBoss = false;
     }
 
 
@@ -291,6 +295,8 @@ public class LevelModel {
 
         String gal = levelFormat.get("galaxy").asString();
         setGalaxy(Galaxy.fromString(gal));
+
+        hasBoss = levelFormat.get("has boss").asBoolean();
 
         bounds = new Rectangle(0,0,pSize[0],pSize[1]);
         scale.x = gSize[0]/pSize[0];
@@ -477,6 +483,7 @@ public class LevelModel {
         tutpoints.clear();
         //MenuMode.getMusic().dispose();
         vectorWorld = new VectorWorld();
+        hasBoss = false;
     }
 
     /**
@@ -612,6 +619,7 @@ public class LevelModel {
         //Add Galaxy
 
         out.addChild("galaxy", new JsonValue(galaxy.fullName()));
+        out.addChild("has boss", new JsonValue(hasBoss));
 
         //Add background
         out.addChild("background", new JsonValue(JsonAssetManager.getInstance().getKey(background)));

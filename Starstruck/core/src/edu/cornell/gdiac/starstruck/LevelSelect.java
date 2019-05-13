@@ -52,7 +52,7 @@ import java.util.ArrayList;
 public class LevelSelect extends WorldController implements Screen, InputProcessor, ControllerListener {
 
     /** Speed of camera pan & zoom */
-    private static final float PAN_CONST = 5;
+    private static final float PAN_CONST = 10;
     /** The reader to process JSON files */
     private JsonReader jsonReader;
     /** The JSON asset directory */
@@ -387,17 +387,14 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         if (Gdx.input.getX() >= right && camera.position.x + camera.viewportWidth/2 < rightBound) {
             camera.position.add(new Vector3(PAN_CONST, 0, 0));
             camOffsetX = camOffsetX + PAN_CONST;
-        }
-        if (Gdx.input.getX() <= left && camera.position.x - camera.viewportWidth/2 > 0) {
+        } else if (Gdx.input.getX() <= left && camera.position.x - camera.viewportWidth/2 > 0) {
             camera.position.sub(new Vector3(PAN_CONST, 0, 0));
             camOffsetX = camOffsetX - PAN_CONST;
-        }
-        if (currentLevel != null && currentLevel.getPosition().x * level.scale.x >= right + camera.position.x - canvas.getWidth()/2
+        } else if (currentLevel != null && currentLevel.getPosition().x * level.scale.x >= right + camera.position.x - canvas.getWidth()/2
                 && camera.position.x + camera.viewportWidth/2 < rightBound) {
             camera.position.add(new Vector3(PAN_CONST, 0, 0));
             camOffsetX = camOffsetX + PAN_CONST;
-        }
-        if (currentLevel != null && currentLevel.getPosition().x * level.scale.x <= left + camera.position.x - canvas.getWidth()/2
+        } else if (currentLevel != null && currentLevel.getPosition().x * level.scale.x <= left + camera.position.x - canvas.getWidth()/2
                 && camera.position.x - camera.viewportWidth/2 > 0) {
             camera.position.sub(new Vector3(PAN_CONST, 0, 0));
             camOffsetX = camOffsetX - PAN_CONST;
