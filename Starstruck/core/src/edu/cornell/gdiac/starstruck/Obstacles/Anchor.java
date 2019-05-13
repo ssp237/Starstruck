@@ -21,24 +21,24 @@ import com.badlogic.gdx.physics.box2d.joints.*;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
-public class Anchor extends ComplexObstacle {
-    /** The debug name for the entire obstacle */
-    private static final String SPINNER_NAME = "anchor_spinner";
-    /** The debug name for the spinning barrier */
-    private static final String BARRIER_NAME = "anchor_barrier";
-    /** The debug name for the central pin */
-    private static final String SPIN_PIN_NAME = "anchor_pin";
-    /** The density for most physics objects */
-    private static final float LIGHT_DENSITY = 0.0f;
-    /** The density for a bullet */
-    private static final float HEAVY_DENSITY = 10.0f;
-    /** The radius of the central pin */
-    private static final float SPIN_PIN_RADIUS = 0.1f;
-
-    /** The primary spinner obstacle */
-    private BoxObstacle barrier;
-
-    private WheelObstacle pivot;
+public class Anchor extends WheelObstacle {
+//    /** The debug name for the entire obstacle */
+//    private static final String SPINNER_NAME = "anchor_spinner";
+//    /** The debug name for the spinning barrier */
+//    private static final String BARRIER_NAME = "anchor_barrier";
+//    /** The debug name for the central pin */
+//    private static final String SPIN_PIN_NAME = "anchor_pin";
+//    /** The density for most physics objects */
+//    private static final float LIGHT_DENSITY = 0.0f;
+//    /** The density for a bullet */
+//    private static final float HEAVY_DENSITY = 10.0f;
+//    /** The radius of the central pin */
+//    private static final float SPIN_PIN_RADIUS = 0.1f;
+//
+//    /** The primary spinner obstacle */
+//    private BoxObstacle barrier;
+//
+//    private WheelObstacle pivot;
 
     /**
      * Creates a new spinner at the origin.
@@ -50,9 +50,9 @@ public class Anchor extends ComplexObstacle {
      * @param width		The object width in physics units
      * @param height	The object width in physics units
      */
-    public Anchor(float width, float height) {
-        this(0,0,width,height);
-    }
+//    public Anchor(float width, float height) {
+//        this(0,0,width,height);
+//    }
 
     /**
      * Creates a new spinner at the given position.
@@ -63,32 +63,29 @@ public class Anchor extends ComplexObstacle {
      *
      * @param x  		Initial x position of the avatar center
      * @param y  		Initial y position of the avatar center
-     * @param width		The object width in physics units
-     * @param height	The object width in physics units
+     * @param radius
      */
-    public Anchor(float x, float y, float width, float height) {
-        super(x,y);
-        setName(SPINNER_NAME);
+    public Anchor(float x, float y, float radius) {
+        super(x,y, radius);
+        setName("anchor");
 
-        // Create the barrier
-        barrier = new BoxObstacle(x,y,width,height);
-        barrier.setName(BARRIER_NAME);
-        barrier.setDensity(HEAVY_DENSITY);
-        bodies.add(barrier);
-
-        //#region INSERT CODE HERE
-        // Create a pin to anchor the barrier
-        pivot = new WheelObstacle(x,y,SPIN_PIN_RADIUS);
-        pivot.setName(SPIN_PIN_NAME);
-        pivot.setDensity(LIGHT_DENSITY);
-        pivot.setBodyType(BodyDef.BodyType.StaticBody);
-        bodies.add(pivot);
-
+//        setName(SPINNER_NAME);
+//
+//        // Create the barrier
+//        barrier = new BoxObstacle(x,y,width,height);
+//        barrier.setName(BARRIER_NAME);
+//        barrier.setDensity(HEAVY_DENSITY);
+//        bodies.add(barrier);
+//
+//        // Create a pin to anchor the barrier
+//        pivot = new WheelObstacle(x,y,SPIN_PIN_RADIUS);
+//        pivot.setName(SPIN_PIN_NAME);
+//        pivot.setDensity(LIGHT_DENSITY);
+//        pivot.setBodyType(BodyDef.BodyType.StaticBody);
+//        bodies.add(pivot);
 
         // Radius: SPIN_PIN_RADIUS
         // Density: LIGHT_DENSITY
-
-        //#endregion
     }
 
     /**
@@ -99,7 +96,7 @@ public class Anchor extends ComplexObstacle {
      * @param scale Draw scale for the new anchor
      */
     public Anchor(float x, float y, TextureRegion texture, Vector2 scale) {
-        this(x,y,texture.getRegionWidth()/scale.x,texture.getRegionHeight()/scale.y);
+        this(x,y,texture.getRegionWidth()/scale.x/2);
         setDrawScale(scale);
         setTexture(texture);
     }
@@ -114,7 +111,7 @@ public class Anchor extends ComplexObstacle {
         String key = json.get("texture").asString();
         TextureRegion texture = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
         Anchor out =  new Anchor(json.get("x").asFloat(), json.get("y").asFloat(),
-                texture.getRegionWidth()/scale.x, texture.getRegionHeight()/scale.y);
+                texture.getRegionWidth()/scale.x/2);
         out.setDrawScale(scale);
         out.setTexture(texture);
         return out;
@@ -141,34 +138,6 @@ public class Anchor extends ComplexObstacle {
         return json;
     }
 
-    /**
-     * Creates the joints for this object.
-     *
-     * We implement our custom logic here.
-     *
-     * @param world Box2D world to store joints
-     *
-     * @return true if object allocation succeeded
-     */
-    protected boolean createJoints(World world) {
-        assert bodies.size() > 0;
-
-        //#region INSERT CODE HERE
-        // Attach the barrier to the pin here
-
-        RevoluteJointDef jointDef = new RevoluteJointDef();
-
-        jointDef.bodyA = barrier.getBody();
-        jointDef.bodyB = pivot.getBody();
-        jointDef.collideConnected = false;
-        Joint joint = world.createJoint(jointDef);
-        joints.add(joint);
-
-        //#endregion
-
-        return true;
-    }
-
     public String toString() {
         String out = "Anchor with {";
 
@@ -178,17 +147,18 @@ public class Anchor extends ComplexObstacle {
         return out;
     }
 
-    public void setTexture(TextureRegion texture) {
-        barrier.setTexture(texture);
-    }
-
-    public TextureRegion getTexture() {
-        return barrier.getTexture();
-    }
+//    public void setTexture(TextureRegion texture) {
+//        barrier.setTexture(texture);
+//    }
+//
+//    public TextureRegion getTexture() {
+//        return barrier.getTexture();
+//    }
 
     public ObstacleType getType() { return ObstacleType.ANCHOR;}
 
     public boolean containsPoint(Vector2 point) {
-        return barrier.containsPoint(point) || pivot.containsPoint(point);
+        return super.containsPoint(point);
+        //return barrier.containsPoint(point) || pivot.containsPoint(point);
     }
 }

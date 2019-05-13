@@ -567,7 +567,7 @@
       "rows": 1,
       "cols": 8,
       "size": 8,
-      "delay": 20
+      "delay": 10
     },
     "blue dot animated": {
       "file": "tutorial/animated_tutorial_blue.png",
@@ -575,7 +575,7 @@
       "rows": 1,
       "cols": 8,
       "size": 8,
-      "delay": 20
+      "delay": 10
     }
   },
   "fonts": {
