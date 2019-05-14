@@ -305,8 +305,10 @@ public class GameController extends WorldController implements ContactListener {
     private int starCount;
     /** Whether a star should be collected */
     private boolean collection;
-    /** List of stars */
+    /** List of stars TODO make private*/
     public ArrayList<Star> stars = new ArrayList<Star>();
+    /** List of stars to be removed */
+    private ArrayList<Star> removed = new ArrayList<Star>();
     /** Number of stars needed to open portal */
     private int winCount;
     /** Whether the goal is open */
@@ -1493,10 +1495,29 @@ public class GameController extends WorldController implements ContactListener {
         if (collection) {
             SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
             starCache.deactivatePhysics(world);
+            removed.add(starCache);
             if (!stars.remove(starCache)) print("star collection error in game controller");
-            if (!objects.remove(starCache)) print("star collection error in game controller");
+            //if (!objects.remove(starCache)) print("star collection error in game controller");
             starCount++;
             collection = false;
+        }
+        for (Star s : removed) {
+            if (!s.removed) {
+                if (s.countdown > 0) {
+                    s.countdown--;
+                    s.shrinkStar();
+                } else if (s.sparkleCount > 0) {
+                    s.sparkleCount--;
+                    s.setSparkling(true);
+                } else {
+                    s.setRemove();
+                }
+                if (s.removeStar()) {
+                    if (!objects.remove(s)) print("star collection error in game controller");
+                    s.removed = true;
+                }
+            }
+
         }
         if (starCount >= winCount && !openGoal) { //&& tutorialpoints.isEmpty()
             openGoal = true;

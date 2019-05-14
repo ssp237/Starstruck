@@ -44,7 +44,7 @@ public class Star extends BoxObstacle {
 //    private WheelObstacle pivot;
 
     /** To be removed */
-    protected boolean remove = false;
+    private boolean remove = false;
     /** Location of this star */
     private String location;
     /** Type */
@@ -60,7 +60,17 @@ public class Star extends BoxObstacle {
     /** The asset for collection */
     private TextureRegion sparkle;
     /** Countdown for star shrinking */
-    private int countdown;
+    public int countdown = 30;
+    /** The amount to decrese star size by while shrinking */
+    private float shrinkFactor = 1/countdown;
+    /** Scale to draw star */
+    private float starScale = 1f;
+    /** Whether this star is sparkling */
+    private boolean isSparkling;
+    /** How long to sparkle */
+    public int sparkleCount = 10;
+    /** This star is removed */
+    public boolean removed = false;
 
     /**
      * Creates a new spinner at the origin.
@@ -159,6 +169,17 @@ public class Star extends BoxObstacle {
     public String getTutName() { return tutName; }
 
     public void setHit(boolean value) { hit = value; }
+
+    public void shrinkStar() {
+        starScale = starScale - shrinkFactor;
+        //starScale = starScale * 0.5f;
+    }
+
+    public void setSparkling(boolean value) { isSparkling = true; }
+
+    public void setRemove() { remove = true; }
+
+    public boolean removeStar() { return remove; }
 
     /**
      * Return a new star with parameters specified by the JSON
@@ -302,7 +323,10 @@ public class Star extends BoxObstacle {
 //            else System.out.println("Didn't draw tutorial point");
         }
         else if (getType() == ObstacleType.STAR){
-            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+            if (isSparkling)
+                canvas.draw(sparkle, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+            else
+            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),starScale,starScale);
         }
     }
 }
