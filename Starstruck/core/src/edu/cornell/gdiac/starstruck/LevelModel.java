@@ -466,6 +466,7 @@ public class LevelModel {
                     activate(octopuss);
                     //enemies.add(octopuss);
                     octoLegs = octoLegs.next;
+                    System.out.println(octopuss);
                 }
             }
         }
@@ -744,6 +745,7 @@ public class LevelModel {
         for (Enemy e: enemies) {
             e.draw(canvas);
         }
+        rope.draw(canvas);
         canvas.end();
 
         if (debug) {
@@ -792,7 +794,6 @@ public class LevelModel {
         for (Enemy e: enemies) {
             e.draw(canvas);
         }
-        rope.draw(canvas);
         canvas.end();
 
         if (debug) {
