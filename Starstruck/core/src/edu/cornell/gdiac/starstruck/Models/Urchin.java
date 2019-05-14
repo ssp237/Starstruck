@@ -15,14 +15,12 @@ import java.util.Arrays;
 
 public class Urchin extends Enemy {
 
-
-
     /** Counter for names */
     private static int urchin_count = 1;
     /** Prefix of all texture names */
     private static String pre;
     /**Textures for drawing. In order, single - top - middle - bottom.*/
-    private static FilmStrip[] textures;
+    protected static FilmStrip[] textures;
     /** Number of body segments */
     private int length;
     /** Position of center of top chunk of the urchin (left if orientation is horizontal) */
@@ -41,6 +39,9 @@ public class Urchin extends Enemy {
      * @param y  		Initial y position of the avatar center
      * @param width		The object width in physics units
      * @param height	The object width in physics units
+     * @param scale  		Drawscale
+     * @param length  		Number of urchin chunks in this urchin (>= 1)
+     * @param orientation	Orientation (horizontal/vertical)
      */
     public Urchin(float x, float y, float width, float height, Vector2 scale, int length, Orientation orientation) {
         super(x,y,width,height);
@@ -62,6 +63,20 @@ public class Urchin extends Enemy {
 
     }
 
+    /**
+     * Creates a new dude avatar at the given position.
+     *
+     * The size is expressed in physics units NOT pixels.  In order for
+     * drawing to work properly, you MUST set the drawScale. The drawScale
+     * drawing to work properly, you MUST set the drawScale. The drawScaled
+     * converts the physics units to pixels.
+     *
+     * @param x  		Initial x position of the avatar center
+     * @param y  		Initial y position of the avatar center
+     * @param scale  		Drawscale
+     * @param length  		Number of urchin chunks in this urchin (>= 1)
+     * @param orientation	Orientation (horizontal/vertical)
+     */
     public Urchin(float x, float y, Vector2 scale, int length, Orientation orientation) {
         this(x,y,
                 orientation == Orientation.VERTICAL ? textures[0].getRegionWidth() / scale.x :

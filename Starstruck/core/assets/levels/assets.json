@@ -252,6 +252,18 @@
       "file": "enemies/static_spike_bottom.png",
       "wrap": false
     },
+    "octo top": {
+      "file": "whirlpool/enemies/octopus/static_octo.leg_top.png",
+      "wrap": false
+    },
+    "octo center": {
+      "file": "whirlpool/enemies/octopus/static_octo.leg_middle.png",
+      "wrap": false
+    },
+    "octo bottom": {
+      "file": "whirlpool/enemies/octopus/static_octo.leg_bottom.png",
+      "wrap": false
+    },
     "pink dot": {
       "file": "tutorial/tutorial_pink_dot.png",
       "wrap": false
