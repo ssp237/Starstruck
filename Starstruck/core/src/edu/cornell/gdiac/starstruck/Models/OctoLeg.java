@@ -325,7 +325,12 @@ public class OctoLeg extends Enemy {
     public boolean activatePhysics(World world) {
         return super.activatePhysics(world) && anchor1.activatePhysics(world)
                 && anchor2.activatePhysics(world);
+    }
 
+    public void deactivatePhysics(World world) {
+        super.deactivatePhysics(world);
+        anchor1.deactivatePhysics(world);
+        anchor2.deactivatePhysics(world);
     }
 
 
