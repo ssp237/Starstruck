@@ -12,6 +12,10 @@
       "file": "platform/static_star_01.png",
       "wrap": false
     },
+    "sparkle": {
+      "file": "platform/static_star_collected_v1",
+      "wrap": false
+    },
     "wp p1": {
       "file": "whirlpool/planets/static_planet1_v1.png",
       "wrap": false

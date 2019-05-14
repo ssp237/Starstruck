@@ -57,7 +57,10 @@ public class Star extends BoxObstacle {
     private boolean hit;
     /** The asset for tutorial points */
     private FilmStrip tutText;
-
+    /** The asset for collection */
+    private TextureRegion sparkle;
+    /** Countdown for star shrinking */
+    private int countdown;
 
     /**
      * Creates a new spinner at the origin.
@@ -90,6 +93,7 @@ public class Star extends BoxObstacle {
         setName("star");
         starType = ObstacleType.STAR;
         hit = false;
+        sparkle = JsonAssetManager.getInstance().getEntry("sparkle", TextureRegion.class);
 //        setName(SPINNER_NAME);
 //
 //        // Create the barrier
