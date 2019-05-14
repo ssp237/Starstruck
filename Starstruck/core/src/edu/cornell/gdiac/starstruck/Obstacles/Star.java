@@ -59,16 +59,16 @@ public class Star extends BoxObstacle {
     private FilmStrip tutText;
     /** The asset for collection */
     private TextureRegion sparkle;
-    /** Countdown for star shrinking */
-    public int countdown = 30;
     /** The amount to decrese star size by while shrinking */
-    private float shrinkFactor = 1/countdown;
+    private float shrinkFactor = 0.8f;
+    /** Countdown for star shrinking */
+    public int countdown = (int) (Math.log(0.05)/Math.log((double)shrinkFactor));
     /** Scale to draw star */
     private float starScale = 1f;
     /** Whether this star is sparkling */
     private boolean isSparkling;
     /** How long to sparkle */
-    public int sparkleCount = 10;
+    public int sparkleCount = 8;
     /** This star is removed */
     public boolean removed = false;
 
@@ -171,8 +171,7 @@ public class Star extends BoxObstacle {
     public void setHit(boolean value) { hit = value; }
 
     public void shrinkStar() {
-        starScale = starScale - shrinkFactor;
-        //starScale = starScale * 0.5f;
+        starScale = starScale * shrinkFactor;
     }
 
     public void setSparkling(boolean value) { isSparkling = true; }
