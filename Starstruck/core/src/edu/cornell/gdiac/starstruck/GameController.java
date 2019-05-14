@@ -825,6 +825,12 @@ public class GameController extends WorldController implements ContactListener {
         if (avatarAnchor.follow) {
             avatarAnchor.setUnAnchored();
             avatarAnchor.setLinearVelocity(avatar.getLinearVelocity());
+            if (avatarAnchor.getCurAnchor().getLinearVelocity().len() != 0) {
+                Vector2 vel = new Vector2(avatarAnchor.getCurAnchor().getLinearVelocity());
+                avatar.setLinearVelocity(avatar.getLinearVelocity().cpy().add(vel));
+                //avatar.setLinearVelocity(vel);
+                avatarAnchor.setLinearVelocity(vel.scl(2));
+            }
             avatarAnchor.follow = false;
         }
         if (avatarAnchor.toplanet) {
