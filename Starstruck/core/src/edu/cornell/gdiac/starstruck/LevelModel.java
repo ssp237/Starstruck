@@ -456,6 +456,20 @@ public class LevelModel {
             creamVals = creamVals.next;
         }
 
+        //add boss
+        if (hasBoss) {
+            if (galaxy == Galaxy.WHIRLPOOL) {
+                OctoLeg.setTextures("octo");
+                JsonValue octoLegs = levelFormat.get("octopus legs").child();
+                while(octoLegs != null) {
+                    OctoLeg octopuss = OctoLeg.fromJSON(octoLegs, scale);
+                    activate(octopuss);
+                    //enemies.add(octopuss);
+                    octoLegs = octoLegs.next;
+                }
+            }
+        }
+
 //        System.out.println("here i am enemy list");
 //        System.out.println(enemies);
 //        System.out.println(enemies.size());
@@ -621,7 +635,6 @@ public class LevelModel {
         //Add Galaxy
 
         out.addChild("galaxy", new JsonValue(galaxy.fullName()));
-        out.addChild("has boss", new JsonValue(hasBoss));
 
         //Add background
         out.addChild("background", new JsonValue(JsonAssetManager.getInstance().getKey(background)));
@@ -647,6 +660,7 @@ public class LevelModel {
         JsonValue tutorialPoints = new JsonValue(JsonValue.ValueType.array);
         JsonValue urchins = new JsonValue(JsonValue.ValueType.array);
         JsonValue iceCreams = new JsonValue(JsonValue.ValueType.array);
+        JsonValue octolegs = new JsonValue(JsonValue.ValueType.array);
 
         for (Obstacle obj : objects) {
             switch (obj.getType()) {
@@ -655,6 +669,7 @@ public class LevelModel {
                 case WORM: worms.addChild(((Worm) obj).toJson()); break;
                 case URCHIN: urchins.addChild(((Urchin) obj).toJson()); break;
                 case ICE_CREAM: iceCreams.addChild(((IceCream) obj).toJson()); break;
+                case OCTO_LEG: hasBoss = true; octolegs.addChild(((OctoLeg) obj).toJson()); break;
             }
         }
 
@@ -665,6 +680,8 @@ public class LevelModel {
         for (TutorialPoint tutorial : tutpoints) {
             tutorialPoints.addChild(tutorial.toJson());
         }
+
+        out.addChild("has boss", new JsonValue(hasBoss));
 
         out.addChild("anchors", anchors);
         out.addChild("stars", stars);
@@ -684,6 +701,10 @@ public class LevelModel {
 
         //add ice cream
         out.addChild("ice cream", iceCreams);
+
+        if (hasBoss) {
+            out.addChild("octopus legs", octolegs);
+        }
 
 
         return out;

@@ -109,10 +109,10 @@ public class OctoLeg extends Enemy {
         float x, y;
         if (getOrientation() == Orientation.VERTICAL) {
             x = getX();
-            y = getY() - getHeight()/2 + ((float) textures[0].getRegionHeight()/2)/drawScale.y;
+            y = getY() - getHeight()/2 + ((float) textures[0].getRegionHeight()/4)/drawScale.y;
         } else {
             y = getY();
-            x = getX() - getWidth()/2 + ((float) textures[2].getRegionHeight()/2)/drawScale.x;
+            x = getX() - getWidth()/2 + ((float) textures[0].getRegionHeight()/4)/drawScale.x;
         }
         return new Vector2(x,y);
     }
@@ -125,10 +125,10 @@ public class OctoLeg extends Enemy {
         float x, y;
         if (getOrientation() == Orientation.VERTICAL) {
             x = getX();
-            y = getY() + getHeight()/2 - ((float) textures[0].getRegionHeight()/2)/drawScale.y;
+            y = getY() + getHeight()/2 - ((float) textures[0].getRegionHeight()/4)/drawScale.y;
         } else {
             y = getY();
-            x = getX() + getWidth()/2 - ((float) textures[0].getRegionHeight()/2)/drawScale.x;
+            x = getX() + getWidth()/2 - ((float) textures[0].getRegionHeight()/4)/drawScale.x;
         }
         return new Vector2(x,y);
     }
@@ -204,21 +204,18 @@ public class OctoLeg extends Enemy {
         int length = json.get("length").asInt();
 
         float width = textures[0].getRegionWidth() / scale.x;
-        float height;
+        float height = 0;
         if (length == 1 ) {
             throw new IndexOutOfBoundsException("OctoLeg needs at least 2 chunks!!");
-        } else { // more than one chunk
-            height = (textures[0].getRegionHeight() + textures[2].getRegionWidth()) /  scale.y;
-            for (int i = 2; i < length; i++) {
-                height += textures[1].getRegionHeight() / scale.y;
-            }
+        } // more than one chunk
+        height = (textures[0].getRegionHeight() + textures[2].getRegionWidth()) /  scale.y;
+        for (int i = 2; i < length; i++) {
+            height += textures[1].getRegionHeight() / scale.y;
         }
-        if (orientation == Orientation.HORIZONTAL) {
-            float temp = height;
-            height = width * scale.x / scale.y;
-            width = temp * scale.y / scale.x;
-        }
-        return new OctoLeg(json.get("x").asFloat(), json.get("y").asFloat(), width, height, scale, length, orientation);
+        OctoLeg u = new OctoLeg(json.get("x").asFloat(), json.get("y").asFloat(), width, height, scale, length, orientation);
+        if (orientation == Orientation.VERTICAL) return u;
+
+        return new OctoLeg(u.getX(), u.getY(), u.getHeight() / Enemy.DUDE_HSHRINK, u.getWidth() / Enemy.DUDE_VSHRINK, scale, u.getLength(), orientation);
     }
 
     /**
@@ -232,10 +229,9 @@ public class OctoLeg extends Enemy {
         json.addChild("orientation", new JsonValue(getOrientation() == Orientation.VERTICAL ? "vertical" : "horizontal"));
 
         //Write position
-        Vector2 pos = getPosition();
 
-        json.addChild("x", new JsonValue(pos.x));
-        json.addChild("y", new JsonValue(pos.y));
+        json.addChild("x", new JsonValue(x_original));
+        json.addChild("y", new JsonValue(y_original));
 
         //Write length
         json.addChild("length", new JsonValue(length));
@@ -272,10 +268,14 @@ public class OctoLeg extends Enemy {
 
     }
 
+    public boolean isSleeping() {
+        return true;
+    }
+
 
     public void draw(GameCanvas canvas) {
         if (getOrientation() == Orientation.VERTICAL) {
-            t_y = getY() + getHeight()/2f - (textures[0].getRegionHeight()/(2f*getDrawScale().y));
+            t_y = getY() + getHeight()/2f - (textures[0].getRegionHeight()/(3f*getDrawScale().y));
             t_x = getX();
             float x = t_x;
             float y = t_y;
@@ -290,7 +290,7 @@ public class OctoLeg extends Enemy {
             canvas.draw(textures[2], Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle(), 1, 1.0f);
         } else {
             t_y = getY();
-            t_x = getX() + getWidth ()/2f - (textures[0].getRegionHeight()/(2f*getDrawScale().x));
+            t_x = getX() + getWidth ()/2f - (textures[0].getRegionHeight()/(3f*getDrawScale().x));
             float angle = (float) (3 * Math.PI / 2);
             float x = t_x;
             float y = t_y;

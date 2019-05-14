@@ -167,18 +167,16 @@ public class Urchin extends Enemy {
         float height = 0;
         if (length == 1 ) {
             height = textures[0].getRegionHeight() / scale.y;
-        } else { // more than one chunk
-            height = (textures[1].getRegionHeight() + textures[3].getRegionWidth()) /  scale.y;
-            for (int i = 2; i < length; i++) {
-                height += textures[2].getRegionHeight() / scale.y;
-            }
+            return new Urchin(json.get("x").asFloat(), json.get("y").asFloat(), width, height, scale, length, orientation);
+        } // more than one chunk
+        height = (textures[1].getRegionHeight() + textures[3].getRegionWidth()) /  scale.y;
+        for (int i = 2; i < length; i++) {
+            height += textures[2].getRegionHeight() / scale.y;
         }
-        if (orientation == Orientation.HORIZONTAL) {
-            float temp = height;
-            height = width * scale.x / scale.y;
-            width = temp * scale.y / scale.x;
-        }
-        return new Urchin(json.get("x").asFloat(), json.get("y").asFloat(), width, height, scale, length, orientation);
+        Urchin u = new Urchin(json.get("x").asFloat(), json.get("y").asFloat(), width, height, scale, length, orientation);
+        if (orientation == Orientation.VERTICAL) return u;
+
+        return new Urchin(u.getX(), u.getY(), u.getHeight() / Enemy.DUDE_HSHRINK, u.getWidth() / Enemy.DUDE_VSHRINK, scale, u.getLength(), orientation);
     }
 
     /**
