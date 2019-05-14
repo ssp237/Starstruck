@@ -157,7 +157,8 @@ public class AstronautModel extends CapsuleObstacle {
     private int lastFace = 1;
     /**Last direction */
     public int lastDir;
-    public boolean useLastDir = false;
+    //public boolean useLastDir = false;
+    public boolean bossSwing = false;
 
     /**
      * Set the glow texture

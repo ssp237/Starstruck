@@ -736,13 +736,20 @@ public class GameController extends WorldController implements ContactListener {
         //If avatar1 is already anchored check if anchored was hit
         if (avatar1.isAnchored()) {
             Vector2 anchorVel = avatar1.getCurAnchor().getLinearVelocity();
-            if (!avatar2.getOnPlanet() && !avatar2.isAnchored() || anchorVel.len() != 0) { //If avatar2 is in space, swing avatar2
+            if (anchorVel.len() != 0) {
+                if (avatar2.getLinearVelocity().len() < anchorVel.len())
+                    avatar2.setLinearVelocity(avatar1.getLinearVelocity().setLength(anchorVel.len()));
+                if (avatar2.getLinearVelocity().len() == 0)
+                    avatar2.setLinearVelocity(anchorVel.cpy().scl(2));
+            }
+            if (!avatar2.getOnPlanet() && !avatar2.isAnchored() || avatar2.bossSwing) { //If avatar2 is in space, swing avatar2
                 if (rope.stretched(dt, 3)) {
                     avatar2.swing = true;
                     if (!avatar2.isActive() && !twoplayer)
                         avatar2.setFixedRotation(true);
                 }
             }
+            else if (avatar2.getOnPlanet() || avatar2.isAnchored()) avatar2.bossSwing = false;
             if (anchord() && avatar1.isActive() && !twoplayer
                     || twoplayer && InputController.getInstance().didPrimary()) { //If anchored was hit unanchor, uananchor and move
                 //avatar1.setUnAnchored();
@@ -777,12 +784,19 @@ public class GameController extends WorldController implements ContactListener {
         if (avatar2.isAnchored()) {
             if (!avatar1.getOnPlanet() && !avatar1.isAnchored()) { //If avatar1 is in space, swing avatar1
                 Vector2 anchorVel = avatar2.getCurAnchor().getLinearVelocity();
-                if (rope.stretched(dt, 3) || anchorVel.len() != 0) {
+                if (anchorVel.len() != 0) {
+                    if (avatar1.getLinearVelocity().len() < anchorVel.len())
+                        avatar1.setLinearVelocity(avatar1.getLinearVelocity().setLength(anchorVel.len()));
+                    if (avatar1.getLinearVelocity().len() == 0)
+                        avatar1.setLinearVelocity(anchorVel.cpy().scl(2));
+                }
+                if (rope.stretched(dt, 3) || avatar1.bossSwing) { //|| anchorVel.len() != 0
                     avatar1.swing = true;
                     if (!avatar1.isActive() && !twoplayer)
                         avatar1.setFixedRotation(true);
                 }
             }
+            else if (avatar1.getOnPlanet() || avatar1.isAnchored()) avatar1.bossSwing = false;
             if (anchord() && avatar2.isActive() && !twoplayer
                     || twoplayer && InputController.getInstance().didW()) { //If anchored was hit unanchor, uananchor and move
                 //avatar2.setUnAnchored();
@@ -820,7 +834,7 @@ public class GameController extends WorldController implements ContactListener {
         if (avatar.swing) {
             Vector2 dir = avatar.getPosition().cpy().sub(avatarAnchor.getPosition());
             if (avatar.lastVel.angle(dir) > 0) {
-                if (avatar.useLastDir)
+                if (avatar.bossSwing)
                     dir.rotate90(avatar.lastDir);
                 else {
                     dir.rotate90(-1);
@@ -828,7 +842,7 @@ public class GameController extends WorldController implements ContactListener {
                 }
             }
             else {
-                if (avatar.useLastDir)
+                if (avatar.bossSwing)
                     dir.rotate90(avatar.lastDir);
                 else {
                     dir.rotate90(1);
@@ -836,14 +850,15 @@ public class GameController extends WorldController implements ContactListener {
                 }
             }
             if (anchorVel.len() != 0) {
-                if (!avatar.useLastDir)
-                    avatar.useLastDir = true;
+                if (!avatar.bossSwing) avatar.bossSwing = true;
+//                if (!avatar.useLastDir)
+//                    avatar.useLastDir = true;
                 dir.setLength(anchorVel.len()*2);
                 dir.add(anchorVel);
                 avatar.setLinearVelocity(dir);
             }
             else {
-                if (avatar.useLastDir) avatar.useLastDir = false;
+                if (avatar.bossSwing) avatar.bossSwing = false;
                 avatar.setLinearVelocity(dir.setLength(speed));
             }
             avatar.swing = false;
@@ -871,6 +886,8 @@ public class GameController extends WorldController implements ContactListener {
             float angle = avatarAnchor.getAngle();
             dir.rotateRad(angle);
             dir.setLength(avatarAnchor.getJumpPulse());
+            if (anchorVel.len() != 0)
+                dir.add(anchorVel);
             avatarAnchor.setLinearVelocity(dir);
             avatarAnchor.anchorhop = false;
         }
