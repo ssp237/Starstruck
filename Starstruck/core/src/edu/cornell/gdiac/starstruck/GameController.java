@@ -735,7 +735,8 @@ public class GameController extends WorldController implements ContactListener {
 
         //If avatar1 is already anchored check if anchored was hit
         if (avatar1.isAnchored()) {
-            if (!avatar2.getOnPlanet() && !avatar2.isAnchored()) { //If avatar2 is in space, swing avatar2
+            Vector2 anchorVel = avatar1.getCurAnchor().getLinearVelocity();
+            if (!avatar2.getOnPlanet() && !avatar2.isAnchored() || anchorVel.len() != 0) { //If avatar2 is in space, swing avatar2
                 if (rope.stretched(dt, 3)) {
                     avatar2.swing = true;
                     if (!avatar2.isActive() && !twoplayer)
@@ -775,11 +776,11 @@ public class GameController extends WorldController implements ContactListener {
         //If avatar2 is already anchored check if anchored was hit
         if (avatar2.isAnchored()) {
             if (!avatar1.getOnPlanet() && !avatar1.isAnchored()) { //If avatar1 is in space, swing avatar1
-                if (rope.stretched(dt, 3)) {
+                Vector2 anchorVel = avatar2.getCurAnchor().getLinearVelocity();
+                if (rope.stretched(dt, 3) || anchorVel.len() != 0) {
                     avatar1.swing = true;
                     if (!avatar1.isActive() && !twoplayer)
                         avatar1.setFixedRotation(true);
-
                 }
             }
             if (anchord() && avatar2.isActive() && !twoplayer
@@ -815,23 +816,45 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void anchorMove(AstronautModel avatarAnchor, AstronautModel avatar, float dt) {
         float speed = avatar.lastVel.len();
+        Vector2 anchorVel = new Vector2(avatarAnchor.getCurAnchor().getLinearVelocity());
         if (avatar.swing) {
             Vector2 dir = avatar.getPosition().cpy().sub(avatarAnchor.getPosition());
-            if (avatar.lastVel.angle(dir) > 0)
-                dir.rotate90(-1);
-            else
-                dir.rotate90(1);
-            avatar.setLinearVelocity(dir.setLength(speed));
+            if (avatar.lastVel.angle(dir) > 0) {
+                if (avatar.useLastDir)
+                    dir.rotate90(avatar.lastDir);
+                else {
+                    dir.rotate90(-1);
+                    avatar.lastDir = -1;
+                }
+            }
+            else {
+                if (avatar.useLastDir)
+                    dir.rotate90(avatar.lastDir);
+                else {
+                    dir.rotate90(1);
+                    avatar.lastDir = 1;
+                }
+            }
+            if (anchorVel.len() != 0) {
+                if (!avatar.useLastDir)
+                    avatar.useLastDir = true;
+                dir.setLength(anchorVel.len()*2);
+                dir.add(anchorVel);
+                avatar.setLinearVelocity(dir);
+            }
+            else {
+                if (avatar.useLastDir) avatar.useLastDir = false;
+                avatar.setLinearVelocity(dir.setLength(speed));
+            }
             avatar.swing = false;
         }
         if (avatarAnchor.follow) {
             avatarAnchor.setUnAnchored();
             avatarAnchor.setLinearVelocity(avatar.getLinearVelocity());
             if (avatarAnchor.getCurAnchor().getLinearVelocity().len() != 0) {
-                Vector2 vel = new Vector2(avatarAnchor.getCurAnchor().getLinearVelocity());
-                avatar.setLinearVelocity(avatar.getLinearVelocity().cpy().add(vel));
+                avatar.setLinearVelocity(avatar.getLinearVelocity().cpy().add(anchorVel));
                 //avatar.setLinearVelocity(vel);
-                avatarAnchor.setLinearVelocity(vel.scl(2));
+                avatarAnchor.setLinearVelocity(anchorVel.cpy().scl(2));
             }
             avatarAnchor.follow = false;
         }

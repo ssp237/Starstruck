@@ -155,6 +155,9 @@ public class AstronautModel extends CapsuleObstacle {
     private boolean twoplayer;
     /** To keep or flip controls */
     private int lastFace = 1;
+    /**Last direction */
+    public int lastDir;
+    public boolean useLastDir = false;
 
     /**
      * Set the glow texture
