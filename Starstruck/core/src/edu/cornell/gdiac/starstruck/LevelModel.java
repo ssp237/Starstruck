@@ -792,6 +792,7 @@ public class LevelModel {
         for (Enemy e: enemies) {
             e.draw(canvas);
         }
+        rope.draw(canvas);
         canvas.end();
 
         if (debug) {

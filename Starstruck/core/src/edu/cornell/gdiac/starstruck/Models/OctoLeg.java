@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.starstruck.Obstacles.Anchor;
@@ -314,6 +315,12 @@ public class OctoLeg extends Enemy {
     }
 
     public ObstacleType getType() { return ObstacleType.OCTO_LEG;}
+
+    public boolean activatePhysics(World world) {
+        return super.activatePhysics(world) && anchor1.activatePhysics(world)
+                && anchor2.activatePhysics(world);
+
+    }
 
 
     public String toString(){
