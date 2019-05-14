@@ -868,7 +868,7 @@ public class AstronautModel extends CapsuleObstacle {
         if (!onPlanet && !idle.justReset()) idle.reset();
 
         if (isAnchored){
-            setLinearVelocity(new Vector2());
+            setLinearVelocity(curAnchor.getLinearVelocity());
             setPosition(anchorPos);
             //setBodyType(BodyDef.BodyType.StaticBody);
             setBodyType(BodyDef.BodyType.KinematicBody);

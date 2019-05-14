@@ -168,11 +168,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         winButtons.add(1, allLevels);
         winButtons.add(2, nextButton);
 
-        print(winButtons.get(0) == winButtons.get(1));
-        print(replayButton == allLevels);
-        for (int i = 0; i < winButtons.size(); i++) {
-            print(winButtons.get(i));
-        }
 
         level.dispose();
 
