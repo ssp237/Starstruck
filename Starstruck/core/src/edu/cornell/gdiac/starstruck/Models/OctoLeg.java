@@ -68,8 +68,10 @@ public class OctoLeg extends Enemy {
 
         if (getOrientation() == Orientation.VERTICAL) {
             setVY(v);
+            anchor1.setVY(v); anchor2.setVY(v);
         } else {
             setVX(v);
+            anchor1.setVX(v); anchor2.setVX(v);
         }
 
         x_original = getX(); y_original = getY();
@@ -256,14 +258,18 @@ public class OctoLeg extends Enemy {
         if (this.getPosition().x < x_original - 5 || this.getPosition().x > x_original + 5) {
             //System.out.println(getVX());
             setVX(-getVX());
+            anchor1.setVX(getVX());
+            anchor2.setVX(getVX());
         }
         if (this.getPosition().y < y_original - 5 || this.getPosition().y > y_original + 5) {
             //System.out.println(getVX());
             setVY(-getVY());
+            anchor1.setVY(getVY());
+            anchor2.setVY(getVY());
         }
-        Vector2 a1Pos = anchor1Pos(), a2Pos = anchor2Pos();
-        anchor1.setPosition(a1Pos);
-        anchor2.setPosition(a2Pos);
+//        Vector2 a1Pos = anchor1Pos(), a2Pos = anchor2Pos();
+//        anchor1.setPosition(a1Pos);
+//        anchor2.setPosition(a2Pos);
         //System.out.println(this);
         //System.out.println(this);
 
