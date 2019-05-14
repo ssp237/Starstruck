@@ -1476,8 +1476,9 @@ public class GameController extends WorldController implements ContactListener {
 
         float angVel = 0.1f;
         if (avatar.isAnchored()) {
-            if (avatar.getCurAnchor().getLinearVelocity().len() != 0 && rope.stretched(dt, 3)) {
-                avatar2.setOnPlanet(false);
+            if (avatar.getCurAnchor().getLinearVelocity().len() != 0) {
+                if (rope.stretched(dt, 3))
+                    avatar2.setOnPlanet(false);
                 if (avatar2.isAnchored())
                     avatar2.setUnAnchored();
             }
@@ -1498,8 +1499,9 @@ public class GameController extends WorldController implements ContactListener {
 
         angVel = 0.1f;
         if (avatar2.isAnchored()) {
-            if (avatar2.getCurAnchor().getLinearVelocity().len() != 0 && rope.stretched(dt, 3)) {
-                avatar.setOnPlanet(false);
+            if (avatar2.getCurAnchor().getLinearVelocity().len() != 0) {
+                if (rope.stretched(dt, 3))
+                    avatar.setOnPlanet(false);
                 if (avatar.isAnchored())
                     avatar.setUnAnchored();
             }
