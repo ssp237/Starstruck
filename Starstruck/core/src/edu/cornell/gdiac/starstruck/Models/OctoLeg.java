@@ -307,6 +307,12 @@ public class OctoLeg extends Enemy {
         anchor2.draw(canvas);
     }
 
+    public void drawDebug(GameCanvas canvas) {
+        super.drawDebug(canvas);
+        anchor1.drawDebug(canvas);
+        anchor2.drawDebug(canvas);
+    }
+
     public ObstacleType getType() { return ObstacleType.OCTO_LEG;}
 
 
