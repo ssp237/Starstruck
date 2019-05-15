@@ -308,7 +308,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 //            music.play();
 //            music.setLooping(true);
         }
-         else if (GameController.getMusic() != null) {
+        else if (GameController.getMusic() != null) {
             GameController.getMusic().stop();
             GameController.getMusic().dispose();
             music.play();
@@ -642,10 +642,9 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                     pressState = 2;
                 }
             }
-            center = menu.getPosition();
-            dist = dist(center, new Vector2(screenX, screenY));
-            if (dist <= menu.getHeight() && menu.getActive()) {
+            if (menu.isIn(screenX, screenY) && menu.getActive()) {
                 menu.pushed = true;
+                pressState = 2;
             }
         } else {
             if (allLevels.getActive()) {
@@ -680,9 +679,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
         if (winPos == null) {
             menu.setActive(false);
-            center = menu.getPosition();
-            dist = dist(center, new Vector2(screenX, screenY));
-            if (dist <= menu.getHeight()) {
+            if (menu.isIn(screenX, screenY)) {
                 menu.setActive(true);
             }
             for (Level l : levels) {
@@ -730,6 +727,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 //            if (!music.isPlaying()) { music.play();}
             // We are are ready, notify our listener
             if (currentLevel != null && isReady() && currentLevel.getUnlocked() && !menu.pushed) {
+                print("what??");
                 lastLevel = currentLevel;
                 nextLevel = currentLevel.nextLevel;
                 listener.exitScreen(this, WorldController.EXIT_PLAY, currentLevel.getFile());
@@ -747,6 +745,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 //print(lastLevel.jsonFile);
                 listener.exitScreen(this, WorldController.EXIT_PLAY, temp, lastLevel.jsonFile);
             } else if (menu.pushed && isReady()) {
+                print("what");
                 listener.exitScreen(this, WorldController.EXIT_QUIT);
             }
         }

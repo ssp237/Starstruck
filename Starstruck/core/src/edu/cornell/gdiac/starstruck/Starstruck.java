@@ -82,7 +82,7 @@ public class Starstruck extends Game implements ScreenListener {
 			controllers[ii].preLoadContent(JsonAssetManager.getInstance());
 		}
 		current = 0;
-		loading.setScreenListener(this);
+//		loading.setScreenListener(this);
 		setScreen(loading);
 	}
 

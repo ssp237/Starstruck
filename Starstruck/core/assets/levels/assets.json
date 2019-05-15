@@ -252,12 +252,40 @@
       "file": "buttons/play.png",
       "wrap": false
     },
-    "build": {
-      "file": "buttons/build.png",
+    "play glow": {
+      "file": "buttons/play hover.png",
+      "wrap": false
+    },
+    "levelselect": {
+      "file": "buttons/levelselect.png",
+      "wrap": false
+    },
+    "levelselect glow": {
+      "file": "buttons/levelselect hover.png",
+      "wrap": false
+    },
+    "settings": {
+      "file": "buttons/settings.png",
+      "wrap": false
+    },
+    "settings glow": {
+      "file": "buttons/settings hover.png",
       "wrap": false
     },
     "quit": {
       "file": "buttons/quit.png",
+      "wrap": false
+    },
+    "quit glow": {
+      "file": "buttons/quit hover.png",
+      "wrap": false
+    },
+    "help": {
+      "file": "buttons/help.png",
+      "wrap": false
+    },
+    "help glow": {
+      "file": "buttons/help hover.png",
       "wrap": false
     },
     "loading": {

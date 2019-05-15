@@ -22,18 +22,28 @@
  */
 package edu.cornell.gdiac.starstruck;
 
-import com.badlogic.gdx.*;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.math.*;
-import com.badlogic.gdx.assets.*;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.controllers.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.ControllerListener;
+import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.controllers.PovDirection;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.starstruck.Obstacles.Button;
+import edu.cornell.gdiac.util.JsonAssetManager;
+import edu.cornell.gdiac.util.PooledList;
 import edu.cornell.gdiac.util.ScreenListener;
-import edu.cornell.gdiac.util.*;
-
-import java.util.LinkedList;
 
 /**
  * Class that provides a loading screen for the state of the game.
@@ -48,93 +58,104 @@ import java.util.LinkedList;
  * the application.  That is why we try to have as few resources as possible for this
  * loading screen.
  */
-public class LoadingMode implements Screen, InputProcessor, ControllerListener {
-    // Textures necessary to support the loading screen
-    private static final String BACKGROUND_FILE = "backgrounds/loading.png";
-    private static final String SPIN_FILE = "shared/spin.png";
-    private static final String TITLE_FILE = "shared/loading_title.png";
+public class MenuMode2 extends WorldController implements Screen, InputProcessor, ControllerListener {
+    private static final String MUSIC_FILE = "audio/loading_screen.mp3";
 
-    LinkedList<String> loaded;
+    private static final float VOLUME = 0.3f;
+
+    /** The reader to process JSON files */
+    private JsonReader jsonReader;
+    /** The JSON asset directory */
+    private JsonValue assetDirectory;
+    /** Track asset loading from all instances and subclasses */
+    private AssetState platformAssetState = AssetState.EMPTY;
+
 
     /** Background texture for start-up */
     private Texture background;
-    /** loading texture for start-up */
-    private Texture spin;
-    /** filmstrip for title animation */
-    private FilmStrip title;
+    /** Play button to display to go to level select*/
+    private TextureRegion playButton;
+    /** Build button to display to go to build mode */
+    private TextureRegion levelsButton;
+    /** Settings button to display to edit settings */
+    private TextureRegion settingsButton;
+    /** Quit button to display to exit the window */
+    private TextureRegion quitButton;
+    /** Quit button to display to get help */
+    private TextureRegion helpButton;
+    /** Loading audio */
+    public static Music music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
 
-    /** Default budget for asset loader (do nothing but load 60 fps) */
-    private static int DEFAULT_BUDGET = 15;
+            //= GameController.getMusic();
+
+
+
+            //
+    private String music_name = "menu";
+
+                    //GameController.getMusicName();
+
+    //public Music from_GameController = GameController.getMusic();
+    //private String gameController_music_name = GameController.getMusicName();
+
     /** Standard window size (for scaling) */
     private static int STANDARD_WIDTH  = 1280;
     /** Standard window height (for scaling) */
     private static int STANDARD_HEIGHT = 720;
-    /** originX of loading spin */
-    private static int SPIN_X = STANDARD_WIDTH/2;
-    /** originY of loading spin */
-    private static int SPIN_Y = 393;
-    /** originX of loading title */
-    private static int TITLE_X = 672;
-    /** originY of loading title */
-    private static int TITLE_Y = 146;
+    /** Amount to scale the play button */
+    private static float BUTTON_SCALE  = 0.75f;
 
     /** Start button for XBox controller on Windows */
     private static int WINDOWS_START = 7;
     /** Start button for XBox controller on Mac OS X */
     private static int MAC_OS_X_START = 4;
 
-    /** AssetManager to be loading in the background */
-    private AssetManager manager;
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
 
+    /** The y-coordinate of the center of the progress bar */
+    private int centerY = 375;
+    /** The x-coordinate of the center of the progress bar */
+    private int centerX;
+    /** Offset of next button */
+    private int OFFSET1 = 25;
+    /** Offset of next button */
+    private int OFFSET2 = 18;
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
     private int heightY;
     /** Scaling factor for when the student changes the resolution. */
     private float scale;
 
-    /** Current progress (0 to 1) of the asset manager */
-    private float progress;
     /** The current state of the play button */
-    private int   pressState;
-    /** The amount of time to devote to loading assets (as opposed to on screen hints, etc.) */
-    private int   budget;
+    private int pressState;
+    /** Button down */
+    private Button currentButton;
     /** Support for the X-Box start button in place of play button */
     private int   startButton;
     /** Whether or not this player mode is still active */
     private boolean active;
-    /** angle of loading spin */
-    private float angle;
 
-    /**
-     * Returns the budget for the asset loader.
-     *
-     * The budget is the number of milliseconds to spend loading assets each animation
-     * frame.  This allows you to do something other than load assets.  An animation
-     * frame is ~16 milliseconds. So if the budget is 10, you have 6 milliseconds to
-     * do something else.  This is how game companies animate their loading screens.
-     *
-     * @return the budget in milliseconds
-     */
-    public int getBudget() {
-        return budget;
-    }
+    /** button list */
+    private PooledList<Button> buttons;
+    /** play button */
+    private Button play;
+    /** level button */
+    private Button levels;
+    /** settings button */
+    private Button settings;
+    /** quit button */
+    private Button quit;
+    /** build placeholder */
+    private Button build;
+    /** help button */
+    private Button help;
 
-    /**
-     * Sets the budget for the asset loader.
-     *
-     * The budget is the number of milliseconds to spend loading assets each animation
-     * frame.  This allows you to do something other than load assets.  An animation
-     * frame is ~16 milliseconds. So if the budget is 10, you have 6 milliseconds to
-     * do something else.  This is how game companies animate their loading screens.
-     *
-     * @param millis the budget in milliseconds
-     */
-    public void setBudget(int millis) {
-        budget = millis;
-    }
+    public static Music getMusic() {return music;}
+
+    public static boolean menuIsPlaying() {return music.isPlaying();}
+
 
     /**
      * Returns true if all assets are loaded and the player is ready to go.
@@ -146,40 +167,22 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
     }
 
     /**
-     * Creates a LoadingMode with the default budget, size and position.
-     *
-     */
-    public LoadingMode(GameCanvas canvas) {
-        this(canvas,DEFAULT_BUDGET);
-    }
-
-    /**
      * Creates a LoadingMode with the default size and position.
      *
      * The budget is the number of milliseconds to spend loading assets each animation
      * frame.  This allows you to do something other than load assets.  An animation
      * frame is ~16 milliseconds. So if the budget is 10, you have 6 milliseconds to
      * do something else.  This is how game companies animate their loading screens.
-     * @param millis The loading budget in milliseconds
      */
-    public LoadingMode(GameCanvas canvas, int millis) {
-        this.manager = JsonAssetManager.getInstance();
+    public MenuMode2(GameCanvas canvas) {
         this.canvas  = canvas;
-        budget = millis;
 
         // Compute the dimensions from the canvas
         resize(canvas.getWidth(),canvas.getHeight());
 
-        // Load the next two images immediately.
-        background = new Texture(BACKGROUND_FILE);
-        spin = new Texture(SPIN_FILE);
-        title = new FilmStrip(new Texture(TITLE_FILE), 4, 1, 4, 20, "title");
-
-        // No progress so far.
-        progress   = 0;
         pressState = 0;
         active = false;
-        angle = 0f;
+        currentButton = null;
 
         startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
         Gdx.input.setInputProcessor(this);
@@ -188,15 +191,99 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
             controller.addListener(this);
         }
         active = true;
-        loaded = new LinkedList<String>();
+    }
+
+    /**
+     * Preloads the assets for this controller.
+     *
+     * To make the game modes more for-loop friendly, we opted for nonstatic loaders
+     * this time.  However, we still want the assets themselves to be static.  So
+     * we have an AssetState that determines the current loading state.  If the
+     * assets are already loaded, this method will do nothing.
+     *
+     * @param manager Reference to global asset manager.
+     */
+    public void preLoadContent(AssetManager manager) {
+        if (platformAssetState != AssetState.EMPTY) {
+            return;
+        }
+
+        platformAssetState = AssetState.LOADING;
+
+        super.preLoadContent(manager);
+
+        jsonReader = new JsonReader();
+        assetDirectory = jsonReader.parse(Gdx.files.internal("levels/assets.json"));
+
+        JsonAssetManager.getInstance().loadDirectory(assetDirectory);
+
+    }
+
+
+    /**
+     * Load the assets for this controller.
+     *
+     * To make the game modes more for-loop friendly, we opted for nonstatic loaders
+     * this time.  However, we still want the assets themselves to be static.  So
+     * we have an AssetState that determines the current loading state.  If the
+     * assets are already loaded, this method will do nothing.
+     *
+     * @param manager Reference to global asset manager.
+     */
+    public void loadContent(AssetManager manager) {
+
+        JsonAssetManager.getInstance().allocateDirectory();
+
+        super.loadContent(manager);
+
+        buttons = new PooledList<Button>();
+
+        playButton = JsonAssetManager.getInstance().getEntry("play", TextureRegion.class);
+        levelsButton = JsonAssetManager.getInstance().getEntry("levelselect", TextureRegion.class);
+        settingsButton = JsonAssetManager.getInstance().getEntry("settings", TextureRegion.class);
+        quitButton = JsonAssetManager.getInstance().getEntry("quit", TextureRegion.class);
+        helpButton = JsonAssetManager.getInstance().getEntry("help", TextureRegion.class);
+        background = JsonAssetManager.getInstance().getEntry("loading", Texture.class);
+
+        play = new Button(playButton.getRegionWidth()+10,canvas.getHeight() - playButton.getRegionWidth() - 10, playButton.getRegionWidth(), playButton.getRegionHeight(), playButton,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("play glow", TextureRegion.class), "play");
+
+        levels = new Button(0,0, levelsButton.getRegionWidth(), levelsButton.getRegionHeight(), levelsButton,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("levelselect glow", TextureRegion.class), "all levels");
+
+        settings = new Button(0,0, settingsButton.getRegionWidth(), settingsButton.getRegionHeight(), settingsButton,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("settings glow", TextureRegion.class), "replay");
+
+        quit = new Button(0,0, quitButton.getRegionWidth(), quitButton.getRegionHeight(), quitButton,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("quit glow", TextureRegion.class), "quit");
+
+        help = new Button(0,0, helpButton.getRegionWidth(), helpButton.getRegionHeight(), helpButton,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("help glow", TextureRegion.class), "help");
+
+        // this is placeholder button for navigation reasons
+        build = new Button(0,0,0,0,playButton, world, new Vector2(1,1), playButton, "build");
+
+        buttons.add(0, play);
+        buttons.add(1, levels);
+        buttons.add(2, settings);
+        buttons.add(3, quit);
+        buttons.add(4, help);
     }
 
     /**
      * Called when this screen should release all resources.
      */
     public void dispose() {
-        background.dispose();
-        background = null;
+        for(Button b : buttons) {
+            b.deactivatePhysics(world);
+        }
+        buttons.clear();
+        if (world != null) {
+            world.dispose();
+            world = new World(new Vector2(0,0), false);
+        }
+        music.stop();
+        music.dispose();
     }
 
     /**
@@ -208,22 +295,12 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      *
      * @param delta Number of seconds since last animation frame
      */
-    private void update(float delta) {
-        angle += 0.03f;
-
-//        for(String s : manager.getAssetNames()) {
-//            if (manager.isLoaded(s) && !loaded.contains(s)){
-//                System.out.println(s);
-//                loaded.add(s);
-//            }
-//        }
-        manager.update(budget);
-        this.progress = manager.getProgress();
-        if (progress >= 1.0f) {
-            this.progress = 1.0f;
-            pressState = 2;
+    public void update(float delta) {
+        if (!music.isPlaying()) {
+            music.play();
+            music.setLooping(true);
         }
-        title.tick();
+
     }
 
     /**
@@ -234,15 +311,29 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * prefer this in lecture.
      */
     private void draw() {
+        OrthographicCamera cam = (OrthographicCamera) canvas.getCamera();
+        if (cam.position.x != canvas.getWidth()/2 || cam.position.y != canvas.getHeight()/2) {
+            cam.position.x = canvas.getWidth()/2; cam.position.y = canvas.getHeight()/2;
+            cam.update();
+        }
         canvas.begin();
         canvas.draw(background, 0, 0, canvas.getWidth(), canvas.getHeight());
-        canvas.draw(title, Color.WHITE, title.getRegionWidth()/2, title.getRegionHeight()/2, TITLE_X, TITLE_Y, 0, scale, scale);
-        Color tint = (pressState == 1 ? Color.GRAY: Color.WHITE);
-        canvas.draw(spin, tint, spin.getWidth()/2, spin.getHeight()/2,
-                    SPIN_X, SPIN_Y, -angle, scale, scale);
+        for (Button b : buttons) {
+            b.draw(canvas);
+        }
         canvas.end();
     }
 
+    /**
+     * Helper to find distance
+     *
+     * @param v1 v1
+     * @param v2 v2
+     * @return distance between v1 and v2
+     */
+    private float dist(Vector2 v1, Vector2 v2) {
+        return (float) Math.sqrt((v1.x - v2.x)*(v1.x-v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
+    }
 
     // ADDITIONAL SCREEN METHODS
     /**
@@ -257,10 +348,17 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
         if (active) {
             update(delta);
             draw();
-
+//            if (!music.isPlaying()) { music.play();}
             // We are are ready, notify our listener
-            if (isReady() && listener != null) {
-                listener.exitScreen(this, 0);
+
+            if (isReady() && currentButton == play) {
+                listener.exitScreen(this, WorldController.EXIT_PLAY);
+            } else if (isReady() && currentButton == levels) {
+                listener.exitScreen(this, WorldController.EXIT_SELECT);
+            } else if (isReady() && currentButton == build) {
+                listener.exitScreen(this, WorldController.EXIT_EDIT);
+            } else if (isReady() && currentButton == quit) {
+                listener.exitScreen(this, WorldController.EXIT_QUIT);
             }
         }
     }
@@ -280,6 +378,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
         float sy = ((float)height)/STANDARD_HEIGHT;
         scale = (sx < sy ? sx : sy);
 
+        centerY = (int)(height*.56);
+        centerX = width/2;
         heightY = height;
     }
 
@@ -342,7 +442,13 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * @param pointer the button or touch finger number
      * @return whether to hand the event to other listeners.
      */
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) { return true; }
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (currentButton != null) {
+            pressState = 1;
+            return false;
+        }
+        return false;
+    }
 
     /**
      * Called when a finger was lifted or a mouse button was released.
@@ -355,7 +461,19 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * @param pointer the button or touch finger number
      * @return whether to hand the event to other listeners.
      */
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) { return true; }
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        Vector2 center;
+        float dist;
+        screenY = heightY - screenY;
+
+        if (currentButton != null) {
+            if (currentButton.isIn(screenX, screenY)) {
+                currentButton.pushed = true;
+            }
+        }
+
+        return true;
+    }
 
     /**
      * Called when a button on the Controller was pressed.
@@ -368,7 +486,14 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
      */
-    public boolean buttonDown (Controller controller, int buttonCode) { return true; }
+    public boolean buttonDown (Controller controller, int buttonCode) {
+        if (buttonCode == startButton && pressState == 0) {
+            pressState = 1;
+            currentButton = play;
+            return false;
+        }
+        return true;
+    }
 
     /**
      * Called when a button on the Controller was released.
@@ -381,9 +506,13 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * @param buttonCode The button pressed
      * @return whether to hand the event to other listeners.
      */
-    public boolean buttonUp (Controller controller, int buttonCode) { return true; }
-
-    // UNSUPPORTED METHODS FROM InputProcessor
+    public boolean buttonUp (Controller controller, int buttonCode) {
+        if (pressState == 1 && buttonCode == startButton) {
+            pressState = 2;
+            return false;
+        }
+        return true;
+    }
 
     /**
      * Called when a key is pressed (UNSUPPORTED)
@@ -392,6 +521,14 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * @return whether to hand the event to other listeners.
      */
     public boolean keyDown(int keycode) {
+        if (pressState == 0 && keycode == Input.Keys.N) {
+            pressState = 1;
+            currentButton = play;
+            return false;
+        } else if (pressState == 0 && keycode == Input.Keys.P) {
+            pressState = 1;
+            currentButton = build;
+        }
         return true;
     }
 
@@ -413,8 +550,18 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * @return whether to hand the event to other listeners.
      */
     public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.ESCAPE && listener != null) {
-            listener.exitScreen(this, WorldController.EXIT_QUIT);
+        if (pressState == 1 && keycode == Input.Keys.N) {
+            pressState = 2;
+            currentButton = play;
+            return false;
+        } else if (pressState == 1 && keycode == Input.Keys.P) {
+            pressState = 2;
+            currentButton = build;
+            return false;
+        } else if (keycode == Input.Keys.ESCAPE) {
+            pressState = 2;
+            currentButton = quit;
+            return false;
         }
         return true;
     }
@@ -427,6 +574,14 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * @return whether to hand the event to other listeners.
      */
     public boolean mouseMoved(int screenX, int screenY) {
+        currentButton = null;
+        screenY = heightY - screenY;
+        for (Button b : buttons) {
+            b.setActive(false);
+            if (b.isIn(screenX,screenY)) {
+                b.setActive(true);
+            }
+        }
         return true;
     }
 
@@ -539,4 +694,28 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
         return true;
     }
 
+
+    /**
+     * Resets the status of the game so that we can play again.
+     *
+     * This method disposes of the world and creates a new one.
+     */
+    public void reset() {
+
+        Gdx.input.setInputProcessor(this);
+
+        currentButton = null;
+        pressState = 0;
+        if (music != null) {
+            music.stop();
+            music.dispose();
+        }
+
+        if (GameController.getMusic() != null) {
+            GameController.getMusic().stop();
+            GameController.getMusic().dispose();
+        }
+
+
+    }
 }
