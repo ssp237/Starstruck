@@ -453,11 +453,11 @@ public class GameController extends WorldController implements ContactListener {
 
         displayFont = JsonAssetManager.getInstance().getEntry("retro game", BitmapFont.class);
 
-        if (music != null) {
-            music.stop();
-            music.dispose();
-            music = null;
-        }
+//        if (music != null) {
+////            music.stop();
+////            music.dispose();
+////            music = null;
+////        }
 
         if (MenuMode.getMusic() != null) {
             MenuMode.getMusic().stop();
@@ -1831,6 +1831,8 @@ public class GameController extends WorldController implements ContactListener {
                 music.setLooping(true);
                 music_name = "sombrero";
             }
+//            System.out.println("in sombrero and music " + music.isPlaying());
+//            System.out.println("music name = " + music_name);
         }
     }
 
@@ -2050,6 +2052,10 @@ public class GameController extends WorldController implements ContactListener {
             }
 
             if (bd1.getType() == ObstacleType.OCTO_LEG || bd2.getType() == ObstacleType.OCTO_LEG) {
+                contact.setEnabled(false);
+            }
+
+            if (bd1.getType() == ObstacleType.AZTEC_WHEEL || bd2.getType() == ObstacleType.AZTEC_WHEEL) {
                 contact.setEnabled(false);
             }
 

@@ -91,7 +91,7 @@ public class Bug extends Enemy {
             this.setPosition(contactPointEN.add(contactDirEn.setLength(BUG_SPEED)));
             //body.applyForce(contactDirEn.setLength(BUG_SPEED), getPosition(), true);
 //            body.setLinearVelocity(new Vector2 (0, 0 ));
-            body.applyLinearImpulse(contactDirEn.cpy().rotateRad(-(float) Math.PI / 2).setLength(24f), getPosition(), true);
+            body.applyLinearImpulse(contactDirEn.cpy().rotateRad(-(float) Math.PI / 2).setLength(10f), getPosition(), true);
 
         //setGravity(vectorWorld.getForce(getPosition()));
             //applyForce();
