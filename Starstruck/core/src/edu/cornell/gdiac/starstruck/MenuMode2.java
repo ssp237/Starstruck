@@ -86,14 +86,14 @@ public class MenuMode2 extends WorldController implements Screen, InputProcessor
     /** Loading audio */
     public static Music music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
 
-            //= GameController.getMusic();
+    //= GameController.getMusic();
 
 
 
-            //
+    //
     private String music_name = "menu";
 
-                    //GameController.getMusicName();
+    //GameController.getMusicName();
 
     //public Music from_GameController = GameController.getMusic();
     //private String gameController_music_name = GameController.getMusicName();
@@ -185,11 +185,7 @@ public class MenuMode2 extends WorldController implements Screen, InputProcessor
         currentButton = null;
 
         startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
-        Gdx.input.setInputProcessor(this);
-        // Let ANY connected controller start the game.
-        for(Controller controller : Controllers.getControllers()) {
-            controller.addListener(this);
-        }
+
         active = true;
     }
 
@@ -268,6 +264,12 @@ public class MenuMode2 extends WorldController implements Screen, InputProcessor
         buttons.add(2, settings);
         buttons.add(3, quit);
         buttons.add(4, help);
+
+        Gdx.input.setInputProcessor(this);
+        // Let ANY connected controller start the game.
+        for(Controller controller : Controllers.getControllers()) {
+            controller.addListener(this);
+        }
     }
 
     /**

@@ -179,6 +179,13 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         levelFormat = jsonReader.parse(Gdx.files.internal("levels/levelselect.json"));
         level.populate(levelFormat);
         levels = level.getLevels();
+
+
+        Gdx.input.setInputProcessor(this);
+        // Let ANY connected controller start the game.
+        for(Controller controller : Controllers.getControllers()) {
+            controller.addListener(this);
+        }
     }
 
     // Physics constants for initialization
@@ -232,11 +239,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         setDebug(false);
         setComplete(false);
         setFailure(false);
-        Gdx.input.setInputProcessor(this);
-        // Let ANY connected controller start the game.
-        for(Controller controller : Controllers.getControllers()) {
-            controller.addListener(this);
-        }
         pressState = 0;
         active = false;
         sensorFixtures = new ObjectSet<Fixture>();
@@ -727,7 +729,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 //            if (!music.isPlaying()) { music.play();}
             // We are are ready, notify our listener
             if (currentLevel != null && isReady() && currentLevel.getUnlocked() && !menu.pushed) {
-                print("what??");
                 lastLevel = currentLevel;
                 nextLevel = currentLevel.nextLevel;
                 listener.exitScreen(this, WorldController.EXIT_PLAY, currentLevel.getFile());
@@ -745,7 +746,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 //print(lastLevel.jsonFile);
                 listener.exitScreen(this, WorldController.EXIT_PLAY, temp, lastLevel.jsonFile);
             } else if (menu.pushed && isReady()) {
-                print("what");
                 listener.exitScreen(this, WorldController.EXIT_QUIT);
             }
         }
