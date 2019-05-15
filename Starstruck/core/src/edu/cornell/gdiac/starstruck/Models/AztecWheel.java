@@ -2,7 +2,6 @@ package edu.cornell.gdiac.starstruck.Models;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.starstruck.Obstacles.Anchor;
@@ -16,6 +15,10 @@ public class AztecWheel extends WheelObstacle {
 
     private static int counter = 0;
 
+    /** Angular velocity */
+    private final float v = 0.5f;
+    /** Initial angle */
+    private float omegaNot;
     /** Radius for anchor positions */
     private float radius2;
     /** List of our anchors */
@@ -49,6 +52,8 @@ public class AztecWheel extends WheelObstacle {
         for (Vector2 v : getAnchorPositions()) {
             anchors.add(new Anchor(v.x, v.y, JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale));
         }
+
+        omegaNot = getAngle();
     }
 
     private ArrayList<Vector2> getAnchorPositions() {
@@ -74,6 +79,8 @@ public class AztecWheel extends WheelObstacle {
     public void setPosition(Vector2 position) {
         super.setPosition(position);
 
+        setAngle(omegaNot);
+
         ArrayList<Vector2> anchorPositions = getAnchorPositions();
         for (int i = 0; i < 8; i ++) {
             anchors.get(i).setPosition(anchorPositions.get(i));
@@ -96,6 +103,26 @@ public class AztecWheel extends WheelObstacle {
         super.deactivatePhysics(world);
         for (Anchor a : anchors) {
             a.deactivatePhysics(world);
+        }
+    }
+
+    public void update(float dt) {
+        super.update(dt);
+        float newAngle = (getAngle() + v*dt) % (float) Math.toRadians(360);
+        setAngle(newAngle);
+        newAngle -= omegaNot;
+        newAngle += (float) Math.toRadians(360);
+        float vx, vy;
+        Vector2 pos = getPosition();
+        for (Anchor a : anchors) {
+            vx = -radius2 * (float) Math.cos(newAngle) * v;
+            vy = -radius2 * (float) Math.sin(newAngle) * v;
+            a.setVX(vx);
+            a.setVY(vy);
+            newAngle -= (float) Math.toRadians(45);
+//            Vector2 pos = getPosition().cpy().sub(a.getPosition()).scl(v*10000);
+//            a.setVX(pos.y);
+//            a.setVY(-pos.x);
         }
     }
 
