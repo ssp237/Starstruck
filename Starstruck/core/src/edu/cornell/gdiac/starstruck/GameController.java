@@ -1720,6 +1720,7 @@ public class GameController extends WorldController implements ContactListener {
             if (music != null && music_name != "tutorial") {
                 music.stop();
                 music.dispose();
+                music = null;
             }
             if (music == null || !music.isPlaying()) {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/tutorial_music.mp3"));
@@ -1733,6 +1734,7 @@ public class GameController extends WorldController implements ContactListener {
             if (music != null && music_name != "whirlpool") {
                 music.stop();
                 music.dispose();
+                music = null;
             }
             if (music == null || !music.isPlaying()) {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/whirlpool_music.mp3"));
@@ -1746,12 +1748,26 @@ public class GameController extends WorldController implements ContactListener {
             if (music != null && music_name != "milkyway") {
                 music.stop();
                 music.dispose();
+                music = null;
             }
             if (music == null || !music.isPlaying()) {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/milky_way.mp3"));
                 music.play();
                 music.setLooping(true);
                 music_name = "milkyway";
+            }
+        }
+        else if(level.getGalaxy() == Galaxy.SOMBRERO) {
+            if (music != null && music_name != "sombrero") {
+                music.stop();
+                music.dispose();
+                music = null;
+            }
+            if (music == null || !music.isPlaying()) {
+                music = Gdx.audio.newMusic(Gdx.files.internal("audio/sombrero_beat.mp3"));
+                music.play();
+                music.setLooping(true);
+                music_name = "sombrero";
             }
         }
     }
