@@ -143,7 +143,7 @@ public class GameController extends WorldController implements ContactListener {
 
         Color tinge = Color.WHITE;
         if (gal == Galaxy.SOMBRERO)
-            tinge = Color.ORANGE;
+            tinge = Color.WHITE;
 
         float centerY = camera.position.y + ((float) canvas.getHeight())/2 - 80;
         float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 45;
