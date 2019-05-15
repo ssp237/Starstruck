@@ -21,6 +21,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.*;
 import com.badlogic.gdx.math.collision.*;
 import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.starstruck.Galaxy;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
@@ -71,6 +72,8 @@ public class Star extends BoxObstacle {
     public int sparkleCount = 8;
     /** This star is removed */
     public boolean removed = false;
+    /** galaxy */
+    private Galaxy galaxy;
 
     /**
      * Creates a new spinner at the origin.
@@ -179,6 +182,8 @@ public class Star extends BoxObstacle {
     public void setRemove() { remove = true; }
 
     public boolean removeStar() { return remove; }
+
+    public void setGalaxy(Galaxy gal) { galaxy = gal; }
 
     /**
      * Return a new star with parameters specified by the JSON
@@ -322,10 +327,18 @@ public class Star extends BoxObstacle {
 //            else System.out.println("Didn't draw tutorial point");
         }
         else if (getType() == ObstacleType.STAR){
-            if (isSparkling)
-                canvas.draw(sparkle, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
-            else
-            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),starScale,starScale);
+            if (galaxy == Galaxy.SOMBRERO) {
+                if (isSparkling)
+                    canvas.draw(sparkle, Color.SKY, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), 1, 1);
+                else
+                    canvas.draw(texture, Color.SKY, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), starScale, starScale);
+            }
+            else {
+                if (isSparkling)
+                    canvas.draw(sparkle, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), 1, 1);
+                else
+                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), starScale, starScale);
+            }
         }
     }
 }

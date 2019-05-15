@@ -306,11 +306,13 @@ public class LevelModel {
 
         player1 = AstronautModel.fromJson(levelFormat.get("astronaut 1"), scale, true);
         player1.setName("avatar");
+        player1.setGalaxy(galaxy);
         player1.activatePhysics(world);
         //addObject(player1);
 
         player2 = AstronautModel.fromJson(levelFormat.get("astronaut 2"), scale, false);
         player2.setName("avatar2");
+        player2.setGalaxy(galaxy);
         player2.activatePhysics(world);
 
         //objects.remove(player1); objects.remove(player2);
@@ -378,6 +380,7 @@ public class LevelModel {
             Star star = Star.fromJSON(starVals, scale);
             star.setName("star" + i);
             activate(star);
+            star.setGalaxy(galaxy);
             stars.add(star);
             starVals = starVals.next;
         }
@@ -408,6 +411,7 @@ public class LevelModel {
             Anchor anchor = Anchor.fromJSON(anchorVals, scale);
             anchor.setName("anchor" + i);
             activate(anchor);
+            anchor.setGalaxy(galaxy);
             anchors.add(anchor);
             anchorVals = anchorVals.next;
         }

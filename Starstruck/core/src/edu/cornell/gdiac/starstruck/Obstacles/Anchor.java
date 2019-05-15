@@ -20,12 +20,14 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.*;
 import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.starstruck.Galaxy;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
 public class Anchor extends WheelObstacle {
     private FilmStrip animatedText;
+    private Galaxy galaxy;
 
 //    /** The debug name for the entire obstacle */
 //    private static final String SPINNER_NAME = "anchor_spinner";
@@ -107,6 +109,8 @@ public class Anchor extends WheelObstacle {
         setTexture(texture);
     }
 
+    public void setGalaxy(Galaxy gal) { galaxy = gal; }
+
     public void update(float dt) {
         animatedText.tick();
     }
@@ -173,6 +177,11 @@ public class Anchor extends WheelObstacle {
     }
 
     public void draw(GameCanvas canvas) {
-        canvas.draw(animatedText, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+        if (galaxy == Galaxy.SOMBRERO){
+            canvas.draw(animatedText, Color.GRAY, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), 1, 1);
+        }
+        else {
+            canvas.draw(animatedText, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), 1, 1);
+        }
     }
 }
