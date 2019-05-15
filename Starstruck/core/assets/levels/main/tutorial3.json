@@ -4,6 +4,7 @@
 "playSize": [ 1.0, 1.0 ],
 "win": "1.0",
 "galaxy": "default",
+"has boss": false,
 "background": "de background",
 "astronaut 1": {
 	"pos": [ 14.821533203125, 14.393730163574219 ],
@@ -57,7 +58,7 @@
 		"y1": 17.880001068115234,
 		"x2": 15.90000057220459,
 		"y2": 13.680000305175781,
-		"taskText": "reel keyone",
+		"taskText": "reel",
 		"name": "task1"
 	},
 	{

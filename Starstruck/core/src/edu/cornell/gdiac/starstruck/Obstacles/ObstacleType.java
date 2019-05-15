@@ -21,5 +21,7 @@ public enum ObstacleType {
     URCHIN,
     TUTORIAL,
     ICE_CREAM,
-    COLORED_BUG
+    COLORED_BUG,
+    OCTO_LEG,
+    AZTEC_WHEEL
 }

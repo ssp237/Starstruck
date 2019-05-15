@@ -105,6 +105,8 @@ public class AstronautModel extends CapsuleObstacle {
     private Vector2 planetJump;
     /** Is this astronaut anchored */
     private boolean isAnchored;
+    /** Whether the astronaut has collided with an anchor */
+    private boolean anchorHit;
     /** What is the position of the current anchor? (May be null) */
     private Vector2 anchorPos;
     /** Is this astronaut the active character*/
@@ -118,7 +120,7 @@ public class AstronautModel extends CapsuleObstacle {
     /** Whether the astronaut is being moved, i.e. movement keys pressed */
     public boolean moving;
     /** Anchor astronaut is currently or last anchored on */
-    public Anchor curAnchor;
+    private Anchor curAnchor;
     /** Is this player one?*/
     private boolean isPlayerOne;
     /** This astronaut's current planet */
@@ -153,6 +155,10 @@ public class AstronautModel extends CapsuleObstacle {
     private boolean twoplayer;
     /** To keep or flip controls */
     private int lastFace = 1;
+    /**Last direction */
+    public int lastDir;
+    //public boolean useLastDir = false;
+    public boolean bossSwing = false;
 
     /**
      * Set the glow texture
@@ -415,6 +421,10 @@ public class AstronautModel extends CapsuleObstacle {
      */
     public void setUnAnchored() { isAnchored = false; }
 
+    public boolean anchorHit() { return anchorHit; }
+
+    public void setAnchorHit(boolean value) { anchorHit = value; }
+
     /**
      * Whether astronaut is acitive
      *
@@ -430,11 +440,19 @@ public class AstronautModel extends CapsuleObstacle {
     public void setActive(boolean active) { isActive = active; }
 
     /**
-     * Gets curAnchor for thsi astronaut
+     * Gets curAnchor for this astronaut
      *
      * @return Anchor curAnchor
      */
     public Anchor getCurAnchor() { return curAnchor; }
+
+
+    /**
+     * Set curAnchor for this astronaut
+     *
+     * @param a anchor
+     */
+    public void setCurAnchor(Anchor a) { curAnchor = a; }
 
     /**
      * Returns the upward impulse for a jump.
@@ -551,6 +569,7 @@ public class AstronautModel extends CapsuleObstacle {
         planetJump = new Vector2();
         /** Is this astronaut anchored */
         isAnchored = false;
+        anchorHit = false;
         /** Is this astronaut the active character*/
         isActive = active;
         isPlayerOne = playerOne;
@@ -853,7 +872,7 @@ public class AstronautModel extends CapsuleObstacle {
         if (!onPlanet && !idle.justReset()) idle.reset();
 
         if (isAnchored){
-            setLinearVelocity(new Vector2());
+            setLinearVelocity(curAnchor.getLinearVelocity());
             setPosition(anchorPos);
             //setBodyType(BodyDef.BodyType.StaticBody);
             setBodyType(BodyDef.BodyType.KinematicBody);

@@ -332,7 +332,7 @@ public class InputController {
      * @return true if the player wants to go to the previous level.
      */
     public boolean didRetreat() {
-        return prevPressed && !prevPrevious && shiftPressed;
+        return prevPressed && !prevPrevious && shiftPressed && nextPressed && !nextPrevious;
     }
 
     /**

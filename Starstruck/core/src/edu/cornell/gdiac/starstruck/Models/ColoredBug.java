@@ -3,6 +3,7 @@ package edu.cornell.gdiac.starstruck.Models;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.starstruck.Obstacles.ObstacleType;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -119,6 +120,16 @@ public class ColoredBug extends Bug {
 
     public ObstacleType getType() {
         return ObstacleType.COLORED_BUG;
+    }
+
+    public JsonValue toJson () {
+        JsonValue json = new JsonValue(JsonValue.ValueType.object);
+
+        //Add textures
+        json.addChild("texture", new JsonValue(JsonAssetManager.getInstance().getKey(getTexture())));
+        json.addChild("color", new JsonValue(color.getName()));
+
+        return json;
     }
 
     public String toString(){

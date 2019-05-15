@@ -52,7 +52,7 @@ import java.util.ArrayList;
 public class LevelSelect extends WorldController implements Screen, InputProcessor, ControllerListener {
 
     /** Speed of camera pan & zoom */
-    private static final float PAN_CONST = 5;
+    private static final float PAN_CONST = 10;
     /** The reader to process JSON files */
     private JsonReader jsonReader;
     /** The JSON asset directory */
@@ -112,6 +112,9 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     private Button nextButton;
     private Button menu;
 
+    /** Current selected button */
+    private int curButton = -1;
+
     /** Buttons to display upon winning a level */
     private PooledList<Button> winButtons;
 
@@ -166,9 +169,10 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         nextButton = new Button(0,0, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
                 world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("next glow", TextureRegion.class), "next");
 
-        winButtons.add(allLevels);
-        winButtons.add(replayButton);
-        winButtons.add(nextButton);
+        winButtons.add(0, replayButton);
+        winButtons.add(1, allLevels);
+        winButtons.add(2, nextButton);
+
 
         level.dispose();
 
@@ -282,8 +286,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     public void reset() {
         Gdx.input.setInputProcessor(this);
 
-        print("resetting");
-
         setComplete(false);
         setFailure(false);
         currentLevel = null;
@@ -297,9 +299,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
             b.setDrawScale(level.scale);
             b.pushed = false;
         }
-
-        print("reset");
-
 
         if (MenuMode.menuIsPlaying()) {
             dont_play_music = true;
@@ -391,17 +390,14 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         if (Gdx.input.getX() >= right && camera.position.x + camera.viewportWidth/2 < rightBound) {
             camera.position.add(new Vector3(PAN_CONST, 0, 0));
             camOffsetX = camOffsetX + PAN_CONST;
-        }
-        if (Gdx.input.getX() <= left && camera.position.x - camera.viewportWidth/2 > 0) {
+        } else if (Gdx.input.getX() <= left && camera.position.x - camera.viewportWidth/2 > 0) {
             camera.position.sub(new Vector3(PAN_CONST, 0, 0));
             camOffsetX = camOffsetX - PAN_CONST;
-        }
-        if (currentLevel != null && currentLevel.getPosition().x * level.scale.x >= right + camera.position.x - canvas.getWidth()/2
+        } else if (currentLevel != null && currentLevel.getPosition().x * level.scale.x >= right + camera.position.x - canvas.getWidth()/2
                 && camera.position.x + camera.viewportWidth/2 < rightBound) {
             camera.position.add(new Vector3(PAN_CONST, 0, 0));
             camOffsetX = camOffsetX + PAN_CONST;
-        }
-        if (currentLevel != null && currentLevel.getPosition().x * level.scale.x <= left + camera.position.x - canvas.getWidth()/2
+        } else if (currentLevel != null && currentLevel.getPosition().x * level.scale.x <= left + camera.position.x - canvas.getWidth()/2
                 && camera.position.x - camera.viewportWidth/2 > 0) {
             camera.position.sub(new Vector3(PAN_CONST, 0, 0));
             camOffsetX = camOffsetX - PAN_CONST;
@@ -533,36 +529,72 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param keycode one of the constants in {@link Input.Keys}
      * @return whether the input was processed */
     public boolean keyUp (int keycode) {
-        if (keycode == Input.Keys.RIGHT) {
-            //pressState = 0;
-            //print(currentLevel);
-            if (currentLevel == null) {
-                currentLevel = level.firstLevel;
-            } else if (currentLevel.nextLevel != null){
+        if (winPos == null) {
+            if (keycode == Input.Keys.RIGHT) {
+                //pressState = 0;
+                //print(currentLevel);
+                if (currentLevel == null) {
+                    currentLevel = level.firstLevel;
+                } else if (currentLevel.nextLevel != null) {
+                    currentLevel.setActive(false);
+                    currentLevel = currentLevel.nextLevel;
+                }
+                currentLevel.setActive(true);
+                return false;
+            } else if (keycode == Input.Keys.LEFT) {
+                //pressState = 0;
+                //print(currentLevel);
+                if (currentLevel == null) {
+                    currentLevel = level.firstLevel;
+                } else if (currentLevel.lastLevel != null) {
+                    currentLevel.setActive(false);
+                    currentLevel = currentLevel.lastLevel;
+                }
+                currentLevel.setActive(true);
+                return false;
+            } else if ((keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) && currentLevel != null) {
                 currentLevel.setActive(false);
-                currentLevel = currentLevel.nextLevel;
+                pressState = 2;
+                return false;
+            } else if (keycode == Input.Keys.ESCAPE) {
+                menu.pushed = true;
+                pressState = 2;
+                return false;
+            } else {
+                if (keycode == Input.Keys.RIGHT) {
+                    //pressState = 0;
+                    //print(currentLevel);
+                    if (curButton == -1) {
+                        curButton = 0;
+                    } else {
+                        winButtons.get(curButton).setActive(false);
+                        curButton = (curButton + 1) % winButtons.size();
+                    }
+                    winButtons.get(curButton).setActive(true);
+                    return false;
+                } else if (keycode == Input.Keys.LEFT) {
+                    //pressState = 0;
+                    //print(currentLevel);
+                    if (curButton == -1) {
+                        curButton = 0;
+                    } else {
+                        winButtons.get(curButton).setActive(false);
+                        curButton = (curButton - 1) % winButtons.size();
+                        if (curButton < 0) curButton += winButtons.size();
+                    }
+                    winButtons.get(curButton).setActive(true);
+                    return false;
+                } else if ((keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) && curButton != -1) {
+                    if (allLevels.getActive()) {
+                        animLoop++;
+                    } else if (replayButton.getActive()) {
+                        replayButton.pushed = true;
+                    } else if (nextButton.getActive()) {
+                        nextButton.pushed = true;
+                    }
+                    return false;
+                }
             }
-            currentLevel.setActive(true);
-            return false;
-        } else if (keycode == Input.Keys.LEFT) {
-            //pressState = 0;
-            //print(currentLevel);
-            if (currentLevel == null) {
-                currentLevel = level.firstLevel;
-            } else if (currentLevel.lastLevel != null){
-                currentLevel.setActive(false);
-                currentLevel = currentLevel.lastLevel;
-            }
-            currentLevel.setActive(true);
-            return false;
-        } else if ((keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) && currentLevel != null) {
-            currentLevel.setActive(false);
-            pressState = 2;
-            return false;
-        } else if (keycode == Input.Keys.ESCAPE) {
-            menu.pushed = true;
-            pressState = 2;
-            return false;
         }
         return true;
     };
@@ -862,8 +894,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 Color drawColor = new Color(1, 1, 1, 1);
                 canvas.draw(death, drawColor, winPos.x,
                         winPos.y, death.getWidth(), death.getHeight());
-                canvas.draw(winSprite, Color.WHITE, winSprite.getRegionWidth() / 2, winSprite.getRegionHeight() / 2,
-                        winPos.x + death.getWidth() / 2,
+                canvas.draw(winSprite, Color.WHITE, (float) winSprite.getRegionWidth() / 2, (float) winSprite.getRegionHeight() / 2,
+                        winPos.x + (float) death.getWidth() / 2,
                         winPos.y + 3 * (float) canvas.getHeight() / 4, 0, 1, 1.0f);
 
                 if (animLoop >= 1){
@@ -886,8 +918,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 Color drawColor = new Color(1,1,1, 1);
                 canvas.draw(death, drawColor, winPos.x,
                         winPos.y, death.getWidth(), death.getHeight());
-                canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
-                        winPos.x + death.getWidth()/2,
+                canvas.draw(winSprite, Color.WHITE,(float) winSprite.getRegionWidth()/2,(float) winSprite.getRegionHeight()/2,
+                        winPos.x + (float) death.getWidth()/2,
                         (winPos.y + 3 * (float) canvas.getHeight() / 4 ),0,1,1.0f);;
                 canvas.end();
                 winPos.x += (float) death.getWidth()/ (EXIT_COUNT);

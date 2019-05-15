@@ -4,6 +4,7 @@
 	"playSize": [1.5, 1.5],
 	"win": "0.5",
 	"galaxy": "milky way",
+	"has boss": false,
 	"background": "mw background",
 	"astronaut 1": {
 		"pos": [ 6.118957042694092, 8.080119132995605 ],

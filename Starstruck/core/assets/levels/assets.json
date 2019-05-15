@@ -12,6 +12,10 @@
       "file": "platform/static_star_01.png",
       "wrap": false
     },
+    "sparkle": {
+      "file": "platform/static_star_collected_v1.png",
+      "wrap": false
+    },
     "wp p1": {
       "file": "whirlpool/planets/static_planet1_v1.png",
       "wrap": false
@@ -106,6 +110,38 @@
     },
     "mw g4": {
       "file": "milky way/planets/static_gravity.ring4_v1.png",
+      "wrap": false
+    },
+    "ci p1": {
+      "file": "circinus/planets/static_planet1_v1.png",
+      "wrap": false
+    },
+    "ci g1": {
+      "file": "circinus/planets/static_gravity.ring1_v1.png",
+      "wrap": false
+    },
+    "ci p2": {
+      "file": "circinus/planets/static_planet2_v1.png",
+      "wrap": false
+    },
+    "ci g2": {
+      "file": "circinus/planets/static_gravity.ring2_v1.png",
+      "wrap": false
+    },
+    "ci p3": {
+      "file": "circinus/planets/static_planet3_v1.png",
+      "wrap": false
+    },
+    "ci g3": {
+      "file": "circinus/planets/static_gravity.ring3_v1.png",
+      "wrap": false
+    },
+    "ci p4": {
+      "file": "circinus/planets/static_planet4_v1.png",
+      "wrap": false
+    },
+    "ci g4": {
+      "file": "circinus/planets/static_gravity.ring4_v1.png",
       "wrap": false
     },
     "ls p1": {
@@ -252,6 +288,18 @@
       "file": "enemies/static_spike_bottom.png",
       "wrap": false
     },
+    "octo top": {
+      "file": "whirlpool/enemies/octopus/static_octo.leg_top.png",
+      "wrap": false
+    },
+    "octo center": {
+      "file": "whirlpool/enemies/octopus/static_octo.leg_middle.png",
+      "wrap": false
+    },
+    "octo bottom": {
+      "file": "whirlpool/enemies/octopus/static_octo.leg_bottom.png",
+      "wrap": false
+    },
     "pink dot": {
       "file": "tutorial/tutorial_pink_dot.png",
       "wrap": false
@@ -315,6 +363,10 @@
     "menu glow": {
       "file": "buttons/menu hover.png",
       "wrap": false
+    },
+    "so boss": {
+      "file": "sombrero/enemies/boss/sombrero_boss.png",
+      "wrap": false
     }
   },
   "textures": {
@@ -332,6 +384,10 @@
     },
     "so background": {
       "file": "sombrero/background_sombrero_v1.png",
+      "wrap": false
+    },
+    "ci background": {
+      "file": "circinus/circinus_background_v1.png",
       "wrap": false
     },
     "de background": {
@@ -373,6 +429,10 @@
     },
     "starbarglow": {
       "file": "default/starbarglow.png",
+      "wrap": false
+    },
+    "starglow" : {
+      "file": "default/star_glow.png",
       "wrap": false
     }
   },
@@ -575,7 +635,7 @@
       "rows": 1,
       "cols": 8,
       "size": 8,
-      "delay": 20
+      "delay": 10
     },
     "blue dot animated": {
       "file": "tutorial/animated_tutorial_blue.png",
@@ -583,7 +643,7 @@
       "rows": 1,
       "cols": 8,
       "size": 8,
-      "delay": 20
+      "delay": 10
     }
   },
   "fonts": {

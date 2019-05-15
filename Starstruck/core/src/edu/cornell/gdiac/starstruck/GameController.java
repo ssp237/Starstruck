@@ -119,6 +119,8 @@ public class GameController extends WorldController implements ContactListener {
     private TextureRegion statusFrgRight;
     /** All stars collected glow for status bar */
     private Texture statusGlow;
+    /** Star glow asset for star bar */
+    private Texture starGlow;
 
     /** The width of the progress bar */
     private int widthBar = 448;
@@ -142,7 +144,7 @@ public class GameController extends WorldController implements ContactListener {
         float centerY = camera.position.y + canvas.getHeight() - ((float) canvas.getHeight())/2 - 60;
         float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 10;
         canvas.draw(statusBkgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
-        canvas.draw(statusBkgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + (widthBar /2) - PROGRESS_CAP_RIGHT*0.56f*scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+        canvas.draw(statusBkgRight, Color.WHITE, centerX + statusBkgMiddle.getRegionWidth() + 23, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
         canvas.draw(statusBkgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
 
         canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
@@ -152,11 +154,14 @@ public class GameController extends WorldController implements ContactListener {
             canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, span, PROGRESS_HEIGHT);
         } else if (starCount == totalStars) {
             canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
-            canvas.draw(statusFrgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + (widthBar /2) - PROGRESS_CAP_RIGHT*0.56f*scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+            canvas.draw(statusFrgRight, Color.WHITE, centerX + statusBkgMiddle.getRegionWidth() + 23, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
             canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
         }
         else {
             canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        }
+        if (openGoal) {
+            canvas.draw(starGlow, centerX-16, centerY-8);
         }
     }
 
@@ -300,8 +305,10 @@ public class GameController extends WorldController implements ContactListener {
     private int starCount;
     /** Whether a star should be collected */
     private boolean collection;
-    /** List of stars */
+    /** List of stars TODO make private*/
     public ArrayList<Star> stars = new ArrayList<Star>();
+    /** List of stars to be removed */
+    private ArrayList<Star> removed = new ArrayList<Star>();
     /** Number of stars needed to open portal */
     private int winCount;
     /** Whether the goal is open */
@@ -435,6 +442,8 @@ public class GameController extends WorldController implements ContactListener {
         statusFrgRight  = new TextureRegion(statusBar,statusBar.getWidth()-PROGRESS_CAP_RIGHT,offset,PROGRESS_CAP_RIGHT,PROGRESS_HEIGHT);
         statusFrgMiddle = new TextureRegion(statusBar,PROGRESS_CAP_LEFT,offset,PROGRESS_MIDDLE,PROGRESS_HEIGHT);
 
+        starGlow = JsonAssetManager.getInstance().getEntry("starglow", Texture.class);
+
         statusGlow = JsonAssetManager.getInstance().getEntry("starbarglow", Texture.class);
 
         displayFont = JsonAssetManager.getInstance().getEntry("retro game", BitmapFont.class);
@@ -525,6 +534,8 @@ public class GameController extends WorldController implements ContactListener {
         tutPointCache = null;
         tutDrawCache = null;
 
+        if (!anchors.isEmpty())
+            ANCHOR_DIST = anchors.get(0).getRadius()*2;
         winCount = level.winCount;
         openGoal = false;
 
@@ -683,12 +694,14 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void updateAnchor(AstronautModel avatar1, AstronautModel avatar2, float dt) {
         //If unanchored and anchor is hit
-        if (avatar1.isActive() && !avatar1.getOnPlanet() && !avatar1.isAnchored() && anchord() && !twoplayer
-                || twoplayer && !avatar1.getOnPlanet() && !avatar1.isAnchored() && anchord1()) {
-            for (Anchor a : anchors) {
-                SPIN_POS.set(a.getPosition());
+        if (avatar1.anchorHit()) {
+            avatar.setAnchorHit(false);
+            if (avatar1.isActive() && !avatar1.getOnPlanet() && !avatar1.isAnchored() && anchord() && !twoplayer
+                    || twoplayer && !avatar1.getOnPlanet() && !avatar1.isAnchored() && anchord1()) {
+                //print(avatar1.anchorHit());
+                SPIN_POS.set(avatar1.getCurAnchor().getPosition());
                 if (dist(avatar1.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                    anchorHelp(avatar1, avatar2, a);
+                    anchorHelp(avatar1, avatar2, avatar1.getCurAnchor());
                     if (switchOnAnchor && !twoplayer) {
                         avatar1.setActive(false);
                         avatar2.setActive(true);
@@ -698,12 +711,13 @@ public class GameController extends WorldController implements ContactListener {
             }
         }
 
-        if (avatar2.isActive() && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord() && !twoplayer
-                || twoplayer && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord2()) {
-            for (Anchor a : anchors) {
-                SPIN_POS.set(a.getPosition());
+        if (avatar2.anchorHit()) {
+            avatar2.setAnchorHit(false);
+            if (avatar2.isActive() && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord() && !twoplayer
+                    || twoplayer && !avatar2.getOnPlanet() && !avatar2.isAnchored() && anchord2()) {
+                SPIN_POS.set(avatar2.getCurAnchor().getPosition());
                 if (dist(avatar2.getPosition(), SPIN_POS) < ANCHOR_DIST) {
-                    anchorHelp(avatar2, avatar1, a);
+                    anchorHelp(avatar2, avatar1, avatar2.getCurAnchor());
                     if (switchOnAnchor && !twoplayer) {
                         avatar1.setActive(true);
                         avatar2.setActive(false);
@@ -715,13 +729,21 @@ public class GameController extends WorldController implements ContactListener {
 
         //If avatar1 is already anchored check if anchored was hit
         if (avatar1.isAnchored()) {
-            if (!avatar2.getOnPlanet() && !avatar2.isAnchored()) { //If avatar2 is in space, swing avatar2
+            Vector2 anchorVel = avatar1.getCurAnchor().getLinearVelocity();
+            if (anchorVel.len() != 0) {
+                if (avatar2.getLinearVelocity().len() < anchorVel.len())
+                    avatar2.setLinearVelocity(avatar1.getLinearVelocity().setLength(anchorVel.len()));
+                if (avatar2.getLinearVelocity().len() == 0)
+                    avatar2.setLinearVelocity(anchorVel.cpy().scl(2));
+            }
+            if (!avatar2.getOnPlanet() && !avatar2.isAnchored() || avatar2.bossSwing) { //If avatar2 is in space, swing avatar2
                 if (rope.stretched(dt, 3)) {
                     avatar2.swing = true;
                     if (!avatar2.isActive() && !twoplayer)
                         avatar2.setFixedRotation(true);
                 }
             }
+            else if (avatar2.getOnPlanet() || avatar2.isAnchored()) avatar2.bossSwing = false;
             if (anchord() && avatar1.isActive() && !twoplayer
                     || twoplayer && InputController.getInstance().didPrimary()) { //If anchored was hit unanchor, uananchor and move
                 //avatar1.setUnAnchored();
@@ -755,13 +777,20 @@ public class GameController extends WorldController implements ContactListener {
         //If avatar2 is already anchored check if anchored was hit
         if (avatar2.isAnchored()) {
             if (!avatar1.getOnPlanet() && !avatar1.isAnchored()) { //If avatar1 is in space, swing avatar1
-                if (rope.stretched(dt, 3)) {
+                Vector2 anchorVel = avatar2.getCurAnchor().getLinearVelocity();
+                if (anchorVel.len() != 0) {
+                    if (avatar1.getLinearVelocity().len() < anchorVel.len())
+                        avatar1.setLinearVelocity(avatar1.getLinearVelocity().setLength(anchorVel.len()));
+                    if (avatar1.getLinearVelocity().len() == 0)
+                        avatar1.setLinearVelocity(anchorVel.cpy().scl(2));
+                }
+                if (rope.stretched(dt, 3) || avatar1.bossSwing) { //|| anchorVel.len() != 0
                     avatar1.swing = true;
                     if (!avatar1.isActive() && !twoplayer)
                         avatar1.setFixedRotation(true);
-
                 }
             }
+            else if (avatar1.getOnPlanet() || avatar1.isAnchored()) avatar1.bossSwing = false;
             if (anchord() && avatar2.isActive() && !twoplayer
                     || twoplayer && InputController.getInstance().didW()) { //If anchored was hit unanchor, uananchor and move
                 //avatar2.setUnAnchored();
@@ -795,18 +824,47 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void anchorMove(AstronautModel avatarAnchor, AstronautModel avatar, float dt) {
         float speed = avatar.lastVel.len();
+        Vector2 anchorVel = new Vector2(avatarAnchor.getCurAnchor().getLinearVelocity());
         if (avatar.swing) {
             Vector2 dir = avatar.getPosition().cpy().sub(avatarAnchor.getPosition());
-            if (avatar.lastVel.angle(dir) > 0)
-                dir.rotate90(-1);
-            else
-                dir.rotate90(1);
-            avatar.setLinearVelocity(dir.setLength(speed));
+            if (avatar.lastVel.angle(dir) > 0) {
+                if (avatar.bossSwing)
+                    dir.rotate90(avatar.lastDir);
+                else {
+                    dir.rotate90(-1);
+                    avatar.lastDir = -1;
+                }
+            }
+            else {
+                if (avatar.bossSwing)
+                    dir.rotate90(avatar.lastDir);
+                else {
+                    dir.rotate90(1);
+                    avatar.lastDir = 1;
+                }
+            }
+            if (anchorVel.len() != 0) {
+                if (!avatar.bossSwing) avatar.bossSwing = true;
+//                if (!avatar.useLastDir)
+//                    avatar.useLastDir = true;
+                dir.setLength(anchorVel.len()*2);
+                dir.add(anchorVel);
+                avatar.setLinearVelocity(dir);
+            }
+            else {
+                if (avatar.bossSwing) avatar.bossSwing = false;
+                avatar.setLinearVelocity(dir.setLength(speed));
+            }
             avatar.swing = false;
         }
         if (avatarAnchor.follow) {
             avatarAnchor.setUnAnchored();
             avatarAnchor.setLinearVelocity(avatar.getLinearVelocity());
+            if (avatarAnchor.getCurAnchor().getLinearVelocity().len() != 0) {
+                avatar.setLinearVelocity(avatar.getLinearVelocity().cpy().add(anchorVel));
+                //avatar.setLinearVelocity(vel);
+                avatarAnchor.setLinearVelocity(anchorVel.cpy().scl(2));
+            }
             avatarAnchor.follow = false;
         }
         if (avatarAnchor.toplanet) {
@@ -822,6 +880,8 @@ public class GameController extends WorldController implements ContactListener {
             float angle = avatarAnchor.getAngle();
             dir.rotateRad(angle);
             dir.setLength(avatarAnchor.getJumpPulse());
+            if (anchorVel.len() != 0)
+                dir.add(anchorVel);
             avatarAnchor.setLinearVelocity(dir);
             avatarAnchor.anchorhop = false;
         }
@@ -1427,6 +1487,12 @@ public class GameController extends WorldController implements ContactListener {
 
         float angVel = 0.1f;
         if (avatar.isAnchored()) {
+            if (avatar.getCurAnchor().getLinearVelocity().len() != 0) {
+                if (rope.stretched(dt, 3))
+                    avatar2.setOnPlanet(false);
+                if (avatar2.isAnchored())
+                    avatar2.setUnAnchored();
+            }
             if ((!avatar.isActive() && !twoplayer) || avatar.getRotation() == 0) { //Dampen rotation
                 if (avatar.getAngularVelocity() > 0) {
                     if (avatar.getAngularVelocity() < angVel)
@@ -1444,6 +1510,12 @@ public class GameController extends WorldController implements ContactListener {
 
         angVel = 0.1f;
         if (avatar2.isAnchored()) {
+            if (avatar2.getCurAnchor().getLinearVelocity().len() != 0) {
+                if (rope.stretched(dt, 3))
+                    avatar.setOnPlanet(false);
+                if (avatar.isAnchored())
+                    avatar.setUnAnchored();
+            }
             if ((!avatar2.isActive() && !twoplayer) || avatar2.getRotation() == 0) { //Dampen
                 if (avatar2.getAngularVelocity() > 0) {
                     if (avatar2.getAngularVelocity() < angVel)
@@ -1463,10 +1535,29 @@ public class GameController extends WorldController implements ContactListener {
         if (collection) {
             SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
             starCache.deactivatePhysics(world);
+            removed.add(starCache);
             if (!stars.remove(starCache)) print("star collection error in game controller");
-            if (!objects.remove(starCache)) print("star collection error in game controller");
+            //if (!objects.remove(starCache)) print("star collection error in game controller");
             starCount++;
             collection = false;
+        }
+        for (Star s : removed) {
+            if (!s.removed) {
+                if (s.countdown > 0) {
+                    s.countdown--;
+                    s.shrinkStar();
+                } else if (s.sparkleCount > 0) {
+                    s.sparkleCount--;
+                    s.setSparkling(true);
+                } else {
+                    s.setRemove();
+                }
+                if (s.removeStar()) {
+                    if (!objects.remove(s)) print("star collection error in game controller");
+                    s.removed = true;
+                }
+            }
+
         }
         if (starCount >= winCount && !openGoal) { //&& tutorialpoints.isEmpty()
             openGoal = true;
@@ -1515,20 +1606,28 @@ public class GameController extends WorldController implements ContactListener {
         portal = false;
 
         if (twoplayer) {
+            Vector2 offset = new Vector2();
             if (reeled() && !avatar2.getOnPlanet() && !avatar2.isAnchored()) {
                 reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
 //                reelCache.setLength(REEL_FORCE);
 //                avatar2.getBody().applyForceToCenter(reelCache, true);
-                rope.reel(true, reelCache);
+                if (!avatar.getOnPlanet()) {
+                    offset = avatar2.getLinearVelocity().cpy().add(avatar.getLinearVelocity()).scl(0.5f);
+                }
+                rope.reel(true, reelCache, offset);
             }
             else rope.setLinearVelocity(reset);
             updateHelp(avatar, avatar2, dt);
 
+            offset.set(reset);
             if (reeled2() && !avatar.getOnPlanet() && !avatar.isAnchored()) {
                 reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
 //                reelCache.setLength(REEL_FORCE);
 //                avatar.getBody().applyForceToCenter(reelCache, true);
-                rope.reel(false, reelCache);
+                if (!avatar2.getOnPlanet()) {
+                    offset = avatar.getLinearVelocity().cpy().add(avatar2.getLinearVelocity()).scl(0.5f);
+                }
+                rope.reel(false, reelCache, offset);
             }
             else rope.setLinearVelocity(reset);
             updateHelp(avatar2, avatar, dt);
@@ -1538,14 +1637,14 @@ public class GameController extends WorldController implements ContactListener {
             if (avatar.getOnPlanet() && !avatar2.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
-                    rope.reel(true, reelCache);
+                    rope.reel(true, reelCache, reset);
                 }
                 else rope.setLinearVelocity(reset);
             }
             else if (avatar2.getOnPlanet() && !avatar.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
-                    rope.reel(false, reelCache);
+                    rope.reel(false, reelCache, reset);
                 }
                 else rope.setLinearVelocity(reset);
             }
@@ -1615,6 +1714,7 @@ public class GameController extends WorldController implements ContactListener {
             if (music != null && music_name != "tutorial") {
                 music.stop();
                 music.dispose();
+                music = null;
             }
             if (music == null || !music.isPlaying()) {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/tutorial_music.mp3"));
@@ -1628,6 +1728,7 @@ public class GameController extends WorldController implements ContactListener {
             if (music != null && music_name != "whirlpool") {
                 music.stop();
                 music.dispose();
+                music = null;
             }
             if (music == null || !music.isPlaying()) {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/whirlpool_music.mp3"));
@@ -1641,12 +1742,26 @@ public class GameController extends WorldController implements ContactListener {
             if (music != null && music_name != "milkyway") {
                 music.stop();
                 music.dispose();
+                music = null;
             }
             if (music == null || !music.isPlaying()) {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/milky_way.mp3"));
                 music.play();
                 music.setLooping(true);
                 music_name = "milkyway";
+            }
+        }
+        else if(level.getGalaxy() == Galaxy.SOMBRERO) {
+            if (music != null && music_name != "sombrero") {
+                music.stop();
+                music.dispose();
+                music = null;
+            }
+            if (music == null || !music.isPlaying()) {
+                music = Gdx.audio.newMusic(Gdx.files.internal("audio/sombrero_beat.mp3"));
+                music.play();
+                music.setLooping(true);
+                music_name = "sombrero";
             }
         }
     }
@@ -1866,6 +1981,10 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(false);
             }
 
+            if (bd1.getType() == ObstacleType.OCTO_LEG || bd2.getType() == ObstacleType.OCTO_LEG) {
+                contact.setEnabled(false);
+            }
+
             if ((bd1 == avatar2 && bd2N.contains("cbugblue")) || (bd2 == avatar2 && bd1N.contains("cbugblue"))) {
                 contact.setEnabled(false);
             }
@@ -1935,6 +2054,31 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(false);
             }
 
+            //If astronaut 1 hits an anchor
+            if (bd1 == avatar && bd2.getType() == ObstacleType.ANCHOR) {
+                avatar.setAnchorHit(true);
+                avatar.setCurAnchor((Anchor)bd2);
+            }
+            else if (bd1.getType() == ObstacleType.ANCHOR && bd2 == avatar) {
+                avatar.setAnchorHit(true);
+                avatar.setCurAnchor((Anchor)bd1);
+            }
+//            else {
+//                avatar.setAnchorHit(false);
+//            }
+            //If astronaut 2 hits an anchor
+            if (bd1 == avatar2 && bd2.getType() == ObstacleType.ANCHOR) {
+                avatar2.setAnchorHit(true);
+                avatar2.setCurAnchor((Anchor)bd2);
+            }
+            else if (bd1.getType() == ObstacleType.ANCHOR && bd2 == avatar2) {
+                avatar2.setAnchorHit(true);
+                avatar2.setCurAnchor((Anchor)bd1);
+            }
+//            else {
+//                avatar2.setAnchorHit(false);
+//            }
+
             //If there is an active task
             if (tutorial) {
                 if (bd1 == avatar && bd2 == tutPointCache.getPinkPoint() || bd2 == avatar && bd1 == tutPointCache.getPinkPoint()) {
@@ -1989,8 +2133,8 @@ public class GameController extends WorldController implements ContactListener {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         if (tutDrawCache != null) {
             TextureRegion text = tutDrawCache.getTask();
-            float xPos = camera.position.x - text.getRegionWidth() / 2;
-            float yPos = camera.position.y - camera.viewportHeight / 2 + text.getRegionHeight() / 2;
+            float xPos = camera.position.x - (float) text.getRegionWidth() / 2;
+            float yPos = camera.position.y - camera.viewportHeight / 2 + (float) text.getRegionHeight() / 2;
             canvas.draw(text, Color.WHITE, 0, 0, xPos, yPos, 0, 1, 1);
         }
         if (tutorial) {
@@ -2013,10 +2157,10 @@ public class GameController extends WorldController implements ContactListener {
             canvas.begin(); // DO NOT SCALE
             //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
             Color drawColor = new Color(1,1,1, 1);
-            canvas.draw(death, drawColor, deathPos.x + cam.position.x - canvas.getWidth()/2,
-                    deathPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
-            canvas.draw(deathSprite, Color.WHITE,deathSprite.getRegionWidth()/2,deathSprite.getRegionHeight()/2,
-                    deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+            canvas.draw(death, drawColor, deathPos.x + cam.position.x - (float) canvas.getWidth()/2,
+                    deathPos.y + cam.position.y - (float) canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(deathSprite, Color.WHITE,(float) deathSprite.getRegionWidth()/2,(float) deathSprite.getRegionHeight()/2,
+                    deathPos.x + cam.position.x - (float) canvas.getWidth()/2 + (float) death.getWidth()/2,
                     (deathPos.y + cam.position.y ),0,1,1.0f);;
             canvas.end();
             deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
@@ -2034,10 +2178,10 @@ public class GameController extends WorldController implements ContactListener {
         if ((deathPos.x + death.getWidth()/2) >= canvas.getWidth()/2 && (deathAnimLoop < MAX_ANIM || isFailure())) {
             canvas.begin(); // DO NOT SCALE
             Color drawColor = new Color(1,1,1, 1);
-            canvas.draw(death, drawColor, deathPos.x + cam.position.x - canvas.getWidth()/2,
-                    deathPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
-            canvas.draw(deathSprite, Color.WHITE,deathSprite.getRegionWidth()/2,deathSprite.getRegionHeight()/2,
-                    deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+            canvas.draw(death, drawColor, deathPos.x + cam.position.x - (float) canvas.getWidth()/2,
+                    deathPos.y + cam.position.y - (float) canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(deathSprite, Color.WHITE,(float) deathSprite.getRegionWidth()/2,(float) deathSprite.getRegionHeight()/2,
+                    deathPos.x + cam.position.x - (float) canvas.getWidth()/2 + (float) death.getWidth()/2,
                     (deathPos.y + cam.position.y ),0,1,1.0f);
             canvas.end();
             deathSprite.tick();
@@ -2049,10 +2193,10 @@ public class GameController extends WorldController implements ContactListener {
             canvas.begin(); // DO NOT SCALE
             //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
             Color drawColor = new Color(1,1,1, 1);
-            canvas.draw(death, drawColor, deathPos.x + cam.position.x - canvas.getWidth()/2,
-                    deathPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
-            canvas.draw(deathSprite, Color.WHITE,deathSprite.getRegionWidth()/2,deathSprite.getRegionHeight()/2,
-                    deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+            canvas.draw(death, drawColor, deathPos.x + cam.position.x - (float) canvas.getWidth()/2,
+                    deathPos.y + cam.position.y - (float) canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(deathSprite, Color.WHITE,(float) deathSprite.getRegionWidth()/2,(float) deathSprite.getRegionHeight()/2,
+                    deathPos.x + cam.position.x - (float) canvas.getWidth()/2 + (float) death.getWidth()/2,
                     (deathPos.y + cam.position.y ),0,1,1.0f);;
             canvas.end();
             deathPos.x += (float) death.getWidth()/ (EXIT_COUNT);
@@ -2068,10 +2212,10 @@ public class GameController extends WorldController implements ContactListener {
             canvas.begin(); // DO NOT SCALE
             //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
             Color drawColor = new Color(1,1,1, 1);
-            canvas.draw(death, drawColor, winPos.x + cam.position.x - canvas.getWidth()/2,
-                    winPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
-            canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
-                    winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+            canvas.draw(death, drawColor, winPos.x + cam.position.x - (float) canvas.getWidth()/2,
+                    winPos.y + cam.position.y - (float) canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(winSprite, Color.WHITE,(float) winSprite.getRegionWidth()/2,(float) winSprite.getRegionHeight()/2,
+                    winPos.x + cam.position.x - (float) canvas.getWidth()/2 + (float) death.getWidth()/2,
                     (winPos.y + cam.position.y + 3 * (float) canvas.getHeight() / 4 - (float) canvas.getHeight()/2),0,1,1.0f);;
             canvas.end();
             winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
@@ -2081,10 +2225,10 @@ public class GameController extends WorldController implements ContactListener {
         if ((winPos.x + death.getWidth()/2) >= canvas.getWidth()/2 && winAnimLoop < MAX_ANIM) {
             canvas.begin(); // DO NOT SCALE
             Color drawColor = new Color(1,1,1, 1);
-            canvas.draw(death, drawColor, winPos.x + cam.position.x - canvas.getWidth()/2,
-                    winPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
-            canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
-                    winPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2,
+            canvas.draw(death, drawColor, winPos.x + cam.position.x - (float) canvas.getWidth()/2,
+                    winPos.y + cam.position.y - (float) canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(winSprite, Color.WHITE,(float) winSprite.getRegionWidth()/2,(float) winSprite.getRegionHeight()/2,
+                    winPos.x + cam.position.x - (float) canvas.getWidth()/2 + (float) death.getWidth()/2,
                     (winPos.y + cam.position.y + 3 * (float) canvas.getHeight() / 4 - (float) canvas.getHeight()/2 ),0,1,1.0f);
             canvas.end();
             winSprite.tick();
@@ -2097,10 +2241,10 @@ public class GameController extends WorldController implements ContactListener {
             //print(deathPos.x + cam.position.x - canvas.getWidth()/2 + death.getWidth()/2);
             Color drawColor = new Color(1,1,1, 1);
             canvas.draw(death, drawColor, winPos.x,
-                    winPos.y + cam.position.y - canvas.getHeight()/2, death.getWidth(), death.getHeight());
-            canvas.draw(winSprite, Color.WHITE,winSprite.getRegionWidth()/2,winSprite.getRegionHeight()/2,
-                    winPos.x + death.getWidth()/2,
-                    (winPos.y + 3 * (float) canvas.getHeight() / 4 ) + cam.position.y - canvas.getHeight()/2,0,1,1.0f);;
+                    winPos.y + cam.position.y - (float) canvas.getHeight()/2, death.getWidth(), death.getHeight());
+            canvas.draw(winSprite, Color.WHITE,(float) winSprite.getRegionWidth()/2,(float) winSprite.getRegionHeight()/2,
+                    winPos.x + (float) death.getWidth()/2,
+                    (winPos.y + 3 * (float) canvas.getHeight() / 4 ) + cam.position.y - (float) canvas.getHeight()/2,0,1,1.0f);;
             canvas.end();
             winPos.x += (float) death.getWidth()/ (EXIT_COUNT);
 

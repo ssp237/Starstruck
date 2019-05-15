@@ -4,6 +4,7 @@
 "playSize": [ 2.0, 1.100000023841858 ],
 "win": "0.9",
 "galaxy": "whirlpool",
+"has boss": false,
 "background": "wp background",
 "astronaut 1": {
 	"pos": [ 8.205986022949219, 9.492555618286133 ],

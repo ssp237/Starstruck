@@ -44,7 +44,7 @@ public class Star extends BoxObstacle {
 //    private WheelObstacle pivot;
 
     /** To be removed */
-    protected boolean remove = false;
+    private boolean remove = false;
     /** Location of this star */
     private String location;
     /** Type */
@@ -57,7 +57,20 @@ public class Star extends BoxObstacle {
     private boolean hit;
     /** The asset for tutorial points */
     private FilmStrip tutText;
-
+    /** The asset for collection */
+    private TextureRegion sparkle;
+    /** The amount to decrese star size by while shrinking */
+    private float shrinkFactor = 0.8f;
+    /** Countdown for star shrinking */
+    public int countdown = (int) (Math.log(0.05)/Math.log((double)shrinkFactor));
+    /** Scale to draw star */
+    private float starScale = 1f;
+    /** Whether this star is sparkling */
+    private boolean isSparkling;
+    /** How long to sparkle */
+    public int sparkleCount = 8;
+    /** This star is removed */
+    public boolean removed = false;
 
     /**
      * Creates a new spinner at the origin.
@@ -90,6 +103,7 @@ public class Star extends BoxObstacle {
         setName("star");
         starType = ObstacleType.STAR;
         hit = false;
+        sparkle = JsonAssetManager.getInstance().getEntry("sparkle", TextureRegion.class);
 //        setName(SPINNER_NAME);
 //
 //        // Create the barrier
@@ -155,6 +169,16 @@ public class Star extends BoxObstacle {
     public String getTutName() { return tutName; }
 
     public void setHit(boolean value) { hit = value; }
+
+    public void shrinkStar() {
+        starScale = starScale * shrinkFactor;
+    }
+
+    public void setSparkling(boolean value) { isSparkling = true; }
+
+    public void setRemove() { remove = true; }
+
+    public boolean removeStar() { return remove; }
 
     /**
      * Return a new star with parameters specified by the JSON
@@ -271,7 +295,7 @@ public class Star extends BoxObstacle {
 
     public void update(float dt) {
         if (getType() == ObstacleType.TUTORIAL) {
-
+            tutText.tick();
         }
     }
 
@@ -298,7 +322,10 @@ public class Star extends BoxObstacle {
 //            else System.out.println("Didn't draw tutorial point");
         }
         else if (getType() == ObstacleType.STAR){
-            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+            if (isSparkling)
+                canvas.draw(sparkle, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),1,1);
+            else
+            canvas.draw(texture, Color.WHITE,origin.x,origin.y,getX()*drawScale.x,getY()*drawScale.x,getAngle(),starScale,starScale);
         }
     }
 }
