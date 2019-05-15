@@ -532,6 +532,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param keycode one of the constants in {@link Input.Keys}
      * @return whether the input was processed */
     public boolean keyUp (int keycode) {
+        if (menu == null || levels.getTail() == null || winButtons.getTail() == null) { return true; }
+
         if (winPos == null) {
             if (keycode == Input.Keys.RIGHT) {
                 //pressState = 0;
@@ -637,6 +639,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         Vector2 mouse = new Vector2(screenX/scale.x, screenY/scale.y);
         Vector2 camOffset = new Vector2(camOffsetX / scale.x, 0);
 
+        if (menu == null || levels.getTail() == null || winButtons.getTail() == null) { return true; }
+
         if (winPos == null) {
             if (currentLevel != null) {
                 center = currentLevel.getPosition();
@@ -677,7 +681,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         Vector2 mouse = new Vector2(screenX/scale.x, screenY/scale.y);
         Vector2 center;
         float dist;
-
+        if (menu == null || levels.getTail() == null || winButtons.getTail() == null) { return true; }
         Vector2 camOffset = new Vector2(camOffsetX/scale.x, 0);
 
         if (winPos == null) {

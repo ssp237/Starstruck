@@ -292,6 +292,14 @@
       "file": "platform/static_glow_v1.png",
       "wrap": false
     },
+    "build": {
+      "file": "buttons/build.png",
+      "wrap": false
+    },
+    "build glow": {
+      "file": "buttons/build.png",
+      "wrap": false
+    },
     "play": {
       "file": "buttons/play.png",
       "wrap": false

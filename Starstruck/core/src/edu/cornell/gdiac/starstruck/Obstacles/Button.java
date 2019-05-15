@@ -52,6 +52,17 @@ public class Button extends BoxObstacle {
     public TextureRegion getHoverTexture() { return hoverTexture;}
 
     /**
+     * Return the texture of this level
+     * @return The texture of this level.
+     */
+    public void setTexture(TextureRegion texture) {
+        super.setTexture(texture);
+        System.out.println("hit");
+    }
+
+
+
+    /**
      * Sets hover to true when mouse pointer is over this level sprite
      */
     public void setActive(boolean state) {
@@ -95,7 +106,7 @@ public class Button extends BoxObstacle {
             canvas.draw(hoverTexture, Color.WHITE, origin.x, origin.y,getX() * drawScale.x,
                     getY() * drawScale.x, getAngle(), 1,1);
         } else {
-            canvas.draw(getTexture(), Color.WHITE, origin.x, origin.y,getX() * drawScale.x,
+            canvas.draw(this.getTexture(), Color.WHITE, origin.x, origin.y,getX() * drawScale.x,
                     getY() * drawScale.x, getAngle(), 1,1);
         }
 
@@ -111,6 +122,7 @@ public class Button extends BoxObstacle {
         out += "width: " + getWidth() + ", ";
         out += "height: " + getHeight() + ", ";
         out += "texture: " + JsonAssetManager.getInstance().getKey(texture) + ", ";
+        out += "name: " + getName() + " ";
         out += "}";
 
         return out;
