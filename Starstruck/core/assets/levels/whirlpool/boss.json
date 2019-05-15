@@ -1,0 +1,298 @@
+{
+"physicsSize": [ 38.400001525878906, 21.600000381469727 ],
+"graphicSize": [ 1280, 720 ],
+"playSize": [ 2.299999952316284, 1.5 ],
+"win": "0.5",
+"galaxy": "whirlpool",
+"background": "wp background",
+"astronaut 1": {
+	"pos": [ 8.50983715057373, 8.520923614501953 ],
+	"size": [ 0.9000000357627869, 1.290000081062317 ],
+	"texture": "astronaut 1",
+	"glow texture": "glow"
+},
+"astronaut 2": {
+	"pos": [ 9.21810245513916, 7.288129806518555 ],
+	"size": [ 0.9000000357627869, 1.290000081062317 ],
+	"texture": "astronaut 2",
+	"glow texture": "glow"
+},
+"rope": {
+	"texture": "rope",
+	"rope width": 6.0
+},
+"planet specs": [ 700.0, 800.0, 900.0, 1000.0 ],
+"planets": [
+	{
+		"x": 5.7900004386901855,
+		"y": 5.729999542236328,
+		"i": 3
+	},
+	{
+		"x": 25.530000686645508,
+		"y": 21.059999465942383,
+		"i": 4
+	},
+	{
+		"x": 57.45240020751953,
+		"y": 7.625400543212891,
+		"i": 2
+	},
+	{
+		"x": 74.10000610351562,
+		"y": 3.8699989318847656,
+		"i": 1
+	}
+],
+"has boss": true,
+"anchors": [
+	{
+		"x": 13.950000762939453,
+		"y": 7.34999942779541,
+		"texture": "anchor"
+	},
+	{
+		"x": 80.533203125,
+		"y": 5.983800888061523,
+		"texture": "anchor"
+	}
+],
+"stars": [
+	{
+		"x": 10.830000877380371,
+		"y": 3.75,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 13.65000057220459,
+		"y": 3.0,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 17.07000160217285,
+		"y": 3.6299991607666016,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 19.079999923706055,
+		"y": 6.300000190734863,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 20.880001068115234,
+		"y": 9.390000343322754,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 22.350000381469727,
+		"y": 12.539999961853027,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 23.73000144958496,
+		"y": 15.720000267028809,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 32.46480178833008,
+		"y": 11.35319995880127,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 33.79859924316406,
+		"y": 8.001601219177246,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 31.849201202392578,
+		"y": 5.094600677490234,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 37.62900161743164,
+		"y": 10.293000221252441,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 37.18440246582031,
+		"y": 5.744400978088379,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 35.64540100097656,
+		"y": 15.628199577331543,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 41.1515998840332,
+		"y": 14.089200019836426,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 42.14339828491211,
+		"y": 8.754000663757324,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 42.58799743652344,
+		"y": 4.034400939941406,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 45.08460235595703,
+		"y": 11.797800064086914,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 46.07640075683594,
+		"y": 16.756799697875977,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 46.79460144042969,
+		"y": 6.873000144958496,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 49.49639892578125,
+		"y": 3.863401412963867,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 49.83839797973633,
+		"y": 13.268400192260742,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 82.94219970703125,
+		"y": 11.489999771118164,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 84.8916015625,
+		"y": 10.464000701904297,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 85.71240234375,
+		"y": 8.548800468444824,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 86.05440521240234,
+		"y": 6.4626007080078125,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 85.40460205078125,
+		"y": 4.376399993896484,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 84.37860107421875,
+		"y": 2.427001953125,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 82.32659912109375,
+		"y": 2.050802230834961,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 80.03520202636719,
+		"y": 1.948202133178711,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 77.57279968261719,
+		"y": 2.290201187133789,
+		"texture": "star",
+		"location": "space"
+	}
+],
+"worms": [],
+"portalpairs": [
+	{
+		"x1": 81.45659637451172,
+		"y1": 13.268400192260742,
+		"x2": 200.0,
+		"y2": 200.0,
+		"name": "portalpair1",
+		"color": "0",
+		"texture": "goal",
+		"goal": "yes"
+	}
+],
+"tutorialpoints": [],
+"urchin texture": "spike",
+"urchins": [
+	{
+		"orientation": "horizontal",
+		"x": 10.620000839233398,
+		"y": 12.239999771118164,
+		"length": 6
+	},
+	{
+		"orientation": "vertical",
+		"x": 77.8656005859375,
+		"y": 14.567999839782715,
+		"length": 7
+	}
+],
+"ice cream": [],
+"octopus legs": [
+	{
+		"orientation": "vertical",
+		"x": 34.316402435302734,
+		"y": 25.306798934936523,
+		"length": 2
+	},
+	{
+		"orientation": "horizontal",
+		"x": 36.71039962768555,
+		"y": 12.481800079345703,
+		"length": 2
+	},
+	{
+		"orientation": "horizontal",
+		"x": 44.70840072631836,
+		"y": 6.120600700378418,
+		"length": 2
+	},
+	{
+		"orientation": "horizontal",
+		"x": 70.75199890136719,
+		"y": 8.172600746154785,
+		"length": 2
+	}
+]
+}

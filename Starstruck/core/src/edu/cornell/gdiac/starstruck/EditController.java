@@ -779,9 +779,15 @@ public class EditController extends WorldController implements ContactListener {
                 current = new Urchin(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, 1, CapsuleObstacle.Orientation.VERTICAL);
                 level.add(current);
             } else if (input.didB() ) {
-                Vector2 pos = input.getCrossHair();
-                current = new OctoLeg(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, 2, CapsuleObstacle.Orientation.VERTICAL);
-                level.add(current);
+                if (galaxy == Galaxy.WHIRLPOOL) {
+                    Vector2 pos = input.getCrossHair();
+                    current = new OctoLeg(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, 2, CapsuleObstacle.Orientation.VERTICAL);
+                    level.add(current);
+                } else if (galaxy == Galaxy.SOMBRERO) {
+                    Vector2 pos = input.getCrossHair();
+                    current = new AztecWheel(pos.x + camScaleX + w, pos.y + camScaleY + h, scale);
+                    level.add(current);
+                }
             }
             if (input.mouseDragged()) {
                 updateCamera();

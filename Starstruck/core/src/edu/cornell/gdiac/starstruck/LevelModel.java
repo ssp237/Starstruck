@@ -517,7 +517,8 @@ public class LevelModel {
             case BUG: activate(obj); enemies.add((Bug) obj); break;
             case PORTAL: activate(obj); break;
             case URCHIN: activate(obj); enemies.add((Urchin) obj); break;
-            case OCTO_LEG: activate(obj); enemies.add((OctoLeg) obj); break;
+            case OCTO_LEG: activate(obj); break;
+            case AZTEC_WHEEL: activate(obj); break;
             case TUTORIAL: activate(obj); break;
             case ICE_CREAM:
                 ((IceCream) obj).setUpBound(bounds.getHeight() * yPlay);
@@ -546,7 +547,8 @@ public class LevelModel {
             case BUG: deactivate(obj); enemies.remove((Bug) obj); break;
             case PORTAL: deactivate(obj); break;
             case URCHIN: deactivate(obj); enemies.remove((Urchin) obj); break;
-            case OCTO_LEG: deactivate(obj); enemies.remove((OctoLeg) obj); break;
+            case OCTO_LEG: deactivate(obj); break;
+            case AZTEC_WHEEL: deactivate(obj);
             case TUTORIAL: deactivate(obj); break;
             case ICE_CREAM: deactivate(obj); enemies.remove((IceCream) obj); break;
         }
@@ -740,12 +742,12 @@ public class LevelModel {
             if (obj.getType() != ObstacleType.PLAYER && obj.getType() != ObstacleType.TUTORIAL)
                 obj.draw(canvas);
         }
+        rope.draw(canvas);
         if (player1.isActive()) { player2.draw(canvas); player1.draw(canvas); }
         else { player1.draw(canvas); player2.draw(canvas); }
         for (Enemy e: enemies) {
             e.draw(canvas);
         }
-        rope.draw(canvas);
         canvas.end();
 
         if (debug) {
