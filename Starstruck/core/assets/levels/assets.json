@@ -144,44 +144,64 @@
       "file": "circinus/planets/static_gravity.ring4_v1.png",
       "wrap": false
     },
-    "ls p1": {
-      "file": "levelselect/lvl1.png",
+    "ls de g": {
+      "file": "levelselect/ring1.png",
       "wrap": false
     },
-    "ls g1": {
-      "file": "levelselect/ring1.png",
+    "ls mw g": {
+      "file": "levelselect/ring2.png",
+      "wrap": false
+    },
+    "ls wp g": {
+      "file": "levelselect/ring3.png",
+      "wrap": false
+    },
+    "ls so g": {
+      "file": "levelselect/ring4.png",
+      "wrap": false
+    },
+    "ls ci g": {
+      "file": "levelselect/ring5.png",
+      "wrap": false
+    },
+    "ls tut p": {
+      "file": "levelselect/tutorial_lvl.png",
+      "wrap": false
+    },
+    "ls mw p": {
+      "file": "levelselect/milkyway_lvl.png",
+      "wrap": false
+    },
+    "ls wp p": {
+      "file": "levelselect/whirlpool_lvl.png",
+      "wrap": false
+    },
+    "ls so p": {
+      "file": "levelselect/sombrero_lvl.png",
+      "wrap": false
+    },
+    "ls ci p": {
+      "file": "levelselect/circinus_lvl.png",
+      "wrap": false
+    },
+    "ls p1": {
+      "file": "levelselect/lvl1.png",
       "wrap": false
     },
     "ls p2": {
       "file": "levelselect/lvl2.png",
       "wrap": false
     },
-    "ls g2": {
-      "file": "levelselect/ring2.png",
-      "wrap": false
-    },
     "ls p3": {
       "file": "levelselect/lvl3.png",
-      "wrap": false
-    },
-    "ls g3": {
-      "file": "levelselect/ring3.png",
       "wrap": false
     },
     "ls p4": {
       "file": "levelselect/lvl4.png",
       "wrap": false
     },
-    "ls g4": {
-      "file": "levelselect/ring4.png",
-      "wrap": false
-    },
     "ls p5": {
       "file": "levelselect/lvl5.png",
-      "wrap": false
-    },
-    "ls g5": {
-      "file": "levelselect/ring5.png",
       "wrap": false
     },
     "ls p6": {
@@ -192,16 +212,40 @@
       "file": "levelselect/lvl7.png",
       "wrap": false
     },
-    "ls g7": {
-      "file": "levelselect/ring7.png",
-      "wrap": false
-    },
     "ls p8": {
       "file": "levelselect/lvl8.png",
       "wrap": false
     },
     "ls p9": {
       "file": "levelselect/lvl9.png",
+      "wrap": false
+    },
+    "ls p10": {
+      "file": "levelselect/lvl10.png",
+      "wrap": false
+    },
+    "ls p11": {
+      "file": "levelselect/lvl11.png",
+      "wrap": false
+    },
+    "ls p12": {
+      "file": "levelselect/lvl12.png",
+      "wrap": false
+    },
+    "ls p13": {
+      "file": "levelselect/lvl13.png",
+      "wrap": false
+    },
+    "ls p14": {
+      "file": "levelselect/lvl14.png",
+      "wrap": false
+    },
+    "ls p15": {
+      "file": "levelselect/lvl15.png",
+      "wrap": false
+    },
+    "ls p16": {
+      "file": "levelselect/lvl16.png",
       "wrap": false
     },
     "de p1": {

@@ -177,6 +177,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         level.dispose();
 
         levelFormat = jsonReader.parse(Gdx.files.internal("levels/levelselect.json"));
+
         level.populate(levelFormat);
         levels = level.getLevels();
 
