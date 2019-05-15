@@ -921,7 +921,7 @@ public class AstronautModel extends CapsuleObstacle {
         if (isActive() && !twoplayer) {
             Color color = isPlayerOne ? p1glow : p2glow;
             if (galaxy == Galaxy.SOMBRERO) {
-                canvas.draw(glowTexture, Color.LIGHT_GRAY, glowOrigin.x, glowOrigin.y, (getX()) * drawScale.x,
+                canvas.draw(glowTexture, Color.WHITE, glowOrigin.x, glowOrigin.y, (getX()) * drawScale.x,
                         (getY()) * drawScale.y, getAngle(), effect * GLOW_SCALE, GLOW_SCALE);
             }
             else {

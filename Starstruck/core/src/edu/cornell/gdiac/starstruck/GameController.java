@@ -1632,12 +1632,15 @@ public class GameController extends WorldController implements ContactListener {
 
         if (twoplayer) {
             Vector2 offset = new Vector2();
+            float speed;
             if (reeled() && !avatar2.getOnPlanet() && !avatar2.isAnchored()) {
                 reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
 //                reelCache.setLength(REEL_FORCE);
 //                avatar2.getBody().applyForceToCenter(reelCache, true);
                 if (!avatar.getOnPlanet()) {
+//                    speed = avatar.getLinearVelocity().len();
                     offset = avatar2.getLinearVelocity().cpy().add(avatar.getLinearVelocity()).scl(0.5f);
+                    //offset = avatar.getLinearVelocity().cpy();
                 }
                 rope.reel(true, reelCache, offset);
             }
@@ -1650,7 +1653,9 @@ public class GameController extends WorldController implements ContactListener {
 //                reelCache.setLength(REEL_FORCE);
 //                avatar.getBody().applyForceToCenter(reelCache, true);
                 if (!avatar2.getOnPlanet()) {
+//                    speed = avatar2.getLinearVelocity().len();
                     offset = avatar.getLinearVelocity().cpy().add(avatar2.getLinearVelocity()).scl(0.5f);
+                    //offset = avatar2.getLinearVelocity().cpy();
                 }
                 rope.reel(false, reelCache, offset);
             }
