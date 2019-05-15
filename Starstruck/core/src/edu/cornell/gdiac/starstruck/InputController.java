@@ -360,6 +360,16 @@ public class InputController {
         return exitPressed && !exitPrevious;
     }
 
+    /**
+     * Returns true if the exit button was pressed.
+     *
+     * @return true if the exit button was pressed.
+     */
+    public boolean exitUp() {
+        return !exitPressed && exitPrevious;
+    }
+
+
     public boolean didRight() {
         return rightPressed;
     }

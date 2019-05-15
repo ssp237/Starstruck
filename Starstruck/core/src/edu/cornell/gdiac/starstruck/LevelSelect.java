@@ -110,6 +110,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     private Button allLevels;
     private Button replayButton;
     private Button nextButton;
+    private Button menu;
 
     /** Current selected button */
     private int curButton = -1;
@@ -152,17 +153,21 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
         winButtons = new PooledList<Button>();
 
+        TextureRegion menuButton = JsonAssetManager.getInstance().getEntry("menu button", TextureRegion.class);
+        menu = new Button(menuButton.getRegionWidth()+10,canvas.getHeight() - menuButton.getRegionWidth() - 10, menuButton.getRegionWidth(), menuButton.getRegionHeight(), menuButton,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("menu glow", TextureRegion.class), "menu");
+
         TextureRegion levelButton = JsonAssetManager.getInstance().getEntry("levels button", TextureRegion.class);
         allLevels = new Button(0,0, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
                 world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("levels glow", TextureRegion.class), "all levels");
 
         levelButton = JsonAssetManager.getInstance().getEntry("replay button", TextureRegion.class);
         replayButton = new Button(0,0, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("replay glow", TextureRegion.class), "all levels");
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("replay glow", TextureRegion.class), "replay");
 
         levelButton = JsonAssetManager.getInstance().getEntry("next button", TextureRegion.class);
         nextButton = new Button(0,0, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("next glow", TextureRegion.class), "all levels");
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("next glow", TextureRegion.class), "next");
 
         winButtons.add(0, replayButton);
         winButtons.add(1, allLevels);
@@ -172,8 +177,16 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         level.dispose();
 
         levelFormat = jsonReader.parse(Gdx.files.internal("levels/levelselect.json"));
+
         level.populate(levelFormat);
         levels = level.getLevels();
+
+
+        Gdx.input.setInputProcessor(this);
+        // Let ANY connected controller start the game.
+        for(Controller controller : Controllers.getControllers()) {
+            controller.addListener(this);
+        }
     }
 
     // Physics constants for initialization
@@ -227,11 +240,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         setDebug(false);
         setComplete(false);
         setFailure(false);
-        Gdx.input.setInputProcessor(this);
-        // Let ANY connected controller start the game.
-        for(Controller controller : Controllers.getControllers()) {
-            controller.addListener(this);
-        }
         pressState = 0;
         active = false;
         sensorFixtures = new ObjectSet<Fixture>();
@@ -281,22 +289,19 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     public void reset() {
         Gdx.input.setInputProcessor(this);
 
-
-        //print(levels);
-
         setComplete(false);
         setFailure(false);
         currentLevel = null;
         pressState = 0;
         assignLevelFields();
         camOffsetX = 0;
+        menu.pushed = false;
 
         for (Button b : winButtons) {
+            b.setActive(false);
             b.setDrawScale(level.scale);
             b.pushed = false;
         }
-
-
 
         if (MenuMode.menuIsPlaying()) {
             dont_play_music = true;
@@ -306,7 +311,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 //            music.play();
 //            music.setLooping(true);
         }
-         else if (GameController.getMusic() != null) {
+        else if (GameController.getMusic() != null) {
             GameController.getMusic().stop();
             GameController.getMusic().dispose();
             music.play();
@@ -376,6 +381,12 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     private void updateCamera() {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         Texture background = level.getBackground();
+
+        float centerY = camera.position.y + canvas.getHeight()/2 - 75;
+        float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 15;
+        menu.setPosition(centerX, centerY);
+
+
         float rightBound = background.getWidth();
         float right = 1280 - 1280/4;
         float left = 1280/4;
@@ -532,6 +543,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                     currentLevel = currentLevel.nextLevel;
                 }
                 currentLevel.setActive(true);
+                return false;
             } else if (keycode == Input.Keys.LEFT) {
                 //pressState = 0;
                 //print(currentLevel);
@@ -542,14 +554,18 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                     currentLevel = currentLevel.lastLevel;
                 }
                 currentLevel.setActive(true);
+                return false;
             } else if ((keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) && currentLevel != null) {
                 currentLevel.setActive(false);
                 pressState = 2;
+                return false;
+            } else if (keycode == Input.Keys.ESCAPE) {
+                menu.pushed = true;
+                pressState = 2;
+                return false;
             }
         } else {
             if (keycode == Input.Keys.RIGHT) {
-                //pressState = 0;
-                //print(currentLevel);
                 if (curButton == -1) {
                     curButton = 0;
                 } else {
@@ -557,6 +573,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                     curButton = (curButton + 1) % winButtons.size();
                 }
                 winButtons.get(curButton).setActive(true);
+                return false;
             } else if (keycode == Input.Keys.LEFT) {
                 //pressState = 0;
                 //print(currentLevel);
@@ -568,6 +585,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                     if (curButton < 0) curButton += winButtons.size();
                 }
                 winButtons.get(curButton).setActive(true);
+                return false;
             } else if ((keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) && curButton != -1) {
                 if (allLevels.getActive()) {
                     animLoop++;
@@ -576,10 +594,11 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 } else if (nextButton.getActive()) {
                     nextButton.pushed = true;
                 }
+                return false;
+            } else if (keycode == Input.Keys.ESCAPE) {
+                animLoop ++;
+                return false;
             }
-//            print(curButton);
-//            print(winButtons);
-//            print(winButtons.get(curButton));
         }
         return true;
     };
@@ -601,6 +620,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     public boolean touchDown (int screenX, int screenY, int pointer, int button) {
         if (currentLevel != null) {
             pressState = 1;
+            return false;
         }
         return true;
     };
@@ -610,18 +630,24 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param button the button
      * @return whether the input was processed */
     public boolean touchUp (int screenX, int screenY, int pointer, int button) {
+        Vector2 center;
+        float dist;
+        screenY = heightY - screenY;
+        Vector2 scale = level.getScale();
+        Vector2 mouse = new Vector2(screenX/scale.x, screenY/scale.y);
+        Vector2 camOffset = new Vector2(camOffsetX / scale.x, 0);
 
         if (winPos == null) {
             if (currentLevel != null) {
-                screenY = heightY - screenY;
-                Vector2 scale = level.getScale();
-                Vector2 camOffset = new Vector2(camOffsetX / scale.x, 0);
-                Vector2 mouse = new Vector2(screenX / scale.x, screenY / scale.y);
-                Vector2 center = currentLevel.getPosition();
-                float dist = dist(center, mouse.cpy().add(camOffset));
+                center = currentLevel.getPosition();
+                dist = dist(center, mouse.cpy().add(camOffset));
                 if (dist <= currentLevel.getRadius()) {
                     pressState = 2;
                 }
+            }
+            if (menu.isIn(screenX, screenY) && menu.getActive()) {
+                menu.pushed = true;
+                pressState = 2;
             }
         } else {
             if (allLevels.getActive()) {
@@ -631,7 +657,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
             } else if (nextButton.getActive()) {
                 nextButton.pushed = true;
             }
-
         }
         return true;
     };
@@ -656,6 +681,10 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         Vector2 camOffset = new Vector2(camOffsetX/scale.x, 0);
 
         if (winPos == null) {
+            menu.setActive(false);
+            if (menu.isIn(screenX, screenY)) {
+                menu.setActive(true);
+            }
             for (Level l : levels) {
                 l.setActive(false);
                 center = l.getPosition();
@@ -671,10 +700,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 center = b.getPosition();
                 center.x += b.getWidth()/(2*level.scale.x); center.y += b.getHeight()/(2 * level.scale.y);
                 dist = dist(center, mouse.cpy().add(camOffset));
-                //print(dist);
                 if (dist <= b.getHeight()/level.scale.y) {
                     b.setActive(true);
-                    //print(dist);
                 }
             }
         }
@@ -702,7 +729,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
             draw(delta);
 //            if (!music.isPlaying()) { music.play();}
             // We are are ready, notify our listener
-            if (currentLevel != null && isReady() && currentLevel.getUnlocked()) {
+            if (currentLevel != null && isReady() && currentLevel.getUnlocked() && !menu.pushed) {
                 lastLevel = currentLevel;
                 nextLevel = currentLevel.nextLevel;
                 listener.exitScreen(this, WorldController.EXIT_PLAY, currentLevel.getFile());
@@ -719,6 +746,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 winSprite.reset();
                 //print(lastLevel.jsonFile);
                 listener.exitScreen(this, WorldController.EXIT_PLAY, temp, lastLevel.jsonFile);
+            } else if (menu.pushed && isReady()) {
+                listener.exitScreen(this, WorldController.EXIT_QUIT);
             }
         }
     }
@@ -852,6 +881,10 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         canvas.clear();
 
         level.draw(canvas);
+        canvas.begin();
+        menu.draw(canvas);
+        canvas.end();
+
         if (winPos != null) {
             // Finish phase 2: animate the people
             if (animLoop < MAX_ANIM) {

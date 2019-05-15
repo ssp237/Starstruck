@@ -65,6 +65,18 @@ public class Button extends BoxObstacle {
         return active;
     }
 
+
+    /**
+     * checks if the given mouse position is within the button
+     */
+    public boolean isIn(float screenX, float screenY) {
+        Vector2 center = this.getPosition();
+        center.add(this.getWidth()/2, this.getHeight()/2);
+        float xdist = Math.abs(screenX - center.x);
+        float ydist = Math.abs(screenY - center.y);
+        return (xdist <= getWidth()/2 && ydist <= getHeight()/2);
+    }
+
     /**
      * gets active state
      */
