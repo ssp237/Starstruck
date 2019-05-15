@@ -1301,9 +1301,12 @@ public class GameController extends WorldController implements ContactListener {
             else {
                 if (avatar == this.avatar) {
                     avatar.setRotation(InputController.getInstance().getHorizontal());
+                    print(this.avatar.getRotation());
                 }
-                else
+                else {
                     avatar.setRotation(InputController.getInstance().getHorizontal2());
+                    print(this.avatar2.getRotation());
+                }
             }
         }
     }

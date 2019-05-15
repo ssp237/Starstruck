@@ -764,7 +764,7 @@ public class AstronautModel extends CapsuleObstacle {
             if (Math.abs(getAngularVelocity()) >= DUDE_MAXROT && !(isAnchored && !isActive)) {
                 body.setAngularVelocity(Math.signum(getAngularVelocity()) * DUDE_MAXROT);
             }
-            else if (!(isAnchored && !isActive)) {
+            else if (!(isAnchored && !isActive) || twoplayer) {
                 //body.applyTorque(-getRotation(), true);
                 body.setAngularVelocity(getAngularVelocity() - 0.1f * getRotation());
             }
