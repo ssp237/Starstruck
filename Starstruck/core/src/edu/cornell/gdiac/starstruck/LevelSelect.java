@@ -560,40 +560,41 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 menu.pushed = true;
                 pressState = 2;
                 return false;
-            } else {
-                if (keycode == Input.Keys.RIGHT) {
-                    //pressState = 0;
-                    //print(currentLevel);
-                    if (curButton == -1) {
-                        curButton = 0;
-                    } else {
-                        winButtons.get(curButton).setActive(false);
-                        curButton = (curButton + 1) % winButtons.size();
-                    }
-                    winButtons.get(curButton).setActive(true);
-                    return false;
-                } else if (keycode == Input.Keys.LEFT) {
-                    //pressState = 0;
-                    //print(currentLevel);
-                    if (curButton == -1) {
-                        curButton = 0;
-                    } else {
-                        winButtons.get(curButton).setActive(false);
-                        curButton = (curButton - 1) % winButtons.size();
-                        if (curButton < 0) curButton += winButtons.size();
-                    }
-                    winButtons.get(curButton).setActive(true);
-                    return false;
-                } else if ((keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) && curButton != -1) {
-                    if (allLevels.getActive()) {
-                        animLoop++;
-                    } else if (replayButton.getActive()) {
-                        replayButton.pushed = true;
-                    } else if (nextButton.getActive()) {
-                        nextButton.pushed = true;
-                    }
-                    return false;
+            }
+        } else {
+            if (keycode == Input.Keys.RIGHT) {
+                if (curButton == -1) {
+                    curButton = 0;
+                } else {
+                    winButtons.get(curButton).setActive(false);
+                    curButton = (curButton + 1) % winButtons.size();
                 }
+                winButtons.get(curButton).setActive(true);
+                return false;
+            } else if (keycode == Input.Keys.LEFT) {
+                //pressState = 0;
+                //print(currentLevel);
+                if (curButton == -1) {
+                    curButton = 0;
+                } else {
+                    winButtons.get(curButton).setActive(false);
+                    curButton = (curButton - 1) % winButtons.size();
+                    if (curButton < 0) curButton += winButtons.size();
+                }
+                winButtons.get(curButton).setActive(true);
+                return false;
+            } else if ((keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) && curButton != -1) {
+                if (allLevels.getActive()) {
+                    animLoop++;
+                } else if (replayButton.getActive()) {
+                    replayButton.pushed = true;
+                } else if (nextButton.getActive()) {
+                    nextButton.pushed = true;
+                }
+                return false;
+            } else if (keycode == Input.Keys.ESCAPE) {
+                animLoop ++;
+                return false;
             }
         }
         return true;
@@ -699,10 +700,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 center = b.getPosition();
                 center.x += b.getWidth()/(2*level.scale.x); center.y += b.getHeight()/(2 * level.scale.y);
                 dist = dist(center, mouse.cpy().add(camOffset));
-                //print(dist);
                 if (dist <= b.getHeight()/level.scale.y) {
                     b.setActive(true);
-                    //print(dist);
                 }
             }
         }
@@ -748,7 +747,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 //print(lastLevel.jsonFile);
                 listener.exitScreen(this, WorldController.EXIT_PLAY, temp, lastLevel.jsonFile);
             } else if (menu.pushed && isReady()) {
-                print("what1");
                 listener.exitScreen(this, WorldController.EXIT_QUIT);
             }
         }
