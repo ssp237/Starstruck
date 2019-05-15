@@ -1642,7 +1642,7 @@ public class GameController extends WorldController implements ContactListener {
                     offset = avatar2.getLinearVelocity().cpy().add(avatar.getLinearVelocity()).scl(0.5f);
                     //offset = avatar.getLinearVelocity().cpy();
                 }
-                rope.reel(true, reelCache, offset);
+                rope.reel(true, reelCache, offset, !avatar.getOnPlanet());
             }
             else rope.setLinearVelocity(reset);
             updateHelp(avatar, avatar2, dt);
@@ -1657,7 +1657,7 @@ public class GameController extends WorldController implements ContactListener {
                     offset = avatar.getLinearVelocity().cpy().add(avatar2.getLinearVelocity()).scl(0.5f);
                     //offset = avatar2.getLinearVelocity().cpy();
                 }
-                rope.reel(false, reelCache, offset);
+                rope.reel(false, reelCache, offset, !avatar2.getOnPlanet());
             }
             else rope.setLinearVelocity(reset);
             updateHelp(avatar2, avatar, dt);
@@ -1667,14 +1667,14 @@ public class GameController extends WorldController implements ContactListener {
             if (avatar.getOnPlanet() && !avatar2.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
-                    rope.reel(true, reelCache, reset);
+                    rope.reel(true, reelCache, reset, false);
                 }
                 else rope.setLinearVelocity(reset);
             }
             else if (avatar2.getOnPlanet() && !avatar.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
-                    rope.reel(false, reelCache, reset);
+                    rope.reel(false, reelCache, reset, false);
                 }
                 else rope.setLinearVelocity(reset);
             }
