@@ -227,8 +227,9 @@ public class EditController extends WorldController implements ContactListener {
         jsonReader = new JsonReader();
         loadFile = null;
         levelFormat = null;
-        galaxy = Galaxy.WHIRLPOOL;
+        galaxy = Galaxy.SOMBRERO;
         level.setGalaxy(galaxy);
+        objects = level.objects;
         FISH_TEXTURES = WORM_TEXTURES;
     }
 
