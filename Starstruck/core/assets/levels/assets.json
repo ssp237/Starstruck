@@ -307,6 +307,14 @@
     "replay glow": {
       "file": "buttons/restart hover.png",
       "wrap": false
+    },
+    "menu button": {
+      "file": "buttons/menu.png",
+      "wrap": false
+    },
+    "menu glow": {
+      "file": "buttons/menu hover.png",
+      "wrap": false
     }
   },
   "textures": {

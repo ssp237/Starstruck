@@ -305,20 +305,17 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             if (isReady() && listener != null && buttonId == PLAY) {
                 pressState = 0;
                 buttonId = 0;
-                System.out.println("play");
                 listener.exitScreen(this, WorldController.EXIT_SELECT);
             }
             if (isReady() && listener != null && buttonId == BUILD) {
                 pressState = 0;
                 buttonId = 0;
-                System.out.println("build");
 
                 listener.exitScreen(this, WorldController.EXIT_EDIT);
             }
             if (isReady() && listener != null && buttonId == QUIT) {
                 pressState = 0;
                 buttonId = 0;
-                System.out.println("exit");
                 listener.exitScreen(this, WorldController.EXIT_QUIT);
             }
         }
@@ -556,6 +553,10 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             return false;
         } else if (pressState == 1 && keycode == Input.Keys.P) {
             pressState = 2;
+            return false;
+        } else if (keycode == Input.Keys.ESCAPE) {
+            pressState = 2;
+            buttonId = QUIT;
             return false;
         }
         return true;

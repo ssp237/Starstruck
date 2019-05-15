@@ -139,7 +139,7 @@ public class GameController extends WorldController implements ContactListener {
     private void drawStarBar(GameCanvas canvas) {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
 
-        float centerY = camera.position.y + ((float) canvas.getHeight())/2 - 60;
+        float centerY = camera.position.y + canvas.getHeight() - ((float) canvas.getHeight())/2 - 60;
         float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 10;
         canvas.draw(statusBkgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
         canvas.draw(statusBkgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + (widthBar /2) - PROGRESS_CAP_RIGHT*0.56f*scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
@@ -1259,9 +1259,9 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         // Now it is time to maybe switch screens.
-        if (input.didExit()) {
+        if (input.exitUp()) {
             setFailure(false);
-            listener.exitScreen(this, EXIT_QUIT);
+            listener.exitScreen(this, EXIT_SELECT);
             return false;
         } else if (input.didAdvance()) {
             setFailure(false);
