@@ -475,7 +475,7 @@ public class LevelModel {
             } else if (galaxy == Galaxy.SOMBRERO) {
                 JsonValue wheels = levelFormat.get("aztec wheels").child();
                 while(wheels != null) {
-                    OctoLeg wheel = OctoLeg.fromJSON(wheels, scale);
+                    AztecWheel wheel = AztecWheel.fromJSON(wheels, scale);
                     activate(wheel);
                     //enemies.add(octopuss);
                     wheels = wheels.next;
