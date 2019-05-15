@@ -165,7 +165,8 @@ public class GameController extends WorldController implements ContactListener {
             canvas.draw(statusFrgLeft, tinge, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
         }
         if (openGoal) {
-            canvas.draw(starGlow, centerX-16, centerY-8);
+            canvas.draw(starGlow, tinge, centerX-16, centerY-8, starGlow.getWidth(), starGlow.getHeight());
+            //canvas.draw(starGlow, centerX-16, centerY-8);
         }
     }
 
