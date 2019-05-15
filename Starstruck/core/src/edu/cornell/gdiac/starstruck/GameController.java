@@ -1796,6 +1796,8 @@ public class GameController extends WorldController implements ContactListener {
                 music.setLooping(true);
                 music_name = "sombrero";
             }
+//            System.out.println("in sombrero and music " + music.isPlaying());
+//            System.out.println("music name = " + music_name);
         }
     }
 
