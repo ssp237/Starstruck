@@ -752,19 +752,25 @@ public class GameController extends WorldController implements ContactListener {
         if (avatar1.isAnchored()) {
             Vector2 anchorVel = avatar1.getCurAnchor().getLinearVelocity();
             if (anchorVel.len() != 0) {
-                if (avatar2.getLinearVelocity().len() < anchorVel.len())
-                    avatar2.setLinearVelocity(avatar1.getLinearVelocity().setLength(anchorVel.len()));
-                if (avatar2.getLinearVelocity().len() == 0)
-                    avatar2.setLinearVelocity(anchorVel.cpy().scl(2));
+//                if (avatar2.getLinearVelocity().len() < anchorVel.len())
+//                    avatar2.setLinearVelocity(avatar1.getLinearVelocity().setLength(anchorVel.len()));
+//                if (avatar2.getLinearVelocity().len() == 0)
+//                    avatar2.setLinearVelocity(anchorVel.cpy().scl(2));
+                if (!avatar2.getOnPlanet() && !avatar2.isAnchored()) {
+                    if (!twoplayer && avatar2.isActive())
+                        avatar2.control = true;
+                    else if (twoplayer)
+                        avatar2.control = true;
+                }
             }
-            if (!avatar2.getOnPlanet() && !avatar2.isAnchored() || avatar2.bossSwing) { //If avatar2 is in space, swing avatar2
+            else if (!avatar2.getOnPlanet() && !avatar2.isAnchored()) { //If avatar2 is in space, swing avatar2
                 if (rope.stretched(dt, 3)) {
                     avatar2.swing = true;
                     if (!avatar2.isActive() && !twoplayer)
                         avatar2.setFixedRotation(true);
                 }
             }
-            else if (avatar2.getOnPlanet() || avatar2.isAnchored()) avatar2.bossSwing = false;
+            //else if (avatar2.getOnPlanet() || avatar2.isAnchored()) avatar2.bossSwing = false;
             if (anchord() && avatar1.isActive() && !twoplayer
                     || twoplayer && InputController.getInstance().didPrimary()) { //If anchored was hit unanchor, uananchor and move
                 //avatar1.setUnAnchored();
@@ -848,49 +854,19 @@ public class GameController extends WorldController implements ContactListener {
         Vector2 anchorVel = new Vector2(avatarAnchor.getCurAnchor().getLinearVelocity());
         if (avatar.swing) {
             Vector2 dir = avatar.getPosition().cpy().sub(avatarAnchor.getPosition());
-            if (avatar.lastVel.angle(dir) > 0) {
-                if (avatar.bossSwing)
-                    dir.rotate90(avatar.lastDir);
-                else {
-                    dir.rotate90(-1);
-                    avatar.lastDir = -1;
-                }
-            }
-            else {
-                if (avatar.bossSwing)
-                    dir.rotate90(avatar.lastDir);
-                else {
-                    dir.rotate90(1);
-                    avatar.lastDir = 1;
-                }
-            }
-            if (anchorVel.len() != 0) {
-                if (!avatar.bossSwing) avatar.bossSwing = true;
-//                if (!avatar.useLastDir)
-//                    avatar.useLastDir = true;
-                dir.setLength(anchorVel.len()*2);
-                dir.add(anchorVel);
-                avatar.setLinearVelocity(dir);
-            }
-            else {
-                if (avatar.bossSwing) avatar.bossSwing = false;
-                avatar.setLinearVelocity(dir.setLength(speed));
-            }
+            if (avatar.lastVel.angle(dir) > 0)
+                dir.rotate90(-1);
+            else
+                dir.rotate90(1);
+            avatar.setLinearVelocity(dir.setLength(speed));
             avatar.swing = false;
         }
         if (avatarAnchor.follow) {
             avatarAnchor.setUnAnchored();
             Vector2 dir = avatar.getLinearVelocity().cpy();
             if (avatarAnchor.getCurAnchor().getLinearVelocity().len() != 0) {
-                if (avatar.bossSwing){
-                    dir.setLength(anchorVel.len()*2).add(anchorVel);
-                    avatar.setLinearVelocity(dir);
-                }
-                else {
-                    dir = anchorVel.cpy().scl(2);
-                    avatar.setLinearVelocity(avatar.getLinearVelocity().cpy().add(anchorVel));
-                }
-
+                dir = anchorVel.cpy().scl(2);
+                avatar.setLinearVelocity(avatar.getLinearVelocity().cpy().add(anchorVel));
             }
             avatarAnchor.setLinearVelocity(dir);
             avatarAnchor.follow = false;
@@ -912,6 +888,31 @@ public class GameController extends WorldController implements ContactListener {
                 dir.add(anchorVel);
             avatarAnchor.setLinearVelocity(dir);
             avatarAnchor.anchorhop = false;
+        }
+        if (avatar.control) {
+            speed = avatar.lastVel.len() - anchorVel.len();
+            float force = 100f;
+            InputController input = InputController.getInstance();
+            Vector2 forceDir = avatar.getPosition().cpy().sub(avatarAnchor.getPosition());
+            Vector2 dir = avatar.getPosition().cpy().sub(avatarAnchor.getPosition());
+            if (!twoplayer && (input.didLeft() || input.didRight())) {
+                print("here");
+                forceDir.rotate90((int)(input.getHorizontal()*-2));
+            }
+            else { //is twoplayer
+                if (avatar == this.avatar)
+                    forceDir.rotate90((int)Math.signum(input.getHorizontal()));
+                else
+                    forceDir.rotate90((int)Math.signum(input.getHorizontal2()));
+            }
+            forceDir.setLength(force);
+            avatar.getBody().applyForceToCenter(forceDir.setLength(force), true);
+            if (avatar.getLinearVelocity().angle(dir) > 0)
+                dir.rotate90(-1);
+            else
+                dir.rotate90(1);
+            avatar.setLinearVelocity(dir.setLength(speed).add(anchorVel));
+            avatar.control = false;
         }
     }
 
@@ -1299,7 +1300,8 @@ public class GameController extends WorldController implements ContactListener {
         }
         else {
             if (!twoplayer) {
-                avatar.setRotation(InputController.getInstance().getHorizontal());
+                if (!avatar.control)
+                    avatar.setRotation(InputController.getInstance().getHorizontal());
                 if (avatar2.getOnPlanet()) { //If the inactive avatar is on planet
                     avatar2.setFixedRotation(true);
                     avatar2.contactDir.set(avatar2.getPosition().cpy().sub(avatar2.curPlanet.getPosition()));
@@ -1310,10 +1312,12 @@ public class GameController extends WorldController implements ContactListener {
 
             else {
                 if (avatar == this.avatar) {
-                    avatar.setRotation(InputController.getInstance().getHorizontal());
+                    if (!avatar.control)
+                        avatar.setRotation(InputController.getInstance().getHorizontal());
                 }
                 else {
-                    avatar.setRotation(InputController.getInstance().getHorizontal2());
+                    if (!avatar.control)
+                        avatar.setRotation(InputController.getInstance().getHorizontal2());
                 }
             }
         }

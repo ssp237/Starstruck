@@ -150,6 +150,8 @@ public class AstronautModel extends CapsuleObstacle {
     public boolean toplanet;
     /** Whether the astronaut should "jump" off anchor */
     public boolean anchorhop;
+    /** Allow player to control astronaut */
+    public boolean control;
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
     /** Two player? If true, don't draw glow */
