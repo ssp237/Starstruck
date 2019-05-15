@@ -392,7 +392,11 @@
       "file": "tutorial/kb2_p1_anchor.png",
       "wrap": false
     },
-    "anchor ctrl": {
+    "anchor ctrlone": {
+      "file": "tutorial/controller_anchor.png",
+      "wrap": false
+    },
+    "anchor ctrltwo": {
       "file": "tutorial/controller_anchor.png",
       "wrap": false
     },
@@ -404,7 +408,11 @@
       "file": "tutorial/kb2_jump.png",
       "wrap": false
     },
-    "jump ctrl": {
+    "jump ctrlone": {
+      "file": "tutorial/controller_jump.png",
+      "wrap": false
+    },
+    "jump ctrltwo": {
       "file": "tutorial/controller_jump.png",
       "wrap": false
     },
@@ -416,7 +424,11 @@
       "file": "tutorial/kb2_reel.png",
       "wrap": false
     },
-    "reel ctrl": {
+    "reel ctrlone": {
+      "file": "tutorial/controller_reel.png",
+      "wrap": false
+    },
+    "reel ctrltwo": {
       "file": "tutorial/controller_reel.png",
       "wrap": false
     },
@@ -428,8 +440,12 @@
       "file": "tutorial/kb2_move.png",
       "wrap": false
     },
-    "switch ctrl": {
+    "switch ctrlone": {
       "file": "tutorial/controller_switch.png",
+      "wrap": false
+    },
+    "switch ctrltwo": {
+      "file": "tutorial/controller_move.png",
       "wrap": false
     },
     "move keyone": {
@@ -440,7 +456,11 @@
       "file": "tutorial/kb2_move.png",
       "wrap": false
     },
-    "move ctrl": {
+    "move ctrlone": {
+      "file": "tutorial/controller_move.png",
+      "wrap": false
+    },
+    "move ctrltwo": {
       "file": "tutorial/controller_move.png",
       "wrap": false
     },
