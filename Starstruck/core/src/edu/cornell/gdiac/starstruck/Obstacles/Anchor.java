@@ -178,7 +178,7 @@ public class Anchor extends WheelObstacle {
 
     public void draw(GameCanvas canvas) {
         if (galaxy == Galaxy.SOMBRERO){
-            canvas.draw(animatedText, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), 1, 1);
+            canvas.draw(animatedText, Color.GRAY, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), 1, 1);
         }
         else {
             canvas.draw(animatedText, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), 1, 1);

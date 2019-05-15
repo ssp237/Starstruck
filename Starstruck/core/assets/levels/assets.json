@@ -316,20 +316,60 @@
       "file": "tutorial/static_keyboard_anchor.png",
       "wrap": false
     },
+    "anchor keytwo": {
+      "file": "tutorial/kb2_p1_anchor.png",
+      "wrap": false
+    },
+    "anchor ctrl": {
+      "file": "tutorial/controller_anchor.png",
+      "wrap": false
+    },
     "jump keyone": {
       "file": "tutorial/static_keyboard_jump.png",
+      "wrap": false
+    },
+    "jump keytwo": {
+      "file": "tutorial/kb2_jump.png",
+      "wrap": false
+    },
+    "jump ctrl": {
+      "file": "tutorial/controller_jump.png",
       "wrap": false
     },
     "reel keyone": {
       "file": "tutorial/static_keyboard_reel.png",
       "wrap": false
     },
+    "reel keytwo": {
+      "file": "tutorial/kb2_reel.png",
+      "wrap": false
+    },
+    "reel ctrl": {
+      "file": "tutorial/controller_reel.png",
+      "wrap": false
+    },
     "switch keyone": {
       "file": "tutorial/static_keyboard_switch.png",
       "wrap": false
     },
+    "switch keytwo": {
+      "file": "tutorial/kb2_move.png",
+      "wrap": false
+    },
+    "switch ctrl": {
+      "file": "tutorial/controller_switch.png",
+      "wrap": false
+    },
     "move keyone": {
       "file": "tutorial/static_keyboard_move.png",
+      "wrap": false
+    },
+    "move keytwo": {
+      "file": "tutorial/kb2_move.png",
+      "wrap": false
+    },
+    "move ctrl": {
+      "file": "tutorial/controller_move.png",
       "wrap": false
     },
     "levels button": {

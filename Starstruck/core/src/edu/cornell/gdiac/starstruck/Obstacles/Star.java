@@ -329,9 +329,9 @@ public class Star extends BoxObstacle {
         else if (getType() == ObstacleType.STAR){
             if (galaxy == Galaxy.SOMBRERO) {
                 if (isSparkling)
-                    canvas.draw(sparkle, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), 1, 1);
+                    canvas.draw(sparkle, Color.ORANGE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), 1, 1);
                 else
-                    canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), starScale, starScale);
+                    canvas.draw(texture, Color.ORANGE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), starScale, starScale);
             }
             else {
                 if (isSparkling)

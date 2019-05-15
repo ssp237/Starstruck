@@ -541,6 +541,9 @@ public class GameController extends WorldController implements ContactListener {
         anchors = level.anchors;
         portalpairs = level.portalpairs;
         tutorialpoints = level.tutpoints;
+        for (TutorialPoint tut : tutorialpoints) {
+            tut.setTwoplayer(twoplayer);
+        }
         tutorial = false;
         tutPointCache = null;
         tutDrawCache = null;
@@ -572,6 +575,9 @@ public class GameController extends WorldController implements ContactListener {
      */
     public void setSettings() {
         twoplayer = false;
+        for (TutorialPoint tut : tutorialpoints) {
+            tut.setTwoplayer(twoplayer);
+        }
         switchOnJump = false;
         switchOnAnchor = false;
     }
@@ -1203,6 +1209,9 @@ public class GameController extends WorldController implements ContactListener {
         InputController input = InputController.getInstance();
         if (input.didOne()) {
             twoplayer = !twoplayer;
+            for (TutorialPoint tut : tutorialpoints) {
+                tut.setTwoplayer(twoplayer);
+            }
             print("Toggled setting two player: " + twoplayer);
             avatar.setTwoPlayer(twoplayer);
             avatar2.setTwoPlayer(twoplayer);
@@ -2164,7 +2173,7 @@ public class GameController extends WorldController implements ContactListener {
         if (tutDrawCache != null) {
             TextureRegion text = tutDrawCache.getTask();
             float xPos = camera.position.x - (float) text.getRegionWidth() / 2;
-            float yPos = camera.position.y - camera.viewportHeight / 2 + (float) text.getRegionHeight() / 2;
+            float yPos = camera.position.y - camera.viewportHeight / 2 + (float) text.getRegionHeight()*0.15f;
             canvas.draw(text, Color.WHITE, 0, 0, xPos, yPos, 0, 1, 1);
         }
         if (tutorial) {

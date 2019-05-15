@@ -45,6 +45,8 @@ public class TutorialPoint {
     private boolean complete;
     /** The general name of the task */
     private String taskName;
+    /** twoplayer */
+    private static boolean twoplayer;
 
     /**
      * Create new tutorial points with the given texture and draw scale.
@@ -113,6 +115,8 @@ public class TutorialPoint {
 
     public void setComplete(boolean value) { complete = value; }
 
+    public void setTwoplayer(boolean value) { twoplayer = value; }
+
     /**
      * Return a new star with parameters specified by the JSON
      * @param json A JSON containing data for one star
@@ -122,11 +126,14 @@ public class TutorialPoint {
     public static TutorialPoint fromJSON(JsonValue json, Vector2 scale) {
         String taskname = json.get("taskText").asString();
         String key = taskname + " keyone";
-        if (InputController.getInstance().getControlType() == ControllerType.CTRLONE) {
-            key = taskname + " ctrlone";
+        if (InputController.getInstance().getControlType() == ControllerType.CTRLONE || InputController.getInstance().getControlType() == ControllerType.CTRLTWO) {
+            key = taskname + " ctrl";
         }
-        if (InputController.getInstance().getControlType() == ControllerType.CTRLTWO) {
-            key = taskname = " ctrltwo";
+//        if (InputController.getInstance().getControlType() == ControllerType.CTRLTWO) {
+//            key = taskname = " ctrltwo";
+//        }
+        if (InputController.getInstance().getControlType() == ControllerType.KEY && twoplayer) {
+            key = taskname + " keytwo";
         }
         if (taskname.equals("transparent")) {
             key = taskname;
