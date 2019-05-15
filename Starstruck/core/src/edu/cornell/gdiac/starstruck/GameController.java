@@ -141,24 +141,28 @@ public class GameController extends WorldController implements ContactListener {
     private void drawStarBar(GameCanvas canvas) {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
 
-        float centerY = camera.position.y + canvas.getHeight() - ((float) canvas.getHeight())/2 - 60;
-        float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 10;
-        canvas.draw(statusBkgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
-        canvas.draw(statusBkgRight, Color.WHITE, centerX + statusBkgMiddle.getRegionWidth() + 23, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
-        canvas.draw(statusBkgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        Color tinge = Color.WHITE;
+        if (gal == Galaxy.SOMBRERO)
+            tinge = Color.WHITE;
 
-        canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        float centerY = camera.position.y + ((float) canvas.getHeight())/2 - 80;
+        float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 45;
+        canvas.draw(statusBkgLeft, tinge, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+        canvas.draw(statusBkgRight, tinge, centerX + statusBkgMiddle.getRegionWidth() + 23, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+        canvas.draw(statusBkgMiddle, tinge, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+
+        canvas.draw(statusFrgLeft, tinge, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
         if (starCount > 0 && starCount != totalStars) {
             float span = starCount * ((PROGRESS_MIDDLE - 2 * PROGRESS_CAP_RIGHT)) / totalStars;
-            //canvas.draw(statusFrgRight, Color.WHITE, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + span/scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
-            canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, span, PROGRESS_HEIGHT);
+            //canvas.draw(statusFrgRight, tinge, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + span/scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+            canvas.draw(statusFrgMiddle, tinge, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, span, PROGRESS_HEIGHT);
         } else if (starCount == totalStars) {
-            canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
-            canvas.draw(statusFrgRight, Color.WHITE, centerX + statusBkgMiddle.getRegionWidth() + 23, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
-            canvas.draw(statusFrgMiddle, Color.WHITE, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+            canvas.draw(statusFrgLeft, tinge, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+            canvas.draw(statusFrgRight, tinge, centerX + statusBkgMiddle.getRegionWidth() + 23, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+            canvas.draw(statusFrgMiddle, tinge, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
         }
         else {
-            canvas.draw(statusFrgLeft, Color.WHITE, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
+            canvas.draw(statusFrgLeft, tinge, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
         }
         if (openGoal) {
             canvas.draw(starGlow, centerX-16, centerY-8);
@@ -297,6 +301,7 @@ public class GameController extends WorldController implements ContactListener {
     private PlanetList planets;
     /** Planets */
     private Galaxy galaxy = Galaxy.WHIRLPOOL;
+    private Galaxy gal;
     /** Non planet objects when checking collisions */
     private boolean barrier;
     /** Rope */
@@ -549,6 +554,8 @@ public class GameController extends WorldController implements ContactListener {
         collection = false;
 
         totalStars = stars.size();
+
+        gal = level.getGalaxy();
 
         //rope.setReelForce(REEL_FORCE);
         //setSettings();
@@ -1296,8 +1303,9 @@ public class GameController extends WorldController implements ContactListener {
                 if (avatar == this.avatar) {
                     avatar.setRotation(InputController.getInstance().getHorizontal());
                 }
-                else
+                else {
                     avatar.setRotation(InputController.getInstance().getHorizontal2());
+                }
             }
         }
     }
@@ -1618,14 +1626,17 @@ public class GameController extends WorldController implements ContactListener {
 
         if (twoplayer) {
             Vector2 offset = new Vector2();
+            float speed;
             if (reeled() && !avatar2.getOnPlanet() && !avatar2.isAnchored()) {
                 reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
 //                reelCache.setLength(REEL_FORCE);
 //                avatar2.getBody().applyForceToCenter(reelCache, true);
                 if (!avatar.getOnPlanet()) {
+//                    speed = avatar.getLinearVelocity().len();
                     offset = avatar2.getLinearVelocity().cpy().add(avatar.getLinearVelocity()).scl(0.5f);
+                    //offset = avatar.getLinearVelocity().cpy();
                 }
-                rope.reel(true, reelCache, offset);
+                rope.reel(true, reelCache, offset, !avatar.getOnPlanet());
             }
             else rope.setLinearVelocity(reset);
             updateHelp(avatar, avatar2, dt);
@@ -1636,9 +1647,11 @@ public class GameController extends WorldController implements ContactListener {
 //                reelCache.setLength(REEL_FORCE);
 //                avatar.getBody().applyForceToCenter(reelCache, true);
                 if (!avatar2.getOnPlanet()) {
+//                    speed = avatar2.getLinearVelocity().len();
                     offset = avatar.getLinearVelocity().cpy().add(avatar2.getLinearVelocity()).scl(0.5f);
+                    //offset = avatar2.getLinearVelocity().cpy();
                 }
-                rope.reel(false, reelCache, offset);
+                rope.reel(false, reelCache, offset, !avatar2.getOnPlanet());
             }
             else rope.setLinearVelocity(reset);
             updateHelp(avatar2, avatar, dt);
@@ -1648,14 +1661,14 @@ public class GameController extends WorldController implements ContactListener {
             if (avatar.getOnPlanet() && !avatar2.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
-                    rope.reel(true, reelCache, reset);
+                    rope.reel(true, reelCache, reset, false);
                 }
                 else rope.setLinearVelocity(reset);
             }
             else if (avatar2.getOnPlanet() && !avatar.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
-                    rope.reel(false, reelCache, reset);
+                    rope.reel(false, reelCache, reset, false);
                 }
                 else rope.setLinearVelocity(reset);
             }

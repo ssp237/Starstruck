@@ -569,11 +569,11 @@ public class Rope extends ComplexObstacle {
      *
      * @param isAvatar2 is avatar2 the one to be reeled
      */
-    public void reel(boolean isAvatar2, Vector2 dir, Vector2 offset) {
+    public void reel(boolean isAvatar2, Vector2 dir, Vector2 offset, boolean space) {
         BoxObstacle plank;
         BoxObstacle plank0;
         dir.setLength(reel_force);
-        dir.add(offset);
+        //dir.add(offset);
         if (isAvatar2) {
             for (int i = bodies.size()-2; i >= 0; i--) { //i = bodies.size()-2;
                 plank = (BoxObstacle)bodies.get(i);
@@ -582,13 +582,21 @@ public class Rope extends ComplexObstacle {
                 dirCache.setLength(reel_force);
                 dirCache.add(offset);
                 if (i >= bodies.size()/2) {
-                    plank.setLinearVelocity(dir);
-//                    plank.getBody().applyForceToCenter(dir, true);
+                    if (!space)
+                        plank.setLinearVelocity(dir);
+                    else {
+                        plank.getBody().applyForceToCenter(dir.scl(0.2f), true);
+                        System.out.println("here");
+                    }
                     //i--;
                 }
                 else {
-                    plank.setLinearVelocity(dirCache);
-//                    plank.getBody().applyForceToCenter(dirCache, true);
+                    if (!space)
+                        plank.setLinearVelocity(dirCache);
+                    else {
+                        plank.getBody().applyForceToCenter(dirCache.scl(0.2f), true);
+                        System.out.println("here");
+                    }
                     //plank.getBody().applyForceToCenter(dir, true);
                     //i--;
                 }
@@ -603,13 +611,21 @@ public class Rope extends ComplexObstacle {
                 dirCache.setLength(reel_force);
                 dirCache.add(offset);
                 if (i <= bodies.size()/2) {
-                    plank.setLinearVelocity(dir);
-//                    plank.getBody().applyForceToCenter(dir, true);
+                    if (!space)
+                        plank.setLinearVelocity(dir);
+                    else {
+                        plank.getBody().applyForceToCenter(dir.scl(0.2f), true);
+                        System.out.println("here");
+                    }
                     //i++;
                 }
                 else {
-                    plank.setLinearVelocity(dirCache);
-//                    plank.getBody().applyForceToCenter(dirCache, true);
+                    if (!space)
+                        plank.setLinearVelocity(dirCache);
+                    else {
+                        plank.getBody().applyForceToCenter(dirCache.scl(0.2f), true);
+                        System.out.println("here");
+                    }
                     //plank.getBody().applyForceToCenter(dir, true);
                     //i++;
                 }

@@ -672,6 +672,14 @@
       "cols": 8,
       "size": 8,
       "delay": 10
+    },
+    "anchor animated": {
+      "file": "platform/animated_anchor_glow.png",
+      "wrap": false,
+      "rows": 1,
+      "cols": 12,
+      "size": 12,
+      "delay": 6
     }
   },
   "fonts": {

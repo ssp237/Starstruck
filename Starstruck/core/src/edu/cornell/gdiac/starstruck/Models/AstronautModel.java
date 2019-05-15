@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.*;
 
 //import edu.cornell.gdiac.starstruck.*;
 import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.starstruck.Galaxy;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.starstruck.GameController;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
@@ -159,6 +160,8 @@ public class AstronautModel extends CapsuleObstacle {
     public int lastDir;
     //public boolean useLastDir = false;
     public boolean bossSwing = false;
+    /** This galaxy */
+    private Galaxy galaxy;
 
     /**
      * Set the glow texture
@@ -516,6 +519,8 @@ public class AstronautModel extends CapsuleObstacle {
         jumpSound = sound;
     }
 
+    public void setGalaxy(Galaxy gal) { galaxy = gal; }
+
     /**
      * Creates a new dude at the origin.
      *
@@ -764,7 +769,7 @@ public class AstronautModel extends CapsuleObstacle {
             if (Math.abs(getAngularVelocity()) >= DUDE_MAXROT && !(isAnchored && !isActive)) {
                 body.setAngularVelocity(Math.signum(getAngularVelocity()) * DUDE_MAXROT);
             }
-            else if (!(isAnchored && !isActive)) {
+            else if (!(isAnchored && !isActive) || twoplayer) {
                 //body.applyTorque(-getRotation(), true);
                 body.setAngularVelocity(getAngularVelocity() - 0.1f * getRotation());
             }
@@ -915,8 +920,14 @@ public class AstronautModel extends CapsuleObstacle {
         float effect = faceRight ? 1.0f : -1.0f;
         if (isActive() && !twoplayer) {
             Color color = isPlayerOne ? p1glow : p2glow;
-            canvas.draw(glowTexture, color, glowOrigin.x, glowOrigin.y, (getX()) * drawScale.x,
-                    (getY()) * drawScale.y, getAngle(), effect * GLOW_SCALE, GLOW_SCALE);
+            if (galaxy == Galaxy.SOMBRERO) {
+                canvas.draw(glowTexture, Color.WHITE, glowOrigin.x, glowOrigin.y, (getX()) * drawScale.x,
+                        (getY()) * drawScale.y, getAngle(), effect * GLOW_SCALE, GLOW_SCALE);
+            }
+            else {
+                canvas.draw(glowTexture, color, glowOrigin.x, glowOrigin.y, (getX()) * drawScale.x,
+                        (getY()) * drawScale.y, getAngle(), effect * GLOW_SCALE, GLOW_SCALE);
+            }
         }
         if (onPlanet){
             canvas.draw(idle,Color.WHITE,origin.x,origin.y,getX()*drawScale.x,
