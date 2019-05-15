@@ -2018,6 +2018,10 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(false);
             }
 
+            if (bd1.getType() == ObstacleType.AZTEC_WHEEL || bd2.getType() == ObstacleType.AZTEC_WHEEL) {
+                contact.setEnabled(false);
+            }
+
             if ((bd1 == avatar2 && bd2N.contains("cbugblue")) || (bd2 == avatar2 && bd1N.contains("cbugblue"))) {
                 contact.setEnabled(false);
             }

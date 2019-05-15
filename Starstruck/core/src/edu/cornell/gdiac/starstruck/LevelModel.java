@@ -472,6 +472,15 @@ public class LevelModel {
                     octoLegs = octoLegs.next;
                     System.out.println(octopuss);
                 }
+            } else if (galaxy == Galaxy.SOMBRERO) {
+                JsonValue wheels = levelFormat.get("aztec wheels").child();
+                while(wheels != null) {
+                    OctoLeg wheel = OctoLeg.fromJSON(wheels, scale);
+                    activate(wheel);
+                    //enemies.add(octopuss);
+                    wheels = wheels.next;
+                    System.out.println(wheel);
+                }
             }
         }
 
@@ -668,6 +677,7 @@ public class LevelModel {
         JsonValue urchins = new JsonValue(JsonValue.ValueType.array);
         JsonValue iceCreams = new JsonValue(JsonValue.ValueType.array);
         JsonValue octolegs = new JsonValue(JsonValue.ValueType.array);
+        JsonValue wheels = new JsonValue(JsonValue.ValueType.array);
 
         for (Obstacle obj : objects) {
             switch (obj.getType()) {
@@ -677,6 +687,7 @@ public class LevelModel {
                 case URCHIN: urchins.addChild(((Urchin) obj).toJson()); break;
                 case ICE_CREAM: iceCreams.addChild(((IceCream) obj).toJson()); break;
                 case OCTO_LEG: hasBoss = true; octolegs.addChild(((OctoLeg) obj).toJson()); break;
+                case AZTEC_WHEEL: hasBoss = true; wheels.addChild(((AztecWheel) obj).toJson()); break;
             }
         }
 
@@ -710,7 +721,8 @@ public class LevelModel {
         out.addChild("ice cream", iceCreams);
 
         if (hasBoss) {
-            out.addChild("octopus legs", octolegs);
+            if (galaxy == Galaxy.WHIRLPOOL) out.addChild("octopus legs", octolegs);
+            else if (galaxy == Galaxy.SOMBRERO) out.addChild("aztec wheels", wheels);
         }
 
 
