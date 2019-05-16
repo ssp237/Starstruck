@@ -2,12 +2,13 @@ package edu.cornell.gdiac.starstruck.Models;
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.GameCanvas;
 import edu.cornell.gdiac.starstruck.Obstacles.Anchor;
 import edu.cornell.gdiac.starstruck.Obstacles.ObstacleType;
 import edu.cornell.gdiac.starstruck.Obstacles.WheelObstacle;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
 import java.util.ArrayList;
@@ -16,6 +17,10 @@ public class AztecWheel extends WheelObstacle {
 
     private static int counter = 0;
 
+    /** Angular velocity */
+    private final float v = 0.5f;
+    /** Initial angle */
+    private float omegaNot;
     /** Radius for anchor positions */
     private float radius2;
     /** List of our anchors */
@@ -42,13 +47,15 @@ public class AztecWheel extends WheelObstacle {
 
         setName("aztecWheel" + counter);
         counter++;
-        radius2 = radius * 0.9f;
+        radius2 = radius * 1.1f;
 
         anchors = new ArrayList<Anchor>();
 
         for (Vector2 v : getAnchorPositions()) {
             anchors.add(new Anchor(v.x, v.y, JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale));
         }
+
+        omegaNot = getAngle();
     }
 
     private ArrayList<Vector2> getAnchorPositions() {
@@ -74,6 +81,8 @@ public class AztecWheel extends WheelObstacle {
     public void setPosition(Vector2 position) {
         super.setPosition(position);
 
+        setAngle(omegaNot);
+
         ArrayList<Vector2> anchorPositions = getAnchorPositions();
         for (int i = 0; i < 8; i ++) {
             anchors.get(i).setPosition(anchorPositions.get(i));
@@ -97,6 +106,65 @@ public class AztecWheel extends WheelObstacle {
         for (Anchor a : anchors) {
             a.deactivatePhysics(world);
         }
+    }
+
+    public void update(float dt) {
+        super.update(dt);
+        float newAngle = (getAngle() + v*dt) % (float) Math.toRadians(360);
+        setAngle(newAngle);
+        newAngle -= omegaNot;
+        newAngle += (float) Math.toRadians(360);
+        float vx, vy;
+        Vector2 pos = getPosition();
+        for (Anchor a : anchors) {
+            vx = -radius2 * (float) Math.cos(newAngle) * v;
+            vy = -radius2 * (float) Math.sin(newAngle) * v;
+            a.setVX(vx);
+            a.setVY(vy);
+            newAngle -= (float) Math.toRadians(45);
+//            Vector2 pos = getPosition().cpy().sub(a.getPosition()).scl(v*10000);
+//            a.setVX(pos.y);
+//            a.setVY(-pos.x);
+        }
+    }
+
+
+    /**
+     * Return a new AztecWheel with parameters specified by the JSON
+     * @param json A JSON containing data for one AztecWheel
+     * @param scale The scale to convert physics units to drawing units
+     * @return A AztecWheel created according to the specifications in the JSON
+     */
+    public static AztecWheel fromJSON(JsonValue json, Vector2 scale) {
+        AztecWheel out =  new AztecWheel(json.get("x").asFloat(), json.get("y").asFloat(), scale);
+        return out;
+    }
+
+    /**
+     * Write this AztecWheel to a JsonValue. When parsed, this JsonValue should return the same AztecWheel.
+     * @return A JsonValue representing this AztecWheel.
+     */
+    public JsonValue toJson() {
+        JsonValue json = new JsonValue(JsonValue.ValueType.object);
+        //Write position
+        Vector2 pos = getPosition();
+
+        json.addChild("x", new JsonValue(pos.x));
+        json.addChild("y", new JsonValue(pos.y));
+
+        //System.out.println(json);
+
+        return json;
+    }
+
+    public String toString(){
+        String out = "AztecWheel at (";
+        out += getX() + "," + getY() + ")";
+
+
+
+        //"Worm with { velocity " + getVX() + " and position " + getPosition() +"}";
+        return out;
     }
 
 

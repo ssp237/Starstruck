@@ -227,8 +227,9 @@ public class EditController extends WorldController implements ContactListener {
         jsonReader = new JsonReader();
         loadFile = null;
         levelFormat = null;
-        galaxy = Galaxy.WHIRLPOOL;
+        galaxy = Galaxy.SOMBRERO;
         level.setGalaxy(galaxy);
+        objects = level.objects;
         FISH_TEXTURES = WORM_TEXTURES;
     }
 
@@ -258,7 +259,6 @@ public class EditController extends WorldController implements ContactListener {
         load = new SaveListener();
         galListener = new GalaxyListener();
         OctoLeg.setTextures("octo");
-        System.out.println(Arrays.toString(OctoLeg.getTextures()));
     }
 
     private void createPlayers() {
@@ -887,6 +887,14 @@ public class EditController extends WorldController implements ContactListener {
 
             //Disable all collisions for worms
             if (bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) {
+                contact.setEnabled(false);
+            }
+
+            if (bd1.getType() == ObstacleType.OCTO_LEG || bd2.getType() == ObstacleType.OCTO_LEG) {
+                contact.setEnabled(false);
+            }
+
+            if (bd1.getType() == ObstacleType.AZTEC_WHEEL || bd2.getType() == ObstacleType.AZTEC_WHEEL) {
                 contact.setEnabled(false);
             }
 

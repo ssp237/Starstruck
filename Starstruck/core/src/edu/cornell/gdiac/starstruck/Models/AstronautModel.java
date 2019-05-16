@@ -150,6 +150,8 @@ public class AstronautModel extends CapsuleObstacle {
     public boolean toplanet;
     /** Whether the astronaut should "jump" off anchor */
     public boolean anchorhop;
+    /** Allow player to control astronaut */
+    public boolean control;
     /** Cache for internal force calculations */
     private Vector2 forceCache = new Vector2();
     /** Two player? If true, don't draw glow */
@@ -158,10 +160,13 @@ public class AstronautModel extends CapsuleObstacle {
     private int lastFace = 1;
     /**Last direction */
     public int lastDir;
+    /** Thing for control */
+    public boolean curJumping = false;
     //public boolean useLastDir = false;
     public boolean bossSwing = false;
     /** This galaxy */
     private Galaxy galaxy;
+
 
     /**
      * Set the glow texture
@@ -921,7 +926,7 @@ public class AstronautModel extends CapsuleObstacle {
         if (isActive() && !twoplayer) {
             Color color = isPlayerOne ? p1glow : p2glow;
             if (galaxy == Galaxy.SOMBRERO) {
-                canvas.draw(glowTexture, Color.LIGHT_GRAY, glowOrigin.x, glowOrigin.y, (getX()) * drawScale.x,
+                canvas.draw(glowTexture, Color.WHITE, glowOrigin.x, glowOrigin.y, (getX()) * drawScale.x,
                         (getY()) * drawScale.y, getAngle(), effect * GLOW_SCALE, GLOW_SCALE);
             }
             else {
