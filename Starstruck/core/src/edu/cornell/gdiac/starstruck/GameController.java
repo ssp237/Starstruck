@@ -29,6 +29,7 @@ import edu.cornell.gdiac.starstruck.Models.*;
 import edu.cornell.gdiac.starstruck.MenuMode;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
+import edu.cornell.gdiac.starstruck.Obstacles.Button;
 import edu.cornell.gdiac.util.FilmStrip;
 //import edu.cornell.gdiac.starstruck.Models.PlayerModel;
 
@@ -86,6 +87,16 @@ public class GameController extends WorldController implements ContactListener {
     private int winAnimLoop;
     private boolean replaying = false;
 
+    /** pause screen stuff */
+    private boolean paused;
+    private Texture pauseBackground;
+    private Button pause;
+    private Button play;
+    private Button settings;
+    private Button levels;
+    private Button resume;
+    private Button restart;
+
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
 
@@ -135,6 +146,28 @@ public class GameController extends WorldController implements ContactListener {
     private String music_name = "menu";
 
     public static Music getMusic() {return music;}
+
+    /**
+     * Draws UI
+     */
+    private void drawUI(GameCanvas canvas) {
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
+
+        if (paused) {
+            //draw pause stuff
+            canvas.draw(pauseBackground, camera.position.x - ((float) canvas.getWidth())/2, camera.position.y - ((float) canvas.getHeight())/2);
+
+            levels.draw(canvas);
+            restart.draw(canvas);
+            resume.draw(canvas);
+            play.draw(canvas);
+        } else {
+            //pause button
+            pause.draw(canvas);
+        }
+        // draw settings button no matter what!
+        settings.draw(canvas);
+    }
 
     /**StarCount bar */
 
@@ -213,7 +246,6 @@ public class GameController extends WorldController implements ContactListener {
 
         JsonAssetManager.getInstance().allocateDirectory();
 
-
         death = JsonAssetManager.getInstance().getEntry("dead background", Texture.class);
         deathSprite = JsonAssetManager.getInstance().getEntry("you dead", FilmStrip.class);
         winSprite = JsonAssetManager.getInstance().getEntry("you win", FilmStrip.class);
@@ -226,6 +258,31 @@ public class GameController extends WorldController implements ContactListener {
         sounds.allocate("switch");
         sounds.allocate("space sounds");
 
+        //UI
+
+        TextureRegion buttonTexture = JsonAssetManager.getInstance().getEntry("levels button", TextureRegion.class);
+        levels = new Button(0,0, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("levels glow", TextureRegion.class), "all levels");
+
+        buttonTexture = JsonAssetManager.getInstance().getEntry("replay button", TextureRegion.class);
+        restart = new Button(0,0, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("replay glow", TextureRegion.class), "replay");
+
+        buttonTexture = JsonAssetManager.getInstance().getEntry("next button", TextureRegion.class);
+        resume = new Button(0,0, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("next glow", TextureRegion.class), "next");
+
+        buttonTexture = JsonAssetManager.getInstance().getEntry("pausei button", TextureRegion.class);
+        pause = new Button(0,0, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("pausei glow", TextureRegion.class), "next");
+
+        buttonTexture = JsonAssetManager.getInstance().getEntry("settingsi button", TextureRegion.class);
+        settings = new Button(buttonTexture.getRegionWidth()+10,buttonTexture.getRegionWidth() - 10, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("settingsi glow", TextureRegion.class), "settings");
+
+        buttonTexture = JsonAssetManager.getInstance().getEntry("next button", TextureRegion.class);
+        play = new Button(buttonTexture.getRegionWidth()+10,buttonTexture.getRegionWidth() - 10, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("next glow", TextureRegion.class), "play");;
 
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
@@ -408,9 +465,10 @@ public class GameController extends WorldController implements ContactListener {
         setFailure(false);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
-        loadFile = "main/tutorial.json";
+        loadFile = "main/tutorial1.json";
         loader = new SaveListener();
         deathPos = new Vector2(0,0);
+        paused = true;
     }
 
     /**
@@ -436,8 +494,8 @@ public class GameController extends WorldController implements ContactListener {
         collectCount = 60;
         deathOp = 0f;
         portalpairCache = null;
-//        avatar.portalpairCache = null;
-//        avatar2.portalpairCache = null;
+
+        paused = false;
 
         statusBar  = JsonAssetManager.getInstance().getEntry("starbar", Texture.class);
         // Break up the status bar texture into regions
@@ -572,13 +630,12 @@ public class GameController extends WorldController implements ContactListener {
     /**
      * Set the settings at the beginning of the level.
      */
-    public void setSettings() {
-        twoplayer = false;
+    public void setTwoplayer(boolean state) {
+
+        twoplayer = state;
         for (TutorialPoint tut : tutorialpoints) {
             tut.setTwoplayer(twoplayer);
         }
-        switchOnJump = false;
-        switchOnAnchor = false;
     }
 
     /**
@@ -1119,25 +1176,6 @@ public class GameController extends WorldController implements ContactListener {
         }
     }
 
-//    private void updateMovementBug(Bug buggy, Vector2 contactDir, Planet curPlanet, boolean auto) {
-//        //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
-//        contactDir.rotateRad(-(float) Math.PI / 2);
-//        //float move = InputController.getInstance().getHorizontal();
-//        //if (InputController.getInstance().didRight() || InputController.getInstance().didLeft()) {
-//            avatar.setPlanetMove(contactDir.scl(1));
-//            //avatar.moving = true;
-//        }
-//
-//        if (InputController.getInstance().didPrimary() && !auto && !testC) {
-//            //print(contactPoint);
-//            avatar.setJumping(true);
-//            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
-//            contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
-//            avatar.setPlanetJump(contactDir);
-//            avatar.setOnPlanet(false);
-//            avatar.moving = false;
-//        }
-//    }
 
     /**
      * Helper method to determine whether the rope is ok
@@ -1261,6 +1299,16 @@ public class GameController extends WorldController implements ContactListener {
                 return p;
         }
         return null;
+    }
+
+    /**
+     * If pause button pressed
+     */
+    private void updatePaused() {
+        InputController input = InputController.getInstance();
+//        if (input.getCrossHair()) {
+//
+//        }
     }
 
     /**
@@ -1419,7 +1467,6 @@ public class GameController extends WorldController implements ContactListener {
         if (input.didGameReset()) {
             reset();
         }
-
         // Now it is time to maybe switch screens.
         if (input.exitUp()) {
             setFailure(false);

@@ -39,7 +39,7 @@ public class Starstruck extends Game implements ScreenListener {
 	/** List of all WorldControllers */
 	private WorldController[] controllers;
 	/** Number of special screens */
-	private static int SCREENS = 4;
+	private static int SCREENS = 5;
 
 	Vector3 camPos;
 
@@ -78,10 +78,11 @@ public class Starstruck extends Game implements ScreenListener {
 		controllers[1] = new LevelSelect(canvas);
 		controllers[2] = new EditController();
 		controllers[3] = new GameController();
+		controllers[4] = new Settings(canvas);
 		for(int ii = 0; ii < controllers.length; ii++) {
 			controllers[ii].preLoadContent(JsonAssetManager.getInstance());
 		}
-		current = 0;
+		current = 4;
 		loading.setScreenListener(this);
 		setScreen(loading);
 	}
@@ -132,12 +133,26 @@ public class Starstruck extends Game implements ScreenListener {
 	 */
 	public void exitScreen(Screen screen, int exitCode, String json) {
 		canvas.resetCamera();
-		if (exitCode == WorldController.EXIT_PLAY) {
-			current = WorldController.EXIT_PLAY;
-			((GameController) controllers[current]).setJson(json);
-			exitScreen(screen, WorldController.EXIT_PLAY);
+		if (current == WorldController.EXIT_SETTINGS) {
+			if (Integer.valueOf(json) == 1) {
+				((GameController) controllers[WorldController.EXIT_PLAY]).setTwoplayer(false);
+			} else if (Integer.valueOf(json) == 2){
+				((GameController) controllers[WorldController.EXIT_PLAY]).setTwoplayer(true);
+			}
+			if (exitCode == WorldController.EXIT_PLAY) {
+				current = WorldController.EXIT_PLAY;
+				setScreen(controllers[current]);
+			} else {
+				exitScreen(screen, exitCode);
+			}
 		} else {
-			exitScreen(screen, exitCode);
+			if (exitCode == WorldController.EXIT_PLAY) {
+				current = WorldController.EXIT_PLAY;
+				((GameController) controllers[current]).setJson(json);
+				exitScreen(screen, WorldController.EXIT_PLAY);
+			} else {
+				exitScreen(screen, exitCode);
+			}
 		}
 	}
 
@@ -189,6 +204,10 @@ public class Starstruck extends Game implements ScreenListener {
 			current = WorldController.EXIT_PLAY;
 			controllers[current].reset();
 			setScreen(controllers[current]);
+		} else if (exitCode == WorldController.EXIT_SETTINGS) {
+			current = WorldController.EXIT_SETTINGS;
+			controllers[current].reset();
+			setScreen(controllers[current]);
 		}
 	}
 
@@ -212,6 +231,8 @@ public class Starstruck extends Game implements ScreenListener {
 			controllers[current].reset();
 			((LevelSelect) controllers[current]).assignWinScreenFields(winStrip, animDelay, winPos);
 			setScreen(controllers[current]);
+		} else {
+			exitScreen(screen, exitCode);
 		}
 	}
 
@@ -236,6 +257,8 @@ public class Starstruck extends Game implements ScreenListener {
 			((GameController) controllers[current]).reset();
 			((GameController) controllers[current]).setWinPos(winPos);
 			setScreen(controllers[current]);
+		} else {
+			exitScreen(screen, exitCode);
 		}
 	}
 

@@ -173,6 +173,8 @@ public abstract class WorldController implements Screen {
     public static final int EXIT_EDIT = 2;
     /** Exit code for going to the game */
     public static final int EXIT_PLAY = 3;
+    /** Exit code for settings screen */
+    public static final int EXIT_SETTINGS = 4;
     /** How many frames after winning/losing do we continue? */
     public static final int EXIT_COUNT = 120;
 
