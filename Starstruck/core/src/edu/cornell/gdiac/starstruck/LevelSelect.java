@@ -326,12 +326,12 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         animLoop = animDelay;
         this.winPos = winPos;
 
-        allLevels.setPosition(((float) canvas.getWidth()/2 - allLevels.getWidth()/2)/level.scale.x,
-                ((float) canvas.getHeight()/6)/level.scale.y);
-        replayButton.setPosition(((float) canvas.getWidth()/4 - replayButton.getWidth()/2)/level.scale.x,
-                ((float) canvas.getHeight()/6)/level.scale.y);
-        nextButton.setPosition(((float) 3 * canvas.getWidth()/4 - nextButton.getWidth()/2)/level.scale.x,
-                ((float) canvas.getHeight()/6)/level.scale.y);
+        allLevels.setPosition(((float) canvas.getWidth()/2)/level.scale.x,
+                ((float) canvas.getHeight()/3.5f)/level.scale.y);
+        replayButton.setPosition(((float) canvas.getWidth()/4)/level.scale.x,
+                ((float) canvas.getHeight()/3.5f)/level.scale.y);
+        nextButton.setPosition(((float) 3 * canvas.getWidth()/4)/level.scale.x,
+                ((float) canvas.getHeight()/3.5f)/level.scale.y);
     }
 
     /**
@@ -368,22 +368,17 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         Texture background = level.getBackground();
 
-        float centerY = camera.position.y + canvas.getHeight()/2 - 50;
-        float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 45;
-        menu.setPosition(centerX, centerY);
-
-
         float rightBound = background.getWidth();
         float right = 1280 - 1280/4;
         float left = 1280/4;
-        if (Gdx.input.getX() >= right && camera.position.x + camera.viewportWidth/2 < rightBound) {
+        if (Gdx.input.getX() >= right && camera.position.x + camera.viewportWidth/2 < rightBound-PAN_CONST) {
             camera.position.add(new Vector3(PAN_CONST, 0, 0));
             camOffsetX = camOffsetX + PAN_CONST;
         } else if (Gdx.input.getX() <= left && camera.position.x - camera.viewportWidth/2 > 0) {
             camera.position.sub(new Vector3(PAN_CONST, 0, 0));
             camOffsetX = camOffsetX - PAN_CONST;
         } else if (currentLevel != null && currentLevel.getPosition().x * level.scale.x >= right + camera.position.x - canvas.getWidth()/2
-                && camera.position.x + camera.viewportWidth/2 < rightBound) {
+                && camera.position.x + camera.viewportWidth/2 < rightBound-PAN_CONST) {
             camera.position.add(new Vector3(PAN_CONST, 0, 0));
             camOffsetX = camOffsetX + PAN_CONST;
         } else if (currentLevel != null && currentLevel.getPosition().x * level.scale.x <= left + camera.position.x - canvas.getWidth()/2
@@ -392,6 +387,11 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
             camOffsetX = camOffsetX - PAN_CONST;
         }
         camera.update();
+
+        float centerY = camera.position.y + canvas.getHeight()/2 - 50;
+        float centerX = camera.position.x - canvas.getWidth()/2 + 50;
+        menu.setPosition(centerX, centerY);
+
     }
 
     /**

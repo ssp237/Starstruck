@@ -308,6 +308,14 @@
       "file": "buttons/play hover.png",
       "wrap": false
     },
+    "done": {
+      "file": "buttons/done.png",
+      "wrap": false
+    },
+    "done glow": {
+      "file": "buttons/done hover.png",
+      "wrap": false
+    },
     "levelselect": {
       "file": "buttons/levelselect.png",
       "wrap": false
@@ -496,12 +504,68 @@
       "file": "buttons/restart hover.png",
       "wrap": false
     },
+    "resume button": {
+      "file": "buttons/resume.png",
+      "wrap": false
+    },
+    "resume glow": {
+      "file": "buttons/resume hover.png",
+      "wrap": false
+    },
     "menu button": {
       "file": "buttons/menu.png",
       "wrap": false
     },
     "menu glow": {
       "file": "buttons/menu hover.png",
+      "wrap": false
+    },
+    "pausei button": {
+      "file": "buttons/pause icon.png",
+      "wrap": false
+    },
+    "pausei glow": {
+      "file": "buttons/pause icon hover.png",
+      "wrap": false
+    },
+    "playi button": {
+      "file": "buttons/play icon.png",
+      "wrap": false
+    },
+    "playi glow": {
+      "file": "buttons/play icon hover.png",
+      "wrap": false
+    },
+    "settingsi button": {
+      "file": "buttons/settings icon.png",
+      "wrap": false
+    },
+    "settingsi glow": {
+      "file": "buttons/settings icon hover.png",
+      "wrap": false
+    },
+    "oneplayer button": {
+      "file": "buttons/oneplayer.png",
+      "wrap": false
+    },
+    "oneplayer glow": {
+      "file": "buttons/oneplayer hover.png",
+      "wrap": false
+    },
+    "oneplayer active": {
+      "file": "buttons/oneplayer active.png",
+      "wrap": false
+    },
+    "twoplayer button": {
+      "file": "buttons/twoplayer.png",
+      "wrap": false
+    },
+    "twoplayer glow": {
+      "file": "buttons/twoplayer hover.png",
+      "wrap": false
+    },
+    "twoplayer active": {
+      "file": "buttons/twoplayer active.png",
       "wrap": false
     },
     "so boss": {

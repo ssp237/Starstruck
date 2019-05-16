@@ -30,7 +30,7 @@
       "ring texture": "ls de g",
       "unlocked": "true",
       "completed": "false",
-      "json file": "sombrero/boss.json"
+      "json file": "main/tutorial1.json"
     },
     {
       "x": 18,
@@ -143,7 +143,7 @@
       "json file": "whirlpool/boss.json"
     },
     {
-      "x": 150,
+      "x": 151,
       "y": 13.5,
       "r": 3.8,
       "texture": "ls p13",
@@ -173,14 +173,14 @@
       "json file": "sombrero/levelThree.json"
     },
     {
-      "x": 195,
+      "x": 180,
       "y": 10,
       "r": 5,
       "texture": "ls p16",
-      "ring texture": "ls ci g",
+      "ring texture": "ls so g",
       "unlocked": "true",
       "completed": "false",
-      "json file": "test/wboss.json"
+      "json file": "sombrero/boss.json"
     }
   ]
 }

@@ -13,12 +13,11 @@ package edu.cornell.gdiac.starstruck;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.ControllerListener;
-
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.controllers.PovDirection;
 import com.badlogic.gdx.graphics.Texture;
@@ -27,8 +26,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
-import edu.cornell.gdiac.starstruck.Obstacles.*;
-import edu.cornell.gdiac.util.*;
+import edu.cornell.gdiac.starstruck.Obstacles.Button;
+import edu.cornell.gdiac.util.JsonAssetManager;
+import edu.cornell.gdiac.util.PooledList;
+import edu.cornell.gdiac.util.ScreenListener;
+import edu.cornell.gdiac.util.SoundController;
 
 /**
  * Gameplay specific controller for the platformer game.
@@ -39,7 +41,7 @@ import edu.cornell.gdiac.util.*;
  * This is the purpose of our AssetState variable; it ensures that multiple instances
  * place nicely with the static assets.
  */
-public class MenuMode extends WorldController implements Screen, InputProcessor, ControllerListener {
+public class Settings extends WorldController implements Screen, InputProcessor, ControllerListener {
 
     /** Speed of camera pan & zoom */
     private static final float PAN_CONST = 10;
@@ -70,14 +72,14 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
     private static int OFFSET1 = 98;
     private static int OFFSET2 = 76;
 
-    /** The current state of the play button */
+    /** The current state of the onePlayer button */
     private int pressState;
 
     /** Whether or not this player mode is still active */
     private boolean active;
 
     private static final String MUSIC_FILE = "audio/loading_screen.mp3";
-    public static boolean menuIsPlaying() {return music.isPlaying();}
+    public static boolean settingsIsPlaying() {return music.isPlaying();}
 
     public static Music music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
 
@@ -85,12 +87,16 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 
     private boolean dont_play_music = false;
 
-    private Button play;
-    private Button levels;
-    private Button settings;
+    private Button onePlayer;
+    private Button twoPlayer;
     private Button quit;
-    private Button help;
-    private Button build;
+    private Button play;
+
+    private Button active1;
+    private Button active2;
+    private int numPlayers;
+    private boolean returnToMenu;
+
     /** Background texture for start-up */
     private Texture background;
 
@@ -122,36 +128,28 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 
         buttons = new PooledList<Button>();
 
-        TextureRegion levelButton = JsonAssetManager.getInstance().getEntry("play", TextureRegion.class);
-        play = new Button(CENTERX,CENTERY, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("play glow", TextureRegion.class), "play");
+        TextureRegion texture = JsonAssetManager.getInstance().getEntry("oneplayer button", TextureRegion.class);
+        onePlayer = new Button(canvas.getWidth()/3-20,canvas.getHeight()/2, texture.getRegionWidth(), texture.getRegionHeight(), texture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("oneplayer glow", TextureRegion.class), "onePlayer");
 
-        levelButton = JsonAssetManager.getInstance().getEntry("levelselect", TextureRegion.class);
-        levels = new Button(CENTERX,CENTERY-OFFSET1, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("levelselect glow", TextureRegion.class), "levels");
+        texture = JsonAssetManager.getInstance().getEntry("twoplayer button", TextureRegion.class);
+        twoPlayer = new Button(canvas.getWidth()*2/3+20,canvas.getHeight()/2, texture.getRegionWidth(), texture.getRegionHeight(), texture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("twoplayer glow", TextureRegion.class), "twoPlayer");
 
-        levelButton = JsonAssetManager.getInstance().getEntry("settings", TextureRegion.class);
-        settings = new Button(CENTERX,CENTERY-OFFSET1-OFFSET2, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("settings glow", TextureRegion.class), "settings");
+        texture = JsonAssetManager.getInstance().getEntry("done", TextureRegion.class);
+        play = new Button(canvas.getWidth()/2,canvas.getHeight()/4, texture.getRegionWidth(), texture.getRegionHeight(), texture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("done glow", TextureRegion.class), "twoPlayer");
+        texture = JsonAssetManager.getInstance().getEntry("oneplayer active", TextureRegion.class);
+        active1 = new Button(canvas.getWidth()/3-20,canvas.getHeight()/2, texture.getRegionWidth(), texture.getRegionHeight(), texture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("oneplayer glow", TextureRegion.class), "onePlayer");
 
-        levelButton = JsonAssetManager.getInstance().getEntry("quit", TextureRegion.class);
-        quit = new Button(CENTERX,CENTERY-OFFSET1-OFFSET2*2, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("quit glow", TextureRegion.class), "quit");
+        texture = JsonAssetManager.getInstance().getEntry("twoplayer active", TextureRegion.class);
+        active2 = new Button(canvas.getWidth()*2/3+20,canvas.getHeight()/2, texture.getRegionWidth(), texture.getRegionHeight(), texture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("twoplayer glow", TextureRegion.class), "twoPlayer");
 
-        levelButton = JsonAssetManager.getInstance().getEntry("help", TextureRegion.class);
-        help = new Button(CENTERX,CENTERY-OFFSET1-OFFSET2*3, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("help glow", TextureRegion.class), "help");
-
-        levelButton = JsonAssetManager.getInstance().getEntry("build", TextureRegion.class);
-        build = new Button(-1000,-1000, 1, 1, levelButton,
-                world, new Vector2(1,1), levelButton, "build");
-
+        buttons.add(onePlayer);
+        buttons.add(twoPlayer);
         buttons.add(play);
-        buttons.add(levels);
-        buttons.add(settings);
-        buttons.add(quit);
-        buttons.add(help);
-        buttons.add(build);
 
         Gdx.input.setInputProcessor(this);
         // Let ANY connected controller start the game.
@@ -169,7 +167,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
      *
      * The game has default gravity and other settings
      */
-    public MenuMode(GameCanvas canvas) {
+    public Settings(GameCanvas canvas) {
 
         this.canvas  = canvas;
 
@@ -181,6 +179,8 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 
         pressState = 0;
         active = false;
+        numPlayers = 0;
+        returnToMenu = true;
     }
 
 
@@ -210,6 +210,10 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 
     }
 
+    public void setReturnToMenu(boolean state) {
+        returnToMenu = state;
+    }
+
     /**
      * Sets the ScreenListener for this mode
      *
@@ -220,7 +224,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
     }
 
     /**
-     * Resets the status of the game so that we can play again.
+     * Resets the status of the game so that we can onePlayer again.
      *
      * This method disposes of the world and creates a new one.
      */
@@ -330,15 +334,6 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
     public boolean keyDown (int keycode) {
         if (buttons.getTail() == null) { return true; }
 
-        if (pressState == 0 && keycode == Input.Keys.N) {
-            pressState = 1;
-            currentButton = play;
-            return false;
-        } else if (pressState == 0 && keycode == Input.Keys.P) {
-            pressState = 1;
-            currentButton = build;
-            return false;
-        }
         return true;
     };
 
@@ -349,15 +344,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
     public boolean keyUp (int keycode) {
         if (buttons.getTail() == null) { return true; }
 
-        if (pressState == 1 && keycode == Input.Keys.N) {
-            pressState = 2;
-            currentButton = play;
-            return false;
-        } else if (pressState == 1 && keycode == Input.Keys.P) {
-            pressState = 2;
-            currentButton = build;
-            return false;
-        } else if (keycode == Input.Keys.ESCAPE) {
+        if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.ENTER) {
             pressState = 2;
             currentButton = quit;
             return false;
@@ -423,6 +410,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         currentButton = null;
         for (Button b : buttons) {
             b.setActive(false);
+            b.pushed = false;
             if (b.isIn(screenX,screenY)) {
                 currentButton = b;
                 b.setActive(true);
@@ -450,19 +438,18 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         if (active) {
             update(delta);
             draw(delta);
+            Vector3 pls = new Vector3(1,1,1);
 
-            if (isReady() && currentButton == play) {
-                listener.exitScreen(this, WorldController.EXIT_PLAY);
-            } else if (isReady() && currentButton == levels) {
-                listener.exitScreen(this, WorldController.EXIT_SELECT);
-            } else if (isReady() && currentButton == settings) {
-                listener.exitScreen(this, WorldController.EXIT_SETTINGS);
-            } else if (isReady() && currentButton == quit) {
-                listener.exitScreen(this, WorldController.EXIT_QUIT);
-            } else if (isReady() && currentButton == help) {
-                listener.exitScreen(this, WorldController.EXIT_PLAY);
-            } else if (isReady() && currentButton == build) {
-                listener.exitScreen(this, WorldController.EXIT_EDIT);
+            if (isReady() && play.pushed && numPlayers != 0) {
+                if (returnToMenu) {
+                    listener.exitScreen(this, WorldController.EXIT_QUIT, Integer.toString(numPlayers));
+                } else {
+                    listener.exitScreen(this, WorldController.EXIT_PLAY, Integer.toString(numPlayers));
+                }
+            } else if (isReady() && currentButton == onePlayer && onePlayer.pushed) {
+                numPlayers = 1;
+            } else if (isReady() && currentButton == twoPlayer && twoPlayer.pushed) {
+                numPlayers = 2;
             }
         }
     }
@@ -597,8 +584,16 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 
         canvas.begin();
         canvas.draw(background, 0, 0);
+
         for (Button b : buttons) {
-            b.draw(canvas);
+            if (!(b == play && numPlayers == 0)) {
+                b.draw(canvas);
+            }
+        }
+        if (numPlayers == 1) {
+            active1.draw(canvas);
+        } else if (numPlayers == 2) {
+            active2.draw(canvas);
         }
         canvas.end();
 
