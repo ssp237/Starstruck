@@ -90,6 +90,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
     private Button settings;
     private Button quit;
     private Button help;
+    private Button build;
     /** Background texture for start-up */
     private Texture background;
 
@@ -141,11 +142,16 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         help = new Button(CENTERX,CENTERY-OFFSET1-OFFSET2*3, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
                 world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("help glow", TextureRegion.class), "help");
 
+        levelButton = JsonAssetManager.getInstance().getEntry("build", TextureRegion.class);
+        build = new Button(-1,-1, 1, 1, levelButton,
+                world, new Vector2(1,1), levelButton, "build");
+
         buttons.add(play);
         buttons.add(levels);
         buttons.add(settings);
         buttons.add(quit);
         buttons.add(help);
+        buttons.add(build);
 
         Gdx.input.setInputProcessor(this);
         // Let ANY connected controller start the game.
@@ -330,7 +336,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             return false;
         } else if (pressState == 0 && keycode == Input.Keys.P) {
             pressState = 1;
-            currentButton = levels;
+            currentButton = build;
             return false;
         }
         return true;
@@ -349,7 +355,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             return false;
         } else if (pressState == 1 && keycode == Input.Keys.P) {
             pressState = 2;
-            currentButton = levels;
+            currentButton = build;
             return false;
         } else if (keycode == Input.Keys.ESCAPE) {
             pressState = 2;
@@ -450,9 +456,13 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             } else if (isReady() && currentButton == levels) {
                 listener.exitScreen(this, WorldController.EXIT_SELECT);
             } else if (isReady() && currentButton == settings) {
-                listener.exitScreen(this, WorldController.EXIT_EDIT);
+                listener.exitScreen(this, WorldController.EXIT_SELECT);
             } else if (isReady() && currentButton == quit) {
                 listener.exitScreen(this, WorldController.EXIT_QUIT);
+            } else if (isReady() && currentButton == help) {
+                listener.exitScreen(this, WorldController.EXIT_PLAY);
+            } else if (isReady() && currentButton == build) {
+                listener.exitScreen(this, WorldController.EXIT_EDIT);
             }
         }
     }
