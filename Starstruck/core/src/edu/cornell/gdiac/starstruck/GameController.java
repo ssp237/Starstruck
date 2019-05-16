@@ -334,16 +334,16 @@ public class GameController extends WorldController implements ContactListener {
     /** List of the planks in rope, used for presolve */
     ArrayList<Obstacle> ropeList;
     /** Whether astronaut hit a portal */
-    private boolean portal;
+//    private boolean portal;
     /** Countdown timer for portal */
-    private int portalCount;
+//    private int portalCount;
     /** Target for camera position */
     private Vector3 camTarget = new Vector3();
 
     /** Cache variable to store current planet being drawn*/
     private WheelObstacle planetCache;
     /** Portal cache */
-    private Portal portalCache;
+//    private Portal portalCache;
     private PortalPair portalpairCache;
     /** cache for stars */
     private Star starCache;
@@ -436,6 +436,8 @@ public class GameController extends WorldController implements ContactListener {
         collectCount = 60;
         deathOp = 0f;
         portalpairCache = null;
+//        avatar.portalpairCache = null;
+//        avatar2.portalpairCache = null;
 
         statusBar  = JsonAssetManager.getInstance().getEntry("starbar", Texture.class);
         // Break up the status bar texture into regions
@@ -548,8 +550,10 @@ public class GameController extends WorldController implements ContactListener {
         winCount = level.winCount;
         openGoal = false;
 
-        portal = false;
-        portalCount = 0;
+        avatar.portal = false;
+        avatar2.portal = false;
+        avatar.portalCount = 0;
+        avatar2.portalCount = 0;
 
         // Add level goal
         float dwidth;
@@ -1203,6 +1207,36 @@ public class GameController extends WorldController implements ContactListener {
         return false;
     }
 
+    private boolean updatePortal(AstronautModel portalAvatar, AstronautModel avatar) {
+        boolean result = false;
+        if (portalAvatar.portal && portalAvatar.portalCount <= 0) {
+            portalpairCache = findPortalPair(portalAvatar.portalCache);
+            if (!portalpairCache.isGoal() || portalpairCache.isGoal() && openGoal) {
+                portalpairCache.teleport(world, portalAvatar, rope);
+                portalAvatar.portalCount = 5;
+            }
+            result = true;
+        }
+        if (portalpairCache != null && portalpairCache.isActive()) {
+            if (portalpairCache.isGoal() && !isFailure()) { //By this point we have already confirmed that goal is open
+                if (!isComplete()) {
+                    setComplete(true);
+                }
+            }
+            avatar.setOnPlanet(false);
+            avatar.setUnAnchored();
+            Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar.getPosition());
+            print(dir);
+            dir.setLength(portalAvatar.portalVel.len()*2);
+            avatar.setLinearVelocity(dir);
+            portalAvatar.setLinearVelocity(portalAvatar.portalVel);
+        }
+
+        portalAvatar.portalCount--;
+        portalAvatar.portal = false;
+        return result;
+    }
+
     /**
      * Find the PortalPair of the portal. Returns null if portal can't be found, means something's wrong
      * @param portal
@@ -1635,41 +1669,48 @@ public class GameController extends WorldController implements ContactListener {
 //            setComplete(true);
 //        }
 
-        if (portal && portalCount <= 0) {
-            portalpairCache = findPortalPair(portalCache);
-            if (!portalpairCache.isGoal() || portalpairCache.isGoal() && openGoal) {
-                portalpairCache.teleport(world, avatarCache, rope);
-                portalCount = 5;
-            }
-        }
-        if (portalpairCache != null && portalpairCache.isActive()) {
-            if (portalpairCache.isGoal() && !isFailure()) { //By this point we have already confirmed that goal is open
-                if (!isComplete()) {
-                    setComplete(true);
-                }
-            }
-            if (avatarCache == avatar) {
-                avatar2.setOnPlanet(false);
-                avatar2.setUnAnchored();
-                Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar2.getPosition());
-                dir.setLength(avatar.portalVel.len()*2);
-                avatar2.setLinearVelocity(dir);
-                avatar.setLinearVelocity(avatar.portalVel);
-                //avatar.getBody().applyForce(avatar.portalVel, avatar.getPosition(), true);
-            }
-            else {
-                avatar.setOnPlanet(false);
-                avatar.setUnAnchored();
-                Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar.getPosition());
-                dir.setLength(avatar2.portalVel.len()*2);
-                avatar.setLinearVelocity(dir);
-                avatar2.setLinearVelocity(avatar2.portalVel);
-                //avatar2.getBody().applyForce(avatar2.portalVel, avatar2.getPosition(), true);
-            }
+        if (avatarCache != null) {
+            if (avatarCache == avatar)
+                updatePortal(avatar, avatar2);
+            else
+                updatePortal(avatar2, avatar);
         }
 
-        portalCount--;
-        portal = false;
+//        if (portal && portalCount <= 0) {
+//            portalpairCache = findPortalPair(portalCache);
+//            if (!portalpairCache.isGoal() || portalpairCache.isGoal() && openGoal) {
+//                portalpairCache.teleport(world, avatarCache, rope);
+//                portalCount = 5;
+//            }
+//        }
+//        if (portalpairCache != null && portalpairCache.isActive()) {
+//            if (portalpairCache.isGoal() && !isFailure()) { //By this point we have already confirmed that goal is open
+//                if (!isComplete()) {
+//                    setComplete(true);
+//                }
+//            }
+//            if (avatarCache == avatar) {
+//                avatar2.setOnPlanet(false);
+//                avatar2.setUnAnchored();
+//                Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar2.getPosition());
+//                dir.setLength(avatar.portalVel.len()*2);
+//                avatar2.setLinearVelocity(dir);
+//                avatar.setLinearVelocity(avatar.portalVel);
+//                //avatar.getBody().applyForce(avatar.portalVel, avatar.getPosition(), true);
+//            }
+//            else {
+//                avatar.setOnPlanet(false);
+//                avatar.setUnAnchored();
+//                Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar.getPosition());
+//                dir.setLength(avatar2.portalVel.len()*2);
+//                avatar.setLinearVelocity(dir);
+//                avatar2.setLinearVelocity(avatar2.portalVel);
+//                //avatar2.getBody().applyForce(avatar2.portalVel, avatar2.getPosition(), true);
+//            }
+//        }
+//
+//        portalCount--;
+//        portal = false;
 
         if (twoplayer) {
             Vector2 offset = new Vector2();
@@ -1914,24 +1955,24 @@ public class GameController extends WorldController implements ContactListener {
 
             //Portal stuff
             if (bd1 == avatar && bd2.getType() == ObstacleType.PORTAL) {
-                portal = true;
-                portalCache = (Portal)bd2;
                 avatarCache = avatar;
+                avatar.portal = true;
+                avatar.portalCache = (Portal)bd2;
             }
             if (bd1.getType() == ObstacleType.PORTAL && bd2 == avatar) {
-                portal = true;
-                portalCache = (Portal)bd1;
                 avatarCache = avatar;
+                avatar.portal = true;
+                avatar.portalCache = (Portal)bd1;
             }
             if (bd1 == avatar2 && bd2.getType() == ObstacleType.PORTAL) {
-                portal = true;
-                portalCache = (Portal)bd2;
                 avatarCache = avatar2;
+                avatar2.portal = true;
+                avatar2.portalCache = (Portal)bd2;
             }
             if (bd1.getType() == ObstacleType.PORTAL && bd2 == avatar2) {
-                portal = true;
-                portalCache = (Portal)bd1;
                 avatarCache = avatar2;
+                avatar2.portal = true;
+                avatar2.portalCache = (Portal)bd1;
             }
 
             if ((bd1 == avatar || bd2 == avatar) && (bd1N.contains("planet") || bd2N.contains("planet")) && !barrier) {
