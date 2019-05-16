@@ -6,20 +6,20 @@
 "galaxy": "sombrero",
 "background": "so background",
 "astronaut 1": {
-	"pos": [ 3.950390100479126, 6.999443531036377 ],
+	"pos": [ 2.9713358879089355, 6.663228511810303 ],
 	"size": [ 0.9000000357627869, 1.290000081062317 ],
 	"texture": "astronaut 1",
 	"glow texture": "glow"
 },
 "astronaut 2": {
-	"pos": [ 7.077353477478027, 7.130513668060303 ],
+	"pos": [ 4.987234592437744, 7.058787822723389 ],
 	"size": [ 0.9000000357627869, 1.290000081062317 ],
 	"texture": "astronaut 2",
 	"glow texture": "glow"
 },
 "rope": {
 	"texture": "rope",
-	"rope width": 6.000000953674316
+	"rope width": 6.0
 },
 "planet specs": [ 700.0, 800.0, 900.0, 1000.0 ],
 "planets": [

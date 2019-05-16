@@ -1,25 +1,25 @@
 {
 "physicsSize": [ 38.400001525878906, 21.600000381469727 ],
 "graphicSize": [ 1280, 720 ],
-"playSize": [ 0.30000001192092896, 0.5 ],
+"playSize": [ 1.5, 1.5 ],
 "win": "0.5",
 "galaxy": "sombrero",
-"background": "so background",
+"background": "wp background",
 "astronaut 1": {
-	"pos": [ 3.950390100479126, 6.999443531036377 ],
+	"pos": [ 2.728827476501465, 6.579464435577393 ],
 	"size": [ 0.9000000357627869, 1.290000081062317 ],
 	"texture": "astronaut 1",
 	"glow texture": "glow"
 },
 "astronaut 2": {
-	"pos": [ 7.077353477478027, 7.130513668060303 ],
+	"pos": [ 4.685107231140137, 6.984155178070068 ],
 	"size": [ 0.9000000357627869, 1.290000081062317 ],
 	"texture": "astronaut 2",
 	"glow texture": "glow"
 },
 "rope": {
 	"texture": "rope",
-	"rope width": 6.000000953674316
+	"rope width": 6.0
 },
 "planet specs": [ 700.0, 800.0, 900.0, 1000.0 ],
 "planets": [

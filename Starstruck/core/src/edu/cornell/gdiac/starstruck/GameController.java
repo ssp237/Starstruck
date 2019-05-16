@@ -1494,7 +1494,7 @@ public class GameController extends WorldController implements ContactListener {
         // +/- 1 for a little bit of buffer space because astronaut position is at its center
         if (!isFailure() && !isComplete() && ((avatar.getY() < -1 || avatar.getY() > yBound+1 || avatar.getX() < -1 || avatar.getX() > xBound+1)
                 || (avatar2.getY() < -1 || avatar2.getY() > yBound+1 || avatar2.getX() < -1 || avatar2.getX() > xBound+1))
-                && !avatar.getOnPlanet() && !avatar2.getOnPlanet() && !avatar.isAnchored() && !avatar2.isAnchored()) {
+                && !(avatar.getOnPlanet() || avatar2.getOnPlanet() || avatar.isAnchored() || avatar2.isAnchored())) {
             if (portalpairCache != null && !portalpairCache.isGoal() || portalpairCache == null) {
                 setFailure(true);
                 return false;
