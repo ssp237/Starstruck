@@ -66,7 +66,7 @@ public class Starstruck extends Game implements ScreenListener {
 	 * the asynchronous loader for all other assets.
 	 */
 	public void create() {
-		canvas  = new GameCanvas();
+		this.canvas  = new GameCanvas();
 
 		camPos = canvas.getCamera().position.cpy();
 
@@ -165,7 +165,6 @@ public class Starstruck extends Game implements ScreenListener {
 			}
 			controllers[current].reset();
 			setScreen(controllers[current]);
-
 			loading.dispose();
 			loading = null;
 		}  else if (exitCode == WorldController.EXIT_QUIT) {

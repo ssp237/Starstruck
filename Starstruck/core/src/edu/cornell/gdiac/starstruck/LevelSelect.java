@@ -35,11 +35,6 @@ import edu.cornell.gdiac.starstruck.Models.AstronautModel;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
 import edu.cornell.gdiac.util.*;
 
-import java.util.ArrayList;
-
-//import edu.cornell.gdiac.physics.*;
-//import edu.cornell.gdiac.starstruck.Models.PlayerModel;
-
 /**
  * Gameplay specific controller for the platformer game.  
  *
@@ -66,15 +61,11 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
     /** Camera offset */
     private float camOffsetX;
-    private float camOffsetY;
 
     /** Reference to GameCanvas created by the root */
     private GameCanvas canvas;
     /** Listener that will update the player mode when we are done */
     private ScreenListener listener;
-
-    /** Space sounds */
-    private static final String SPACE_SOUNDS = "space sounds";
 
     /** The height of the canvas window (necessary since sprite origin != screen origin) */
     private int heightY;
@@ -305,11 +296,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
         if (MenuMode.menuIsPlaying()) {
             dont_play_music = true;
-            //System.out.println("dont play" + dont_play_music);
-//            MenuMode.getMusic().stop();
-//            MenuMode.getMusic().dispose();
-//            music.play();
-//            music.setLooping(true);
         }
         else if (GameController.getMusic() != null) {
             GameController.getMusic().stop();
@@ -382,8 +368,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         Texture background = level.getBackground();
 
-        float centerY = camera.position.y + canvas.getHeight()/2 - 75;
-        float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 15;
+        float centerY = camera.position.y + canvas.getHeight()/2 - 50;
+        float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 45;
         menu.setPosition(centerX, centerY);
 
 
@@ -459,13 +445,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         if (!super.preUpdate(dt)) {
             return false;
         }
-
-//        if (!isFailure() && (avatar.getY() < - 2 || avatar.getY() > bounds.height + 2
-//                || avatar.getX() < -2)) {
-//            // || avatar.getX() > bounds.getWidth() + 1)) {
-//            setFailure(true);
-//            return false;
-//        }
 
         return true;
     }

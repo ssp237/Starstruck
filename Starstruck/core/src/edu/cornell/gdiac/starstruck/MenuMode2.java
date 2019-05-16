@@ -1,723 +1,590 @@
-/*
- * LoadingMode.java
- *
- * Asset loading is a really tricky problem.  If you have a lot of sound or images,
- * it can take a long time to decompress them and load them into memory.  If you just
- * have code at the start to load all your assets, your game will look like it is hung
- * at the start.
- *
- * The alternative is asynchronous asset loading.  In asynchronous loading, you load a
- * little bit of the assets at a time, but still animate the game while you are loading.
- * This way the player knows the game is not hung, even though he or she cannot do
- * anything until loading is complete. You know those loading screens with the inane tips
- * that want to be helpful?  That is asynchronous loading.
- *
- * This player mode provides a basic loading screen.  While you could adapt it for
- * between level loading, it is currently designed for loading all assets at the
- * start of the game.
- *
- * Author: Walker M. White
- * Based on original PhysicsDemo Lab by Don Holden, 2007
- * LibGDX version, 2/6/2015
- */
-package edu.cornell.gdiac.starstruck;
-
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.controllers.Controller;
-import com.badlogic.gdx.controllers.ControllerListener;
-import com.badlogic.gdx.controllers.Controllers;
-import com.badlogic.gdx.controllers.PovDirection;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
-import edu.cornell.gdiac.starstruck.Obstacles.Button;
-import edu.cornell.gdiac.util.JsonAssetManager;
-import edu.cornell.gdiac.util.PooledList;
-import edu.cornell.gdiac.util.ScreenListener;
-
-/**
- * Class that provides a loading screen for the state of the game.
- *
- * You still DO NOT need to understand this class for this lab.  We will talk about this
- * class much later in the course.  This class provides a basic template for a loading
- * screen to be used at the start of the game or between levels.  Feel free to adopt
- * this to your needs.
- *
- * You will note that this mode has some textures that are not loaded by the AssetManager.
- * You are never required to load through the AssetManager.  But doing this will block
- * the application.  That is why we try to have as few resources as possible for this
- * loading screen.
- */
-public class MenuMode2 extends WorldController implements Screen, InputProcessor, ControllerListener {
-    private static final String MUSIC_FILE = "audio/loading_screen.mp3";
-
-    private static final float VOLUME = 0.3f;
-
-    /** The reader to process JSON files */
-    private JsonReader jsonReader;
-    /** The JSON asset directory */
-    private JsonValue assetDirectory;
-    /** Track asset loading from all instances and subclasses */
-    private AssetState platformAssetState = AssetState.EMPTY;
-
-
-    /** Background texture for start-up */
-    private Texture background;
-    /** Play button to display to go to level select*/
-    private TextureRegion playButton;
-    /** Build button to display to go to build mode */
-    private TextureRegion levelsButton;
-    /** Settings button to display to edit settings */
-    private TextureRegion settingsButton;
-    /** Quit button to display to exit the window */
-    private TextureRegion quitButton;
-    /** Quit button to display to get help */
-    private TextureRegion helpButton;
-    /** Loading audio */
-    public static Music music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
-
-    //= GameController.getMusic();
-
-
-
-    //
-    private String music_name = "menu";
-
-    //GameController.getMusicName();
-
-    //public Music from_GameController = GameController.getMusic();
-    //private String gameController_music_name = GameController.getMusicName();
-
-    /** Standard window size (for scaling) */
-    private static int STANDARD_WIDTH  = 1280;
-    /** Standard window height (for scaling) */
-    private static int STANDARD_HEIGHT = 720;
-    /** Amount to scale the play button */
-    private static float BUTTON_SCALE  = 0.75f;
-
-    /** Start button for XBox controller on Windows */
-    private static int WINDOWS_START = 7;
-    /** Start button for XBox controller on Mac OS X */
-    private static int MAC_OS_X_START = 4;
-
-    /** Reference to GameCanvas created by the root */
-    private GameCanvas canvas;
-    /** Listener that will update the player mode when we are done */
-    private ScreenListener listener;
-
-    /** The y-coordinate of the center of the progress bar */
-    private int centerY = 375;
-    /** The x-coordinate of the center of the progress bar */
-    private int centerX;
-    /** Offset of next button */
-    private int OFFSET1 = 25;
-    /** Offset of next button */
-    private int OFFSET2 = 18;
-    /** The height of the canvas window (necessary since sprite origin != screen origin) */
-    private int heightY;
-    /** Scaling factor for when the student changes the resolution. */
-    private float scale;
-
-    /** The current state of the play button */
-    private int pressState;
-    /** Button down */
-    private Button currentButton;
-    /** Support for the X-Box start button in place of play button */
-    private int   startButton;
-    /** Whether or not this player mode is still active */
-    private boolean active;
-
-    /** button list */
-    private PooledList<Button> buttons;
-    /** play button */
-    private Button play;
-    /** level button */
-    private Button levels;
-    /** settings button */
-    private Button settings;
-    /** quit button */
-    private Button quit;
-    /** build placeholder */
-    private Button build;
-    /** help button */
-    private Button help;
-
-    public static Music getMusic() {return music;}
-
-    public static boolean menuIsPlaying() {return music.isPlaying();}
-
-
-    /**
-     * Returns true if all assets are loaded and the player is ready to go.
-     *
-     * @return true if the player is ready to go
-     */
-    public boolean isReady() {
-        return pressState == 2;
-    }
-
-    /**
-     * Creates a LoadingMode with the default size and position.
-     *
-     * The budget is the number of milliseconds to spend loading assets each animation
-     * frame.  This allows you to do something other than load assets.  An animation
-     * frame is ~16 milliseconds. So if the budget is 10, you have 6 milliseconds to
-     * do something else.  This is how game companies animate their loading screens.
-     */
-    public MenuMode2(GameCanvas canvas) {
-        this.canvas  = canvas;
-
-        // Compute the dimensions from the canvas
-        resize(canvas.getWidth(),canvas.getHeight());
-
-        pressState = 0;
-        active = false;
-        currentButton = null;
-
-        startButton = (System.getProperty("os.name").equals("Mac OS X") ? MAC_OS_X_START : WINDOWS_START);
-
-        active = true;
-    }
-
-    /**
-     * Preloads the assets for this controller.
-     *
-     * To make the game modes more for-loop friendly, we opted for nonstatic loaders
-     * this time.  However, we still want the assets themselves to be static.  So
-     * we have an AssetState that determines the current loading state.  If the
-     * assets are already loaded, this method will do nothing.
-     *
-     * @param manager Reference to global asset manager.
-     */
-    public void preLoadContent(AssetManager manager) {
-        if (platformAssetState != AssetState.EMPTY) {
-            return;
-        }
-
-        platformAssetState = AssetState.LOADING;
-
-        super.preLoadContent(manager);
-
-        jsonReader = new JsonReader();
-        assetDirectory = jsonReader.parse(Gdx.files.internal("levels/assets.json"));
-
-        JsonAssetManager.getInstance().loadDirectory(assetDirectory);
-
-    }
-
-
-    /**
-     * Load the assets for this controller.
-     *
-     * To make the game modes more for-loop friendly, we opted for nonstatic loaders
-     * this time.  However, we still want the assets themselves to be static.  So
-     * we have an AssetState that determines the current loading state.  If the
-     * assets are already loaded, this method will do nothing.
-     *
-     * @param manager Reference to global asset manager.
-     */
-    public void loadContent(AssetManager manager) {
-
-        JsonAssetManager.getInstance().allocateDirectory();
-
-        super.loadContent(manager);
-
-        buttons = new PooledList<Button>();
-
-        playButton = JsonAssetManager.getInstance().getEntry("play", TextureRegion.class);
-        levelsButton = JsonAssetManager.getInstance().getEntry("levelselect", TextureRegion.class);
-        settingsButton = JsonAssetManager.getInstance().getEntry("settings", TextureRegion.class);
-        quitButton = JsonAssetManager.getInstance().getEntry("quit", TextureRegion.class);
-        helpButton = JsonAssetManager.getInstance().getEntry("help", TextureRegion.class);
-        background = JsonAssetManager.getInstance().getEntry("loading", Texture.class);
-
-        play = new Button(playButton.getRegionWidth()+10,canvas.getHeight() - playButton.getRegionWidth() - 10, playButton.getRegionWidth(), playButton.getRegionHeight(), playButton,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("play glow", TextureRegion.class), "play");
-
-        levels = new Button(0,0, levelsButton.getRegionWidth(), levelsButton.getRegionHeight(), levelsButton,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("levelselect glow", TextureRegion.class), "all levels");
-
-        settings = new Button(0,0, settingsButton.getRegionWidth(), settingsButton.getRegionHeight(), settingsButton,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("settings glow", TextureRegion.class), "replay");
-
-        quit = new Button(0,0, quitButton.getRegionWidth(), quitButton.getRegionHeight(), quitButton,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("quit glow", TextureRegion.class), "quit");
-
-        help = new Button(0,0, helpButton.getRegionWidth(), helpButton.getRegionHeight(), helpButton,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("help glow", TextureRegion.class), "help");
-
-        // this is placeholder button for navigation reasons
-        build = new Button(0,0,0,0,playButton, world, new Vector2(1,1), playButton, "build");
-
-        buttons.add(0, play);
-        buttons.add(1, levels);
-        buttons.add(2, settings);
-        buttons.add(3, quit);
-        buttons.add(4, help);
-
-        Gdx.input.setInputProcessor(this);
-        // Let ANY connected controller start the game.
-        for(Controller controller : Controllers.getControllers()) {
-            controller.addListener(this);
-        }
-    }
-
-    /**
-     * Called when this screen should release all resources.
-     */
-    public void dispose() {
-        for(Button b : buttons) {
-            b.deactivatePhysics(world);
-        }
-        buttons.clear();
-        if (world != null) {
-            world.dispose();
-            world = new World(new Vector2(0,0), false);
-        }
-        music.stop();
-        music.dispose();
-    }
-
-    /**
-     * Update the status of this player mode.
-     *
-     * We prefer to separate update and draw from one another as separate methods, instead
-     * of using the single render() method that LibGDX does.  We will talk about why we
-     * prefer this in lecture.
-     *
-     * @param delta Number of seconds since last animation frame
-     */
-    public void update(float delta) {
-        if (!music.isPlaying()) {
-            music.play();
-            music.setLooping(true);
-        }
-
-    }
-
-    /**
-     * Draw the status of this player mode.
-     *
-     * We prefer to separate update and draw from one another as separate methods, instead
-     * of using the single render() method that LibGDX does.  We will talk about why we
-     * prefer this in lecture.
-     */
-    private void draw() {
-        OrthographicCamera cam = (OrthographicCamera) canvas.getCamera();
-        if (cam.position.x != canvas.getWidth()/2 || cam.position.y != canvas.getHeight()/2) {
-            cam.position.x = canvas.getWidth()/2; cam.position.y = canvas.getHeight()/2;
-            cam.update();
-        }
-        canvas.begin();
-        canvas.draw(background, 0, 0, canvas.getWidth(), canvas.getHeight());
-        for (Button b : buttons) {
-            b.draw(canvas);
-        }
-        canvas.end();
-    }
-
-    /**
-     * Helper to find distance
-     *
-     * @param v1 v1
-     * @param v2 v2
-     * @return distance between v1 and v2
-     */
-    private float dist(Vector2 v1, Vector2 v2) {
-        return (float) Math.sqrt((v1.x - v2.x)*(v1.x-v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
-    }
-
-    // ADDITIONAL SCREEN METHODS
-    /**
-     * Called when the Screen should render itself.
-     *
-     * We defer to the other methods update() and draw().  However, it is VERY important
-     * that we only quit AFTER a draw.
-     *
-     * @param delta Number of seconds since last animation frame
-     */
-    public void render(float delta) {
-        if (active) {
-            update(delta);
-            draw();
-//            if (!music.isPlaying()) { music.play();}
-            // We are are ready, notify our listener
-
-            if (isReady() && currentButton == play) {
-                listener.exitScreen(this, WorldController.EXIT_PLAY);
-            } else if (isReady() && currentButton == levels) {
-                listener.exitScreen(this, WorldController.EXIT_SELECT);
-            } else if (isReady() && currentButton == build) {
-                listener.exitScreen(this, WorldController.EXIT_EDIT);
-            } else if (isReady() && currentButton == quit) {
-                listener.exitScreen(this, WorldController.EXIT_QUIT);
-            }
-        }
-    }
-
-    /**
-     * Called when the Screen is resized.
-     *
-     * This can happen at any point during a non-paused state but will never happen
-     * before a call to show().
-     *
-     * @param width  The new width in pixels
-     * @param height The new height in pixels
-     */
-    public void resize(int width, int height) {
-        // Compute the drawing scale
-        float sx = ((float)width)/STANDARD_WIDTH;
-        float sy = ((float)height)/STANDARD_HEIGHT;
-        scale = (sx < sy ? sx : sy);
-
-        centerY = (int)(height*.56);
-        centerX = width/2;
-        heightY = height;
-    }
-
-    /**
-     * Called when the Screen is paused.
-     *
-     * This is usually when it's not active or visible on screen. An Application is
-     * also paused before it is destroyed.
-     */
-    public void pause() {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * Called when the Screen is resumed from a paused state.
-     *
-     * This is usually when it regains focus.
-     */
-    public void resume() {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
-     * Called when this screen becomes the current screen for a Game.
-     */
-    public void show() {
-        // Useless if called in outside animation loop
-        active = true;
-    }
-
-    /**
-     * Called when this screen is no longer the current screen for a Game.
-     */
-    public void hide() {
-        // Useless if called in outside animation loop
-        active = false;
-    }
-
-    /**
-     * Sets the ScreenListener for this mode
-     *
-     * The ScreenListener will respond to requests to quit.
-     */
-    public void setScreenListener(ScreenListener listener) {
-        this.listener = listener;
-    }
-
-    // PROCESSING PLAYER INPUT
-    /**
-     * Called when the screen was touched or a mouse button was pressed.
-     *
-     * This method checks to see if the play button is available and if the click
-     * is in the bounds of the play button.  If so, it signals the that the button
-     * has been pressed and is currently down. Any mouse button is accepted.
-     *
-     * @param screenX the x-coordinate of the mouse on the screen
-     * @param screenY the y-coordinate of the mouse on the screen
-     * @param pointer the button or touch finger number
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (currentButton != null) {
-            pressState = 1;
-            return false;
-        }
-        return false;
-    }
-
-    /**
-     * Called when a finger was lifted or a mouse button was released.
-     *
-     * This method checks to see if the play button is currently pressed down. If so,
-     * it signals the that the player is ready to go.
-     *
-     * @param screenX the x-coordinate of the mouse on the screen
-     * @param screenY the y-coordinate of the mouse on the screen
-     * @param pointer the button or touch finger number
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        Vector2 center;
-        float dist;
-        screenY = heightY - screenY;
-
-        if (currentButton != null) {
-            if (currentButton.isIn(screenX, screenY)) {
-                currentButton.pushed = true;
-            }
-        }
-
-        return true;
-    }
-
-    /**
-     * Called when a button on the Controller was pressed.
-     *
-     * The buttonCode is controller specific. This listener only supports the start
-     * button on an X-Box controller.  This outcome of this method is identical to
-     * pressing (but not releasing) the play button.
-     *
-     * @param controller The game controller
-     * @param buttonCode The button pressed
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean buttonDown (Controller controller, int buttonCode) {
-        if (buttonCode == startButton && pressState == 0) {
-            pressState = 1;
-            currentButton = play;
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Called when a button on the Controller was released.
-     *
-     * The buttonCode is controller specific. This listener only supports the start
-     * button on an X-Box controller.  This outcome of this method is identical to
-     * releasing the the play button after pressing it.
-     *
-     * @param controller The game controller
-     * @param buttonCode The button pressed
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean buttonUp (Controller controller, int buttonCode) {
-        if (pressState == 1 && buttonCode == startButton) {
-            pressState = 2;
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Called when a key is pressed (UNSUPPORTED)
-     *
-     * @param keycode the key pressed
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean keyDown(int keycode) {
-        if (pressState == 0 && keycode == Input.Keys.N) {
-            pressState = 1;
-            currentButton = play;
-            return false;
-        } else if (pressState == 0 && keycode == Input.Keys.P) {
-            pressState = 1;
-            currentButton = build;
-        }
-        return true;
-    }
-
-    /**
-     * Called when a key is typed (UNSUPPORTED)
-     *
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean keyTyped(char character) {
-        return true;
-    }
-
-    /**
-     * Called when a key is released.
-     *
-     * We allow key commands to start the game this time.
-     *
-     * @param keycode the key released
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean keyUp(int keycode) {
-        if (pressState == 1 && keycode == Input.Keys.N) {
-            pressState = 2;
-            currentButton = play;
-            return false;
-        } else if (pressState == 1 && keycode == Input.Keys.P) {
-            pressState = 2;
-            currentButton = build;
-            return false;
-        } else if (keycode == Input.Keys.ESCAPE) {
-            pressState = 2;
-            currentButton = quit;
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * Called when the mouse was moved without any buttons being pressed. (UNSUPPORTED)
-     *
-     * @param screenX the x-coordinate of the mouse on the screen
-     * @param screenY the y-coordinate of the mouse on the screen
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean mouseMoved(int screenX, int screenY) {
-        currentButton = null;
-        screenY = heightY - screenY;
-        for (Button b : buttons) {
-            b.setActive(false);
-            if (b.isIn(screenX,screenY)) {
-                b.setActive(true);
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Called when the mouse wheel was scrolled. (UNSUPPORTED)
-     *
-     * @param amount the amount of scroll from the wheel
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean scrolled(int amount) {
-        return true;
-    }
-
-    /**
-     * Called when the mouse or finger was dragged. (UNSUPPORTED)
-     *
-     * @param screenX the x-coordinate of the mouse on the screen
-     * @param screenY the y-coordinate of the mouse on the screen
-     * @param pointer the button or touch finger number
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return true;
-    }
-
-    // UNSUPPORTED METHODS FROM ControllerListener
-
-    /**
-     * Called when a controller is connected. (UNSUPPORTED)
-     *
-     * @param controller The game controller
-     */
-    public void connected (Controller controller) {}
-
-    /**
-     * Called when a controller is disconnected. (UNSUPPORTED)
-     *
-     * @param controller The game controller
-     */
-    public void disconnected (Controller controller) {}
-
-    /**
-     * Called when an axis on the Controller moved. (UNSUPPORTED)
-     *
-     * The axisCode is controller specific. The axis value is in the range [-1, 1].
-     *
-     * @param controller The game controller
-     * @param axisCode 	The axis moved
-     * @param value 	The axis value, -1 to 1
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean axisMoved (Controller controller, int axisCode, float value) {
-        return true;
-    }
-
-    /**
-     * Called when a POV on the Controller moved. (UNSUPPORTED)
-     *
-     * The povCode is controller specific. The value is a cardinal direction.
-     *
-     * @param controller The game controller
-     * @param povCode 	The POV controller moved
-     * @param value 	The direction of the POV
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean povMoved (Controller controller, int povCode, PovDirection value) {
-        return true;
-    }
-
-    /**
-     * Called when an x-slider on the Controller moved. (UNSUPPORTED)
-     *
-     * The x-slider is controller specific.
-     *
-     * @param controller The game controller
-     * @param sliderCode The slider controller moved
-     * @param value 	 The direction of the slider
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean xSliderMoved (Controller controller, int sliderCode, boolean value) {
-        return true;
-    }
-
-    /**
-     * Called when a y-slider on the Controller moved. (UNSUPPORTED)
-     *
-     * The y-slider is controller specific.
-     *
-     * @param controller The game controller
-     * @param sliderCode The slider controller moved
-     * @param value 	 The direction of the slider
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean ySliderMoved (Controller controller, int sliderCode, boolean value) {
-        return true;
-    }
-
-    /**
-     * Called when an accelerometer value on the Controller changed. (UNSUPPORTED)
-     *
-     * The accelerometerCode is controller specific. The value is a Vector3 representing
-     * the acceleration on a 3-axis accelerometer in m/s^2.
-     *
-     * @param controller The game controller
-     * @param accelerometerCode The accelerometer adjusted
-     * @param value A vector with the 3-axis acceleration
-     * @return whether to hand the event to other listeners.
-     */
-    public boolean accelerometerMoved(Controller controller, int accelerometerCode, Vector3 value) {
-        return true;
-    }
-
-
-    /**
-     * Resets the status of the game so that we can play again.
-     *
-     * This method disposes of the world and creates a new one.
-     */
-    public void reset() {
-
-        Gdx.input.setInputProcessor(this);
-
-        currentButton = null;
-        pressState = 0;
-        if (music != null) {
-            music.stop();
-            music.dispose();
-        }
-
-        if (GameController.getMusic() != null) {
-            GameController.getMusic().stop();
-            GameController.getMusic().dispose();
-        }
-
-
-    }
-}
+///*
+// * GameController.java
+// *
+// * This is one of the files that you are expected to modify. Please limit changes to
+// * the regions that say INSERT CODE HERE.
+// *
+// * Author: Walker M. White
+// * Based on original PhysicsDemo Lab by Don Holden, 2007
+// * LibGDX version, 2/6/2015
+// */
+//package edu.cornell.gdiac.starstruck;
+//
+//import com.badlogic.gdx.Gdx;
+//import com.badlogic.gdx.Input;
+//import com.badlogic.gdx.InputProcessor;
+//import com.badlogic.gdx.audio.Music;
+//import com.badlogic.gdx.controllers.Controller;
+//import com.badlogic.gdx.controllers.ControllerListener;
+//
+//import com.badlogic.gdx.Screen;
+//import com.badlogic.gdx.assets.AssetManager;
+//import com.badlogic.gdx.controllers.Controllers;
+//import com.badlogic.gdx.controllers.PovDirection;
+//import com.badlogic.gdx.graphics.g2d.TextureRegion;
+//import com.badlogic.gdx.math.Vector2;
+//import com.badlogic.gdx.math.Vector3;
+//import com.badlogic.gdx.utils.JsonReader;
+//import com.badlogic.gdx.utils.JsonValue;
+//import edu.cornell.gdiac.starstruck.Obstacles.*;
+//import edu.cornell.gdiac.util.*;
+//
+///**
+// * Gameplay specific controller for the platformer game.
+// *
+// * You will notice that asset loading is not done with static methods this time.
+// * Instance asset loading makes it easier to process our game modes in a loop, which
+// * is much more scalable. However, we still want the assets themselves to be static.
+// * This is the purpose of our AssetState variable; it ensures that multiple instances
+// * place nicely with the static assets.
+// */
+//public class MenuMode extends WorldController implements Screen, InputProcessor, ControllerListener {
+//
+//    /** Speed of camera pan & zoom */
+//    private static final float PAN_CONST = 10;
+//    /** The reader to process JSON files */
+//    private JsonReader jsonReader;
+//    /** The JSON asset directory */
+//    private JsonValue  assetDirectory;
+//    /** Reference to the game level */
+//    protected LevelSelectModel level;
+//    /** mouse is currently selecting */
+//    private Level currentLevel;
+//
+//    /** Camera offset */
+//    private float camOffsetX;
+//
+//    /** Reference to GameCanvas created by the root */
+//    private GameCanvas canvas;
+//    /** Listener that will update the player mode when we are done */
+//    private ScreenListener listener;
+//
+//    /** The height of the canvas window (necessary since sprite origin != screen origin) */
+//    private int heightY;
+//    /** Scaling factor for when the student changes the resolution. */
+//    private float scale;
+//
+//    /** Standard window size (for scaling) */
+//    private static int STANDARD_WIDTH  = 1280;
+//    /** Standard window height (for scaling) */
+//    private static int STANDARD_HEIGHT = 720;
+//
+//    /** The current state of the play button */
+//    private int pressState;
+//
+//    /** Whether or not this player mode is still active */
+//    private boolean active;
+//
+//    private static final String MUSIC_FILE = "audio/loading_screen.mp3";
+//    public static boolean menuIsPlaying() {return music.isPlaying();}
+//
+//    public static Music music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
+//
+//    public static Music getMusic() {return music;}
+//
+//    private boolean dont_play_music = false;
+//
+//    private Button play;
+//    private Button build;
+//    private Button quit;
+//    private Button menu;
+//
+//    /** Current selected button */
+//    private Button currentButton = null;
+//
+//    /** Buttons to display upon winning a level */
+//    private PooledList<Button> buttons;
+//
+//
+//
+//    /**
+//     * Load the assets for this controller.
+//     *
+//     * To make the game modes more for-loop friendly, we opted for nonstatic loaders
+//     * this time.  However, we still want the assets themselves to be static.  So
+//     * we have an AssetState that determines the current loading state.  If the
+//     * assets are already loaded, this method will do nothing.
+//     *
+//     * @param manager Reference to global asset manager.
+//     */
+//    public void loadContent(AssetManager manager) {
+//
+//        JsonAssetManager.getInstance().allocateDirectory();
+//
+//        super.loadContent(manager);
+//
+//        buttons = new PooledList<Button>();
+//
+//        TextureRegion menuButton = JsonAssetManager.getInstance().getEntry("menu button", TextureRegion.class);
+//        menu = new Button(menuButton.getRegionWidth()+10,canvas.getHeight() - menuButton.getRegionWidth() - 10, menuButton.getRegionWidth(), menuButton.getRegionHeight(), menuButton,
+//                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("menu glow", TextureRegion.class), "menu");
+//
+//        TextureRegion levelButton = JsonAssetManager.getInstance().getEntry("levels button", TextureRegion.class);
+//        play = new Button(0,0, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
+//                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("levels glow", TextureRegion.class), "all levels");
+//
+//        levelButton = JsonAssetManager.getInstance().getEntry("replay button", TextureRegion.class);
+//        build = new Button(0,0, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
+//                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("replay glow", TextureRegion.class), "replay");
+//
+//        levelButton = JsonAssetManager.getInstance().getEntry("next button", TextureRegion.class);
+//        quit = new Button(0,0, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
+//                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("next glow", TextureRegion.class), "next");
+//
+//        buttons.add(0, build);
+//        buttons.add(1, play);
+//        buttons.add(2, quit);
+//
+//        Gdx.input.setInputProcessor(this);
+//        // Let ANY connected controller start the game.
+//        for(Controller controller : Controllers.getControllers()) {
+//            controller.addListener(this);
+//        }
+//    }
+//
+//    /** Track asset loading from all instances and subclasses */
+//    private AssetState platformAssetState = AssetState.EMPTY;
+//
+//
+//    /**
+//     * Creates and initialize a new instance of the platformer game
+//     *
+//     * The game has default gravity and other settings
+//     */
+//    public MenuMode(GameCanvas canvas) {
+//
+//        this.canvas  = canvas;
+//
+//        // Compute the dimensions from the canvas
+//        resize(canvas.getWidth(),canvas.getHeight());
+//
+//        jsonReader = new JsonReader();
+//        currentLevel = null;
+//
+//        pressState = 0;
+//        active = false;
+//    }
+//
+//
+//    /**
+//     * Preloads the assets for this controller.
+//     *
+//     * To make the game modes more for-loop friendly, we opted for nonstatic loaders
+//     * this time.  However, we still want the assets themselves to be static.  So
+//     * we have an AssetState that determines the current loading state.  If the
+//     * assets are already loaded, this method will do nothing.
+//     *
+//     * @param manager Reference to global asset manager.
+//     */
+//    public void preLoadContent(AssetManager manager) {
+//        if (platformAssetState != AssetState.EMPTY) {
+//            return;
+//        }
+//
+//        platformAssetState = AssetState.LOADING;
+//
+//        super.preLoadContent(manager);
+//
+//        jsonReader = new JsonReader();
+//        assetDirectory = jsonReader.parse(Gdx.files.internal("levels/assets.json"));
+//
+//        JsonAssetManager.getInstance().loadDirectory(assetDirectory);
+//
+//    }
+//
+//    /**
+//     * Sets the ScreenListener for this mode
+//     *
+//     * The ScreenListener will respond to requests to quit.
+//     */
+//    public void setScreenListener(ScreenListener listener) {
+//        this.listener = listener;
+//    }
+//
+//    /**
+//     * Resets the status of the game so that we can play again.
+//     *
+//     * This method disposes of the world and creates a new one.
+//     */
+//    public void reset() {
+//        Gdx.input.setInputProcessor(this);
+//
+//        setComplete(false);
+//        setFailure(false);
+//        currentLevel = null;
+//        pressState = 0;
+//        camOffsetX = 0;
+//        menu.pushed = false;
+//
+//        for (Button b : buttons) {
+//            b.setActive(false);
+//            b.pushed = false;
+//        }
+//
+//        if (music != null) {
+//            music.stop();
+//            music.dispose();
+//        }
+//
+//        if (GameController.getMusic() != null) {
+//            GameController.getMusic().stop();
+//            GameController.getMusic().dispose();
+//        }
+//    }
+//
+//    /**
+//     * print method
+//     *
+//     * @param s what to print
+//     */
+//    protected void print(Object s) { System.out.println(s); }
+//
+//    /**
+//     * Helper to find distance
+//     *
+//     * @param v1 v1
+//     * @param v2 v2
+//     * @return distance between v1 and v2
+//     */
+//    private float dist(Vector2 v1, Vector2 v2) {
+//        return (float) Math.sqrt((v1.x - v2.x)*(v1.x-v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
+//    }
+//
+//
+//    /**
+//     * Returns true if all assets are loaded and the player is ready to go.
+//     *
+//     * @return true if the player is ready to go
+//     */
+//    public boolean isReady() {
+//        return pressState == 2;
+//    }
+//
+//
+//    /**
+//     * Returns whether to process the update loop
+//     *
+//     * At the start of the update loop, we check if it is time
+//     * to switch to a new game mode.  If not, the update proceeds
+//     * normally.
+//     *
+//     * @param dt Number of seconds since last animation frame
+//     *
+//     * @return whether to process the update loop
+//     */
+//    public boolean preUpdate(float dt) {
+//        if (!super.preUpdate(dt)) {
+//            return false;
+//        }
+//
+//        return true;
+//    }
+//
+//    /**
+//     * The core gameplay loop of this world.
+//     *
+//     * This method contains the specific update code for this mini-game. It does
+//     * not handle collisions, as those are managed by the parent class WorldController.
+//     * This method is called after input is read, but before collisions are resolved.
+//     * The very last thing that it should do is apply forces to the appropriate objects.
+//     *
+//     * @param dt Number of seconds since last animation frame
+//     */
+//    public void update(float dt) {
+//        //TODO Removed sound stuffs
+//
+////         If we use sound, we must remember this.
+//        SoundController.getInstance().update();
+//
+//        if (!dont_play_music) {
+//            //System.out.println("in here");
+//            if (!music.isPlaying()) {
+//                //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
+//                //System.out.println("in here if");
+//                music.play();
+//                music.setLooping(true);
+//                //music_name = "menu";
+//            }
+//        }
+//    }
+//
+//    /** Called when a key was pressed
+//     *
+//     * @param keycode one of the constants in {@link Input.Keys}
+//     * @return whether the input was processed */
+//    public boolean keyDown (int keycode) {
+//        if (buttons.getTail() == null) { return true; }
+//
+//        if (pressState == 0 && keycode == Input.Keys.N) {
+//            pressState = 1;
+//            currentButton = play;
+//            return false;
+//        } else if (pressState == 0 && keycode == Input.Keys.P) {
+//            pressState = 1;
+//            currentButton = build;
+//            return false;
+//        }
+//        return true;
+//    };
+//
+//    /** Called when a key was released
+//     *
+//     * @param keycode one of the constants in {@link Input.Keys}
+//     * @return whether the input was processed */
+//    public boolean keyUp (int keycode) {
+//        if (buttons.getTail() == null) { return true; }
+//
+//        if (pressState == 1 && keycode == Input.Keys.N) {
+//            pressState = 2;
+//            currentButton = play;
+//            return false;
+//        } else if (pressState == 1 && keycode == Input.Keys.P) {
+//            pressState = 2;
+//            currentButton = build;
+//            return false;
+//        } else if (keycode == Input.Keys.ESCAPE) {
+//            pressState = 2;
+//            currentButton = quit;
+//            return false;
+//        }
+//        return true;
+//    };
+//
+//    /** Called when a key was typed
+//     *
+//     * @param character The character
+//     * @return whether the input was processed */
+//    public boolean keyTyped (char character) {
+//        return true;
+//    };
+//
+//    /** Called when the screen was touched or a mouse button was pressed. The button parameter will be {@link Input.Buttons#LEFT} on iOS.
+//     * @param screenX The x coordinate, origin is in the upper left corner
+//     * @param screenY The y coordinate, origin is in the upper left corner
+//     * @param pointer the pointer for the event.
+//     * @param button the button
+//     * @return whether the input was processed */
+//    public boolean touchDown (int screenX, int screenY, int pointer, int button) {
+//        if (currentLevel != null) {
+//            pressState = 1;
+//            return false;
+//        }
+//        return true;
+//    };
+//
+//    /** Called when a finger was lifted or a mouse button was released. The button parameter will be {@link Input.Buttons#LEFT} on iOS.
+//     * @param pointer the pointer for the event.
+//     * @param button the button
+//     * @return whether the input was processed */
+//    public boolean touchUp (int screenX, int screenY, int pointer, int button) {
+//        Vector2 center;
+//        float dist;
+//        screenY = heightY - screenY;
+//        Vector2 scale = level.getScale();
+//        Vector2 mouse = new Vector2(screenX / scale.x, screenY / scale.y);
+//        Vector2 camOffset = new Vector2(camOffsetX / scale.x, 0);
+//
+//        if (buttons.getTail() == null) {
+//            return true;
+//        }
+//        if (currentLevel != null) {
+//            center = currentLevel.getPosition();
+//            dist = dist(center, mouse.cpy().add(camOffset));
+//            if (dist <= currentLevel.getRadius()) {
+//                pressState = 2;
+//            }
+//        }
+//        if (menu.isIn(screenX, screenY) && menu.getActive()) {
+//            menu.pushed = true;
+//            pressState = 2;
+//        }
+//        return true;
+//    };
+//
+//    /** Called when a finger or the mouse was dragged.
+//     * @param pointer the pointer for the event.
+//     * @return whether the input was processed */
+//    public boolean touchDragged (int screenX, int screenY, int pointer) {
+//        return true;
+//    };
+//
+//    /** Called when the mouse was moved without any buttons being pressed. Will not be called on iOS.
+//     * @return whether the input was processed */
+//    public boolean mouseMoved (int screenX, int screenY) {
+//        if (buttons.getTail() == null) { return true; }
+//
+//        currentButton = null;
+//        screenY = heightY - screenY;
+//        for (Button b : buttons) {
+//            b.setActive(false);
+//            if (b.isIn(screenX,screenY)) {
+//                b.setActive(true);
+//            }
+//        }
+//        return true;
+//    };
+//
+//    /** Called when the mouse wheel was scrolled. Will not be called on iOS.
+//     * @param amount the scroll amount, -1 or 1 depending on the direction the wheel was scrolled.
+//     * @return whether the input was processed. */
+//    public boolean scrolled (int amount) {
+//        return true;
+//    }
+//
+//    /**
+//     * Called when the Screen should render itself.
+//     *
+//     * We defer to the other methods update() and draw().  However, it is VERY important
+//     * that we only quit AFTER a draw.
+//     *
+//     * @param delta Number of seconds since last animation frame
+//     */
+//    public void render(float delta) {
+//        if (active) {
+//            update(delta);
+//            draw(delta);
+//
+//            if (menu.pushed && isReady()) {
+//                listener.exitScreen(this, WorldController.EXIT_QUIT);
+//            }
+//        }
+//    }
+//
+//    /**
+//     * Called when the Screen is resized.
+//     *
+//     * This can happen at any point during a non-paused state but will never happen
+//     * before a call to show().
+//     *
+//     * @param width  The new width in pixels
+//     * @param height The new height in pixels
+//     */
+//    public void resize(int width, int height) {
+//        // Compute the drawing scale
+//        float sx = ((float)width)/STANDARD_WIDTH;
+//        float sy = ((float)height)/STANDARD_HEIGHT;
+//        scale = (sx < sy ? sx : sy);
+//
+//        heightY = height;
+//    }
+//
+//    /**
+//     * Called when the Screen is paused.
+//     *
+//     * This is usually when it's not active or visible on screen. An Application is
+//     * also paused before it is destroyed.
+//     */
+//    public void pause() {
+//        // TODO Auto-generated method stub
+//
+//    }
+//
+//    /**
+//     * Called when the Screen is resumed from a paused state.
+//     *
+//     * This is usually when it regains focus.
+//     */
+//    public void resume() {
+//        // TODO Auto-generated method stub
+//
+//    }
+//
+//    /**
+//     * Called when this screen becomes the current screen for a Game.
+//     */
+//    public void show() {
+//        // Useless if called in outside animation loop
+//        active = true;
+//    }
+//
+//    /**
+//     * Called when this screen is no longer the current screen for a Game.
+//     */
+//    public void hide() {
+//        // Useless if called in outside animation loop
+//        active = false;
+//    }
+//
+//    /** A {@link Controller} got connected.
+//     * @param controller */
+//    public void connected (Controller controller) {  }
+//
+//    /** A {@link Controller} got disconnected.
+//     * @param controller */
+//    public void disconnected (Controller controller) {  }
+//
+//    /** A button on the {@link Controller} was pressed. The buttonCode is controller specific. The
+//     * <code>com.badlogic.gdx.controllers.mapping</code> package hosts button constants for known controllers.
+//     * @param controller
+//     * @param buttonCode
+//     * @return whether to hand the event to other listeners. */
+//    public boolean buttonDown (Controller controller, int buttonCode) { return true; }
+//
+//    /** A button on the {@link Controller} was released. The buttonCode is controller specific. The
+//     * <code>com.badlogic.gdx.controllers.mapping</code> package hosts button constants for known controllers.
+//     * @param controller
+//     * @param buttonCode
+//     * @return whether to hand the event to other listeners. */
+//    public boolean buttonUp (Controller controller, int buttonCode) { return true; }
+//
+//    /** An axis on the {@link Controller} moved. The axisCode is controller specific. The axis value is in the range [-1, 1]. The
+//     * <code>com.badlogic.gdx.controllers.mapping</code> package hosts axes constants for known controllers.
+//     * @param controller
+//     * @param axisCode
+//     * @param value the axis value, -1 to 1
+//     * @return whether to hand the event to other listeners. */
+//    public boolean axisMoved (Controller controller, int axisCode, float value) { return true; }
+//
+//    /** A POV on the {@link Controller} moved. The povCode is controller specific. The
+//     * <code>com.badlogic.gdx.controllers.mapping</code> package hosts POV constants for known controllers.
+//     * @param controller
+//     * @param povCode
+//     * @param value
+//     * @return whether to hand the event to other listeners. */
+//    public boolean povMoved (Controller controller, int povCode, PovDirection value) { return true; }
+//
+//    /** An x-slider on the {@link Controller} moved. The sliderCode is controller specific. The
+//     * <code>com.badlogic.gdx.controllers.mapping</code> package hosts slider constants for known controllers.
+//     * @param controller
+//     * @param sliderCode
+//     * @param value
+//     * @return whether to hand the event to other listeners. */
+//    public boolean xSliderMoved (Controller controller, int sliderCode, boolean value) { return true; }
+//
+//    /** An y-slider on the {@link Controller} moved. The sliderCode is controller specific. The
+//     * <code>com.badlogic.gdx.controllers.mapping</code> package hosts slider constants for known controllers.
+//     * @param controller
+//     * @param sliderCode
+//     * @param value
+//     * @return whether to hand the event to other listeners. */
+//    public boolean ySliderMoved (Controller controller, int sliderCode, boolean value) { return true; }
+//
+//    /** An accelerometer value on the {@link Controller} changed. The accelerometerCode is controller specific. The
+//     * <code>com.badlogic.gdx.controllers.mapping</code> package hosts slider constants for known controllers. The value is a
+//     * {@link Vector3} representing the acceleration on a 3-axis accelerometer in m/s^2.
+//     * @param controller
+//     * @param accelerometerCode
+//     * @param value
+//     * @return whether to hand the event to other listeners. */
+//    public boolean accelerometerMoved (Controller controller, int accelerometerCode, Vector3 value) { return true; }
+//
+//    /**
+//     * Draw the physics objects to the canvas and the background
+//     *
+//     * The method draws all objects in the order that they weret added.
+//     *
+//     * @param delta The delay in seconds since the last update
+//     */
+//    public void draw(float delta) {
+//        canvas.clear();
+//
+//        canvas.begin();
+//
+//        for (Button b : buttons) {
+//            b.draw(canvas);
+//        }
+//        canvas.end();
+//
+//    }
+//
+//}

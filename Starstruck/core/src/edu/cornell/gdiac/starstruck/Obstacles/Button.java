@@ -34,7 +34,7 @@ public class Button extends BoxObstacle {
     public Button(float x, float y, float width, float height, TextureRegion texture,
                   World world, Vector2 scale, TextureRegion hoverTexture, String name) {
         super(x, y, width, height);
-        this.texture = texture;
+        setTexture(texture);
         this.hoverTexture = hoverTexture;
         this.name = name;
         pushed = false;
@@ -57,7 +57,6 @@ public class Button extends BoxObstacle {
      */
     public void setTexture(TextureRegion texture) {
         super.setTexture(texture);
-        System.out.println("hit");
     }
 
 
@@ -82,7 +81,7 @@ public class Button extends BoxObstacle {
      */
     public boolean isIn(float screenX, float screenY) {
         Vector2 center = this.getPosition();
-        center.add(this.getWidth()/2, this.getHeight()/2);
+//        center.add(this.getWidth()/2, this.getHeight()/2);
         float xdist = Math.abs(screenX - center.x);
         float ydist = Math.abs(screenY - center.y);
         return (xdist <= getWidth()/2 && ydist <= getHeight()/2);
@@ -106,10 +105,9 @@ public class Button extends BoxObstacle {
             canvas.draw(hoverTexture, Color.WHITE, origin.x, origin.y,getX() * drawScale.x,
                     getY() * drawScale.x, getAngle(), 1,1);
         } else {
-            canvas.draw(this.getTexture(), Color.WHITE, origin.x, origin.y,getX() * drawScale.x,
+            canvas.draw(texture, Color.WHITE, origin.x, origin.y,getX() * drawScale.x,
                     getY() * drawScale.x, getAngle(), 1,1);
         }
-
     }
 
     public String toString() {
