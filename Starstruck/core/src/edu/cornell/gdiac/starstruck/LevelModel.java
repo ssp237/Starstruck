@@ -82,6 +82,10 @@ public class LevelModel {
     protected ArrayList<Anchor> anchors = new ArrayList<Anchor>();
     /** List of tutorial points in this level */
     protected ArrayList<TutorialPoint> tutpoints = new ArrayList<TutorialPoint>();
+
+    /** List of speechBubbles in this level */
+    protected ArrayList<TutorialPoint> speechBubbles = new ArrayList<TutorialPoint>();
+
     /** Rope texture for extension method */
     //protected TextureRegion ropeTexture;
     /** List of enemies in the world */
@@ -104,6 +108,8 @@ public class LevelModel {
     public boolean getTutorial() {return isTutorial;}
 
     private TalkingBoss talkingboss;
+
+    private SpeechBubble speechBubble;
 
     public TalkingBoss getTalkingBoss() {return talkingboss;}
 
@@ -483,6 +489,11 @@ public class LevelModel {
                     TextureRegion textureboss = JsonAssetManager.getInstance().getEntry("octoboss talk", TextureRegion.class);
                     talkingboss = new TalkingBoss(3.5f, 14, textureboss, scale, 0);
                     activate(talkingboss);
+
+                    TextureRegion texturebubble = JsonAssetManager.getInstance().getEntry("octoboss bubble", TextureRegion.class);
+                    speechBubble = new SpeechBubble(12.5f, 16.5f, scale, texturebubble);
+                    activate(speechBubble.getBubble());
+                    //activate(speechBubble);
                     //System.out.println(scale);
 
                 }
@@ -580,6 +591,7 @@ public class LevelModel {
             case TUTORIAL: deactivate(obj); break;
             case ICE_CREAM: deactivate(obj); enemies.remove((IceCream) obj); break;
             case TALKING_BOSS: deactivate(obj); talkingboss = null; break;
+            case SPEECH_BUBBLE: deactivate(obj); speechBubble = null; break;
         }
     }
 

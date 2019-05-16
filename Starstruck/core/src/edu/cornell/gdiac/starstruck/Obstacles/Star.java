@@ -74,6 +74,8 @@ public class Star extends BoxObstacle {
     public boolean removed = false;
     /** galaxy */
     private Galaxy galaxy;
+    /**length of time for speech bubble to stay on there*/
+    private int delay = 100;
 
     /**
      * Creates a new spinner at the origin.
@@ -302,6 +304,14 @@ public class Star extends BoxObstacle {
         if (getType() == ObstacleType.TUTORIAL) {
             tutText.tick();
         }
+        if (getType() == ObstacleType.SPEECH_BUBBLE) {
+            if (delay < 1) {
+                remove = true;
+            }
+            else {
+                delay--;
+            }
+        }
     }
 
     public ObstacleType getType() { return starType;}
@@ -339,6 +349,11 @@ public class Star extends BoxObstacle {
                 else
                     canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), starScale, starScale);
             }
+        }
+
+        else if (getType() == ObstacleType.SPEECH_BUBBLE) {
+            System.out.println("in here star draw speech");
+            canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), starScale, starScale);
         }
     }
 }
