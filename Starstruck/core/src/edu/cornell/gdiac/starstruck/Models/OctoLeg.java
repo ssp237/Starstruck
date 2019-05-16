@@ -255,6 +255,8 @@ public class OctoLeg extends Enemy {
 //                this.setPosition(right_bound, y_pos);
 //            }
         //}
+        anchor1.update(dt);
+        anchor2.update(dt);
         if (this.getPosition().x < x_original - 5 || this.getPosition().x > x_original + 5) {
             //System.out.println(getVX());
             setVX(-getVX());
