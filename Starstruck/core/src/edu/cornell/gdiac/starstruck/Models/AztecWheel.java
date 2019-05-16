@@ -121,6 +121,7 @@ public class AztecWheel extends WheelObstacle {
             vy = -radius2 * (float) Math.sin(newAngle) * v;
             a.setVX(vx);
             a.setVY(vy);
+            a.update(dt);
             newAngle -= (float) Math.toRadians(45);
 //            Vector2 pos = getPosition().cpy().sub(a.getPosition()).scl(v*10000);
 //            a.setVX(pos.y);
