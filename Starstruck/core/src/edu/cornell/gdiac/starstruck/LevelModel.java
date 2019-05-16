@@ -103,6 +103,9 @@ public class LevelModel {
 
     public boolean getTutorial() {return isTutorial;}
 
+    private TalkingBoss talkingboss;
+
+    public TalkingBoss getTalkingBoss() {return talkingboss;}
 
     /**
      * Returns the bounding rectangle for the physics world
@@ -290,6 +293,8 @@ public class LevelModel {
         int[] gSize = levelFormat.get("graphicSize").asIntArray();
         float[] playSize = levelFormat.get("playSize").asFloatArray();
 
+
+
         String key = levelFormat.get("background").asString();
         background = JsonAssetManager.getInstance().getEntry(key, Texture.class);
 
@@ -303,6 +308,8 @@ public class LevelModel {
         scale.y = gSize[1]/pSize[1];
         xPlay = playSize[0];
         yPlay = playSize[1];
+
+
 
         player1 = AstronautModel.fromJson(levelFormat.get("astronaut 1"), scale, true);
         player1.setName("avatar");
@@ -359,6 +366,7 @@ public class LevelModel {
                     buggy = new ColoredBug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, sleeptexture, scale, modelColor);
                 } catch (Exception e) {
                     buggy = new Bug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, scale);
+                    buggy.vectorWorld = vectorWorld;
                 }
 
                 activate(buggy);
@@ -471,6 +479,12 @@ public class LevelModel {
                     //enemies.add(octopuss);
                     octoLegs = octoLegs.next;
                     System.out.println(octopuss);
+
+                    TextureRegion textureboss = JsonAssetManager.getInstance().getEntry("octoboss talk", TextureRegion.class);
+                    talkingboss = new TalkingBoss(3.5f, 14, textureboss, scale, 0);
+                    activate(talkingboss);
+                    //System.out.println(scale);
+
                 }
             } else if (galaxy == Galaxy.SOMBRERO) {
                 JsonValue wheels = levelFormat.get("aztec wheels").child();
@@ -502,6 +516,7 @@ public class LevelModel {
             world.dispose();
             world = new World(new Vector2(0,0), false);
         }
+        talkingboss = null;
         objects.clear();
         planets.clear();
         stars.clear();
@@ -564,6 +579,7 @@ public class LevelModel {
             case AZTEC_WHEEL: deactivate(obj);
             case TUTORIAL: deactivate(obj); break;
             case ICE_CREAM: deactivate(obj); enemies.remove((IceCream) obj); break;
+            case TALKING_BOSS: deactivate(obj); talkingboss = null; break;
         }
     }
 
@@ -743,6 +759,7 @@ public class LevelModel {
 
         canvas.begin();
 
+        //System.out.println(talkingboss);
         float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
         float y = (float) Math.floor((canvas.getCamera().position.y - canvas.getHeight()/2)/canvas.getHeight()) * canvas.getHeight();
 
@@ -768,6 +785,7 @@ public class LevelModel {
 
         if (debug) {
             canvas.beginDebug();
+            talkingboss.drawDebug(canvas);
             for(Planet p : planets.getPlanets()){
                 p.drawDebug(canvas);
             }
@@ -800,6 +818,7 @@ public class LevelModel {
 //        canvas.draw(background, Color.WHITE, x, y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
 //        canvas.draw(background, Color.WHITE, x + canvas.getWidth(), y + canvas.getHeight(),canvas.getWidth(),canvas.getHeight());
 
+
         for(Planet p : planets.getPlanets()){
             p.draw(canvas);
         }
@@ -812,6 +831,7 @@ public class LevelModel {
         for (Enemy e: enemies) {
             e.draw(canvas);
         }
+        System.out.println("in here skgfh");
         canvas.end();
 
         if (debug) {

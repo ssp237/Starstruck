@@ -480,6 +480,14 @@
       "file": "tutorial/controller_move.png",
       "wrap": false
     },
+    "octoboss talk": {
+      "file": "whirlpool/octo_talking.png",
+      "wrap": false
+    },
+    "octoboss bubble": {
+      "file": "whirlpool/octo_bubble.png",
+      "wrap": false
+    },
     "levels button": {
       "file": "buttons/levels.png",
       "wrap": false
@@ -895,9 +903,9 @@
     }
   },
   "music": {
-    "menu":     {
+    "menu": {
       "file": "audio/loading_screen.mp3",
       "volume": 1
     }
   }
-}
+  }

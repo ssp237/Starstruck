@@ -1587,8 +1587,9 @@ public class GameController extends WorldController implements ContactListener {
                         bug.setSleeping(dist(avatar.getPosition(), bug.getPosition()) > bug.range &&
                                 (!avatar.getOnPlanet() || avatar.getCurPlanet() != bug.getCurPlanet()));
                         break;
-                    case PINK: bug.setSleeping(dist(avatar2.getPosition(), bug.getPosition()) > bug.range &&
-                            (!avatar2.getOnPlanet() || avatar2.getCurPlanet() != bug.getCurPlanet()));
+                    case PINK:
+                        bug.setSleeping(dist(avatar2.getPosition(), bug.getPosition()) > bug.range &&
+                                (!avatar2.getOnPlanet() || avatar2.getCurPlanet() != bug.getCurPlanet()));
                         astro = avatar2;
                         break;
                 }
@@ -1614,8 +1615,7 @@ public class GameController extends WorldController implements ContactListener {
                     if (avatar.getAngularVelocity() < angVel)
                         angVel = avatar.getAngularVelocity();
                     avatar.setAngularVelocity(avatar.getAngularVelocity() - angVel);
-                }
-                else if (avatar.getAngularVelocity() < 0) {
+                } else if (avatar.getAngularVelocity() < 0) {
                     if (avatar.getAngularVelocity() > -angVel)
                         angVel = -avatar.getAngularVelocity();
                     avatar.setAngularVelocity(avatar.getAngularVelocity() + angVel);
@@ -1635,8 +1635,7 @@ public class GameController extends WorldController implements ContactListener {
                     if (avatar2.getAngularVelocity() < angVel)
                         angVel = avatar2.getAngularVelocity();
                     avatar2.setAngularVelocity(avatar2.getAngularVelocity() - angVel);
-                }
-                else if (avatar2.getAngularVelocity() < 0) {
+                } else if (avatar2.getAngularVelocity() < 0) {
                     if (avatar2.getAngularVelocity() > -angVel)
                         angVel = -avatar2.getAngularVelocity();
                     avatar2.setAngularVelocity(avatar2.getAngularVelocity() + angVel);
@@ -1647,7 +1646,7 @@ public class GameController extends WorldController implements ContactListener {
 
         //Collect star
         if (collection) {
-            SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
+            SoundController.getInstance().play(SWITCH_FILE, SWITCH_FILE, false, EFFECT_VOLUME);
             starCache.deactivatePhysics(world);
             removed.add(starCache);
             if (!stars.remove(starCache)) print("star collection error in game controller");
@@ -1700,16 +1699,15 @@ public class GameController extends WorldController implements ContactListener {
                 avatar2.setOnPlanet(false);
                 avatar2.setUnAnchored();
                 Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar2.getPosition());
-                dir.setLength(avatar.portalVel.len()*2);
+                dir.setLength(avatar.portalVel.len() * 2);
                 avatar2.setLinearVelocity(dir);
                 avatar.setLinearVelocity(avatar.portalVel);
                 //avatar.getBody().applyForce(avatar.portalVel, avatar.getPosition(), true);
-            }
-            else {
+            } else {
                 avatar.setOnPlanet(false);
                 avatar.setUnAnchored();
                 Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar.getPosition());
-                dir.setLength(avatar2.portalVel.len()*2);
+                dir.setLength(avatar2.portalVel.len() * 2);
                 avatar.setLinearVelocity(dir);
                 avatar2.setLinearVelocity(avatar2.portalVel);
                 //avatar2.getBody().applyForce(avatar2.portalVel, avatar2.getPosition(), true);
@@ -1732,8 +1730,7 @@ public class GameController extends WorldController implements ContactListener {
                     //offset = avatar.getLinearVelocity().cpy();
                 }
                 rope.reel(true, reelCache, offset, !avatar.getOnPlanet());
-            }
-            else rope.setLinearVelocity(reset);
+            } else rope.setLinearVelocity(reset);
             updateHelp(avatar, avatar2, dt);
 
             offset.set(reset);
@@ -1747,25 +1744,19 @@ public class GameController extends WorldController implements ContactListener {
                     //offset = avatar2.getLinearVelocity().cpy();
                 }
                 rope.reel(false, reelCache, offset, !avatar2.getOnPlanet());
-            }
-            else rope.setLinearVelocity(reset);
+            } else rope.setLinearVelocity(reset);
             updateHelp(avatar2, avatar, dt);
-        }
-
-        else { //twoplayer off
+        } else { //twoplayer off
             if (avatar.getOnPlanet() && !avatar2.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar.getPosition().cpy().sub(avatar2.getPosition());
                     rope.reel(true, reelCache, reset, false);
-                }
-                else rope.setLinearVelocity(reset);
-            }
-            else if (avatar2.getOnPlanet() && !avatar.getOnPlanet()) {
+                } else rope.setLinearVelocity(reset);
+            } else if (avatar2.getOnPlanet() && !avatar.getOnPlanet()) {
                 if (reeled()) {
                     reelCache = avatar2.getPosition().cpy().sub(avatar.getPosition());
                     rope.reel(false, reelCache, reset, false);
-                }
-                else rope.setLinearVelocity(reset);
+                } else rope.setLinearVelocity(reset);
             }
 
             if (avatar.isActive()) {
@@ -1775,8 +1766,7 @@ public class GameController extends WorldController implements ContactListener {
                     avatar.setMovement(InputController.getInstance().getHorizontal());
                     avatar.setMovementV(InputController.getInstance().getVertical());
                 }
-            }
-            else { //if avatar2 is active
+            } else { //if avatar2 is active
                 updateHelp(avatar2, avatar, dt);
                 if (testC) {
                     avatar2.setFixedRotation(true);
@@ -1826,7 +1816,6 @@ public class GameController extends WorldController implements ContactListener {
         SoundController.getInstance().update();
 
 
-
         //MUSIC
 
         if (level.getGalaxy() == Galaxy.DEFAULT) {
@@ -1841,9 +1830,7 @@ public class GameController extends WorldController implements ContactListener {
                 music.setLooping(true);
                 music_name = "tutorial";
             }
-        }
-
-        else if (level.getGalaxy() == Galaxy.WHIRLPOOL) {
+        } else if (level.getGalaxy() == Galaxy.WHIRLPOOL) {
             if (music != null && music_name != "whirlpool") {
                 music.stop();
                 music.dispose();
@@ -1856,8 +1843,7 @@ public class GameController extends WorldController implements ContactListener {
                 music_name = "whirlpool";
             }
 
-        }
-        else if (level.getGalaxy() == Galaxy.MILKYWAY) {
+        } else if (level.getGalaxy() == Galaxy.MILKYWAY) {
             if (music != null && music_name != "milkyway") {
                 music.stop();
                 music.dispose();
@@ -1869,8 +1855,7 @@ public class GameController extends WorldController implements ContactListener {
                 music.setLooping(true);
                 music_name = "milkyway";
             }
-        }
-        else if(level.getGalaxy() == Galaxy.SOMBRERO) {
+        } else if (level.getGalaxy() == Galaxy.SOMBRERO) {
             if (music != null && music_name != "sombrero") {
                 music.stop();
                 music.dispose();
@@ -1884,6 +1869,13 @@ public class GameController extends WorldController implements ContactListener {
             }
 //            System.out.println("in sombrero and music " + music.isPlaying());
 //            System.out.println("music name = " + music_name);
+        }
+
+
+        if (level.getTalkingBoss() != null) {
+            if (level.getTalkingBoss().getPosition().x + level.getTalkingBoss().getWidth() / 2 + 4 < 0) {
+                level.remove(level.getTalkingBoss());
+            }
         }
     }
 
@@ -2120,6 +2112,17 @@ public class GameController extends WorldController implements ContactListener {
 
             //Disable all collisions with portal
             if (bd1.getType() == ObstacleType.PORTAL || bd2.getType() == ObstacleType.PORTAL) {
+                contact.setEnabled(false);
+            }
+
+
+            //Disable all collisions with talking boss
+            if (bd1.getType() == ObstacleType.TALKING_BOSS || bd2.getType() == ObstacleType.TALKING_BOSS) {
+                contact.setEnabled(false);
+            }
+            //disable collisions with astronauts and buggy
+            if ((bd1.getType() ==  ObstacleType.BUG || bd2.getType() ==  ObstacleType.BUG)
+                    && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))) {
                 contact.setEnabled(false);
             }
 
