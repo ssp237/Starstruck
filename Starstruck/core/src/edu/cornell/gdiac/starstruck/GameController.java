@@ -2075,6 +2075,12 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(false);
             }
 
+            //disable collisions with astronauts and buggy
+            if ((bd1.getType() ==  ObstacleType.BUG || bd2.getType() ==  ObstacleType.BUG)
+                    && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))) {
+                contact.setEnabled(false);
+            }
+
             //Disables all collisions w rope
             if (bd1.getName().contains("rope") || bd2.getName().contains("rope")) {
                 contact.setEnabled(false);
