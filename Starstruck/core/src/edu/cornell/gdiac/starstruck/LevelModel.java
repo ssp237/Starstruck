@@ -359,6 +359,7 @@ public class LevelModel {
                     buggy = new ColoredBug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, sleeptexture, scale, modelColor);
                 } catch (Exception e) {
                     buggy = new Bug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, scale);
+                    buggy.vectorWorld = vectorWorld;
                 }
 
                 activate(buggy);
