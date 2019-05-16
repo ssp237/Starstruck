@@ -12,6 +12,10 @@
       "file": "platform/static_star_01.png",
       "wrap": false
     },
+    "sparkle": {
+      "file": "platform/static_star_collected_v1.png",
+      "wrap": false
+    },
     "wp p1": {
       "file": "whirlpool/planets/static_planet1_v1.png",
       "wrap": false
@@ -108,44 +112,96 @@
       "file": "milky way/planets/static_gravity.ring4_v1.png",
       "wrap": false
     },
-    "ls p1": {
-      "file": "levelselect/lvl1.png",
+    "ci p1": {
+      "file": "circinus/planets/static_planet1_v1.png",
       "wrap": false
     },
-    "ls g1": {
+    "ci g1": {
+      "file": "circinus/planets/static_gravity.ring1_v1.png",
+      "wrap": false
+    },
+    "ci p2": {
+      "file": "circinus/planets/static_planet2_v1.png",
+      "wrap": false
+    },
+    "ci g2": {
+      "file": "circinus/planets/static_gravity.ring2_v1.png",
+      "wrap": false
+    },
+    "ci p3": {
+      "file": "circinus/planets/static_planet3_v1.png",
+      "wrap": false
+    },
+    "ci g3": {
+      "file": "circinus/planets/static_gravity.ring3_v1.png",
+      "wrap": false
+    },
+    "ci p4": {
+      "file": "circinus/planets/static_planet4_v1.png",
+      "wrap": false
+    },
+    "ci g4": {
+      "file": "circinus/planets/static_gravity.ring4_v1.png",
+      "wrap": false
+    },
+    "ls de g": {
       "file": "levelselect/ring1.png",
+      "wrap": false
+    },
+    "ls mw g": {
+      "file": "levelselect/ring2.png",
+      "wrap": false
+    },
+    "ls wp g": {
+      "file": "levelselect/ring3.png",
+      "wrap": false
+    },
+    "ls so g": {
+      "file": "levelselect/ring4.png",
+      "wrap": false
+    },
+    "ls ci g": {
+      "file": "levelselect/ring5.png",
+      "wrap": false
+    },
+    "ls tut p": {
+      "file": "levelselect/tutorial_lvl.png",
+      "wrap": false
+    },
+    "ls mw p": {
+      "file": "levelselect/milkyway_lvl.png",
+      "wrap": false
+    },
+    "ls wp p": {
+      "file": "levelselect/whirlpool_lvl.png",
+      "wrap": false
+    },
+    "ls so p": {
+      "file": "levelselect/sombrero_lvl.png",
+      "wrap": false
+    },
+    "ls ci p": {
+      "file": "levelselect/circinus_lvl.png",
+      "wrap": false
+    },
+    "ls p1": {
+      "file": "levelselect/lvl1.png",
       "wrap": false
     },
     "ls p2": {
       "file": "levelselect/lvl2.png",
       "wrap": false
     },
-    "ls g2": {
-      "file": "levelselect/ring2.png",
-      "wrap": false
-    },
     "ls p3": {
       "file": "levelselect/lvl3.png",
-      "wrap": false
-    },
-    "ls g3": {
-      "file": "levelselect/ring3.png",
       "wrap": false
     },
     "ls p4": {
       "file": "levelselect/lvl4.png",
       "wrap": false
     },
-    "ls g4": {
-      "file": "levelselect/ring4.png",
-      "wrap": false
-    },
     "ls p5": {
       "file": "levelselect/lvl5.png",
-      "wrap": false
-    },
-    "ls g5": {
-      "file": "levelselect/ring5.png",
       "wrap": false
     },
     "ls p6": {
@@ -156,16 +212,40 @@
       "file": "levelselect/lvl7.png",
       "wrap": false
     },
-    "ls g7": {
-      "file": "levelselect/ring7.png",
-      "wrap": false
-    },
     "ls p8": {
       "file": "levelselect/lvl8.png",
       "wrap": false
     },
     "ls p9": {
       "file": "levelselect/lvl9.png",
+      "wrap": false
+    },
+    "ls p10": {
+      "file": "levelselect/lvl10.png",
+      "wrap": false
+    },
+    "ls p11": {
+      "file": "levelselect/lvl11.png",
+      "wrap": false
+    },
+    "ls p12": {
+      "file": "levelselect/lvl12.png",
+      "wrap": false
+    },
+    "ls p13": {
+      "file": "levelselect/lvl13.png",
+      "wrap": false
+    },
+    "ls p14": {
+      "file": "levelselect/lvl14.png",
+      "wrap": false
+    },
+    "ls p15": {
+      "file": "levelselect/lvl15.png",
+      "wrap": false
+    },
+    "ls p16": {
+      "file": "levelselect/lvl16.png",
       "wrap": false
     },
     "de p1": {
@@ -212,16 +292,52 @@
       "file": "platform/static_glow_v1.png",
       "wrap": false
     },
-    "play": {
-      "file": "buttons/play.png",
-      "wrap": false
-    },
     "build": {
       "file": "buttons/build.png",
       "wrap": false
     },
+    "build glow": {
+      "file": "buttons/build.png",
+      "wrap": false
+    },
+    "play": {
+      "file": "buttons/play.png",
+      "wrap": false
+    },
+    "play glow": {
+      "file": "buttons/play hover.png",
+      "wrap": false
+    },
+    "levelselect": {
+      "file": "buttons/levelselect.png",
+      "wrap": false
+    },
+    "levelselect glow": {
+      "file": "buttons/levelselect hover.png",
+      "wrap": false
+    },
+    "settings": {
+      "file": "buttons/settings.png",
+      "wrap": false
+    },
+    "settings glow": {
+      "file": "buttons/settings hover.png",
+      "wrap": false
+    },
     "quit": {
       "file": "buttons/quit.png",
+      "wrap": false
+    },
+    "quit glow": {
+      "file": "buttons/quit hover.png",
+      "wrap": false
+    },
+    "help": {
+      "file": "buttons/help.png",
+      "wrap": false
+    },
+    "help glow": {
+      "file": "buttons/help hover.png",
       "wrap": false
     },
     "loading": {
@@ -252,6 +368,18 @@
       "file": "enemies/static_spike_bottom.png",
       "wrap": false
     },
+    "octo top": {
+      "file": "whirlpool/enemies/octopus/static_octo.leg_top.png",
+      "wrap": false
+    },
+    "octo center": {
+      "file": "whirlpool/enemies/octopus/static_octo.leg_middle.png",
+      "wrap": false
+    },
+    "octo bottom": {
+      "file": "whirlpool/enemies/octopus/static_octo.leg_bottom.png",
+      "wrap": false
+    },
     "pink dot": {
       "file": "tutorial/tutorial_pink_dot.png",
       "wrap": false
@@ -268,20 +396,80 @@
       "file": "tutorial/static_keyboard_anchor.png",
       "wrap": false
     },
+    "anchor keytwo": {
+      "file": "tutorial/kb2_p1_anchor.png",
+      "wrap": false
+    },
+    "anchor ctrlone": {
+      "file": "tutorial/controller_anchor.png",
+      "wrap": false
+    },
+    "anchor ctrltwo": {
+      "file": "tutorial/controller_anchor.png",
+      "wrap": false
+    },
     "jump keyone": {
       "file": "tutorial/static_keyboard_jump.png",
+      "wrap": false
+    },
+    "jump keytwo": {
+      "file": "tutorial/kb2_jump.png",
+      "wrap": false
+    },
+    "jump ctrlone": {
+      "file": "tutorial/controller_jump.png",
+      "wrap": false
+    },
+    "jump ctrltwo": {
+      "file": "tutorial/controller_jump.png",
       "wrap": false
     },
     "reel keyone": {
       "file": "tutorial/static_keyboard_reel.png",
       "wrap": false
     },
+    "reel keytwo": {
+      "file": "tutorial/kb2_reel.png",
+      "wrap": false
+    },
+    "reel ctrlone": {
+      "file": "tutorial/controller_reel.png",
+      "wrap": false
+    },
+    "reel ctrltwo": {
+      "file": "tutorial/controller_reel.png",
+      "wrap": false
+    },
     "switch keyone": {
       "file": "tutorial/static_keyboard_switch.png",
       "wrap": false
     },
+    "switch keytwo": {
+      "file": "tutorial/kb2_move.png",
+      "wrap": false
+    },
+    "switch ctrlone": {
+      "file": "tutorial/controller_switch.png",
+      "wrap": false
+    },
+    "switch ctrltwo": {
+      "file": "tutorial/controller_move.png",
+      "wrap": false
+    },
     "move keyone": {
       "file": "tutorial/static_keyboard_move.png",
+      "wrap": false
+    },
+    "move keytwo": {
+      "file": "tutorial/kb2_move.png",
+      "wrap": false
+    },
+    "move ctrlone": {
+      "file": "tutorial/controller_move.png",
+      "wrap": false
+    },
+    "move ctrltwo": {
+      "file": "tutorial/controller_move.png",
       "wrap": false
     },
     "levels button": {
@@ -315,317 +503,344 @@
     "octoboss bubble": {
       "file": "whirlpool/octo_bubble.png",
       "wrap": false
-    }
-  },
-  "textures": {
-    "wp background": {
-      "file": "platform/background.png",
-      "wrap": false
     },
-    "background": {
-      "file": "platform/background.png",
-      "wrap": false
+      "menu button": {
+        "file": "buttons/menu.png",
+        "wrap": false
+      },
+      "menu glow": {
+        "file": "buttons/menu hover.png",
+        "wrap": false
+      },
+      "so boss": {
+        "file": "sombrero/enemies/boss/sombrero_boss.png",
+        "wrap": false
+      }
     },
-    "mw background": {
-      "file": "milky way/background_milkyway_v1.png",
-      "wrap": false
+    "textures": {
+      "wp background": {
+        "file": "platform/background.png",
+        "wrap": false
+      },
+      "background": {
+        "file": "platform/background.png",
+        "wrap": false
+      },
+      "mw background": {
+        "file": "milky way/background_milkyway_v1.png",
+        "wrap": false
+      },
+      "so background": {
+        "file": "sombrero/background_sombrero_v1.png",
+        "wrap": false
+      },
+      "ci background": {
+        "file": "circinus/circinus_background_v1.png",
+        "wrap": false
+      },
+      "de background": {
+        "file": "default/background_default.png",
+        "wrap": false
+      },
+      "ls background": {
+        "file": "backgrounds/levelselect_background.png",
+        "wrap": false
+      },
+      "death screen": {
+        "file": "backgrounds/you_dead_1.png",
+        "wrap": false
+      },
+      "dead background": {
+        "file": "shared/dead_background.png",
+        "wrap": false
+      },
+      "play": {
+        "file": "buttons/play.png",
+        "wrap": false
+      },
+      "build": {
+        "file": "buttons/build.png",
+        "wrap": false
+      },
+      "quit": {
+        "file": "buttons/quit.png",
+        "wrap": false
+      },
+      "menu background": {
+        "file": "backgrounds/menu.png",
+        "wrap": false
+      },
+      "starbar": {
+        "file": "default/starbar.png",
+        "wrap": false
+      },
+      "starbarglow": {
+        "file": "default/starbarglow.png",
+        "wrap": false
+      },
+      "starglow": {
+        "file": "default/star_glow.png",
+        "wrap": false
+      }
     },
-    "so background": {
-      "file": "sombrero/background_sombrero_v1.png",
-      "wrap": false
+    "filmstrips": {
+      "astronaut 1 idle": {
+        "file": "astronauts/animated_astronaut(pink)_walking_jumping.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 11,
+        "size": 11,
+        "delay": 5
+      },
+      "astronaut 2 idle": {
+        "file": "astronauts/animated_astronaut(blue)_walking_jumping.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 11,
+        "size": 11,
+        "delay": 5
+      },
+      "green worm": {
+        "file": "whirlpool/enemies/worms/animated_wpenemy(green)_moving+biting.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 14,
+        "size": 14,
+        "delay": 5
+      },
+      "pink worm": {
+        "file": "whirlpool/enemies/worms/animated_wpenemy(pink)_moving+biting.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 14,
+        "size": 14,
+        "delay": 5
+      },
+      "red worm": {
+        "file": "whirlpool/enemies/worms/animated_wpenemy(red)_moving+biting.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 14,
+        "size": 14,
+        "delay": 5
+      },
+      "purple worm": {
+        "file": "whirlpool/enemies/worms/animated_wpenemy(purple)_moving+biting.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 14,
+        "size": 14,
+        "delay": 5
+      },
+      "yellow worm": {
+        "file": "whirlpool/enemies/worms/animated_wpenemy(yellow)_moving+biting.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 14,
+        "size": 14,
+        "delay": 5
+      },
+      "blue worm": {
+        "file": "whirlpool/enemies/worms/animated_wpenemy(blue)_moving+biting.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 14,
+        "size": 14,
+        "delay": 5
+      },
+      "orange bug": {
+        "file": "platform/enemy.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 3,
+        "size": 3,
+        "delay": 20
+      },
+      "pink bug awake": {
+        "file": "enemies/bugs/pink_open_filmstrip_SMALL.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 3,
+        "size": 3,
+        "delay": 5
+      },
+      "pink bug asleep": {
+        "file": "enemies/bugs/pink_closed_filmstrip_small.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 3,
+        "size": 3,
+        "delay": 5
+      },
+      "blue bug awake": {
+        "file": "enemies/bugs/blue_open_filmstrip_SMALL.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 3,
+        "size": 3,
+        "delay": 5
+      },
+      "blue bug asleep": {
+        "file": "enemies/bugs/blue_closed_filmstrip_small.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 3,
+        "size": 3,
+        "delay": 5
+      },
+      "pink berry": {
+        "file": "milky way/enemies/berries/animated_mwenemy(sberry)_biting.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 10,
+        "size": 10,
+        "delay": 3
+      },
+      "cactus": {
+        "file": "sombrero/enemies/cacti/animated_cactus_spikes.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 14,
+        "size": 14,
+        "delay": 3
+      },
+      "ice cream": {
+        "file": "milky way/enemies/ice cream/static_mwenemy(icecream)_v1.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 1,
+        "size": 1,
+        "delay": 0
+      },
+      "static portal": {
+        "file": "shared/animated_portal_turning.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 18,
+        "size": 18,
+        "delay": 11
+      },
+      "goal": {
+        "file": "shared/static_end.portal_v1.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 1,
+        "size": 1,
+        "delay": 0
+      },
+      "you dead": {
+        "file": "shared/animated_you.dead_screen.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 18,
+        "size": 18,
+        "delay": 5
+      },
+      "you win": {
+        "file": "shared/animated_you.win_screen.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 17,
+        "size": 17,
+        "delay": 4
+      },
+      "spike single": {
+        "file": "enemies/animated_spike_circle.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 12,
+        "size": 12,
+        "delay": 7
+      },
+      "spike top": {
+        "file": "enemies/animated_spike_top.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 12,
+        "size": 12,
+        "delay": 7
+      },
+      "spike center": {
+        "file": "enemies/animated_spike_middle.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 12,
+        "size": 12,
+        "delay": 7
+      },
+      "spike bottom": {
+        "file": "enemies/animated_spike_bottom.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 12,
+        "size": 12,
+        "delay": 7
+      },
+      "pink dot animated": {
+        "file": "tutorial/animated_tutorial_pink.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 8,
+        "size": 8,
+        "delay": 10
+      },
+      "blue dot animated": {
+        "file": "tutorial/animated_tutorial_blue.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 8,
+        "size": 8,
+        "delay": 10
+      },
+      "anchor animated": {
+        "file": "platform/animated_anchor_glow.png",
+        "wrap": false,
+        "rows": 1,
+        "cols": 12,
+        "size": 12,
+        "delay": 6
+      }
     },
-    "de background": {
-      "file": "default/background_default.png",
-      "wrap": false
+    "fonts": {
+      "retro game": {
+        "file": "shared/RetroGame.ttf",
+        "size": 64
+      },
+      "light pixel": {
+        "file": "shared/LightPixel7.ttf",
+        "size": 64
+      }
     },
-    "ls background": {
-      "file": "backgrounds/levelselect_background.png",
-      "wrap": false
+    "sounds": {
+      "jump": {
+        "file": "audio/jump/jump8.mp3",
+        "volume": 1
+      },
+      "land": {
+        "file": "audio/jump/quick_land.mp3",
+        "volume": 1
+      },
+      "collision": {
+        "file": "audio/anchor.mp3",
+        "volume": 1
+      },
+      "switch": {
+        "file": "audio/collecting stars/star_collect.mp3",
+        "volume": 1
+      },
+      "anchor": {
+        "file": "audio/anchor.mp3",
+        "volume": 1
+      },
+      "space sounds": {
+        "file": "audio/sounds from space/VanB-2017-04-05-2229.mp3",
+        "volume": 1
+      }
     },
-    "death screen": {
-      "file": "backgrounds/you_dead_1.png",
-      "wrap": false
-    },
-    "dead background": {
-      "file": "shared/dead_background.png",
-      "wrap": false
-    },
-    "play": {
-      "file": "buttons/play.png",
-      "wrap": false
-    },
-    "build": {
-      "file": "buttons/build.png",
-      "wrap": false
-    },
-    "quit": {
-      "file": "buttons/quit.png",
-      "wrap": false
-    },
-    "menu background": {
-      "file": "shared/menu.png",
-      "wrap": false
-    },
-    "starbar": {
-      "file": "default/starbar.png",
-      "wrap": false
-
-    },
-    "starbarglow": {
-      "file": "default/starbarglow.png",
-      "wrap": false
-    }
-  },
-  "filmstrips" : {
-    "astronaut 1 idle": {
-      "file": "astronauts/animated_astronaut(pink)_walking_jumping.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 11,
-      "size": 11,
-      "delay": 5
-    },
-    "astronaut 2 idle": {
-      "file": "astronauts/animated_astronaut(blue)_walking_jumping.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 11,
-      "size": 11,
-      "delay": 5
-    },
-    "green worm": {
-      "file": "whirlpool/enemies/worms/animated_wpenemy(green)_moving+biting.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 14,
-      "size": 14,
-      "delay": 5
-    },
-    "pink worm": {
-      "file": "whirlpool/enemies/worms/animated_wpenemy(pink)_moving+biting.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 14,
-      "size": 14,
-      "delay": 5
-    },
-    "red worm": {
-      "file": "whirlpool/enemies/worms/animated_wpenemy(red)_moving+biting.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 14,
-      "size": 14,
-      "delay": 5
-    },
-    "purple worm": {
-      "file": "whirlpool/enemies/worms/animated_wpenemy(purple)_moving+biting.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 14,
-      "size": 14,
-      "delay": 5
-    },
-    "yellow worm": {
-      "file": "whirlpool/enemies/worms/animated_wpenemy(yellow)_moving+biting.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 14,
-      "size": 14,
-      "delay": 5
-    },
-    "blue worm": {
-      "file": "whirlpool/enemies/worms/animated_wpenemy(blue)_moving+biting.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 14,
-      "size": 14,
-      "delay": 5
-    },
-    "orange bug": {
-      "file": "platform/enemy.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 3,
-      "size": 3,
-      "delay": 20
-    },
-    "pink bug awake": {
-      "file": "enemies/bugs/pink_open_filmstrip_SMALL.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 3,
-      "size": 3,
-      "delay": 5
-    },
-    "pink bug asleep": {
-      "file": "enemies/bugs/pink_closed_filmstrip_small.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 3,
-      "size": 3,
-      "delay": 5
-    },
-    "blue bug awake": {
-      "file": "enemies/bugs/blue_open_filmstrip_SMALL.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 3,
-      "size": 3,
-      "delay": 5
-    },
-    "blue bug asleep": {
-      "file": "enemies/bugs/blue_closed_filmstrip_small.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 3,
-      "size": 3,
-      "delay": 5
-    },
-    "pink berry": {
-      "file": "milky way/enemies/berries/animated_mwenemy(sberry)_biting.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 10,
-      "size": 10,
-      "delay": 3
-    },
-    "cactus": {
-      "file": "sombrero/enemies/cacti/animated_cactus_spikes.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 14,
-      "size": 14,
-      "delay": 3
-    },
-    "ice cream": {
-      "file": "milky way/enemies/ice cream/static_mwenemy(icecream)_v1.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 1,
-      "size": 1,
-      "delay": 0
-    },
-    "static portal": {
-      "file": "shared/animated_portal_turning.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 18,
-      "size": 18,
-      "delay": 11
-    },
-    "goal": {
-      "file": "shared/static_end.portal_v1.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 1,
-      "size": 1,
-      "delay": 0
-    },
-    "you dead": {
-      "file": "shared/animated_you.dead_screen.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 18,
-      "size": 18,
-      "delay": 5
-    },
-    "you win": {
-      "file": "shared/animated_you.win_screen.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 17,
-      "size": 17,
-      "delay": 4
-    },
-    "spike single": {
-      "file": "enemies/animated_spike_circle.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 12,
-      "size": 12,
-      "delay": 7
-    },
-    "spike top": {
-      "file": "enemies/animated_spike_top.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 12,
-      "size": 12,
-      "delay": 7
-    },
-    "spike center": {
-      "file": "enemies/animated_spike_middle.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 12,
-      "size": 12,
-      "delay": 7
-    },
-    "spike bottom": {
-      "file": "enemies/animated_spike_bottom.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 12,
-      "size": 12,
-      "delay": 7
-    },
-    "pink dot animated": {
-      "file": "tutorial/animated_tutorial_pink.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 8,
-      "size": 8,
-      "delay": 10
-    },
-    "blue dot animated": {
-      "file": "tutorial/animated_tutorial_blue.png",
-      "wrap": false,
-      "rows": 1,
-      "cols": 8,
-      "size": 8,
-      "delay": 10
-    }
-  },
-  "fonts": {
-    "retro game": {
-      "file": 	"shared/RetroGame.ttf",
-      "size": 	64
-    },
-    "light pixel": {
-      "file": 	"shared/LightPixel7.ttf",
-      "size": 	64
-    }
-  },
-  "sounds": {
-    "jump":	{
-      "file": "audio/jump/jump8.mp3",
-      "volume":	1
-    },
-    "land":	{
-      "file": "audio/jump/quick_land.mp3",
-      "volume":	1
-    },
-    "collision":	{
-      "file": "audio/anchor.mp3",
-      "volume":	1
-    },
-    "switch":	{
-      "file": "audio/collecting stars/star_collect.mp3",
-      "volume":	1
-    },
-    "anchor":	{
-      "file": "audio/anchor.mp3",
-      "volume":	1
-    },
-    "space sounds": {
-      "file": "audio/sounds from space/VanB-2017-04-05-2229.mp3",
-      "volume": 1
-    }
-  },
-  "music": {
-    "menu":     {
-      "file": "audio/loading_screen.mp3",
-      "volume": 1
+    "music": {
+      "menu": {
+        "file": "audio/loading_screen.mp3",
+        "volume": 1
+      }
     }
   }
-}

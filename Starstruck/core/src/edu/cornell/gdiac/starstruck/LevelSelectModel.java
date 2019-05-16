@@ -359,9 +359,6 @@ public class LevelSelectModel {
 
         canvas.begin();
 
-//        float x = (float) Math.floor((canvas.getCamera().position.x - canvas.getWidth()/2)/canvas.getWidth()) * canvas.getWidth();
-//        float y = (float) Math.floor((canvas.getCamera().position.y - canvas.getHeight()/2)/canvas.getHeight()) * canvas.getHeight();
-
         canvas.draw(background, 0, 0);
 
         for(Level l : levels){

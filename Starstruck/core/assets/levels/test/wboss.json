@@ -1,0 +1,84 @@
+{
+"physicsSize": [ 38.400001525878906, 21.600000381469727 ],
+"graphicSize": [ 1280, 720 ],
+"playSize": [ 1.5, 1.5 ],
+"win": "0.5",
+"galaxy": "whirlpool",
+"background": "wp background",
+"astronaut 1": {
+	"pos": [ 3.064417839050293, 5.121138572692871 ],
+	"size": [ 0.9000000357627869, 1.290000081062317 ],
+	"texture": "astronaut 1",
+	"glow texture": "glow"
+},
+"astronaut 2": {
+	"pos": [ 4.727323532104492, 4.847062110900879 ],
+	"size": [ 0.9000000357627869, 1.290000081062317 ],
+	"texture": "astronaut 2",
+	"glow texture": "glow"
+},
+"rope": {
+	"texture": "rope",
+	"rope width": 6.000000476837158
+},
+"planet specs": [ 700.0, 800.0, 900.0, 1000.0 ],
+"planets": [
+	{
+		"x": 5.850000381469727,
+		"y": 6.929999351501465,
+		"i": 2
+	},
+	{
+		"x": 24.30000114440918,
+		"y": 7.439999580383301,
+		"i": 2
+	}
+],
+"has boss": true,
+"anchors": [],
+"stars": [
+	{
+		"x": 13.530000686645508,
+		"y": 7.260000228881836,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 18.450000762939453,
+		"y": 7.260000228881836,
+		"texture": "star",
+		"location": "space"
+	},
+	{
+		"x": 15.8100004196167,
+		"y": 7.260000228881836,
+		"texture": "star",
+		"location": "space"
+	}
+],
+"worms": [],
+"portalpairs": [
+	{
+		"x1": 32.52000045776367,
+		"y1": 6.960000038146973,
+		"x2": 200.0,
+		"y2": 200.0,
+		"name": "portalpair1",
+		"color": "0",
+		"texture": "goal",
+		"goal": "yes"
+	}
+],
+"tutorialpoints": [],
+"urchin texture": "spike",
+"urchins": [],
+"ice cream": [],
+"octopus legs": [
+	{
+		"orientation": "horizontal",
+		"x": 14.589993476867676,
+		"y": 13.199999809265137,
+		"length": 2
+	}
+]
+}

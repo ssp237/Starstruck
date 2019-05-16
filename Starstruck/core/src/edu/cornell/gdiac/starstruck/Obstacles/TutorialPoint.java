@@ -20,6 +20,8 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.*;
 import com.badlogic.gdx.math.collision.*;
 import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.starstruck.ControllerType;
+import edu.cornell.gdiac.starstruck.InputController;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
@@ -41,6 +43,10 @@ public class TutorialPoint {
     private boolean blueHit;
     /** Whether this task is complete */
     private boolean complete;
+    /** The general name of the task */
+    private String taskName;
+    /** twoplayer */
+    private static boolean twoplayer;
 
     /**
      * Create new tutorial points with the given texture and draw scale.
@@ -78,6 +84,11 @@ public class TutorialPoint {
         bluePoint.setTutName(name);
     }
 
+    public TutorialPoint(float x1, float y1, float x2, float y2, TextureRegion taskText, Vector2 scale, String name, String taskname) {
+        this(x1, y1, x2, y2, taskText, scale, name);
+        taskName = taskname;
+    }
+
     public Star getPinkPoint() { return pinkPoint; }
 
     public Star getBluePoint() { return bluePoint; }
@@ -104,6 +115,8 @@ public class TutorialPoint {
 
     public void setComplete(boolean value) { complete = value; }
 
+    public void setTwoplayer(boolean value) { twoplayer = value; }
+
     /**
      * Return a new star with parameters specified by the JSON
      * @param json A JSON containing data for one star
@@ -111,10 +124,23 @@ public class TutorialPoint {
      * @return A star created according to the specifications in the JSON
      */
     public static TutorialPoint fromJSON(JsonValue json, Vector2 scale) {
-        String key = json.get("taskText").asString();
+        String taskname = json.get("taskText").asString();
+        String key = taskname + " keyone";
+        if (InputController.getInstance().getControlType() == ControllerType.CTRLONE) {
+            key = taskname + " ctrlone";
+        }
+        if (InputController.getInstance().getControlType() == ControllerType.CTRLTWO) {
+            key = taskname = " ctrltwo";
+        }
+        if (InputController.getInstance().getControlType() == ControllerType.KEY && twoplayer) {
+            key = taskname + " keytwo";
+        }
+        if (taskname.equals("transparent")) {
+            key = taskname;
+        }
         TextureRegion taskText = JsonAssetManager.getInstance().getEntry(key, TextureRegion.class);
         String name = json.get("name").asString();
-        TutorialPoint out = new TutorialPoint(json.get("x1").asFloat(), json.get("y1").asFloat(), json.get("x2").asFloat(), json.get("y2").asFloat(), taskText, scale, name);
+        TutorialPoint out = new TutorialPoint(json.get("x1").asFloat(), json.get("y1").asFloat(), json.get("x2").asFloat(), json.get("y2").asFloat(), taskText, scale, name, taskname);
         return out;
     }
 
@@ -135,7 +161,7 @@ public class TutorialPoint {
         json.addChild("y2", new JsonValue(p2.y));
 
         //Add textures
-        json.addChild("taskText", new JsonValue(JsonAssetManager.getInstance().getKey(task)));
+        json.addChild("taskText", new JsonValue(taskName));
 
         //Add name
         json.addChild("name", new JsonValue(name));

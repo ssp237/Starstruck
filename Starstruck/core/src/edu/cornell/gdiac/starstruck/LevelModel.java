@@ -96,6 +96,9 @@ public class LevelModel {
     protected float xPlay;
     protected float yPlay;
 
+    /**Is there a boss in this level?*/
+    private boolean hasBoss;
+
     private boolean isTutorial = false;
 
     public boolean getTutorial() {return isTutorial;}
@@ -267,6 +270,7 @@ public class LevelModel {
         this.scale = scale;
         debug  = false;
         planets = new PlanetList(scale);
+        hasBoss = false;
     }
 
 
@@ -297,24 +301,25 @@ public class LevelModel {
         String gal = levelFormat.get("galaxy").asString();
         setGalaxy(Galaxy.fromString(gal));
 
+        hasBoss = levelFormat.get("has boss").asBoolean();
+
         bounds = new Rectangle(0,0,pSize[0],pSize[1]);
         scale.x = gSize[0]/pSize[0];
         scale.y = gSize[1]/pSize[1];
         xPlay = playSize[0];
         yPlay = playSize[1];
 
-        TextureRegion textureboss = JsonAssetManager.getInstance().getEntry("octoboss talk", TextureRegion.class);
-        talkingboss = new TalkingBoss(3.5f, 14, textureboss, scale, 0);
-        activate(talkingboss);
-        System.out.println(scale);
+
 
         player1 = AstronautModel.fromJson(levelFormat.get("astronaut 1"), scale, true);
         player1.setName("avatar");
+        player1.setGalaxy(galaxy);
         player1.activatePhysics(world);
         //addObject(player1);
 
         player2 = AstronautModel.fromJson(levelFormat.get("astronaut 2"), scale, false);
         player2.setName("avatar2");
+        player2.setGalaxy(galaxy);
         player2.activatePhysics(world);
 
         //objects.remove(player1); objects.remove(player2);
@@ -361,6 +366,7 @@ public class LevelModel {
                     buggy = new ColoredBug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, sleeptexture, scale, modelColor);
                 } catch (Exception e) {
                     buggy = new Bug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, scale);
+                    buggy.vectorWorld = vectorWorld;
                 }
 
                 activate(buggy);
@@ -382,6 +388,7 @@ public class LevelModel {
             Star star = Star.fromJSON(starVals, scale);
             star.setName("star" + i);
             activate(star);
+            star.setGalaxy(galaxy);
             stars.add(star);
             starVals = starVals.next;
         }
@@ -412,6 +419,7 @@ public class LevelModel {
             Anchor anchor = Anchor.fromJSON(anchorVals, scale);
             anchor.setName("anchor" + i);
             activate(anchor);
+            anchor.setGalaxy(galaxy);
             anchors.add(anchor);
             anchorVals = anchorVals.next;
         }
@@ -460,6 +468,36 @@ public class LevelModel {
             creamVals = creamVals.next;
         }
 
+        //add boss
+        if (hasBoss) {
+            if (galaxy == Galaxy.WHIRLPOOL) {
+                OctoLeg.setTextures("octo");
+                JsonValue octoLegs = levelFormat.get("octopus legs").child();
+                while(octoLegs != null) {
+                    OctoLeg octopuss = OctoLeg.fromJSON(octoLegs, scale);
+                    activate(octopuss);
+                    //enemies.add(octopuss);
+                    octoLegs = octoLegs.next;
+                    System.out.println(octopuss);
+
+                    TextureRegion textureboss = JsonAssetManager.getInstance().getEntry("octoboss talk", TextureRegion.class);
+                    talkingboss = new TalkingBoss(3.5f, 14, textureboss, scale, 0);
+                    activate(talkingboss);
+                    //System.out.println(scale);
+
+                }
+            } else if (galaxy == Galaxy.SOMBRERO) {
+                JsonValue wheels = levelFormat.get("aztec wheels").child();
+                while(wheels != null) {
+                    AztecWheel wheel = AztecWheel.fromJSON(wheels, scale);
+                    activate(wheel);
+                    //enemies.add(octopuss);
+                    wheels = wheels.next;
+                    System.out.println(wheel);
+                }
+            }
+        }
+
 //        System.out.println("here i am enemy list");
 //        System.out.println(enemies);
 //        System.out.println(enemies.size());
@@ -488,6 +526,7 @@ public class LevelModel {
         tutpoints.clear();
         //MenuMode.getMusic().dispose();
         vectorWorld = new VectorWorld();
+        hasBoss = false;
     }
 
     /**
@@ -506,6 +545,8 @@ public class LevelModel {
             case BUG: activate(obj); enemies.add((Bug) obj); break;
             case PORTAL: activate(obj); break;
             case URCHIN: activate(obj); enemies.add((Urchin) obj); break;
+            case OCTO_LEG: activate(obj); break;
+            case AZTEC_WHEEL: activate(obj); break;
             case TUTORIAL: activate(obj); break;
             case ICE_CREAM:
                 ((IceCream) obj).setUpBound(bounds.getHeight() * yPlay);
@@ -534,6 +575,8 @@ public class LevelModel {
             case BUG: deactivate(obj); enemies.remove((Bug) obj); break;
             case PORTAL: deactivate(obj); break;
             case URCHIN: deactivate(obj); enemies.remove((Urchin) obj); break;
+            case OCTO_LEG: deactivate(obj); break;
+            case AZTEC_WHEEL: deactivate(obj);
             case TUTORIAL: deactivate(obj); break;
             case ICE_CREAM: deactivate(obj); enemies.remove((IceCream) obj); break;
             case TALKING_BOSS: deactivate(obj); talkingboss = null; break;
@@ -649,6 +692,8 @@ public class LevelModel {
         JsonValue tutorialPoints = new JsonValue(JsonValue.ValueType.array);
         JsonValue urchins = new JsonValue(JsonValue.ValueType.array);
         JsonValue iceCreams = new JsonValue(JsonValue.ValueType.array);
+        JsonValue octolegs = new JsonValue(JsonValue.ValueType.array);
+        JsonValue wheels = new JsonValue(JsonValue.ValueType.array);
 
         for (Obstacle obj : objects) {
             switch (obj.getType()) {
@@ -657,6 +702,8 @@ public class LevelModel {
                 case WORM: worms.addChild(((Worm) obj).toJson()); break;
                 case URCHIN: urchins.addChild(((Urchin) obj).toJson()); break;
                 case ICE_CREAM: iceCreams.addChild(((IceCream) obj).toJson()); break;
+                case OCTO_LEG: hasBoss = true; octolegs.addChild(((OctoLeg) obj).toJson()); break;
+                case AZTEC_WHEEL: hasBoss = true; wheels.addChild(((AztecWheel) obj).toJson()); break;
             }
         }
 
@@ -667,6 +714,8 @@ public class LevelModel {
         for (TutorialPoint tutorial : tutpoints) {
             tutorialPoints.addChild(tutorial.toJson());
         }
+
+        out.addChild("has boss", new JsonValue(hasBoss));
 
         out.addChild("anchors", anchors);
         out.addChild("stars", stars);
@@ -686,6 +735,11 @@ public class LevelModel {
 
         //add ice cream
         out.addChild("ice cream", iceCreams);
+
+        if (hasBoss) {
+            if (galaxy == Galaxy.WHIRLPOOL) out.addChild("octopus legs", octolegs);
+            else if (galaxy == Galaxy.SOMBRERO) out.addChild("aztec wheels", wheels);
+        }
 
 
         return out;
@@ -721,6 +775,7 @@ public class LevelModel {
             if (obj.getType() != ObstacleType.PLAYER && obj.getType() != ObstacleType.TUTORIAL)
                 obj.draw(canvas);
         }
+        rope.draw(canvas);
         if (player1.isActive()) { player2.draw(canvas); player1.draw(canvas); }
         else { player1.draw(canvas); player2.draw(canvas); }
         for (Enemy e: enemies) {
@@ -793,4 +848,5 @@ public class LevelModel {
             canvas.endDebug();
         }
     }
+
 }

@@ -148,7 +148,7 @@ public class TalkingBoss extends Enemy {
         //System.out.println(this);
         //System.out.println(this);
 
-        System.out.println("in talking boss update");
+        //System.out.println("in talking boss update");
 
         if (delay_time > 1) {
             delay_time--;

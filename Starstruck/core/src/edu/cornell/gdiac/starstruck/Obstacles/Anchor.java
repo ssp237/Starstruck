@@ -14,14 +14,21 @@
  */
 package edu.cornell.gdiac.starstruck.Obstacles;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.physics.box2d.joints.*;
 import com.badlogic.gdx.utils.JsonValue;
+import edu.cornell.gdiac.starstruck.Galaxy;
+import edu.cornell.gdiac.starstruck.GameCanvas;
+import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
 public class Anchor extends WheelObstacle {
+    private FilmStrip animatedText;
+    private Galaxy galaxy;
+
 //    /** The debug name for the entire obstacle */
 //    private static final String SPINNER_NAME = "anchor_spinner";
 //    /** The debug name for the spinning barrier */
@@ -68,6 +75,7 @@ public class Anchor extends WheelObstacle {
     public Anchor(float x, float y, float radius) {
         super(x,y, radius);
         setName("anchor");
+        animatedText = JsonAssetManager.getInstance().getEntry("anchor animated", FilmStrip.class);
 
 //        setName(SPINNER_NAME);
 //
@@ -99,6 +107,12 @@ public class Anchor extends WheelObstacle {
         this(x,y,texture.getRegionWidth()/scale.x/2);
         setDrawScale(scale);
         setTexture(texture);
+    }
+
+    public void setGalaxy(Galaxy gal) { galaxy = gal; }
+
+    public void update(float dt) {
+        animatedText.tick();
     }
 
     /**
@@ -160,5 +174,14 @@ public class Anchor extends WheelObstacle {
     public boolean containsPoint(Vector2 point) {
         return super.containsPoint(point);
         //return barrier.containsPoint(point) || pivot.containsPoint(point);
+    }
+
+    public void draw(GameCanvas canvas) {
+        if (galaxy == Galaxy.SOMBRERO){
+            canvas.draw(animatedText, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), 1, 1);
+        }
+        else {
+            canvas.draw(animatedText, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), 1, 1);
+        }
     }
 }

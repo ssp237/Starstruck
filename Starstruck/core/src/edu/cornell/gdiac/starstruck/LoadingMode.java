@@ -413,9 +413,8 @@ public class LoadingMode implements Screen, InputProcessor, ControllerListener {
      * @return whether to hand the event to other listeners.
      */
     public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.N || keycode == Input.Keys.P) {
-            pressState = 2;
-            return false;
+        if (keycode == Input.Keys.ESCAPE && listener != null) {
+            listener.exitScreen(this, WorldController.EXIT_QUIT);
         }
         return true;
     }

@@ -332,7 +332,7 @@ public class InputController {
      * @return true if the player wants to go to the previous level.
      */
     public boolean didRetreat() {
-        return prevPressed && !prevPrevious && shiftPressed;
+        return prevPressed && !prevPrevious && shiftPressed && nextPressed && !nextPrevious;
     }
 
     /**
@@ -359,6 +359,16 @@ public class InputController {
     public boolean didExit() {
         return exitPressed && !exitPrevious;
     }
+
+    /**
+     * Returns true if the exit button was pressed.
+     *
+     * @return true if the exit button was pressed.
+     */
+    public boolean exitUp() {
+        return !exitPressed && exitPrevious;
+    }
+
 
     public boolean didRight() {
         return rightPressed;

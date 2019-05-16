@@ -227,8 +227,9 @@ public class EditController extends WorldController implements ContactListener {
         jsonReader = new JsonReader();
         loadFile = null;
         levelFormat = null;
-        galaxy = Galaxy.WHIRLPOOL;
+        galaxy = Galaxy.SOMBRERO;
         level.setGalaxy(galaxy);
+        objects = level.objects;
         FISH_TEXTURES = WORM_TEXTURES;
     }
 
@@ -257,6 +258,7 @@ public class EditController extends WorldController implements ContactListener {
         save = new SaveListener();
         load = new SaveListener();
         galListener = new GalaxyListener();
+        OctoLeg.setTextures("octo");
     }
 
     private void createPlayers() {
@@ -442,6 +444,51 @@ public class EditController extends WorldController implements ContactListener {
             Vector2 pos = u.getPosition();
             CapsuleObstacle.Orientation orie = u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL ? CapsuleObstacle.Orientation.HORIZONTAL : CapsuleObstacle.Orientation.VERTICAL;
             current = new Urchin(pos.x, pos.y, u.getHeight() / Enemy.DUDE_HSHRINK, u.getWidth() / Enemy.DUDE_VSHRINK, scale, u.getLength(), orie);
+            level.add(current);
+        }
+    }
+
+    /**
+     * Helper to update current obstacle if it is an OctoLeg.
+     */
+    private void updateOctoLeg() {
+        InputController input = InputController.getInstance();
+
+        if (input.didPrimary()){
+            OctoLeg u = (OctoLeg) current;
+            level.remove(u);
+            Vector2 pos = u.getPosition();
+            if (u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL) {
+                current = new OctoLeg(pos.x, pos.y, scale, u.getLength() + 1, u.getOrientation());
+            } else {
+                if (u.getLength() > 1) {
+                    current = new OctoLeg(pos.x, pos.y, (u.getWidth() + u.midHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, u.getLength() + 1, u.getOrientation());
+                }
+            }
+            level.add(current);
+        } else if (input.didDown()) {
+            OctoLeg u = (OctoLeg) current;
+            level.remove(u);
+            Vector2 pos = u.getPosition();
+            if (u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL) {
+                current = new OctoLeg(pos.x, pos.y, scale, Math.max(u.getLength() - 1, 2), u.getOrientation());
+            } else {
+                if (u.getLength() <= 3)  {
+                    current = new OctoLeg(pos.x, pos.y, (u.topHeight() + u.botHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, 2, u.getOrientation());
+                } else {
+                    current = new OctoLeg(pos.x, pos.y, (u.getWidth() - u.midHeight()) / Enemy.DUDE_HSHRINK,
+                            u.getHeight() / Enemy.DUDE_VSHRINK, scale, u.getLength() - 1, u.getOrientation());
+                }
+            }
+            level.add(current);
+        } else if ((input.didLeft() && !input.leftPrevious()) || (input.didRight() && !input.rightPrevious())) {
+            OctoLeg u = (OctoLeg) current;
+            level.remove(u);
+            Vector2 pos = u.getPosition();
+            CapsuleObstacle.Orientation orie = u.getOrientation() == CapsuleObstacle.Orientation.VERTICAL ? CapsuleObstacle.Orientation.HORIZONTAL : CapsuleObstacle.Orientation.VERTICAL;
+            current = new OctoLeg(pos.x, pos.y, u.getHeight() / Enemy.DUDE_HSHRINK, u.getWidth() / Enemy.DUDE_VSHRINK, scale, u.getLength(), orie);
             level.add(current);
         }
     }
@@ -663,6 +710,7 @@ public class EditController extends WorldController implements ContactListener {
                     case WORM: updateWorm(); break;
                     case PORTAL: updatePortal(); break;
                     case URCHIN: updateUrchin(); break;
+                    case OCTO_LEG: updateOctoLeg(); break;
                 }
             }
         } else {
@@ -730,6 +778,16 @@ public class EditController extends WorldController implements ContactListener {
                 Vector2 pos = input.getCrossHair();
                 current = new Urchin(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, 1, CapsuleObstacle.Orientation.VERTICAL);
                 level.add(current);
+            } else if (input.didB() ) {
+                if (galaxy == Galaxy.WHIRLPOOL) {
+                    Vector2 pos = input.getCrossHair();
+                    current = new OctoLeg(pos.x + camScaleX + w, pos.y + camScaleY + h, scale, 2, CapsuleObstacle.Orientation.VERTICAL);
+                    level.add(current);
+                } else if (galaxy == Galaxy.SOMBRERO) {
+                    Vector2 pos = input.getCrossHair();
+                    current = new AztecWheel(pos.x + camScaleX + w, pos.y + camScaleY + h, scale);
+                    level.add(current);
+                }
             }
             if (input.mouseDragged()) {
                 updateCamera();
@@ -829,6 +887,14 @@ public class EditController extends WorldController implements ContactListener {
 
             //Disable all collisions for worms
             if (bd1.getType() == ObstacleType.WORM || bd2.getType() == ObstacleType.WORM) {
+                contact.setEnabled(false);
+            }
+
+            if (bd1.getType() == ObstacleType.OCTO_LEG || bd2.getType() == ObstacleType.OCTO_LEG) {
+                contact.setEnabled(false);
+            }
+
+            if (bd1.getType() == ObstacleType.AZTEC_WHEEL || bd2.getType() == ObstacleType.AZTEC_WHEEL) {
                 contact.setEnabled(false);
             }
 

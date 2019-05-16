@@ -9,6 +9,7 @@ public enum Galaxy {
     WHIRLPOOL("wp"),
     MILKYWAY("mw"),
     SOMBRERO("so"),
+    CIRCINUS("ci"),
     LEVELSELECT("ls");
 
     private final String chars;
@@ -33,6 +34,8 @@ public enum Galaxy {
             return MILKYWAY;
         } else if (chars.equals("sombrero")) {
             return SOMBRERO;
+        } else if (chars.equals("circinus")) {
+            return CIRCINUS;
         } else if (chars.equals("level select")) {
             return LEVELSELECT;
         }
@@ -45,6 +48,7 @@ public enum Galaxy {
             case MILKYWAY: return "milky way";
             case SOMBRERO: return "sombrero";
             case LEVELSELECT: return "level select";
+            case CIRCINUS: return "circinus";
             default: return "default";
         }
     }

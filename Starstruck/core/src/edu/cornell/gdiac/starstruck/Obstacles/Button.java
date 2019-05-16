@@ -34,7 +34,7 @@ public class Button extends BoxObstacle {
     public Button(float x, float y, float width, float height, TextureRegion texture,
                   World world, Vector2 scale, TextureRegion hoverTexture, String name) {
         super(x, y, width, height);
-        this.texture = texture;
+        setTexture(texture);
         this.hoverTexture = hoverTexture;
         this.name = name;
         pushed = false;
@@ -52,6 +52,16 @@ public class Button extends BoxObstacle {
     public TextureRegion getHoverTexture() { return hoverTexture;}
 
     /**
+     * Return the texture of this level
+     * @return The texture of this level.
+     */
+    public void setTexture(TextureRegion texture) {
+        super.setTexture(texture);
+    }
+
+
+
+    /**
      * Sets hover to true when mouse pointer is over this level sprite
      */
     public void setActive(boolean state) {
@@ -63,6 +73,18 @@ public class Button extends BoxObstacle {
      */
     public boolean getActive() {
         return active;
+    }
+
+
+    /**
+     * checks if the given mouse position is within the button
+     */
+    public boolean isIn(float screenX, float screenY) {
+        Vector2 center = this.getPosition();
+//        center.add(this.getWidth()/2, this.getHeight()/2);
+        float xdist = Math.abs(screenX - center.x);
+        float ydist = Math.abs(screenY - center.y);
+        return (xdist <= getWidth()/2 && ydist <= getHeight()/2);
     }
 
     /**
@@ -83,10 +105,9 @@ public class Button extends BoxObstacle {
             canvas.draw(hoverTexture, Color.WHITE, origin.x, origin.y,getX() * drawScale.x,
                     getY() * drawScale.x, getAngle(), 1,1);
         } else {
-            canvas.draw(getTexture(), Color.WHITE, origin.x, origin.y,getX() * drawScale.x,
+            canvas.draw(texture, Color.WHITE, origin.x, origin.y,getX() * drawScale.x,
                     getY() * drawScale.x, getAngle(), 1,1);
         }
-
     }
 
     public String toString() {
@@ -98,7 +119,8 @@ public class Button extends BoxObstacle {
         out += "pos: " + getPosition() + ", ";
         out += "width: " + getWidth() + ", ";
         out += "height: " + getHeight() + ", ";
-        out += "texture: " + getTexture() + ", ";
+        out += "texture: " + JsonAssetManager.getInstance().getKey(texture) + ", ";
+        out += "name: " + getName() + " ";
         out += "}";
 
         return out;
