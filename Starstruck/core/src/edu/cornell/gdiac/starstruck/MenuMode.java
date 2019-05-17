@@ -371,7 +371,6 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         } else if (keycode == Input.Keys.ESCAPE) {
             pressState = 2;
             currentButton = showOverview ? close : quit;
-            print(currentButton);
             currentButton.pushed = true;
             return false;
         }

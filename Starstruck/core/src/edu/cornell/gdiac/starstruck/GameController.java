@@ -1337,14 +1337,14 @@ public class GameController extends WorldController implements ContactListener {
                 avatar2.setActive(false);
             }
         }
-        if (input.didTwo() && !twoplayer) {
-            switchOnJump = !switchOnJump;
-            print("Toggled setting switch on jump: " + switchOnJump);
-        }
-        if (input.didThree() && !twoplayer) {
-            switchOnAnchor = !switchOnAnchor;
-            print("Toggled setting switch on anchor: " + switchOnAnchor);
-        }
+//        if (input.didTwo() && !twoplayer) {
+//            switchOnJump = !switchOnJump;
+//            print("Toggled setting switch on jump: " + switchOnJump);
+//        }
+//        if (input.didThree() && !twoplayer) {
+//            switchOnAnchor = !switchOnAnchor;
+//            print("Toggled setting switch on anchor: " + switchOnAnchor);
+//        }
 //        if (input.didFour()) {
 //            useController = !useController;
 //            print("Toggled setting use controller: " + useController);
@@ -2349,8 +2349,6 @@ public class GameController extends WorldController implements ContactListener {
                 deathPos.x = -death.getWidth(); //Reset
             }
         }
-
-        //print(animLoop);
 
         //Death phase 2: once death screen is in place, animate
         if ((deathPos.x + death.getWidth()/2) >= canvas.getWidth()/2 && (deathAnimLoop < MAX_ANIM || isFailure())) {

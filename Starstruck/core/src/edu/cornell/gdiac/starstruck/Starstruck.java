@@ -136,11 +136,14 @@ public class Starstruck extends Game implements ScreenListener {
 		if (current == WorldController.EXIT_SETTINGS) {
 			if (Integer.valueOf(json) == 1) {
 				((GameController) controllers[WorldController.EXIT_PLAY]).setTwoplayer(false);
+				((GameController) controllers[WorldController.EXIT_PLAY]).reset();
 			} else if (Integer.valueOf(json) == 2){
 				((GameController) controllers[WorldController.EXIT_PLAY]).setTwoplayer(true);
+				((GameController) controllers[WorldController.EXIT_PLAY]).reset();
 			}
 			if (exitCode == WorldController.EXIT_PLAY) {
 				current = WorldController.EXIT_PLAY;
+				controllers[current].reset();
 				setScreen(controllers[current]);
 			} else {
 				canvas.resetCamera();
@@ -151,6 +154,7 @@ public class Starstruck extends Game implements ScreenListener {
 			if (exitCode == WorldController.EXIT_PLAY) {
 				current = WorldController.EXIT_PLAY;
 				((GameController) controllers[current]).setJson(json);
+
 				exitScreen(screen, WorldController.EXIT_PLAY);
 			} else {
 				exitScreen(screen, exitCode);

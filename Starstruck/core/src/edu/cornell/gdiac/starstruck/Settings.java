@@ -372,7 +372,7 @@ public class Settings extends WorldController implements Screen, InputProcessor,
                 currentButton.pushed = true;
                 if (currentButton.equals(play)) currentButton.setActive(false);
                 pressState = 2;
-            } if (numPlayers == 0) {
+            } else if (numPlayers == 0) {
                 active1.setActive(true);
                 pressState = 2;
                 play.pushed = true;

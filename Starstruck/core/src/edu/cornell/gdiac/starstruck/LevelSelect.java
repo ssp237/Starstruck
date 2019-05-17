@@ -47,7 +47,7 @@ import edu.cornell.gdiac.util.*;
 public class LevelSelect extends WorldController implements Screen, InputProcessor, ControllerListener {
 
     /** Speed of camera pan & zoom */
-    private static final float PAN_CONST = 20;
+    private static final float PAN_CONST = 15;
     /** The reader to process JSON files */
     private JsonReader jsonReader;
     /** The JSON asset directory */
@@ -290,11 +290,10 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
         setComplete(false);
         setFailure(false);
-        currentLevel = null;
         pressState = 0;
         assignLevelFields();
-        camOffsetX = 0;
         menu.pushed = false;
+        camOffsetX = 0;
 
         for (Button b : winButtons) {
             b.setActive(false);
@@ -376,11 +375,11 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         Texture background = level.getBackground();
 
-        float rightBound = background.getWidth();
+        float rightBound = background.getWidth() - PAN_CONST;
         float right = 1280 - 1280/4;
         float left = 1280/4;
         if (mouseControl) {
-            if (Gdx.input.getX() >= right && camera.position.x + camera.viewportWidth / 2 < rightBound - PAN_CONST) {
+            if (Gdx.input.getX() >= right && camera.position.x + camera.viewportWidth / 2 < rightBound) {
                 camera.position.add(new Vector3(PAN_CONST, 0, 0));
                 camOffsetX = camOffsetX + PAN_CONST;
             } else if (Gdx.input.getX() <= left && camera.position.x - camera.viewportWidth / 2 > 0) {
@@ -395,7 +394,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 camera.position.add(new Vector3(PAN_CONST2, 0, 0));
                 camOffsetX = camOffsetX + PAN_CONST2;
             } else if (currentLevel != null && currentLevel.getPosition().x * level.scale.x <= left + camera.position.x - canvas.getWidth() / 2
-                    && camera.position.x - camera.viewportWidth / 2 > 0) {
+                    && camera.position.x - camera.viewportWidth / 2 > PAN_CONST2) {
                 camera.position.sub(new Vector3(PAN_CONST2, 0, 0));
                 camOffsetX = camOffsetX - PAN_CONST2;
             }
@@ -407,6 +406,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         menu.setPosition(centerX, centerY);
 
     }
+
 
     /**
      * Helper for update for control on planet
@@ -677,7 +677,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @return whether the input was processed */
     public boolean mouseMoved (int screenX, int screenY) {
         mouseControl = true;
-        currentLevel = null;
         screenY = heightY - screenY;
         Vector2 scale = level.getScale();
         Vector2 mouse = new Vector2(screenX/scale.x, screenY/scale.y);
