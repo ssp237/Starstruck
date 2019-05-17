@@ -90,7 +90,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
     private Button settings;
     private Button quit;
     private Button help;
-    private Button build;
+//    private Button build;
     /** Background texture for start-up */
     private Texture background;
     private Texture title;
@@ -150,16 +150,16 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         help = new Button(CENTERX,CENTERY-OFFSET1-OFFSET2*3, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
                 world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("help glow", TextureRegion.class), "help");
 
-        levelButton = JsonAssetManager.getInstance().getEntry("build", TextureRegion.class);
-        build = new Button(-1000,-1000, 1, 1, levelButton,
-                world, new Vector2(1,1), levelButton, "build");
+//        levelButton = JsonAssetManager.getInstance().getEntry("build", TextureRegion.class);
+//        build = new Button(-1000,-1000, 1, 1, levelButton,
+//                world, new Vector2(1,1), levelButton, "build");
 
         buttons.add(play);
         buttons.add(levels);
         buttons.add(settings);
         buttons.add(quit);
         buttons.add(help);
-        buttons.add(build);
+//        buttons.add(build);
 
         overview = JsonAssetManager.getInstance().getEntry("overview", Texture.class);
         overlay = JsonAssetManager.getInstance().getEntry("overlay", Texture.class);
@@ -519,8 +519,8 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
                 listener.exitScreen(this, WorldController.EXIT_SETTINGS);
             } else if (isReady() && quit.pushed) {
                 listener.exitScreen(this, WorldController.EXIT_QUIT);
-            } else if (isReady() && build.pushed) {
-                listener.exitScreen(this, WorldController.EXIT_EDIT);
+//            } else if (isReady() && build.pushed) {
+//                listener.exitScreen(this, WorldController.EXIT_EDIT);
             } else if (isReady() && help.pushed) {
                 showOverview = !showOverview;
                 pressState = 0;
