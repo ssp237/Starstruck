@@ -97,6 +97,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 
     private Button close;
     private Texture overview;
+    private Texture overlay;
     private boolean showOverview;
 
     /** Current selected button */
@@ -161,6 +162,8 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         buttons.add(build);
 
         overview = JsonAssetManager.getInstance().getEntry("overview", Texture.class);
+        overlay = JsonAssetManager.getInstance().getEntry("overlay", Texture.class);
+
         levelButton = JsonAssetManager.getInstance().getEntry("done", TextureRegion.class);
         close = new Button(canvas.getWidth() / 2 + overview.getWidth() / 2 - levelButton.getRegionWidth()/2, 80, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
                 world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("done glow", TextureRegion.class), "build");
@@ -658,6 +661,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         canvas.begin();
         canvas.draw(background, 0, 0);
         if (showOverview) {
+            canvas.draw(overlay, 0, 0);
             canvas.draw(overview, canvas.getWidth() / 2 - overview.getWidth() / 2, 130);
             close.draw(canvas);
         } else {

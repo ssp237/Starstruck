@@ -690,7 +690,11 @@
     "overview" : {
       "file": "shared/overview.png",
       "wrap": false
-    }
+    },
+    "overlay" : {
+    "file": "shared/overlay.png",
+    "wrap": false
+  }
   },
   "filmstrips" : {
     "astronaut 1 idle": {
