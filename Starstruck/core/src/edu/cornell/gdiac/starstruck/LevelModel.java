@@ -112,6 +112,7 @@ public class LevelModel {
     private SpeechBubble speechBubble;
 
     public TalkingBoss getTalkingBoss() {return talkingboss;}
+    public SpeechBubble getSpeechBubble() {return speechBubble;}
 
     /**
      * Returns the bounding rectangle for the physics world

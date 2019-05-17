@@ -25,6 +25,7 @@ import java.awt.*;
 import java.util.*;
 
 //import edu.cornell.gdiac.physics.*;
+import com.sun.org.apache.bcel.internal.generic.SWITCH;
 import edu.cornell.gdiac.starstruck.Models.*;
 import edu.cornell.gdiac.starstruck.MenuMode;
 import edu.cornell.gdiac.util.*;
@@ -69,6 +70,9 @@ public class GameController extends WorldController implements ContactListener {
     private static final String ANCHOR_FILE = "anchor";
     /** Space sounds */
     private static final String SPACE_SOUNDS = "space sounds";
+
+    /** The sound file for a character switch */
+    private static final String OPEN_GOAL = "open portal";
 
 
     /** The background for DEATH*/
@@ -146,6 +150,8 @@ public class GameController extends WorldController implements ContactListener {
     private String music_name = "menu";
 
     public static Music getMusic() {return music;}
+
+    private boolean hasPlayedSound = false;
 
     /**
      * Draws UI
@@ -257,6 +263,7 @@ public class GameController extends WorldController implements ContactListener {
         sounds.allocate("anchor");
         sounds.allocate("switch");
         sounds.allocate("space sounds");
+        sounds.allocate("open portal");
 
         //UI
 
@@ -747,7 +754,7 @@ public class GameController extends WorldController implements ContactListener {
         avatar1.setAngularVelocity(0);
         //avatar2.setUnAnchored();
         //avatar2.setActive(true);
-        SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
+        SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,0.6f);
     }
 
     /**
@@ -1679,9 +1686,17 @@ public class GameController extends WorldController implements ContactListener {
 
         //Collect star
         if (collection) {
-            SoundController.getInstance().play(SWITCH_FILE, SWITCH_FILE, false, EFFECT_VOLUME);
-            starCache.deactivatePhysics(world);
-            removed.add(starCache);
+            if (starCount >= winCount && !hasPlayedSound) {
+                SoundController.getInstance().play(OPEN_GOAL,OPEN_GOAL,false,0.6f);
+                starCache.deactivatePhysics(world);
+                removed.add(starCache);
+                hasPlayedSound = true;
+            }
+            else {
+                SoundController.getInstance().play(SWITCH_FILE, SWITCH_FILE, false, 0.7f);
+                starCache.deactivatePhysics(world);
+                removed.add(starCache);
+            }
             if (!stars.remove(starCache)) print("star collection error in game controller");
             //if (!objects.remove(starCache)) print("star collection error in game controller");
             starCount++;
@@ -1708,7 +1723,7 @@ public class GameController extends WorldController implements ContactListener {
         if (starCount >= winCount && !openGoal) { //&& tutorialpoints.isEmpty()
             //SOUNDS
             //COME HERE
-            SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
+            //System.out.println("played");
             openGoal = true;
             goal.getPortal1().setOpen(true);
         }
@@ -1842,6 +1857,7 @@ public class GameController extends WorldController implements ContactListener {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/tutorial_music.mp3"));
                 music.play();
                 music.setLooping(true);
+                music.setVolume(0.4f);
                 music_name = "tutorial";
             }
         } else if (level.getGalaxy() == Galaxy.WHIRLPOOL) {
@@ -1854,6 +1870,7 @@ public class GameController extends WorldController implements ContactListener {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/whirlpool_music.mp3"));
                 music.play();
                 music.setLooping(true);
+                music.setVolume(0.4f);
                 music_name = "whirlpool";
             }
 
@@ -1867,6 +1884,7 @@ public class GameController extends WorldController implements ContactListener {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/milky_way.mp3"));
                 music.play();
                 music.setLooping(true);
+                music.setVolume(0.4f);
                 music_name = "milkyway";
             }
         } else if (level.getGalaxy() == Galaxy.SOMBRERO) {
@@ -1879,6 +1897,7 @@ public class GameController extends WorldController implements ContactListener {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/sombrero_beat.mp3"));
                 music.play();
                 music.setLooping(true);
+                music.setVolume(0.4f);
                 music_name = "sombrero";
             }
 //            System.out.println("in sombrero and music " + music.isPlaying());
@@ -1887,9 +1906,10 @@ public class GameController extends WorldController implements ContactListener {
 
 
         if (level.getTalkingBoss() != null) {
-            if (level.getTalkingBoss().getPosition().x + level.getTalkingBoss().getWidth() / 2 + 4 < 0) {
+            if (level.getTalkingBoss().getPosition().x + level.getTalkingBoss().getWidth() / 2 + 12 < 0) {
                 level.remove(level.getTalkingBoss());
             }
+
         }
     }
 
