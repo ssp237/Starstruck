@@ -476,6 +476,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     public void update(float dt) {
         if (winPos == null) {
             updateCamera();
+        } else {
+            //(winPos);
         }
 //        updateCamera();
 
