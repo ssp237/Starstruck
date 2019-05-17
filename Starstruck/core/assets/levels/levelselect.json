@@ -191,6 +191,17 @@
       "unlocked": "true",
       "completed": "false",
       "json file": "sombrero/levelboss.json"
+    },
+
+    {
+      "x": 185,
+      "y": 5,
+      "r": 5,
+      "texture": "ls p16",
+      "ring texture": "ls so g",
+      "unlocked": "true",
+      "completed": "false",
+      "json file": "circinus/level1.json"
     }
 
 
