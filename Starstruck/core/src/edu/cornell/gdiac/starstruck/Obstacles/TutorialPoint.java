@@ -130,7 +130,9 @@ public class TutorialPoint {
             key = taskname + " ctrlone";
         }
         if (InputController.getInstance().getControlType() == ControllerType.CTRLTWO) {
-            key = taskname = " ctrltwo";
+            key = taskname + " ctrlone";
+            if (taskname.equals("switch"))
+                key = "move ctrlone";
         }
         if (InputController.getInstance().getControlType() == ControllerType.KEY && twoplayer) {
             key = taskname + " keytwo";

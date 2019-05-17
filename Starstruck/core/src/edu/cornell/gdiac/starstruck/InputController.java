@@ -744,9 +744,11 @@ public class InputController {
         rightPressed = Gdx.input.isKeyPressed (Input.Keys.RIGHT); //ONLY FOR KEYBOARD
         leftPressed = Gdx.input.isKeyPressed (Input.Keys.LEFT); //ONLY FOR KEYBOARD
         downPressed = (secondary && downPressed) || Gdx.input.isKeyPressed (Input.Keys.DOWN);
-        aPressed = (secondary && aPressed) || Gdx.input.isKeyPressed (Input.Keys.A);
+//        aPressed = (secondary && aPressed) || Gdx.input.isKeyPressed (Input.Keys.A);
+        aPressed = Gdx.input.isKeyPressed(Input.Keys.A); //ONLY FOR KEYBOARD
         sPressed = (secondary && sPressed) || Gdx.input.isKeyPressed (Input.Keys.S);
-        dPressed = (secondary && dPressed) || Gdx.input.isKeyPressed (Input.Keys.D);
+//        dPressed = (secondary && dPressed) || Gdx.input.isKeyPressed (Input.Keys.D);
+        dPressed = Gdx.input.isKeyPressed(Input.Keys.D); //ONLY FOR KEYBOARD
         oPressed = (secondary && oPressed) || Gdx.input.isKeyPressed (Input.Keys.O);
         wPressed = (secondary && wPressed) || Gdx.input.isKeyPressed (Input.Keys.W);
         gPressed = (secondary && gPressed ) || Gdx.input.isKeyPressed (Input.Keys.G);

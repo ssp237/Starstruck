@@ -1480,9 +1480,9 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         // Toggle debug
-        if (input.didDebug()) {
-            setDebug(!isDebug());
-        }
+//        if (input.didDebug()) {
+//            setDebug(!isDebug());
+//        }
 
         // Handle resets
         if (input.didGameReset() || restart.pushed) {
@@ -1605,11 +1605,11 @@ public class GameController extends WorldController implements ContactListener {
                 return;
             }
         }
-        if (InputController.getInstance().shiftHeld() && InputController.getInstance().didO()) {
-            Gdx.input.getTextInput(loader, "Load...", "level.json", "");
-        }
+//        if (InputController.getInstance().shiftHeld() && InputController.getInstance().didO()) {
+//            Gdx.input.getTextInput(loader, "Load...", "level.json", "");
+//        }
 
-        updateSettings();
+        //updateSettings();
 
         updateTutorial();
 

@@ -390,7 +390,7 @@ public class EditController extends WorldController implements ContactListener {
                                     JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class), scale, vectorWorld); break;
                         }
                 }
-                System.out.println(b);
+                //System.out.println(b);
                 level.add(b);
                 b.setPlanet(p);
                 p.setBug(b);
@@ -790,7 +790,7 @@ public class EditController extends WorldController implements ContactListener {
                 } else if (galaxy == Galaxy.CIRCINUS) {
                     Vector2 pos = input.getCrossHair();
                     current = new FerisWheel(pos.x + camScaleX + w, pos.y + camScaleY + h, scale);
-                    System.out.println(current);
+                    //System.out.println(current);
                     level.add(current);
                 }
             }
