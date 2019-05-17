@@ -79,7 +79,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
     private static final String MUSIC_FILE = "audio/loading_screen.mp3";
     public static boolean menuIsPlaying() {return music.isPlaying();}
 
-    public static Music music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
+    public static Music music = Settings.getMusic(); //Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
 
     public static Music getMusic() {return music;}
 
@@ -238,15 +238,15 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             b.pushed = false;
         }
 
-        if (music != null) {
-            music.stop();
-            music.dispose();
-        }
+//        if (music != null) {
+////            music.stop();
+////            music.dispose();
+////        }
 
-        if (GameController.getMusic() != null) {
-            GameController.getMusic().stop();
-            GameController.getMusic().dispose();
-        }
+//        if (GameController.getMusic() != null) {
+////            GameController.getMusic().stop();
+////            GameController.getMusic().dispose();
+////        }
     }
 
     /**
@@ -313,14 +313,14 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 //         If we use sound, we must remember this.
         SoundController.getInstance().update();
 
-        if (!dont_play_music) {
+//        if (!dont_play_music) {
             if (!music.isPlaying()) {
                 //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
                 music.play();
                 music.setLooping(true);
                 //music_name = "menu";
             }
-        }
+////        }
     }
 
     /** Called when a key was pressed
