@@ -334,9 +334,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 ((float) canvas.getHeight()/3.5f)/level.scale.y);
         nextButton.setPosition(((float) 3 * canvas.getWidth()/4)/level.scale.x,
                 ((float) canvas.getHeight()/3.5f)/level.scale.y);
-
-        //currentLevel = lastLevel;
-        //mouseControl = false;
     }
 
     /**
