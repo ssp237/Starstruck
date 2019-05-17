@@ -595,6 +595,14 @@
     "so boss": {
       "file": "sombrero/enemies/boss/sombrero_boss.png",
       "wrap": false
+    },
+    "ci boss": {
+      "file": "circinus/enemies/boss/circinus_boss.png",
+      "wrap": false
+    },
+    "ci boss-ket": {
+      "file": "circinus/enemies/boss/circinus_boss_basket.png",
+      "wrap": false
     }
   },
   "textures": {
@@ -735,7 +743,7 @@
       "rows": 1,
       "cols": 3,
       "size": 3,
-      "delay": 20
+      "delay": 5
     },
     "pink bug awake": {
       "file": "enemies/bugs/pink_open_filmstrip_SMALL.png",
@@ -912,6 +920,10 @@
     "anchor":	{
       "file": "audio/anchor.mp3",
       "volume":	1
+    },
+    "open portal": {
+      "file": "audio/gate_open.mp3",
+      "volume": 1
     },
     "space sounds": {
       "file": "audio/sounds from space/VanB-2017-04-05-2229.mp3",

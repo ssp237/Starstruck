@@ -79,7 +79,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
     private static final String MUSIC_FILE = "audio/loading_screen.mp3";
     public static boolean menuIsPlaying() {return music.isPlaying();}
 
-    public static Music music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
+    public static Music music = Settings.getMusic(); //Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
 
     public static Music getMusic() {return music;}
 
@@ -96,6 +96,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 
     /** Current selected button */
     private Button currentButton = null;
+    private int curInd = 0;
 
     /** Buttons to display upon winning a level */
     private PooledList<Button> buttons;
@@ -238,15 +239,15 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             b.pushed = false;
         }
 
-        if (music != null) {
-            music.stop();
-            music.dispose();
-        }
+//        if (music != null) {
+////            music.stop();
+////            music.dispose();
+////        }
 
-        if (GameController.getMusic() != null) {
-            GameController.getMusic().stop();
-            GameController.getMusic().dispose();
-        }
+//        if (GameController.getMusic() != null) {
+////            GameController.getMusic().stop();
+////            GameController.getMusic().dispose();
+////        }
     }
 
     /**
@@ -313,14 +314,16 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 //         If we use sound, we must remember this.
         SoundController.getInstance().update();
 
-        if (!dont_play_music) {
+//        if (!dont_play_music) {
             if (!music.isPlaying()) {
                 //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
                 music.play();
                 music.setLooping(true);
+                music.setVolume(0.6f);
+
                 //music_name = "menu";
             }
-        }
+////        }
     }
 
     /** Called when a key was pressed
@@ -362,6 +365,29 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             currentButton = quit;
             quit.pushed = true;
             return false;
+        }
+
+        if (keycode == Input.Keys.DOWN) {
+            if (currentButton != null) currentButton.setActive(false);
+            buttons.get(curInd).setActive(false);
+            curInd = (curInd + 1) % buttons.size();
+            currentButton = buttons.get(curInd);
+            currentButton.setActive(true);
+        } else if (keycode == Input.Keys.UP) {
+            if (currentButton != null) currentButton.setActive(false);
+            buttons.get(curInd).setActive(false);
+            curInd = (curInd - 1) % buttons.size();
+            if (curInd < 0) {
+                curInd += buttons.size();
+            }
+            currentButton = buttons.get(curInd);
+            currentButton.setActive(true);
+        } else if (keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) {
+            if (currentButton != null) {
+                currentButton.pushed = true;
+                currentButton.setActive(false);
+                pressState = 2;
+            }
         }
         return true;
     };

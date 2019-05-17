@@ -24,7 +24,7 @@ public class TalkingBoss extends Enemy {
     /** Counter for names */
     private static int worm_count = 1;
     /** Delay for talking boss to stay on screen */
-    private int delay_time = 100;
+    private int delay_time = 400;
 
     private float x_original;
 
@@ -154,7 +154,7 @@ public class TalkingBoss extends Enemy {
             delay_time--;
         }
         else {
-            this.setVX(-2f);
+            this.setVX(-6f);
         }
 
     }

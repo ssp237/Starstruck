@@ -47,7 +47,7 @@ import edu.cornell.gdiac.util.*;
 public class LevelSelect extends WorldController implements Screen, InputProcessor, ControllerListener {
 
     /** Speed of camera pan & zoom */
-    private static final float PAN_CONST = 10;
+    private static final float PAN_CONST = 20;
     /** The reader to process JSON files */
     private JsonReader jsonReader;
     /** The JSON asset directory */
@@ -102,6 +102,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     private Button replayButton;
     private Button nextButton;
     private Button menu;
+
+    private boolean mouseControl = false;
 
     /** Current selected button */
     private int curButton = -1;
@@ -371,20 +373,26 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         float rightBound = background.getWidth();
         float right = 1280 - 1280/4;
         float left = 1280/4;
-        if (Gdx.input.getX() >= right && camera.position.x + camera.viewportWidth/2 < rightBound-PAN_CONST) {
-            camera.position.add(new Vector3(PAN_CONST, 0, 0));
-            camOffsetX = camOffsetX + PAN_CONST;
-        } else if (Gdx.input.getX() <= left && camera.position.x - camera.viewportWidth/2 > 0) {
-            camera.position.sub(new Vector3(PAN_CONST, 0, 0));
-            camOffsetX = camOffsetX - PAN_CONST;
-        } else if (currentLevel != null && currentLevel.getPosition().x * level.scale.x >= right + camera.position.x - canvas.getWidth()/2
-                && camera.position.x + camera.viewportWidth/2 < rightBound-PAN_CONST) {
-            camera.position.add(new Vector3(PAN_CONST, 0, 0));
-            camOffsetX = camOffsetX + PAN_CONST;
-        } else if (currentLevel != null && currentLevel.getPosition().x * level.scale.x <= left + camera.position.x - canvas.getWidth()/2
-                && camera.position.x - camera.viewportWidth/2 > 0) {
-            camera.position.sub(new Vector3(PAN_CONST, 0, 0));
-            camOffsetX = camOffsetX - PAN_CONST;
+        if (mouseControl) {
+            if (Gdx.input.getX() >= right && camera.position.x + camera.viewportWidth / 2 < rightBound - PAN_CONST) {
+                camera.position.add(new Vector3(PAN_CONST, 0, 0));
+                camOffsetX = camOffsetX + PAN_CONST;
+            } else if (Gdx.input.getX() <= left && camera.position.x - camera.viewportWidth / 2 > 0) {
+                camera.position.sub(new Vector3(PAN_CONST, 0, 0));
+                camOffsetX = camOffsetX - PAN_CONST;
+            }
+        }
+        else {
+            float PAN_CONST2 = 2*PAN_CONST;
+            if (currentLevel != null && currentLevel.getPosition().x * level.scale.x >= right + camera.position.x - canvas.getWidth() / 2
+                    && camera.position.x + camera.viewportWidth / 2 < rightBound - PAN_CONST2) {
+                camera.position.add(new Vector3(PAN_CONST2, 0, 0));
+                camOffsetX = camOffsetX + PAN_CONST2;
+            } else if (currentLevel != null && currentLevel.getPosition().x * level.scale.x <= left + camera.position.x - canvas.getWidth() / 2
+                    && camera.position.x - camera.viewportWidth / 2 > 0) {
+                camera.position.sub(new Vector3(PAN_CONST2, 0, 0));
+                camOffsetX = camOffsetX - PAN_CONST2;
+            }
         }
         camera.update();
 
@@ -513,6 +521,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     public boolean keyUp (int keycode) {
         if (menu == null || levels.getTail() == null || winButtons.getTail() == null) { return true; }
 
+        mouseControl = false;
+
         if (winPos == null) {
             if (keycode == Input.Keys.RIGHT) {
                 //pressState = 0;
@@ -552,6 +562,9 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 } else {
                     winButtons.get(curButton).setActive(false);
                     curButton = (curButton + 1) % winButtons.size();
+                    if (curButton == 2 && nextLevel == null) {
+                        curButton = 0;
+                    }
                 }
                 winButtons.get(curButton).setActive(true);
                 return false;
@@ -564,6 +577,9 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                     winButtons.get(curButton).setActive(false);
                     curButton = (curButton - 1) % winButtons.size();
                     if (curButton < 0) curButton += winButtons.size();
+                    if (curButton == 2 && nextLevel == null) {
+                        curButton = 1;
+                    }
                 }
                 winButtons.get(curButton).setActive(true);
                 return false;
@@ -654,6 +670,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     /** Called when the mouse was moved without any buttons being pressed. Will not be called on iOS.
      * @return whether the input was processed */
     public boolean mouseMoved (int screenX, int screenY) {
+        mouseControl = true;
         currentLevel = null;
         screenY = heightY - screenY;
         Vector2 scale = level.getScale();

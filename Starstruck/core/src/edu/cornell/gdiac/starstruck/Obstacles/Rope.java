@@ -586,7 +586,6 @@ public class Rope extends ComplexObstacle {
                         plank.setLinearVelocity(dir);
                     else {
                         plank.getBody().applyForceToCenter(dir.scl(0.2f), true);
-                        System.out.println("here");
                     }
                     //i--;
                 }
@@ -595,7 +594,6 @@ public class Rope extends ComplexObstacle {
                         plank.setLinearVelocity(dirCache);
                     else {
                         plank.getBody().applyForceToCenter(dirCache.scl(0.2f), true);
-                        System.out.println("here");
                     }
                     //plank.getBody().applyForceToCenter(dir, true);
                     //i--;
@@ -615,7 +613,6 @@ public class Rope extends ComplexObstacle {
                         plank.setLinearVelocity(dir);
                     else {
                         plank.getBody().applyForceToCenter(dir.scl(0.2f), true);
-                        System.out.println("here");
                     }
                     //i++;
                 }
@@ -624,7 +621,6 @@ public class Rope extends ComplexObstacle {
                         plank.setLinearVelocity(dirCache);
                     else {
                         plank.getBody().applyForceToCenter(dirCache.scl(0.2f), true);
-                        System.out.println("here");
                     }
                     //plank.getBody().applyForceToCenter(dir, true);
                     //i++;

@@ -24,5 +24,7 @@ public enum ObstacleType {
     COLORED_BUG,
     TALKING_BOSS,
     OCTO_LEG,
-    AZTEC_WHEEL
+    AZTEC_WHEEL,
+    FERIS_WHEEL,
+    SPEECH_BUBBLE
 }
