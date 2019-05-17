@@ -383,7 +383,8 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             currentButton.setActive(true);
         } else if (keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) {
             if (currentButton != null) {
-                currentButton.pushed = true; 
+                currentButton.pushed = true;
+                currentButton.setActive(false);
                 pressState = 2;
             }
         }
