@@ -12,6 +12,8 @@ import edu.cornell.gdiac.starstruck.Obstacles.ObstacleType;
 import edu.cornell.gdiac.util.FilmStrip;
 import edu.cornell.gdiac.util.JsonAssetManager;
 
+import java.util.ArrayList;
+
 public class OctoLeg extends Enemy {
 
     /** Counter for names */
@@ -27,7 +29,7 @@ public class OctoLeg extends Enemy {
     /**Velocity; horizontal or vertical depending on orientation */
     private float v = 2.0f;
     /**Anchors! */
-    private Anchor anchor1, anchor2;
+    private ArrayList<Anchor> anchors;
     /** Original coordinates (for scrolling) */
     private float x_original, y_original;
 
@@ -59,19 +61,31 @@ public class OctoLeg extends Enemy {
         octo_count++;
         setDrawScale(scale);
 
-        Vector2 a1Pos = anchor1Pos(), a2Pos = anchor2Pos();
-        anchor1 = new Anchor(a1Pos.x, a1Pos.y,
-                JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
-        anchor2 = new Anchor(a2Pos.x, a2Pos.y,
-                JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
+//        Vector2 a1Pos = anchor1Pos(), a2Pos = anchor2Pos();
+//        anchor1 = new Anchor(a1Pos.x, a1Pos.y,
+//                JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
+//        anchor2 = new Anchor(a2Pos.x, a2Pos.y,
+//                JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale);
+
+        anchors = new ArrayList<Anchor>();
+        for (Vector2 p : anchorPossy()) {
+            anchors.add(new Anchor(p.x, p.y, JsonAssetManager.getInstance().getEntry("anchor", TextureRegion.class), scale));
+        }
+
         //System.out.println("height: " + getHeight() + ", width: " + getWidth());
 
         if (getOrientation() == Orientation.VERTICAL) {
             setVY(v);
-            anchor1.setVY(v); anchor2.setVY(v);
+            //anchor1.setVY(v); anchor2.setVY(v);
+            for (Anchor a : anchors) {
+                a.setVY(v);
+            }
         } else {
             setVX(v);
-            anchor1.setVX(v); anchor2.setVX(v);
+            //anchor1.setVX(v); anchor2.setVX(v);
+            for (Anchor a : anchors) {
+                a.setVX(v);
+            }
         }
 
         x_original = getX(); y_original = getY();
@@ -136,11 +150,42 @@ public class OctoLeg extends Enemy {
         return new Vector2(x,y);
     }
 
+    private ArrayList<Vector2> anchorPossy() {
+        ArrayList<Vector2> out = new ArrayList<Vector2>();
+        if (getOrientation() == Orientation.HORIZONTAL)  {
+            float x_start = getX() - getWidth()/2 + ((float) textures[0].getRegionHeight()/4)/drawScale.x;
+            float del_x = getWidth()/5;
+            float y = getY();
+
+            while(x_start < getX() + getWidth() / 2) {
+                out.add(new Vector2(x_start, y));
+                x_start += del_x;
+            }
+
+        } else {
+            float y_start = getY() - getHeight()/2 + ((float) textures[0].getRegionHeight()/4)/drawScale.x;
+            float del_y = getHeight()/5;
+            float x = getX();
+
+            while (y_start < getY() + getHeight() / 2) {
+                out.add(new Vector2(x, y_start));
+                y_start += del_y;
+                }
+            }
+        return out;
+    }
+
+
     public void setPosition(Vector2 position) {
         super.setPosition(position);
         Vector2 a1Pos = anchor1Pos(), a2Pos = anchor2Pos();
-        anchor1.setPosition(a1Pos);
-        anchor2.setPosition(a2Pos);
+        int i = 0;
+        for (Vector2 p : anchorPossy()) {
+            anchors.get(i).setPosition(p);
+            i++;
+        }
+        //anchor1.setPosition(a1Pos);
+        //anchor2.setPosition(a2Pos);
         x_original = getX(); y_original = getY();
     }
 
@@ -252,19 +297,28 @@ public class OctoLeg extends Enemy {
 //                this.setPosition(right_bound, y_pos);
 //            }
         //}
-        anchor1.update(dt);
-        anchor2.update(dt);
+//        anchor1.update(dt);
+//        anchor2.update(dt);
+        for (Anchor a : anchors) {
+            a.update(dt);
+        }
         if (this.getPosition().x < x_original - 5 || this.getPosition().x > x_original + 5) {
             //System.out.println(getVX());
             setVX(-getVX());
-            anchor1.setVX(getVX());
-            anchor2.setVX(getVX());
+//            anchor1.setVX(getVX());
+//            anchor2.setVX(getVX());
+            for (Anchor a : anchors) {
+                a.setVX(getVX());
+            }
         }
         if (this.getPosition().y < y_original - 5 || this.getPosition().y > y_original + 5) {
             //System.out.println(getVX());
             setVY(-getVY());
-            anchor1.setVY(getVY());
-            anchor2.setVY(getVY());
+//            anchor1.setVY(getVY());
+//            anchor2.setVY(getVY());
+            for (Anchor a : anchors) {
+                a.setVY(getVY());
+            }
         }
 //        Vector2 a1Pos = anchor1Pos(), a2Pos = anchor2Pos();
 //        anchor1.setPosition(a1Pos);
@@ -309,27 +363,41 @@ public class OctoLeg extends Enemy {
             x -= textures[2].getRegionHeight() / getDrawScale().x;
             canvas.draw(textures[2], Color.WHITE, origin.x, origin.y, x * drawScale.x, y * drawScale.y, getAngle() + angle, 1, 1.0f);
         }
-        anchor1.draw(canvas);
-        anchor2.draw(canvas);
+//        anchor1.draw(canvas);
+//        anchor2.draw(canvas);
+        for (Anchor a : anchors) {
+            a.draw(canvas);
+        }
     }
 
     public void drawDebug(GameCanvas canvas) {
         super.drawDebug(canvas);
-        anchor1.drawDebug(canvas);
-        anchor2.drawDebug(canvas);
+//        anchor1.drawDebug(canvas);
+//        anchor2.drawDebug(canvas);
+        for (Anchor a : anchors) {
+            a.drawDebug(canvas);
+        }
     }
 
     public ObstacleType getType() { return ObstacleType.OCTO_LEG;}
 
     public boolean activatePhysics(World world) {
-        return super.activatePhysics(world) && anchor1.activatePhysics(world)
-                && anchor2.activatePhysics(world);
+//        return super.activatePhysics(world) && anchor1.activatePhysics(world)
+//                && anchor2.activatePhysics(world);
+        if (!super.activatePhysics(world)) return false;
+        for (Anchor a : anchors) {
+            if (!a.activatePhysics(world)) return false;
+        }
+        return true;
     }
 
     public void deactivatePhysics(World world) {
         super.deactivatePhysics(world);
-        anchor1.deactivatePhysics(world);
-        anchor2.deactivatePhysics(world);
+//        anchor1.deactivatePhysics(world);
+//        anchor2.deactivatePhysics(world);
+        for (Anchor a : anchors) {
+            a.deactivatePhysics(world);
+        }
     }
 
 
