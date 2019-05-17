@@ -289,6 +289,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         setFailure(false);
         pressState = 0;
         assignLevelFields();
+        if (currentLevel == null) { currentLevel = level.firstLevel; }
         menu.pushed = false;
         camOffsetX = 0;
 
@@ -649,7 +650,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                     pressState = 2;
                 }
             }
-            if (menu.isIn(screenX, screenY) && menu.getActive()) {
+            if (menu.isIn(screenX+camOffsetX, screenY) && menu.getActive()) {
                 menu.pushed = true;
                 pressState = 2;
             }
@@ -686,7 +687,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
         if (winPos == null) {
             menu.setActive(false);
-            if (menu.isIn(screenX, screenY)) {
+            if (menu.isIn(screenX+camOffsetX, screenY)) {
                 menu.setActive(true);
             }
             for (Level l : levels) {
