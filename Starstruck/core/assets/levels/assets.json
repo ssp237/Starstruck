@@ -909,6 +909,10 @@
       "file": "audio/gate_open.mp3",
       "volume": 1
     },
+    "portal": {
+      "file": "audio/portal.mp3",
+      "volume": 1
+    },
     "space sounds": {
       "file": "audio/sounds from space/VanB-2017-04-05-2229.mp3",
       "volume": 1

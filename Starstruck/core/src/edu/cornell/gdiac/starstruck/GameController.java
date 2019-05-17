@@ -73,6 +73,8 @@ public class GameController extends WorldController implements ContactListener {
     /** The sound file for a character switch */
     private static final String OPEN_GOAL = "open portal";
 
+    private static final String PORTAL_FILE = "portal";
+
 
     /** The background for DEATH*/
     private Texture death;
@@ -263,6 +265,7 @@ public class GameController extends WorldController implements ContactListener {
         sounds.allocate("switch");
         sounds.allocate("space sounds");
         sounds.allocate("open portal");
+        sounds.allocate("portal");
 
         //UI
 
@@ -1259,6 +1262,7 @@ public class GameController extends WorldController implements ContactListener {
             portalpairCache = findPortalPair(portalAvatar.portalCache);
             if (!portalpairCache.isGoal() || portalpairCache.isGoal() && openGoal) {
                 portalpairCache.teleport(world, portalAvatar, rope);
+                SoundController.getInstance().play(PORTAL_FILE, PORTAL_FILE,false,0.7f);
                 portalAvatar.portalCount = 5;
             }
             result = true;
@@ -1858,7 +1862,7 @@ public class GameController extends WorldController implements ContactListener {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/tutorial_music.mp3"));
                 music.play();
                 music.setLooping(true);
-                music.setVolume(0.4f);
+                music.setVolume(0.6f);
                 music_name = "tutorial";
             }
         } else if (level.getGalaxy() == Galaxy.WHIRLPOOL) {
@@ -1871,7 +1875,7 @@ public class GameController extends WorldController implements ContactListener {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/whirlpool_music.mp3"));
                 music.play();
                 music.setLooping(true);
-                music.setVolume(0.4f);
+                music.setVolume(0.6f);
                 music_name = "whirlpool";
             }
 
@@ -1885,7 +1889,7 @@ public class GameController extends WorldController implements ContactListener {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/milky_way.mp3"));
                 music.play();
                 music.setLooping(true);
-                music.setVolume(0.4f);
+                music.setVolume(0.6f);
                 music_name = "milkyway";
             }
         } else if (level.getGalaxy() == Galaxy.SOMBRERO) {
@@ -1898,7 +1902,7 @@ public class GameController extends WorldController implements ContactListener {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/sombrero_beat.mp3"));
                 music.play();
                 music.setLooping(true);
-                music.setVolume(0.4f);
+                music.setVolume(0.6f);
                 music_name = "sombrero";
             }
         } else if (level.getGalaxy() == Galaxy.CIRCINUS) {
