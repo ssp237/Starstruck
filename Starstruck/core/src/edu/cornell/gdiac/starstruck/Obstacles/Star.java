@@ -74,8 +74,10 @@ public class Star extends BoxObstacle {
     public boolean removed = false;
     /** galaxy */
     private Galaxy galaxy;
-    /**length of time for speech bubble to stay on there*/
-    private int delay = 100;
+
+
+    /** Delay for speech bubble to stay on screen */
+    private int delay_time = 400;
 
     /**
      * Creates a new spinner at the origin.
@@ -305,11 +307,11 @@ public class Star extends BoxObstacle {
             tutText.tick();
         }
         if (getType() == ObstacleType.SPEECH_BUBBLE) {
-            if (delay < 1) {
-                remove = true;
+            if (delay_time > 1) {
+                delay_time--;
             }
             else {
-                delay--;
+                this.setVX(-6f);
             }
         }
     }

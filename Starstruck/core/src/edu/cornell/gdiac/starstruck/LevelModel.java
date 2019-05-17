@@ -527,6 +527,7 @@ public class LevelModel {
             world.dispose();
             world = new World(new Vector2(0,0), false);
         }
+        speechBubble = null;
         talkingboss = null;
         objects.clear();
         planets.clear();

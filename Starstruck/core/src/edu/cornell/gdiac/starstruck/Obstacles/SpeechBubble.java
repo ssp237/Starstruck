@@ -23,6 +23,8 @@ public class SpeechBubble{
 
     private TextureRegion texture;
 
+
+
 //    private float x;
 //
 //    private float y;
