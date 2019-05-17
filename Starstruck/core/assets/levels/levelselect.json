@@ -183,7 +183,7 @@
       "json file": "sombrero/levelboss.json"
     },
     {
-      "x": 220,
+      "x": 211,
       "y": 10,
       "r": 5.3,
       "texture": "ls p19",
@@ -192,10 +192,6 @@
       "completed": "false",
       "json file": "circinus/level1.json"
     }
-
-
-
-
 
   ]
 }
