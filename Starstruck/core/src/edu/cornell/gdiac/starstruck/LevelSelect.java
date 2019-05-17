@@ -21,6 +21,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.controllers.PovDirection;
+import com.badlogic.gdx.controllers.mappings.Xbox;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -113,10 +114,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
     /**Last level to be played; next level to play */
     private Level lastLevel, nextLevel;
-
-    /** controller stuff */
-    XboxController xbox = new XboxController(0);
-    XboxController xbox2 = new XboxController(1);
 
     /**
      * Load the assets for this controller.
@@ -406,7 +403,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         menu.setPosition(centerX, centerY);
 
     }
-
 
     /**
      * Helper for update for control on planet
@@ -818,68 +814,6 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     /** A {@link Controller} got connected.
      * @param controller */
     public void connected (Controller controller) {
-//        if (menu == null || levels.getTail() == null || winButtons.getTail() == null) { }
-
-        if (winPos == null) {
-            if (xbox.getLeftX() < -0.6) {
-                //pressState = 0;
-                //print(currentLevel);
-                if (currentLevel == null) {
-                    currentLevel = level.firstLevel;
-                } else if (currentLevel.nextLevel != null) {
-                    currentLevel.setActive(false);
-                    currentLevel = currentLevel.nextLevel;
-                }
-                currentLevel.setActive(true);
-            } else if (xbox.getLeftX() > 0.6) {
-                //pressState = 0;
-                //print(currentLevel);
-                if (currentLevel == null) {
-                    currentLevel = level.firstLevel;
-                } else if (currentLevel.lastLevel != null) {
-                    currentLevel.setActive(false);
-                    currentLevel = currentLevel.lastLevel;
-                }
-                currentLevel.setActive(true);
-            } else if ((xbox.getA()) && currentLevel != null) {
-                currentLevel.setActive(false);
-                pressState = 2;
-            } else if (xbox.getBack()) {
-                menu.pushed = true;
-                pressState = 2;
-            }
-        } else {
-            if (xbox.getLeftX() > 0.6) {
-                if (curButton == -1) {
-                    curButton = 0;
-                } else {
-                    winButtons.get(curButton).setActive(false);
-                    curButton = (curButton + 1) % winButtons.size();
-                }
-                winButtons.get(curButton).setActive(true);
-            } else if (xbox.getLeftX() < -0.6) {
-                //pressState = 0;
-                //print(currentLevel);
-                if (curButton == -1) {
-                    curButton = 0;
-                } else {
-                    winButtons.get(curButton).setActive(false);
-                    curButton = (curButton - 1) % winButtons.size();
-                    if (curButton < 0) curButton += winButtons.size();
-                }
-                winButtons.get(curButton).setActive(true);
-            } else if ((xbox.getA()) && curButton != -1) {
-                if (allLevels.getActive()) {
-                    animLoop++;
-                } else if (replayButton.getActive()) {
-                    replayButton.pushed = true;
-                } else if (nextButton.getActive()) {
-                    nextButton.pushed = true;
-                }
-            } else if (xbox.getBack()) {
-                animLoop ++;
-            }
-        }
     }
 
     /** A {@link Controller} got disconnected.
@@ -898,7 +832,49 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param controller
      * @param buttonCode
      * @return whether to hand the event to other listeners. */
-    public boolean buttonUp (Controller controller, int buttonCode) { return true; }
+    public boolean buttonUp (Controller controller, int buttonCode) {
+        if (menu == null || levels.getTail() == null || winButtons.getTail() == null) { return true; }
+
+        mouseControl = false;
+
+        if (winPos == null) {
+            if (buttonCode == Xbox.A) {
+                if (currentLevel != null)
+                    currentLevel.setActive(false);
+                pressState = 2;
+                return false;
+            }
+            else if (buttonCode == Xbox.BACK) {
+                menu.pushed = true;
+                pressState = 2;
+                return false;
+            }
+        }
+        else {
+            if (buttonCode == Xbox.A) {
+                if (allLevels.getActive()) {
+                    animLoop++;
+                } else if (replayButton.getActive()) {
+                    replayButton.pushed = true;
+                } else if (nextButton.getActive()) {
+                    nextButton.pushed = true;
+                }
+                return false;
+            }
+            else if (buttonCode == Xbox.BACK) {
+                animLoop ++;
+                return false;
+            }
+            else if (buttonCode == Xbox.START) {
+                if (nextLevel != null) {
+                    curButton = 2;
+                    nextButton.pushed = true;
+                }
+            }
+        }
+
+        return true;
+    }
 
     /** An axis on the {@link Controller} moved. The axisCode is controller specific. The axis value is in the range [-1, 1]. The
      * <code>com.badlogic.gdx.controllers.mapping</code> package hosts axes constants for known controllers.
@@ -906,7 +882,85 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param axisCode
      * @param value the axis value, -1 to 1
      * @return whether to hand the event to other listeners. */
-    public boolean axisMoved (Controller controller, int axisCode, float value) { return true; }
+    public boolean axisMoved (Controller controller, int axisCode, float value) {
+//        mouseControl = false;
+//        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
+//
+//        if (winPos == null) {
+//            if (axisCode == Xbox.R_STICK_HORIZONTAL_AXIS) {
+//                print(value);
+//                if (value > 0.6f) {
+//                    camera.position.add(new Vector3(PAN_CONST, 0, 0));
+//                    camOffsetX = camOffsetX + PAN_CONST;
+//                    return false;
+//                } else if (value < -0.6f) {
+//                    camera.position.sub(new Vector3(PAN_CONST, 0, 0));
+//                    camOffsetX = camOffsetX - PAN_CONST;
+//                    return false;
+//                }
+//            }
+//        }
+
+        if (axisCode == Xbox.L_STICK_HORIZONTAL_AXIS) {
+            if (menu == null || levels.getTail() == null || winButtons.getTail() == null) { return true; }
+            mouseControl = false;
+
+            if (winPos == null) {
+                if (value == 1f) {
+                    if (currentLevel == null) {
+                        currentLevel = level.firstLevel;
+                    } else if (currentLevel.nextLevel != null) {
+                        currentLevel.setActive(false);
+                        currentLevel = currentLevel.nextLevel;
+                    }
+                    currentLevel.setActive(true);
+                    return false;
+                }
+                else if (value == -1f) {
+                    if (currentLevel == null) {
+                        currentLevel = level.firstLevel;
+                    } else if (currentLevel.lastLevel != null) {
+                        currentLevel.setActive(false);
+                        currentLevel = currentLevel.lastLevel;
+                    }
+                    currentLevel.setActive(true);
+                    return false;
+                }
+            }
+            else {
+                if (value == 1f) {
+                    if (curButton == -1) {
+                        curButton = 0;
+                    } else {
+                        winButtons.get(curButton).setActive(false);
+                        curButton = (curButton + 1) % winButtons.size();
+                        if (curButton == 2 && nextLevel == null) {
+                            curButton = 0;
+                        }
+                    }
+                    winButtons.get(curButton).setActive(true);
+                    return false;
+                }
+                else if (value == -1f) {
+                    if (curButton == -1) {
+                        curButton = 0;
+                    } else {
+                        winButtons.get(curButton).setActive(false);
+                        curButton = (curButton - 1) % winButtons.size();
+                        if (curButton < 0) curButton += winButtons.size();
+                        if (curButton == 2 && nextLevel == null) {
+                            curButton = 1;
+                        }
+                    }
+                    winButtons.get(curButton).setActive(true);
+                    return false;
+                }
+            }
+        }
+
+
+        return true;
+    }
 
     /** A POV on the {@link Controller} moved. The povCode is controller specific. The
      * <code>com.badlogic.gdx.controllers.mapping</code> package hosts POV constants for known controllers.
@@ -914,7 +968,64 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @param povCode
      * @param value
      * @return whether to hand the event to other listeners. */
-    public boolean povMoved (Controller controller, int povCode, PovDirection value) { return true; }
+    public boolean povMoved (Controller controller, int povCode, PovDirection value) {
+        if (menu == null || levels.getTail() == null || winButtons.getTail() == null) { return true; }
+
+        mouseControl = false;
+
+        if (winPos == null && povCode == 0) {
+            if (value == PovDirection.east) {
+                if (currentLevel == null) {
+                    currentLevel = level.firstLevel;
+                } else if (currentLevel.nextLevel != null) {
+                    currentLevel.setActive(false);
+                    currentLevel = currentLevel.nextLevel;
+                }
+                currentLevel.setActive(true);
+                return false;
+            } else if (value == PovDirection.west) {
+                if (currentLevel == null) {
+                    currentLevel = level.firstLevel;
+                } else if (currentLevel.lastLevel != null) {
+                    currentLevel.setActive(false);
+                    currentLevel = currentLevel.lastLevel;
+                }
+                currentLevel.setActive(true);
+                return false;
+            }
+        }
+        else if (povCode == 0 ){
+            if (value == PovDirection.east) {
+                if (curButton == -1) {
+                    curButton = 0;
+                } else {
+                    winButtons.get(curButton).setActive(false);
+                    curButton = (curButton + 1) % winButtons.size();
+                    if (curButton == 2 && nextLevel == null) {
+                        curButton = 0;
+                    }
+                }
+                winButtons.get(curButton).setActive(true);
+                return false;
+            }
+            else if (value == PovDirection.west) {
+                if (curButton == -1) {
+                    curButton = 0;
+                } else {
+                    winButtons.get(curButton).setActive(false);
+                    curButton = (curButton - 1) % winButtons.size();
+                    if (curButton < 0) curButton += winButtons.size();
+                    if (curButton == 2 && nextLevel == null) {
+                        curButton = 1;
+                    }
+                }
+                winButtons.get(curButton).setActive(true);
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     /** An x-slider on the {@link Controller} moved. The sliderCode is controller specific. The
      * <code>com.badlogic.gdx.controllers.mapping</code> package hosts slider constants for known controllers.
