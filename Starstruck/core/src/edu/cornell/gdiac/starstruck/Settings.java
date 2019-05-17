@@ -168,11 +168,11 @@ public class Settings extends WorldController implements Screen, InputProcessor,
         buttons.add(play);
 
         texture = JsonAssetManager.getInstance().getEntry("keyboard button", TextureRegion.class);
-        keyboard = new Button(canvas.getWidth()/3-20,canvas.getHeight()/2, texture.getRegionWidth(), texture.getRegionHeight(), texture,
+        keyboard = new Button(canvas.getWidth()/2-130,435, texture.getRegionWidth(), texture.getRegionHeight(), texture,
                 world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("keyboard glow", TextureRegion.class), "onePlayer");
 
         texture = JsonAssetManager.getInstance().getEntry("controller button", TextureRegion.class);
-        controller = new Button(canvas.getWidth()*2/3+20,canvas.getHeight()/2, texture.getRegionWidth(), texture.getRegionHeight(), texture,
+        controller = new Button(canvas.getWidth()/2+130,435, texture.getRegionWidth(), texture.getRegionHeight(), texture,
                 world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("controller glow", TextureRegion.class), "twoPlayer");
 
         Gdx.input.setInputProcessor(this);
@@ -246,12 +246,14 @@ public class Settings extends WorldController implements Screen, InputProcessor,
 
     public void updateAssets(GameCanvas canvas) {
         if (showXbox) {
+            controller.setActive(true);
             if (numPlayers == 1) {
                 controls = controller1;
             } else if (numPlayers == 2) {
                 controls = controller2;
             }
         } else {
+            keyboard.setActive(true);
             if (numPlayers == 1) {
                 controls = keyboard1;
             } else if (numPlayers == 2) {
@@ -282,11 +284,6 @@ public class Settings extends WorldController implements Screen, InputProcessor,
             b.setActive(false);
             b.pushed = false;
         }
-
-//        if (music != null) {
-//            music.stop();
-//            music.dispose();
-//        }
 
         if (GameController.getMusic() != null) {
             GameController.getMusic().stop();
@@ -487,8 +484,17 @@ public class Settings extends WorldController implements Screen, InputProcessor,
             }
         }
         if (numPlayers != 0) {
-            keyboard.isIn(screenX, screenY);
-            controller.isIn(screenX, screenY);
+            keyboard.setActive(!showXbox);
+            controller.setActive(showXbox);
+            keyboard.pushed = false;
+            controller.pushed = false;
+            if (keyboard.isIn(screenX, screenY)) {
+                currentButton = keyboard;
+                keyboard.setActive(true);
+            } else if(controller.isIn(screenX, screenY)) {
+                currentButton = controller;
+                controller.setActive(true);
+            }
         }
         return true;
     };
@@ -537,8 +543,16 @@ public class Settings extends WorldController implements Screen, InputProcessor,
             } else {
                 if (isReady() && currentButton == onePlayer && onePlayer.pushed) {
                     numPlayers = 1;
+                    updateAssets(canvas);
                 } else if (isReady() && currentButton == twoPlayer && twoPlayer.pushed) {
                     numPlayers = 2;
+                    updateAssets(canvas);
+                } else if (isReady() && currentButton == keyboard && keyboard.pushed) {
+                    showXbox = false;
+                    updateAssets(canvas);
+                } else if (isReady() && currentButton == controller && controller.pushed) {
+                    showXbox = true;
+                    updateAssets(canvas);
                 }
             }
         }

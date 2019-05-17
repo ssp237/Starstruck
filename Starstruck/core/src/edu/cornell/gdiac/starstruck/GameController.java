@@ -487,6 +487,9 @@ public class GameController extends WorldController implements ContactListener {
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
 
+        camOffsetX = 0;
+        camOffsetY = 0;
+
         currentButton = null;
         for (Button b : ui) {
             b.pushed = false;
@@ -504,8 +507,6 @@ public class GameController extends WorldController implements ContactListener {
         collectCount = 60;
         deathOp = 0f;
         portalpairCache = null;
-        camOffsetX = 0;
-        camOffsetY = 0;
 
         paused = false;
 
