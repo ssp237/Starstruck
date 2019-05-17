@@ -248,6 +248,18 @@
       "file": "levelselect/lvl16.png",
       "wrap": false
     },
+    "ls p17": {
+      "file": "levelselect/lvl17.png",
+      "wrap": false
+    },
+    "ls p18": {
+      "file": "levelselect/lvl18.png",
+      "wrap": false
+    },
+    "ls p19": {
+      "file": "levelselect/lvl19.png",
+      "wrap": false
+    },
     "de p1": {
       "file": "default/planets/static_default.planet1_v1.png",
       "wrap": false

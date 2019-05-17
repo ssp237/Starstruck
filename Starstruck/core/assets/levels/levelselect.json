@@ -60,7 +60,7 @@
       "ring texture": "ls mw g",
       "unlocked": "true",
       "completed": "false",
-      "json file": "milky/level1.json"
+      "json file": "milky/levelOne.json"
     },
     {
       "x": 55,
@@ -70,7 +70,7 @@
       "ring texture": "ls mw g",
       "unlocked": "true",
       "completed": "false",
-      "json file": "milky/levelOne.json"
+      "json file": "milky/level1.json"
     },
     {
       "x": 62,
@@ -80,7 +80,7 @@
       "ring texture": "ls mw g",
       "unlocked": "true",
       "completed": "false",
-      "json file": "main/milkyDemo2.json"
+      "json file": "main/levelTwo.json"
     },
     {
       "x": 68,
@@ -90,7 +90,7 @@
       "ring texture": "ls mw g",
       "unlocked": "true",
       "completed": "false",
-      "json file": "milky/levelTwo.json"
+      "json file": "milky/levelThree.json"
     },
     {
       "x": 77,
@@ -100,7 +100,7 @@
       "ring texture": "ls mw g",
       "unlocked": "true",
       "completed": "false",
-      "json file": "milky/levelThree.json"
+      "json file": "main/milkyDemo2.json"
     },
     {
       "x": 98.5,
@@ -110,7 +110,7 @@
       "ring texture": "ls wp g",
       "unlocked": "true",
       "completed": "false",
-      "json file": "whirlpool/levelOne.json"
+      "json file": "whirlpool/oldTutorial.json"
     },
     {
       "x": 109,
@@ -120,7 +120,7 @@
       "ring texture": "ls wp g",
       "unlocked": "true",
       "completed": "false",
-      "json file": "whirlpool/oldTutorial.json"
+      "json file": "main/oldTutorial.json"
     },
     {
       "x": 118,
@@ -173,9 +173,9 @@
       "json file": "sombrero/levelThree.json"
     },
     {
-      "x": 180,
-      "y": 10,
-      "r": 5,
+      "x": 178,
+      "y": 4.5,
+      "r": 3,
       "texture": "ls p16",
       "ring texture": "ls so g",
       "unlocked": "true",
@@ -183,22 +183,31 @@
       "json file": "sombrero/boss.json"
     },
     {
-      "x": 180,
+      "x": 184,
       "y": 13,
       "r": 5,
-      "texture": "ls p16",
+      "texture": "ls p17",
       "ring texture": "ls so g",
       "unlocked": "true",
       "completed": "false",
       "json file": "sombrero/levelboss.json"
     },
-
     {
-      "x": 185,
-      "y": 5,
-      "r": 5,
-      "texture": "ls p16",
-      "ring texture": "ls so g",
+      "x": 208,
+      "y": 12,
+      "r": 4,
+      "texture": "ls p18",
+      "ring texture": "ls ci g",
+      "unlocked": "true",
+      "completed": "false",
+      "json file": "circinus/boss.json"
+    },
+    {
+      "x": 220,
+      "y": 8,
+      "r": 5.3,
+      "texture": "ls p19",
+      "ring texture": "ls ci g",
       "unlocked": "true",
       "completed": "false",
       "json file": "circinus/level1.json"
