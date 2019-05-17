@@ -124,12 +124,13 @@ public class TutorialPoint {
      * @return A star created according to the specifications in the JSON
      */
     public static TutorialPoint fromJSON(JsonValue json, Vector2 scale) {
+        InputController input = InputController.getInstance();
         String taskname = json.get("taskText").asString();
         String key = taskname + " keyone";
-        if (InputController.getInstance().getControlType() == ControllerType.CTRLONE) {
+        if ((input.getControlType() == ControllerType.CTRLONE || input.getControlType() == ControllerType.CTRLTWO) && !twoplayer) {
             key = taskname + " ctrlone";
         }
-        if (InputController.getInstance().getControlType() == ControllerType.CTRLTWO) {
+        if ((input.getControlType() == ControllerType.CTRLONE || input.getControlType() == ControllerType.CTRLTWO) && twoplayer) {
             key = taskname + " ctrlone";
             if (taskname.equals("switch"))
                 key = "move ctrlone";
