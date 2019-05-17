@@ -2318,8 +2318,8 @@ public class GameController extends WorldController implements ContactListener {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         if (tutDrawCache != null) {
             TextureRegion text = tutDrawCache.getTask();
-            float xPos = camera.position.x - (float) text.getRegionWidth() / 2;
-            float yPos = camera.position.y - camera.viewportHeight / 2 + (float) text.getRegionHeight()*0.15f;
+            float xPos = camera.position.x - (float)canvas.getWidth()/2 + (float)text.getRegionWidth()*0.15f;
+            float yPos = camera.position.y - camera.viewportHeight/2 + (float) text.getRegionHeight()*0.15f;
             canvas.draw(text, Color.WHITE, 0, 0, xPos, yPos, 0, 1, 1);
         }
         if (tutorial) {
