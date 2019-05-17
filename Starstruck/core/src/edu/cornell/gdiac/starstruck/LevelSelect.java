@@ -114,7 +114,9 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
     /**Last level to be played; next level to play */
     private Level lastLevel, nextLevel;
 
-
+    /** controller stuff */
+    XboxController xbox = new XboxController(0);
+    XboxController xbox2 = new XboxController(1);
 
     /**
      * Load the assets for this controller.
@@ -809,7 +811,70 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
     /** A {@link Controller} got connected.
      * @param controller */
-    public void connected (Controller controller) {  }
+    public void connected (Controller controller) {
+//        if (menu == null || levels.getTail() == null || winButtons.getTail() == null) { }
+
+        if (winPos == null) {
+            if (xbox.getLeftX() < -0.6) {
+                //pressState = 0;
+                //print(currentLevel);
+                if (currentLevel == null) {
+                    currentLevel = level.firstLevel;
+                } else if (currentLevel.nextLevel != null) {
+                    currentLevel.setActive(false);
+                    currentLevel = currentLevel.nextLevel;
+                }
+                currentLevel.setActive(true);
+            } else if (xbox.getLeftX() > 0.6) {
+                //pressState = 0;
+                //print(currentLevel);
+                if (currentLevel == null) {
+                    currentLevel = level.firstLevel;
+                } else if (currentLevel.lastLevel != null) {
+                    currentLevel.setActive(false);
+                    currentLevel = currentLevel.lastLevel;
+                }
+                currentLevel.setActive(true);
+            } else if ((xbox.getA()) && currentLevel != null) {
+                currentLevel.setActive(false);
+                pressState = 2;
+            } else if (xbox.getBack()) {
+                menu.pushed = true;
+                pressState = 2;
+            }
+        } else {
+            if (xbox.getLeftX() > 0.6) {
+                if (curButton == -1) {
+                    curButton = 0;
+                } else {
+                    winButtons.get(curButton).setActive(false);
+                    curButton = (curButton + 1) % winButtons.size();
+                }
+                winButtons.get(curButton).setActive(true);
+            } else if (xbox.getLeftX() < -0.6) {
+                //pressState = 0;
+                //print(currentLevel);
+                if (curButton == -1) {
+                    curButton = 0;
+                } else {
+                    winButtons.get(curButton).setActive(false);
+                    curButton = (curButton - 1) % winButtons.size();
+                    if (curButton < 0) curButton += winButtons.size();
+                }
+                winButtons.get(curButton).setActive(true);
+            } else if ((xbox.getA()) && curButton != -1) {
+                if (allLevels.getActive()) {
+                    animLoop++;
+                } else if (replayButton.getActive()) {
+                    replayButton.pushed = true;
+                } else if (nextButton.getActive()) {
+                    nextButton.pushed = true;
+                }
+            } else if (xbox.getBack()) {
+                animLoop ++;
+            }
+        }
+    }
 
     /** A {@link Controller} got disconnected.
      * @param controller */
