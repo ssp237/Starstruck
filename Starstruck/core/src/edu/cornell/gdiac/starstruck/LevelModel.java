@@ -369,10 +369,9 @@ public class LevelModel {
                     key = bug.get("color").asString();
                     FilmStrip sleeptexture = JsonAssetManager.getInstance().getEntry(key + " bug asleep", FilmStrip.class);
                     ModelColor modelColor = key.equals("pink") ? ModelColor.PINK : ModelColor.BLUE;
-                    buggy = new ColoredBug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, sleeptexture, scale, modelColor);
+                    buggy = new ColoredBug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, sleeptexture, scale, modelColor, vectorWorld);
                 } catch (Exception e) {
-                    buggy = new Bug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, scale);
-                    buggy.vectorWorld = vectorWorld;
+                    buggy = new Bug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, scale, vectorWorld);
                 }
 
                 activate(buggy);

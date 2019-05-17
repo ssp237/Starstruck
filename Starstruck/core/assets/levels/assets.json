@@ -719,7 +719,7 @@
       "rows": 1,
       "cols": 3,
       "size": 3,
-      "delay": 20
+      "delay": 5
     },
     "pink bug awake": {
       "file": "enemies/bugs/pink_open_filmstrip_SMALL.png",

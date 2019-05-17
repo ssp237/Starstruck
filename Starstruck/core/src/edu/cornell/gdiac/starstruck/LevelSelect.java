@@ -47,7 +47,7 @@ import edu.cornell.gdiac.util.*;
 public class LevelSelect extends WorldController implements Screen, InputProcessor, ControllerListener {
 
     /** Speed of camera pan & zoom */
-    private static final float PAN_CONST = 10;
+    private static final float PAN_CONST = 20;
     /** The reader to process JSON files */
     private JsonReader jsonReader;
     /** The JSON asset directory */
@@ -383,7 +383,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
             }
         }
         else {
-            float PAN_CONST2 = 3*PAN_CONST;
+            float PAN_CONST2 = 2*PAN_CONST;
             if (currentLevel != null && currentLevel.getPosition().x * level.scale.x >= right + camera.position.x - canvas.getWidth() / 2
                     && camera.position.x + camera.viewportWidth / 2 < rightBound - PAN_CONST2) {
                 camera.position.add(new Vector3(PAN_CONST2, 0, 0));
