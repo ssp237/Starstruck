@@ -503,6 +503,8 @@ public class GameController extends WorldController implements ContactListener {
 
         paused = false;
 
+        hasPlayedSound = false;
+
         statusBar  = JsonAssetManager.getInstance().getEntry("starbar", Texture.class);
         // Break up the status bar texture into regions
         statusBkgLeft   = new TextureRegion(statusBar,0,0,PROGRESS_CAP_LEFT,PROGRESS_HEIGHT);
@@ -753,7 +755,7 @@ public class GameController extends WorldController implements ContactListener {
         avatar1.setAngularVelocity(0);
         //avatar2.setUnAnchored();
         //avatar2.setActive(true);
-        SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,0.4f);
+        SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,0.25f);
     }
 
     /**
@@ -1686,7 +1688,7 @@ public class GameController extends WorldController implements ContactListener {
         //Collect star
         if (collection) {
             if (starCount >= winCount && !hasPlayedSound) {
-                SoundController.getInstance().play(OPEN_GOAL,OPEN_GOAL,false,0.6f);
+                SoundController.getInstance().play(OPEN_GOAL,OPEN_GOAL,false,0.4f);
                 starCache.deactivatePhysics(world);
                 removed.add(starCache);
                 hasPlayedSound = true;
@@ -1899,8 +1901,19 @@ public class GameController extends WorldController implements ContactListener {
                 music.setVolume(0.4f);
                 music_name = "sombrero";
             }
-//            System.out.println("in sombrero and music " + music.isPlaying());
-//            System.out.println("music name = " + music_name);
+        } else if (level.getGalaxy() == Galaxy.CIRCINUS) {
+            if (music != null && !music_name.equals("circinus")) {
+                music.stop();
+                music.dispose();
+                music = null;
+            }
+            if (music == null || !music.isPlaying()) {
+                music = Gdx.audio.newMusic(Gdx.files.internal("audio/circinus_song.mp3"));
+                music.play();
+                music.setLooping(true);
+                music.setVolume(0.6f);
+                music_name = "circinus";
+            }
         }
 
 
