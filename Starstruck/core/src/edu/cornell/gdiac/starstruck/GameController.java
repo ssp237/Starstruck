@@ -98,6 +98,8 @@ public class GameController extends WorldController implements ContactListener {
     private Button settings;
     private Button back;
     private Button restart;
+    private PooledList<Button> ui;
+    private Button currentButton;
 
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
@@ -156,18 +158,15 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void drawUI(GameCanvas canvas) {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
-
-        float centerY = camera.position.y + canvas.getHeight()/2 - 50;
-        float centerX = camera.position.x + canvas.getWidth()/2 + 50;
-//        back.setPosition(centerX, centerY);
-//        restart.setPosition(centerX, centerY);
+        float centerY = camera.position.y + ((float) canvas.getHeight())/2 - 35;
+        float centerX = camera.position.x + ((float) canvas.getWidth())/2 - 35;
+        back.setPosition(centerX, centerY);
+        restart.setPosition(centerX-50, centerY);
 //        settings.setPosition(centerX, centerY);
-
-        System.out.println("what");
 
         back.draw(canvas);
         restart.draw(canvas);
-        settings.draw(canvas);
+//        settings.draw(canvas);
     }
 
     /**StarCount bar */
@@ -179,8 +178,8 @@ public class GameController extends WorldController implements ContactListener {
         if (gal == Galaxy.SOMBRERO)
             tinge = Color.WHITE;
 
-        float centerY = camera.position.y + ((float) canvas.getHeight())/2 - 80;
-        float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 45;
+        float centerY = camera.position.y + ((float) canvas.getHeight())/2 - 70;
+        float centerX = camera.position.x - ((float) canvas.getWidth())/2 + 25;
         canvas.draw(statusBkgLeft, tinge, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
         canvas.draw(statusBkgRight, tinge, centerX + statusBkgMiddle.getRegionWidth() + 23, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
         canvas.draw(statusBkgMiddle, tinge, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, widthBar - 2 * PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
@@ -262,18 +261,22 @@ public class GameController extends WorldController implements ContactListener {
 
         //UI
 
+        ui = new PooledList<Button>();
+
         TextureRegion buttonTexture = JsonAssetManager.getInstance().getEntry("exiti button", TextureRegion.class);
-        restart = new Button(30,30, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+        back = new Button(30,30, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
                 world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("exiti glow", TextureRegion.class), "back");
 
         buttonTexture = JsonAssetManager.getInstance().getEntry("restarti button", TextureRegion.class);
-        back = new Button(30,30, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+        restart = new Button(30,30, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
                 world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("restarti glow", TextureRegion.class), "restart");
 
         buttonTexture = JsonAssetManager.getInstance().getEntry("settingsi button", TextureRegion.class);
         settings = new Button(buttonTexture.getRegionWidth()+10,buttonTexture.getRegionWidth() - 10, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
                 world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("settingsi glow", TextureRegion.class), "settings");
 
+        ui.add(restart);
+        ui.add(back);
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
 
@@ -472,6 +475,12 @@ public class GameController extends WorldController implements ContactListener {
         levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
+
+        currentButton = null;
+        for (Button b : ui) {
+            b.pushed = false;
+            b.setActive(false);
+        }
 
         justDead = isFailure();
 
@@ -1296,11 +1305,19 @@ public class GameController extends WorldController implements ContactListener {
     /**
      * If pause button pressed
      */
-    private void updatePaused() {
+    private void updateUI() {
         InputController input = InputController.getInstance();
-//        if (input.getCrossHair()) {
-//
-//        }
+        for (Button b : ui) {
+            b.setActive(false);
+            b.pushed = false;
+            if (b.isIn(input.getCrossHair().x*scale.x, input.getCrossHair().y*scale.y)) {
+                currentButton = b;
+                b.setActive(true);
+                if (input.mouseDragged()) {
+                    b.pushed = true;
+                }
+            }
+        }
     }
 
     /**
@@ -1456,11 +1473,11 @@ public class GameController extends WorldController implements ContactListener {
         }
 
         // Handle resets
-        if (input.didGameReset()) {
+        if (input.didGameReset() || restart.pushed) {
             reset();
         }
         // Now it is time to maybe switch screens.
-        if (input.exitUp()) {
+        else if (input.exitUp() || back.pushed) {
             setFailure(false);
             listener.exitScreen(this, EXIT_SELECT);
             return false;
@@ -1899,6 +1916,9 @@ public class GameController extends WorldController implements ContactListener {
                 music_name = "circinus";
             }
         }
+
+        // UI
+        updateUI();
 
 
         if (level.getTalkingBoss() != null) {

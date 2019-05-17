@@ -345,7 +345,6 @@ public class Settings extends WorldController implements Screen, InputProcessor,
         if (buttons.getTail() == null) { return true; }
 
         if (keycode == Input.Keys.ESCAPE) {
-            if (numPlayers == 0 ) {numPlayers = 1;}
             pressState = 2;
             play.pushed = true;
             return false;
@@ -464,7 +463,8 @@ public class Settings extends WorldController implements Screen, InputProcessor,
             draw(delta);
             Vector3 pls = new Vector3(1,1,1);
 
-            if (isReady() && play.pushed && numPlayers != 0) {
+            if (isReady() && play.pushed) {
+                if (numPlayers == 0 ) {numPlayers = 1;}
                 if (returnToMenu) {
                     listener.exitScreen(this, WorldController.EXIT_QUIT, Integer.toString(numPlayers));
                 } else {
