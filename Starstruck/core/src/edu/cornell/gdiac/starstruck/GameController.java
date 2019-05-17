@@ -382,11 +382,6 @@ public class GameController extends WorldController implements ContactListener {
     private float camWidth;
     private float camHeight;
 
-    /** Camera offset */
-    private float camOffsetX;
-    /** Camera offset */
-    private float camOffsetY;
-
     /** Level bounds */
     private float xBound;
     private float yBound;
@@ -492,9 +487,6 @@ public class GameController extends WorldController implements ContactListener {
         levelFormat = jsonReader.parse(Gdx.files.internal("levels/" + loadFile));
         level.populate(levelFormat);
         level.getWorld().setContactListener(this);
-
-        camOffsetX = 0;
-        camOffsetY = 0;
 
         currentButton = null;
         for (Button b : ui) {
@@ -1069,8 +1061,6 @@ public class GameController extends WorldController implements ContactListener {
         if (dir.len() >= CAMERA_SPEED)
             dir.setLength(CAMERA_SPEED);
         camera.position.add(dir);
-        camOffsetX = camOffsetX + dir.x;
-        camOffsetY = camOffsetY + dir.y;
         camera.update();
     }
 
@@ -1319,10 +1309,13 @@ public class GameController extends WorldController implements ContactListener {
      */
     private void updateUI() {
         InputController input = InputController.getInstance();
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
+        float centerY = camera.position.y - ((float) canvas.getHeight())/2;
+        float centerX = camera.position.x - ((float) canvas.getWidth())/2;
         for (Button b : ui) {
             b.setActive(false);
             b.pushed = false;
-            if (b.isIn(input.getCrossHair().x*scale.x+camOffsetX, input.getCrossHair().y*scale.y+camOffsetY)) {
+            if (b.isIn(input.getCrossHair().x*scale.x+centerX, input.getCrossHair().y*scale.y+centerY)) {
                 currentButton = b;
                 b.setActive(true);
                 if (input.mouseDragged()) {

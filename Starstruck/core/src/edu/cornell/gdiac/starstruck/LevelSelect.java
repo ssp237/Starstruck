@@ -376,11 +376,12 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         float rightBound = background.getWidth() - PAN_CONST;
         float right = 1280 - 1280/4;
         float left = 1280/4;
+        float top = 120;
         if (mouseControl) {
             if (Gdx.input.getX() >= right && camera.position.x + camera.viewportWidth / 2 < rightBound) {
                 camera.position.add(new Vector3(PAN_CONST, 0, 0));
                 camOffsetX = camOffsetX + PAN_CONST;
-            } else if (Gdx.input.getX() <= left && camera.position.x - camera.viewportWidth / 2 > 0) {
+            } else if (Gdx.input.getX() <= left && Gdx.input.getY() >= top && camera.position.x - camera.viewportWidth / 2 > 0) {
                 camera.position.sub(new Vector3(PAN_CONST, 0, 0));
                 camOffsetX = camOffsetX - PAN_CONST;
             }
@@ -639,6 +640,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         Vector2 scale = level.getScale();
         Vector2 mouse = new Vector2(screenX/scale.x, screenY/scale.y);
         Vector2 camOffset = new Vector2(camOffsetX / scale.x, 0);
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
 
         if (menu == null || levels.getTail() == null || winButtons.getTail() == null) { return true; }
 
@@ -650,7 +652,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                     pressState = 2;
                 }
             }
-            if (menu.isIn(screenX+camOffsetX, screenY) && menu.getActive()) {
+            if (menu.isIn(screenX+camera.position.x - ((float) canvas.getWidth())/2, screenY+camera.position.y - ((float) canvas.getHeight())/2) && menu.getActive()) {
                 menu.pushed = true;
                 pressState = 2;
             }
