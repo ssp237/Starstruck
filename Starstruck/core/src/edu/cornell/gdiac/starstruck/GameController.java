@@ -375,6 +375,12 @@ public class GameController extends WorldController implements ContactListener {
     /** Viewport width and height */
     private float camWidth;
     private float camHeight;
+
+    /** Camera offset */
+    private float camOffsetX;
+    /** Camera offset */
+    private float camOffsetY;
+
     /** Level bounds */
     private float xBound;
     private float yBound;
@@ -496,6 +502,8 @@ public class GameController extends WorldController implements ContactListener {
         collectCount = 60;
         deathOp = 0f;
         portalpairCache = null;
+        camOffsetX = 0;
+        camOffsetY = 0;
 
         paused = false;
 
@@ -1058,6 +1066,8 @@ public class GameController extends WorldController implements ContactListener {
         if (dir.len() >= CAMERA_SPEED)
             dir.setLength(CAMERA_SPEED);
         camera.position.add(dir);
+        camOffsetX = camOffsetX + dir.x;
+        camOffsetY = camOffsetY + dir.y;
         camera.update();
     }
 
@@ -1309,7 +1319,7 @@ public class GameController extends WorldController implements ContactListener {
         for (Button b : ui) {
             b.setActive(false);
             b.pushed = false;
-            if (b.isIn(input.getCrossHair().x*scale.x, input.getCrossHair().y*scale.y)) {
+            if (b.isIn(input.getCrossHair().x*scale.x+camOffsetX, input.getCrossHair().y*scale.y+camOffsetY)) {
                 currentButton = b;
                 b.setActive(true);
                 if (input.mouseDragged()) {

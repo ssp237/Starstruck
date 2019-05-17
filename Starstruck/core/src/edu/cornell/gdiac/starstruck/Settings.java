@@ -91,14 +91,19 @@ public class Settings extends WorldController implements Screen, InputProcessor,
     private Button twoPlayer;
     private Button quit;
     private Button play;
+    private Button controller;
+    private Button keyboard;
 
     private Button active1;
     private Button active2;
     private int numPlayers;
     private boolean returnToMenu;
+    private boolean showXbox;
 
     /** Background texture for start-up */
     private Texture background;
+    private Texture overlay;
+
 
     /** Current selected button */
     private Button currentButton = null;
@@ -125,6 +130,7 @@ public class Settings extends WorldController implements Screen, InputProcessor,
         super.loadContent(manager);
 
         background = JsonAssetManager.getInstance().getEntry("menu background", Texture.class);
+        overlay = JsonAssetManager.getInstance().getEntry("overlay", Texture.class);
 
         buttons = new PooledList<Button>();
 
@@ -624,6 +630,7 @@ public class Settings extends WorldController implements Screen, InputProcessor,
 
         canvas.begin();
         canvas.draw(background, 0, 0);
+        canvas.draw(overlay, 0, 0);
 
         for (Button b : buttons) {
             if (!(b == play && numPlayers == 0)) {
