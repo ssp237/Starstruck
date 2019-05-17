@@ -103,6 +103,11 @@ public class Settings extends WorldController implements Screen, InputProcessor,
     /** Background texture for start-up */
     private Texture background;
     private Texture overlay;
+    private Texture keyboard1;
+    private Texture keyboard2;
+    private Texture controller1;
+    private Texture controller2;
+    private Texture controls;
 
 
     /** Current selected button */
@@ -131,6 +136,11 @@ public class Settings extends WorldController implements Screen, InputProcessor,
 
         background = JsonAssetManager.getInstance().getEntry("menu background", Texture.class);
         overlay = JsonAssetManager.getInstance().getEntry("overlay", Texture.class);
+        keyboard1 = JsonAssetManager.getInstance().getEntry("keyboard1", Texture.class);
+        keyboard2 = JsonAssetManager.getInstance().getEntry("keyboard2", Texture.class);
+        controller1 = JsonAssetManager.getInstance().getEntry("controller1", Texture.class);
+        controller2 = JsonAssetManager.getInstance().getEntry("controller2", Texture.class);
+        controls = keyboard1;
 
         buttons = new PooledList<Button>();
 
@@ -143,7 +153,7 @@ public class Settings extends WorldController implements Screen, InputProcessor,
                 world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("twoplayer glow", TextureRegion.class), "twoPlayer");
 
         texture = JsonAssetManager.getInstance().getEntry("done", TextureRegion.class);
-        play = new Button(canvas.getWidth()/2,canvas.getHeight()/4, texture.getRegionWidth(), texture.getRegionHeight(), texture,
+        play = new Button(canvas.getWidth()/2 + controls.getWidth()/2 - texture.getRegionWidth()/2,60, texture.getRegionWidth(), texture.getRegionHeight(), texture,
                 world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("done glow", TextureRegion.class), "twoPlayer");
         texture = JsonAssetManager.getInstance().getEntry("oneplayer active", TextureRegion.class);
         active1 = new Button(canvas.getWidth()/3-20,canvas.getHeight()/2, texture.getRegionWidth(), texture.getRegionHeight(), texture,
@@ -156,6 +166,14 @@ public class Settings extends WorldController implements Screen, InputProcessor,
         buttons.add(onePlayer);
         buttons.add(twoPlayer);
         buttons.add(play);
+
+        texture = JsonAssetManager.getInstance().getEntry("keyboard button", TextureRegion.class);
+        keyboard = new Button(canvas.getWidth()/3-20,canvas.getHeight()/2, texture.getRegionWidth(), texture.getRegionHeight(), texture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("keyboard glow", TextureRegion.class), "onePlayer");
+
+        texture = JsonAssetManager.getInstance().getEntry("controller button", TextureRegion.class);
+        controller = new Button(canvas.getWidth()*2/3+20,canvas.getHeight()/2, texture.getRegionWidth(), texture.getRegionHeight(), texture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("controller glow", TextureRegion.class), "twoPlayer");
 
         Gdx.input.setInputProcessor(this);
         // Let ANY connected controller start the game.
@@ -187,6 +205,7 @@ public class Settings extends WorldController implements Screen, InputProcessor,
         active = false;
         numPlayers = 0;
         returnToMenu = true;
+        showXbox = false;
     }
 
 
@@ -216,10 +235,6 @@ public class Settings extends WorldController implements Screen, InputProcessor,
 
     }
 
-    public void setReturnToMenu(boolean state) {
-        returnToMenu = state;
-    }
-
     /**
      * Sets the ScreenListener for this mode
      *
@@ -227,6 +242,26 @@ public class Settings extends WorldController implements Screen, InputProcessor,
      */
     public void setScreenListener(ScreenListener listener) {
         this.listener = listener;
+    }
+
+    public void updateAssets(GameCanvas canvas) {
+        if (showXbox) {
+            if (numPlayers == 1) {
+                controls = controller1;
+            } else if (numPlayers == 2) {
+                controls = controller2;
+            }
+        } else {
+            if (numPlayers == 1) {
+                controls = keyboard1;
+            } else if (numPlayers == 2) {
+                controls = keyboard2;
+            }
+        }
+        onePlayer.setPosition(canvas.getWidth()/3-20, canvas.getHeight() - 120);
+        active1.setPosition(canvas.getWidth()/3-20, canvas.getHeight() - 120);
+        twoPlayer.setPosition(canvas.getWidth()*2/3+20, canvas.getHeight() - 120);
+        active2.setPosition(canvas.getWidth()*2/3+20, canvas.getHeight() - 120);
     }
 
     /**
@@ -451,6 +486,10 @@ public class Settings extends WorldController implements Screen, InputProcessor,
                 b.setActive(true);
             }
         }
+        if (numPlayers != 0) {
+            keyboard.isIn(screenX, screenY);
+            controller.isIn(screenX, screenY);
+        }
         return true;
     };
 
@@ -476,7 +515,10 @@ public class Settings extends WorldController implements Screen, InputProcessor,
             Vector3 pls = new Vector3(1,1,1);
 
             if (isReady() && play.pushed) {
-                if (numPlayers == 0 ) {numPlayers = 1;}
+                if (numPlayers == 0 ) {
+                    numPlayers = 1;
+                    updateAssets(canvas);
+                }
                 if (returnToMenu) {
                     listener.exitScreen(this, WorldController.EXIT_QUIT, Integer.toString(numPlayers));
                 } else {
@@ -485,9 +527,11 @@ public class Settings extends WorldController implements Screen, InputProcessor,
             } else if (numPlayers == 0) {
                 if (isReady() && currentButton == onePlayer && onePlayer.pushed) {
                     numPlayers = 1;
+                    updateAssets(canvas);
                     listener.exitScreen(this, WorldController.EXIT_QUIT, Integer.toString(numPlayers));
                 } else if (isReady() && currentButton == twoPlayer && twoPlayer.pushed) {
                     numPlayers = 2;
+                    updateAssets(canvas);
                     listener.exitScreen(this, WorldController.EXIT_QUIT, Integer.toString(numPlayers));
                 }
             } else {
@@ -637,6 +681,13 @@ public class Settings extends WorldController implements Screen, InputProcessor,
                 b.draw(canvas);
             }
         }
+
+        if (numPlayers != 0) {
+            canvas.draw(controls, canvas.getWidth()/2 - controls.getWidth()/2, canvas.getHeight()/2 - controls.getHeight()/2 - 40);
+            keyboard.draw(canvas);
+            controller.draw(canvas);
+        }
+
         if (numPlayers == 1) {
             active1.draw(canvas);
         } else if (numPlayers == 2) {

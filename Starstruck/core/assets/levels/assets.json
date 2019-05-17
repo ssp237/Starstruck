@@ -604,6 +604,22 @@
       "file": "buttons/twoplayer active.png",
       "wrap": false
     },
+    "controller button": {
+      "file": "buttons/controller.png",
+      "wrap": false
+    },
+    "controller glow": {
+      "file": "buttons/controller hover.png",
+      "wrap": false
+    },
+    "keyboard button": {
+      "file": "buttons/keyboard.png",
+      "wrap": false
+    },
+    "keyboard glow": {
+      "file": "buttons/keyboard hover.png",
+      "wrap": false
+    },
     "so boss": {
       "file": "sombrero/enemies/boss/sombrero_boss.png",
       "wrap": false
@@ -694,7 +710,23 @@
     "overlay" : {
     "file": "shared/overlay.png",
     "wrap": false
-  }
+    },
+    "keyboard1" : {
+      "file": "shared/keyboard1.png",
+      "wrap": false
+    },
+    "keyboard2" : {
+      "file": "shared/keyboard2.png",
+      "wrap": false
+    },
+    "controller1" : {
+      "file": "shared/controller1.png",
+      "wrap": false
+    },
+    "controller2" : {
+      "file": "shared/controller2.png",
+      "wrap": false
+    }
   },
   "filmstrips" : {
     "astronaut 1 idle": {
