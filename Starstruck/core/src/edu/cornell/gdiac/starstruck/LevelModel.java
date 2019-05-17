@@ -484,7 +484,7 @@ public class LevelModel {
                     activate(octopuss);
                     //enemies.add(octopuss);
                     octoLegs = octoLegs.next;
-                    System.out.println(octopuss);
+                    //System.out.println(octopuss);
 
                     TextureRegion textureboss = JsonAssetManager.getInstance().getEntry("octoboss talk", TextureRegion.class);
                     talkingboss = new TalkingBoss(3.5f, 14, textureboss, scale, 0);
@@ -504,7 +504,7 @@ public class LevelModel {
                     activate(wheel);
                     //enemies.add(octopuss);
                     wheels = wheels.next;
-                    System.out.println(wheel);
+                    //System.out.println(wheel);
                 }
             } else if (galaxy == Galaxy.CIRCINUS) {
                 JsonValue wheels = levelFormat.get("feris wheels").child();
@@ -513,7 +513,7 @@ public class LevelModel {
                     activate(wheel);
                     //enemies.add(octopuss);
                     wheels = wheels.next;
-                    System.out.println(wheel);
+                    //System.out.println(wheel);
                 }
             }
         }
