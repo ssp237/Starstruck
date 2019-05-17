@@ -32,11 +32,11 @@ public class FerisWheel extends WheelObstacle {
     public FerisWheel(float x, float y, Vector2 scale) {
         super(x,y,0);
 
-        texture = JsonAssetManager.getInstance().getEntry("so boss", TextureRegion.class);
+        texture = JsonAssetManager.getInstance().getEntry("ci boss", TextureRegion.class);
         setTexture(texture);
         setDrawScale(scale);
 
-        basketTexture = JsonAssetManager.getInstance().getEntry("astronaut 1", TextureRegion.class);
+        basketTexture = JsonAssetManager.getInstance().getEntry("ci boss-ket", TextureRegion.class);
 
 
         float radius = texture.getRegionWidth() / (scale.x * 2);
@@ -92,7 +92,7 @@ public class FerisWheel extends WheelObstacle {
     public void setPosition(Vector2 position) {
         super.setPosition(position);
 
-        setAngle(omegaNot);
+        setAngle(omegaNot - + (float) Math.toRadians(10));
 
         ArrayList<Vector2> anchorPositions = getAnchorPositions();
         for (int i = 0; i < 8; i ++) {

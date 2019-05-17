@@ -25,7 +25,6 @@ import java.awt.*;
 import java.util.*;
 
 //import edu.cornell.gdiac.physics.*;
-import com.sun.org.apache.bcel.internal.generic.SWITCH;
 import edu.cornell.gdiac.starstruck.Models.*;
 import edu.cornell.gdiac.starstruck.MenuMode;
 import edu.cornell.gdiac.util.*;
