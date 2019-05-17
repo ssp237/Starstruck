@@ -318,6 +318,8 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
                 //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
                 music.play();
                 music.setLooping(true);
+                music.setVolume(0.6f);
+
                 //music_name = "menu";
             }
 ////        }
