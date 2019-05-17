@@ -195,6 +195,7 @@ public class Starstruck extends Game implements ScreenListener {
 		} else if (exitCode == WorldController.EXIT_SELECT) {
 			current = WorldController.EXIT_SELECT;
 			controllers[current].reset();
+			//((LevelSelect)controllers[current]).resetMusic();
 			setScreen(controllers[current]);
 		} else if (exitCode == WorldController.EXIT_EDIT) {
 			current = WorldController.EXIT_EDIT;
