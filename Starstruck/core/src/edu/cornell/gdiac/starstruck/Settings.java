@@ -345,8 +345,9 @@ public class Settings extends WorldController implements Screen, InputProcessor,
         if (buttons.getTail() == null) { return true; }
 
         if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.ENTER) {
+            if (numPlayers == 0 ) {numPlayers = 1;}
             pressState = 2;
-            currentButton = quit;
+            play.pushed = true;
             return false;
         }
         return true;

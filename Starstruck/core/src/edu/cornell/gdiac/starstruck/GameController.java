@@ -93,8 +93,7 @@ public class GameController extends WorldController implements ContactListener {
     private Button pause;
     private Button play;
     private Button settings;
-    private Button levels;
-    private Button resume;
+    private Button back;
     private Button restart;
 
     /** Track asset loading from all instances and subclasses */
@@ -153,19 +152,16 @@ public class GameController extends WorldController implements ContactListener {
     private void drawUI(GameCanvas canvas) {
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
 
-        if (paused) {
-            //draw pause stuff
-            canvas.draw(pauseBackground, camera.position.x - ((float) canvas.getWidth())/2, camera.position.y - ((float) canvas.getHeight())/2);
+        float centerY = camera.position.y + canvas.getHeight()/2 - 50;
+        float centerX = camera.position.x + canvas.getWidth()/2 + 50;
+//        back.setPosition(centerX, centerY);
+//        restart.setPosition(centerX, centerY);
+//        settings.setPosition(centerX, centerY);
 
-            levels.draw(canvas);
-            restart.draw(canvas);
-            resume.draw(canvas);
-            play.draw(canvas);
-        } else {
-            //pause button
-            pause.draw(canvas);
-        }
-        // draw settings button no matter what!
+        System.out.println("what");
+
+        back.draw(canvas);
+        restart.draw(canvas);
         settings.draw(canvas);
     }
 
@@ -260,29 +256,17 @@ public class GameController extends WorldController implements ContactListener {
 
         //UI
 
-        TextureRegion buttonTexture = JsonAssetManager.getInstance().getEntry("levels button", TextureRegion.class);
-        levels = new Button(0,0, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("levels glow", TextureRegion.class), "all levels");
+        TextureRegion buttonTexture = JsonAssetManager.getInstance().getEntry("exiti button", TextureRegion.class);
+        restart = new Button(30,30, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("exiti glow", TextureRegion.class), "back");
 
-        buttonTexture = JsonAssetManager.getInstance().getEntry("replay button", TextureRegion.class);
-        restart = new Button(0,0, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("replay glow", TextureRegion.class), "replay");
-
-        buttonTexture = JsonAssetManager.getInstance().getEntry("next button", TextureRegion.class);
-        resume = new Button(0,0, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("next glow", TextureRegion.class), "next");
-
-        buttonTexture = JsonAssetManager.getInstance().getEntry("pausei button", TextureRegion.class);
-        pause = new Button(0,0, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("pausei glow", TextureRegion.class), "next");
+        buttonTexture = JsonAssetManager.getInstance().getEntry("restarti button", TextureRegion.class);
+        back = new Button(30,30, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("restarti glow", TextureRegion.class), "restart");
 
         buttonTexture = JsonAssetManager.getInstance().getEntry("settingsi button", TextureRegion.class);
         settings = new Button(buttonTexture.getRegionWidth()+10,buttonTexture.getRegionWidth() - 10, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
                 world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("settingsi glow", TextureRegion.class), "settings");
-
-        buttonTexture = JsonAssetManager.getInstance().getEntry("next button", TextureRegion.class);
-        play = new Button(buttonTexture.getRegionWidth()+10,buttonTexture.getRegionWidth() - 10, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
-                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("next glow", TextureRegion.class), "play");;
 
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
@@ -2258,6 +2242,7 @@ public class GameController extends WorldController implements ContactListener {
 
         canvas.begin();
         drawStarBar(canvas);
+        drawUI(canvas);
         OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
         if (tutDrawCache != null) {
             TextureRegion text = tutDrawCache.getTask();

@@ -528,12 +528,28 @@
       "file": "buttons/menu hover.png",
       "wrap": false
     },
+    "exiti button": {
+      "file": "buttons/exit icon.png",
+      "wrap": false
+    },
+    "exiti glow": {
+      "file": "buttons/exit icon hover.png",
+      "wrap": false
+    },
     "pausei button": {
       "file": "buttons/pause icon.png",
       "wrap": false
     },
     "pausei glow": {
       "file": "buttons/pause icon hover.png",
+      "wrap": false
+    },
+    "restarti button": {
+      "file": "buttons/restart icon.png",
+      "wrap": false
+    },
+    "restarti glow": {
+      "file": "buttons/restart icon hover.png",
       "wrap": false
     },
     "playi button": {

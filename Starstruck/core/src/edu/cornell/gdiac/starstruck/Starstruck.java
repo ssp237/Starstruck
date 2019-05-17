@@ -132,7 +132,7 @@ public class Starstruck extends Game implements ScreenListener {
 	 * @param exitCode The state of the screen upon exit
 	 */
 	public void exitScreen(Screen screen, int exitCode, String json) {
-		canvas.resetCamera();
+
 		if (current == WorldController.EXIT_SETTINGS) {
 			if (Integer.valueOf(json) == 1) {
 				((GameController) controllers[WorldController.EXIT_PLAY]).setTwoplayer(false);
@@ -143,9 +143,11 @@ public class Starstruck extends Game implements ScreenListener {
 				current = WorldController.EXIT_PLAY;
 				setScreen(controllers[current]);
 			} else {
+				canvas.resetCamera();
 				exitScreen(screen, exitCode);
 			}
 		} else {
+			canvas.resetCamera();
 			if (exitCode == WorldController.EXIT_PLAY) {
 				current = WorldController.EXIT_PLAY;
 				((GameController) controllers[current]).setJson(json);

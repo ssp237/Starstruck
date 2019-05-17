@@ -360,6 +360,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         } else if (keycode == Input.Keys.ESCAPE) {
             pressState = 2;
             currentButton = quit;
+            quit.pushed = true;
             return false;
         }
         return true;
@@ -451,17 +452,17 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             update(delta);
             draw(delta);
 
-            if (isReady() && currentButton == play) {
+            if (isReady() && play.pushed) {
                 listener.exitScreen(this, WorldController.EXIT_PLAY);
-            } else if (isReady() && currentButton == levels) {
+            } else if (isReady() && levels.pushed) {
                 listener.exitScreen(this, WorldController.EXIT_SELECT);
-            } else if (isReady() && currentButton == settings) {
+            } else if (isReady() && settings.pushed) {
                 listener.exitScreen(this, WorldController.EXIT_SETTINGS);
-            } else if (isReady() && currentButton == quit) {
+            } else if (isReady() && quit.pushed) {
                 listener.exitScreen(this, WorldController.EXIT_QUIT);
-            } else if (isReady() && currentButton == help) {
+            } else if (isReady() && help.pushed) {
                 listener.exitScreen(this, WorldController.EXIT_PLAY);
-            } else if (isReady() && currentButton == build) {
+            } else if (isReady() && build.pushed) {
                 listener.exitScreen(this, WorldController.EXIT_EDIT);
             }
         }
