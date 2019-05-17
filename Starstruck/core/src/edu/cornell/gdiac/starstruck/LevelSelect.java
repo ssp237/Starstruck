@@ -562,6 +562,9 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 } else {
                     winButtons.get(curButton).setActive(false);
                     curButton = (curButton + 1) % winButtons.size();
+                    if (curButton == 2 && nextLevel == null) {
+                        curButton = 0;
+                    }
                 }
                 winButtons.get(curButton).setActive(true);
                 return false;
@@ -574,6 +577,9 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                     winButtons.get(curButton).setActive(false);
                     curButton = (curButton - 1) % winButtons.size();
                     if (curButton < 0) curButton += winButtons.size();
+                    if (curButton == 2 && nextLevel == null) {
+                        curButton = 1;
+                    }
                 }
                 winButtons.get(curButton).setActive(true);
                 return false;
