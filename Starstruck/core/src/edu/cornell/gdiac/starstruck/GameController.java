@@ -2000,7 +2000,24 @@ public class GameController extends WorldController implements ContactListener {
 
             if (!isComplete() && ((bd1 == avatar || bd1 == avatar2)&& (bd2 instanceof Enemy && !((Enemy) bd2).isSleeping())
                     || (bd2 == avatar || bd2 == avatar2) && (bd1 instanceof Enemy && !((Enemy) bd1).isSleeping()))) {
-                setFailure(true);
+                if (bd1 instanceof Enemy) {
+                    if (bd1.getType() == ObstacleType.COLORED_BUG) {
+                        if (((ColoredBug) bd1).getColor() != ((AstronautModel) (bd2)).getColor())
+                            setFailure(true);
+                    }
+                    else {
+                        setFailure(true);
+                    }
+                }
+                else if (bd2 instanceof  Enemy) {
+                    if (bd2.getType() == ObstacleType.COLORED_BUG) {
+                        if (((ColoredBug) bd2).getColor() != ((AstronautModel) (bd1)).getColor())
+                            setFailure(true);
+                    }
+                    else {
+                        setFailure(true);
+                    }
+                }
             }
 
             //Star collection
