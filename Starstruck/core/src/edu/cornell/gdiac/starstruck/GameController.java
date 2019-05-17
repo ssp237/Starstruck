@@ -1534,7 +1534,7 @@ public class GameController extends WorldController implements ContactListener {
                 entry.remove();
             } else {
                 // Note that update is called last!
-                if (obj.getType() != ObstacleType.AZTEC_WHEEL || !justDead) {
+                if (obj.getType() != ObstacleType.AZTEC_WHEEL || obj.getType() != ObstacleType.FERIS_WHEEL || !justDead) {
                     obj.update(dt);
                 }
             }
@@ -2110,6 +2110,10 @@ public class GameController extends WorldController implements ContactListener {
             }
 
             if (bd1.getType() == ObstacleType.AZTEC_WHEEL || bd2.getType() == ObstacleType.AZTEC_WHEEL) {
+                contact.setEnabled(false);
+            }
+
+            if (bd1.getType() == ObstacleType.FERIS_WHEEL || bd2.getType() == ObstacleType.FERIS_WHEEL) {
                 contact.setEnabled(false);
             }
 

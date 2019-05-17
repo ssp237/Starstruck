@@ -227,7 +227,7 @@ public class EditController extends WorldController implements ContactListener {
         jsonReader = new JsonReader();
         loadFile = null;
         levelFormat = null;
-        galaxy = Galaxy.SOMBRERO;
+        galaxy = Galaxy.CIRCINUS;
         level.setGalaxy(galaxy);
         objects = level.objects;
         FISH_TEXTURES = WORM_TEXTURES;
@@ -787,6 +787,11 @@ public class EditController extends WorldController implements ContactListener {
                     Vector2 pos = input.getCrossHair();
                     current = new AztecWheel(pos.x + camScaleX + w, pos.y + camScaleY + h, scale);
                     level.add(current);
+                } else if (galaxy == Galaxy.CIRCINUS) {
+                    Vector2 pos = input.getCrossHair();
+                    current = new FerisWheel(pos.x + camScaleX + w, pos.y + camScaleY + h, scale);
+                    System.out.println(current);
+                    level.add(current);
                 }
             }
             if (input.mouseDragged()) {
@@ -895,6 +900,10 @@ public class EditController extends WorldController implements ContactListener {
             }
 
             if (bd1.getType() == ObstacleType.AZTEC_WHEEL || bd2.getType() == ObstacleType.AZTEC_WHEEL) {
+                contact.setEnabled(false);
+            }
+
+            if (bd1.getType() == ObstacleType.FERIS_WHEEL || bd2.getType() == ObstacleType.FERIS_WHEEL) {
                 contact.setEnabled(false);
             }
 
