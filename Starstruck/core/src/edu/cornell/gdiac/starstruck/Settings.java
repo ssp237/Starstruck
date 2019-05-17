@@ -242,10 +242,10 @@ public class Settings extends WorldController implements Screen, InputProcessor,
             b.pushed = false;
         }
 
-        if (music != null) {
-            music.stop();
-            music.dispose();
-        }
+//        if (music != null) {
+//            music.stop();
+//            music.dispose();
+//        }
 
         if (GameController.getMusic() != null) {
             GameController.getMusic().stop();
@@ -344,10 +344,34 @@ public class Settings extends WorldController implements Screen, InputProcessor,
     public boolean keyUp (int keycode) {
         if (buttons.getTail() == null) { return true; }
 
-        if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.ENTER) {
+        if (keycode == Input.Keys.ESCAPE) {
             pressState = 2;
             currentButton = quit;
             return false;
+        }
+
+        if (keycode == Input.Keys.LEFT || keycode == Input.Keys.RIGHT) {
+            if (currentButton != null) currentButton.setActive(false);
+            if (currentButton == null || currentButton.equals(twoPlayer)) {
+                currentButton = onePlayer;
+            } else if (currentButton.equals(onePlayer)) {
+                currentButton = twoPlayer;
+            }
+            currentButton.setActive(true);
+        } else if (keycode == Input.Keys.UP || keycode == Input.Keys.DOWN) {
+            if (currentButton != null) currentButton.setActive(false);
+            if (currentButton == null || currentButton.equals(play)) {
+                currentButton = onePlayer;
+            } else if ((currentButton.equals(onePlayer) || currentButton.equals(twoPlayer)) && numPlayers != 0) {
+                currentButton = play;
+            }
+            currentButton.setActive(true);
+        } else if (keycode == Input.Keys.ENTER || keycode == Input.Keys.SPACE) {
+            if (currentButton != null) {
+                currentButton.pushed = true;
+                if (currentButton.equals(play)) currentButton.setActive(false);
+                pressState = 2;
+            }
         }
         return true;
     };

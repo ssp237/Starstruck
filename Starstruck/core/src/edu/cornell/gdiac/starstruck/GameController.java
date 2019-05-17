@@ -70,6 +70,9 @@ public class GameController extends WorldController implements ContactListener {
     /** Space sounds */
     private static final String SPACE_SOUNDS = "space sounds";
 
+    /** The sound file for a character switch */
+    private static final String OPEN_GOAL = "open portal";
+
 
     /** The background for DEATH*/
     private Texture death;
@@ -146,6 +149,8 @@ public class GameController extends WorldController implements ContactListener {
     private String music_name = "menu";
 
     public static Music getMusic() {return music;}
+
+    private boolean hasPlayedSound = false;
 
     /**
      * Draws UI
@@ -257,6 +262,7 @@ public class GameController extends WorldController implements ContactListener {
         sounds.allocate("anchor");
         sounds.allocate("switch");
         sounds.allocate("space sounds");
+        sounds.allocate("open portal");
 
         //UI
 
@@ -496,6 +502,8 @@ public class GameController extends WorldController implements ContactListener {
         portalpairCache = null;
 
         paused = false;
+
+        hasPlayedSound = false;
 
         statusBar  = JsonAssetManager.getInstance().getEntry("starbar", Texture.class);
         // Break up the status bar texture into regions
@@ -747,7 +755,7 @@ public class GameController extends WorldController implements ContactListener {
         avatar1.setAngularVelocity(0);
         //avatar2.setUnAnchored();
         //avatar2.setActive(true);
-        SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,EFFECT_VOLUME);
+        SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,0.25f);
     }
 
     /**
@@ -1534,7 +1542,7 @@ public class GameController extends WorldController implements ContactListener {
                 entry.remove();
             } else {
                 // Note that update is called last!
-                if (obj.getType() != ObstacleType.AZTEC_WHEEL || !justDead) {
+                if ((obj.getType() != ObstacleType.AZTEC_WHEEL && obj.getType() != ObstacleType.FERIS_WHEEL) || !justDead) {
                     obj.update(dt);
                 }
             }
@@ -1679,9 +1687,17 @@ public class GameController extends WorldController implements ContactListener {
 
         //Collect star
         if (collection) {
-            SoundController.getInstance().play(SWITCH_FILE, SWITCH_FILE, false, EFFECT_VOLUME);
-            starCache.deactivatePhysics(world);
-            removed.add(starCache);
+            if (starCount >= (winCount - 1) && !hasPlayedSound) {
+                SoundController.getInstance().play(OPEN_GOAL,OPEN_GOAL,false,0.4f);
+                starCache.deactivatePhysics(world);
+                removed.add(starCache);
+                hasPlayedSound = true;
+            }
+            else {
+                SoundController.getInstance().play(SWITCH_FILE, SWITCH_FILE, false, 0.7f);
+                starCache.deactivatePhysics(world);
+                removed.add(starCache);
+            }
             if (!stars.remove(starCache)) print("star collection error in game controller");
             //if (!objects.remove(starCache)) print("star collection error in game controller");
             starCount++;
@@ -1706,6 +1722,9 @@ public class GameController extends WorldController implements ContactListener {
 
         }
         if (starCount >= winCount && !openGoal) { //&& tutorialpoints.isEmpty()
+            //SOUNDS
+            //COME HERE
+            //System.out.println("played");
             openGoal = true;
             goal.getPortal1().setOpen(true);
         }
@@ -1830,7 +1849,7 @@ public class GameController extends WorldController implements ContactListener {
         //MUSIC
 
         if (level.getGalaxy() == Galaxy.DEFAULT) {
-            if (music != null && music_name != "tutorial") {
+            if (music != null && !music_name.equals("tutorial")) {
                 music.stop();
                 music.dispose();
                 music = null;
@@ -1839,10 +1858,11 @@ public class GameController extends WorldController implements ContactListener {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/tutorial_music.mp3"));
                 music.play();
                 music.setLooping(true);
+                music.setVolume(0.4f);
                 music_name = "tutorial";
             }
         } else if (level.getGalaxy() == Galaxy.WHIRLPOOL) {
-            if (music != null && music_name != "whirlpool") {
+            if (music != null && !music_name.equals("whirlpool")) {
                 music.stop();
                 music.dispose();
                 music = null;
@@ -1851,11 +1871,12 @@ public class GameController extends WorldController implements ContactListener {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/whirlpool_music.mp3"));
                 music.play();
                 music.setLooping(true);
+                music.setVolume(0.4f);
                 music_name = "whirlpool";
             }
 
         } else if (level.getGalaxy() == Galaxy.MILKYWAY) {
-            if (music != null && music_name != "milkyway") {
+            if (music != null && !music_name.equals("milkyway")) {
                 music.stop();
                 music.dispose();
                 music = null;
@@ -1864,10 +1885,11 @@ public class GameController extends WorldController implements ContactListener {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/milky_way.mp3"));
                 music.play();
                 music.setLooping(true);
+                music.setVolume(0.4f);
                 music_name = "milkyway";
             }
         } else if (level.getGalaxy() == Galaxy.SOMBRERO) {
-            if (music != null && music_name != "sombrero") {
+            if (music != null && !music_name.equals("sombrero")) {
                 music.stop();
                 music.dispose();
                 music = null;
@@ -1876,17 +1898,30 @@ public class GameController extends WorldController implements ContactListener {
                 music = Gdx.audio.newMusic(Gdx.files.internal("audio/sombrero_beat.mp3"));
                 music.play();
                 music.setLooping(true);
+                music.setVolume(0.4f);
                 music_name = "sombrero";
             }
-//            System.out.println("in sombrero and music " + music.isPlaying());
-//            System.out.println("music name = " + music_name);
+        } else if (level.getGalaxy() == Galaxy.CIRCINUS) {
+            if (music != null && !music_name.equals("circinus")) {
+                music.stop();
+                music.dispose();
+                music = null;
+            }
+            if (music == null || !music.isPlaying()) {
+                music = Gdx.audio.newMusic(Gdx.files.internal("audio/circinus_song.mp3"));
+                music.play();
+                music.setLooping(true);
+                music.setVolume(0.6f);
+                music_name = "circinus";
+            }
         }
 
 
         if (level.getTalkingBoss() != null) {
-            if (level.getTalkingBoss().getPosition().x + level.getTalkingBoss().getWidth() / 2 + 4 < 0) {
+            if (level.getTalkingBoss().getPosition().x + level.getTalkingBoss().getWidth() / 2 + 12 < 0) {
                 level.remove(level.getTalkingBoss());
             }
+
         }
     }
 
@@ -2113,11 +2148,7 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(false);
             }
 
-            if ((bd1 == avatar2 && bd2N.contains("cbugblue")) || (bd2 == avatar2 && bd1N.contains("cbugblue"))) {
-                contact.setEnabled(false);
-            }
-
-            if ((bd1 == avatar && bd2N.contains("cbugpink")) || (bd2 == avatar && bd1N.contains("cbugpink"))) {
+            if (bd1.getType() == ObstacleType.FERIS_WHEEL || bd2.getType() == ObstacleType.FERIS_WHEEL) {
                 contact.setEnabled(false);
             }
 
@@ -2133,6 +2164,10 @@ public class GameController extends WorldController implements ContactListener {
             }
             //disable collisions with astronauts and buggy
             if ((bd1.getType() ==  ObstacleType.BUG || bd2.getType() ==  ObstacleType.BUG)
+                    && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))) {
+                contact.setEnabled(false);
+            }
+            if ((bd1.getType() ==  ObstacleType.COLORED_BUG || bd2.getType() ==  ObstacleType.COLORED_BUG)
                     && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))) {
                 contact.setEnabled(false);
             }

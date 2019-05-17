@@ -49,7 +49,7 @@ public class Bug extends Enemy {
      * @param x  		Initial x position of the avatar center
      * @param y  		Initial y position of the avatar center
      */
-    public Bug(float x, float y, FilmStrip texture, Vector2 scale) {
+    public Bug(float x, float y, FilmStrip texture, Vector2 scale, VectorWorld world) {
         super(x,y,texture.getRegionWidth()/scale.x,texture.getRegionHeight()/scale.y);
         this.x = x;
         this.y = y;
@@ -61,6 +61,7 @@ public class Bug extends Enemy {
 //        for (int i = 0; i < 100; i++){
 //            update(0.015f);
 //        }
+        vectorWorld = world;
     }
 
     public Planet getCurPlanet() {
@@ -88,7 +89,7 @@ public class Bug extends Enemy {
             contactPointEN.set(getPosition().cpy());
             Vector2 contactDirEn = contactPointEN.cpy().sub(curPlanetEN.getPosition());
 
-            if (contactDirEn.len() - ((this.getTexture().getRegionHeight()/2)/ drawScale.y) > curPlanetEN.getRadius()) {
+            if (contactDirEn.len() - ((this.getTexture().getRegionHeight()/2)/ drawScale.y) > curPlanetEN.getRadius() ) {
                 Vector2 gravity = vectorWorld.getForce(this.getPosition()).scl(-1);
                 gravity.setLength(100000);
                 this.getBody().applyForceToCenter(gravity, true);
