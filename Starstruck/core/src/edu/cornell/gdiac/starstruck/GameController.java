@@ -29,6 +29,7 @@ import edu.cornell.gdiac.starstruck.Models.*;
 import edu.cornell.gdiac.starstruck.MenuMode;
 import edu.cornell.gdiac.util.*;
 import edu.cornell.gdiac.starstruck.Obstacles.*;
+import edu.cornell.gdiac.starstruck.Obstacles.Button;
 import edu.cornell.gdiac.util.FilmStrip;
 //import edu.cornell.gdiac.starstruck.Models.PlayerModel;
 
@@ -86,6 +87,16 @@ public class GameController extends WorldController implements ContactListener {
     private int winAnimLoop;
     private boolean replaying = false;
 
+    /** pause screen stuff */
+    private boolean paused;
+    private Texture pauseBackground;
+    private Button pause;
+    private Button play;
+    private Button settings;
+    private Button levels;
+    private Button resume;
+    private Button restart;
+
     /** Track asset loading from all instances and subclasses */
     private AssetState platformAssetState = AssetState.EMPTY;
 
@@ -135,6 +146,28 @@ public class GameController extends WorldController implements ContactListener {
     private String music_name = "menu";
 
     public static Music getMusic() {return music;}
+
+    /**
+     * Draws UI
+     */
+    private void drawUI(GameCanvas canvas) {
+        OrthographicCamera camera = (OrthographicCamera) canvas.getCamera();
+
+        if (paused) {
+            //draw pause stuff
+            canvas.draw(pauseBackground, camera.position.x - ((float) canvas.getWidth())/2, camera.position.y - ((float) canvas.getHeight())/2);
+
+            levels.draw(canvas);
+            restart.draw(canvas);
+            resume.draw(canvas);
+            play.draw(canvas);
+        } else {
+            //pause button
+            pause.draw(canvas);
+        }
+        // draw settings button no matter what!
+        settings.draw(canvas);
+    }
 
     /**StarCount bar */
 
@@ -213,7 +246,6 @@ public class GameController extends WorldController implements ContactListener {
 
         JsonAssetManager.getInstance().allocateDirectory();
 
-
         death = JsonAssetManager.getInstance().getEntry("dead background", Texture.class);
         deathSprite = JsonAssetManager.getInstance().getEntry("you dead", FilmStrip.class);
         winSprite = JsonAssetManager.getInstance().getEntry("you win", FilmStrip.class);
@@ -226,6 +258,31 @@ public class GameController extends WorldController implements ContactListener {
         sounds.allocate("switch");
         sounds.allocate("space sounds");
 
+        //UI
+
+        TextureRegion buttonTexture = JsonAssetManager.getInstance().getEntry("levels button", TextureRegion.class);
+        levels = new Button(0,0, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("levels glow", TextureRegion.class), "all levels");
+
+        buttonTexture = JsonAssetManager.getInstance().getEntry("replay button", TextureRegion.class);
+        restart = new Button(0,0, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("replay glow", TextureRegion.class), "replay");
+
+        buttonTexture = JsonAssetManager.getInstance().getEntry("next button", TextureRegion.class);
+        resume = new Button(0,0, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("next glow", TextureRegion.class), "next");
+
+        buttonTexture = JsonAssetManager.getInstance().getEntry("pausei button", TextureRegion.class);
+        pause = new Button(0,0, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("pausei glow", TextureRegion.class), "next");
+
+        buttonTexture = JsonAssetManager.getInstance().getEntry("settingsi button", TextureRegion.class);
+        settings = new Button(buttonTexture.getRegionWidth()+10,buttonTexture.getRegionWidth() - 10, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("settingsi glow", TextureRegion.class), "settings");
+
+        buttonTexture = JsonAssetManager.getInstance().getEntry("next button", TextureRegion.class);
+        play = new Button(buttonTexture.getRegionWidth()+10,buttonTexture.getRegionWidth() - 10, buttonTexture.getRegionWidth(), buttonTexture.getRegionHeight(), buttonTexture,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("next glow", TextureRegion.class), "play");;
 
         super.loadContent(manager);
         platformAssetState = AssetState.COMPLETE;
@@ -334,16 +391,16 @@ public class GameController extends WorldController implements ContactListener {
     /** List of the planks in rope, used for presolve */
     ArrayList<Obstacle> ropeList;
     /** Whether astronaut hit a portal */
-    private boolean portal;
+//    private boolean portal;
     /** Countdown timer for portal */
-    private int portalCount;
+//    private int portalCount;
     /** Target for camera position */
     private Vector3 camTarget = new Vector3();
 
     /** Cache variable to store current planet being drawn*/
     private WheelObstacle planetCache;
     /** Portal cache */
-    private Portal portalCache;
+//    private Portal portalCache;
     private PortalPair portalpairCache;
     /** cache for stars */
     private Star starCache;
@@ -408,9 +465,10 @@ public class GameController extends WorldController implements ContactListener {
         setFailure(false);
         world.setContactListener(this);
         sensorFixtures = new ObjectSet<Fixture>();
-        loadFile = "main/tutorial.json";
+        loadFile = "main/tutorial1.json";
         loader = new SaveListener();
         deathPos = new Vector2(0,0);
+        paused = true;
     }
 
     /**
@@ -436,6 +494,8 @@ public class GameController extends WorldController implements ContactListener {
         collectCount = 60;
         deathOp = 0f;
         portalpairCache = null;
+
+        paused = false;
 
         statusBar  = JsonAssetManager.getInstance().getEntry("starbar", Texture.class);
         // Break up the status bar texture into regions
@@ -548,8 +608,10 @@ public class GameController extends WorldController implements ContactListener {
         winCount = level.winCount;
         openGoal = false;
 
-        portal = false;
-        portalCount = 0;
+        avatar.portal = false;
+        avatar2.portal = false;
+        avatar.portalCount = 0;
+        avatar2.portalCount = 0;
 
         // Add level goal
         float dwidth;
@@ -568,13 +630,12 @@ public class GameController extends WorldController implements ContactListener {
     /**
      * Set the settings at the beginning of the level.
      */
-    public void setSettings() {
-        twoplayer = false;
+    public void setTwoplayer(boolean state) {
+
+        twoplayer = state;
         for (TutorialPoint tut : tutorialpoints) {
             tut.setTwoplayer(twoplayer);
         }
-        switchOnJump = false;
-        switchOnAnchor = false;
     }
 
     /**
@@ -1115,25 +1176,6 @@ public class GameController extends WorldController implements ContactListener {
         }
     }
 
-//    private void updateMovementBug(Bug buggy, Vector2 contactDir, Planet curPlanet, boolean auto) {
-//        //contactDir = contactPoint.cpy().sub(curPlanet.getPosition());
-//        contactDir.rotateRad(-(float) Math.PI / 2);
-//        //float move = InputController.getInstance().getHorizontal();
-//        //if (InputController.getInstance().didRight() || InputController.getInstance().didLeft()) {
-//            avatar.setPlanetMove(contactDir.scl(1));
-//            //avatar.moving = true;
-//        }
-//
-//        if (InputController.getInstance().didPrimary() && !auto && !testC) {
-//            //print(contactPoint);
-//            avatar.setJumping(true);
-//            SoundController.getInstance().play(JUMP_FILE,JUMP_FILE,false,EFFECT_VOLUME);
-//            contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
-//            avatar.setPlanetJump(contactDir);
-//            avatar.setOnPlanet(false);
-//            avatar.moving = false;
-//        }
-//    }
 
     /**
      * Helper method to determine whether the rope is ok
@@ -1203,6 +1245,36 @@ public class GameController extends WorldController implements ContactListener {
         return false;
     }
 
+    private boolean updatePortal(AstronautModel portalAvatar, AstronautModel avatar) {
+        boolean result = false;
+        if (portalAvatar.portal && portalAvatar.portalCount <= 0) {
+            portalpairCache = findPortalPair(portalAvatar.portalCache);
+            if (!portalpairCache.isGoal() || portalpairCache.isGoal() && openGoal) {
+                portalpairCache.teleport(world, portalAvatar, rope);
+                portalAvatar.portalCount = 5;
+            }
+            result = true;
+        }
+        if (portalpairCache != null && portalpairCache.isActive()) {
+            if (portalpairCache.isGoal() && !isFailure()) { //By this point we have already confirmed that goal is open
+                if (!isComplete()) {
+                    setComplete(true);
+                }
+            }
+            avatar.setOnPlanet(false);
+            avatar.setUnAnchored();
+            Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar.getPosition());
+            print(dir);
+            dir.setLength(portalAvatar.portalVel.len()*2);
+            avatar.setLinearVelocity(dir);
+            portalAvatar.setLinearVelocity(portalAvatar.portalVel);
+        }
+
+        portalAvatar.portalCount--;
+        portalAvatar.portal = false;
+        return result;
+    }
+
     /**
      * Find the PortalPair of the portal. Returns null if portal can't be found, means something's wrong
      * @param portal
@@ -1227,6 +1299,16 @@ public class GameController extends WorldController implements ContactListener {
                 return p;
         }
         return null;
+    }
+
+    /**
+     * If pause button pressed
+     */
+    private void updatePaused() {
+        InputController input = InputController.getInstance();
+//        if (input.getCrossHair()) {
+//
+//        }
     }
 
     /**
@@ -1385,7 +1467,6 @@ public class GameController extends WorldController implements ContactListener {
         if (input.didGameReset()) {
             reset();
         }
-
         // Now it is time to maybe switch screens.
         if (input.exitUp()) {
             setFailure(false);
@@ -1413,7 +1494,7 @@ public class GameController extends WorldController implements ContactListener {
         // +/- 1 for a little bit of buffer space because astronaut position is at its center
         if (!isFailure() && !isComplete() && ((avatar.getY() < -1 || avatar.getY() > yBound+1 || avatar.getX() < -1 || avatar.getX() > xBound+1)
                 || (avatar2.getY() < -1 || avatar2.getY() > yBound+1 || avatar2.getX() < -1 || avatar2.getX() > xBound+1))
-                && !avatar.getOnPlanet() && !avatar2.getOnPlanet() && !avatar.isAnchored() && !avatar2.isAnchored()) {
+                && !(avatar.getOnPlanet() || avatar2.getOnPlanet() || avatar.isAnchored() || avatar2.isAnchored())) {
             if (portalpairCache != null && !portalpairCache.isGoal() || portalpairCache == null) {
                 setFailure(true);
                 return false;
@@ -1637,40 +1718,18 @@ public class GameController extends WorldController implements ContactListener {
 //            setComplete(true);
 //        }
 
-        if (portal && portalCount <= 0) {
-            portalpairCache = findPortalPair(portalCache);
-            if (!portalpairCache.isGoal() || portalpairCache.isGoal() && openGoal) {
-                portalpairCache.teleport(world, avatarCache, rope);
-                portalCount = 5;
-            }
-        }
-        if (portalpairCache != null && portalpairCache.isActive()) {
-            if (portalpairCache.isGoal() && !isFailure()) { //By this point we have already confirmed that goal is open
-                if (!isComplete()) {
-                    setComplete(true);
-                }
-            }
-            if (avatarCache == avatar) {
-                avatar2.setOnPlanet(false);
-                avatar2.setUnAnchored();
-                Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar2.getPosition());
-                dir.setLength(avatar.portalVel.len() * 2);
-                avatar2.setLinearVelocity(dir);
-                avatar.setLinearVelocity(avatar.portalVel);
-                //avatar.getBody().applyForce(avatar.portalVel, avatar.getPosition(), true);
-            } else {
-                avatar.setOnPlanet(false);
-                avatar.setUnAnchored();
-                Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar.getPosition());
-                dir.setLength(avatar2.portalVel.len() * 2);
-                avatar.setLinearVelocity(dir);
-                avatar2.setLinearVelocity(avatar2.portalVel);
-                //avatar2.getBody().applyForce(avatar2.portalVel, avatar2.getPosition(), true);
-            }
+        //A bad to fix a portal bug lmao
+        if (avatar.getOnPlanet() && avatar2.getOnPlanet()) {
+            avatar.portalCount = 0;
+            avatar2.portalCount = 0;
         }
 
-        portalCount--;
-        portal = false;
+        if (avatarCache != null) {
+            if (avatarCache == avatar)
+                updatePortal(avatar, avatar2);
+            else
+                updatePortal(avatar2, avatar);
+        }
 
         if (twoplayer) {
             Vector2 offset = new Vector2();
@@ -1909,24 +1968,24 @@ public class GameController extends WorldController implements ContactListener {
 
             //Portal stuff
             if (bd1 == avatar && bd2.getType() == ObstacleType.PORTAL) {
-                portal = true;
-                portalCache = (Portal)bd2;
                 avatarCache = avatar;
+                avatar.portal = true;
+                avatar.portalCache = (Portal)bd2;
             }
             if (bd1.getType() == ObstacleType.PORTAL && bd2 == avatar) {
-                portal = true;
-                portalCache = (Portal)bd1;
                 avatarCache = avatar;
+                avatar.portal = true;
+                avatar.portalCache = (Portal)bd1;
             }
             if (bd1 == avatar2 && bd2.getType() == ObstacleType.PORTAL) {
-                portal = true;
-                portalCache = (Portal)bd2;
                 avatarCache = avatar2;
+                avatar2.portal = true;
+                avatar2.portalCache = (Portal)bd2;
             }
             if (bd1.getType() == ObstacleType.PORTAL && bd2 == avatar2) {
-                portal = true;
-                portalCache = (Portal)bd1;
                 avatarCache = avatar2;
+                avatar2.portal = true;
+                avatar2.portalCache = (Portal)bd1;
             }
 
             if ((bd1 == avatar || bd2 == avatar) && (bd1N.contains("planet") || bd2N.contains("planet")) && !barrier) {

@@ -166,6 +166,11 @@ public class AstronautModel extends CapsuleObstacle {
     public boolean bossSwing = false;
     /** This galaxy */
     private Galaxy galaxy;
+    /** portal stuff */
+    public Portal portalCache;
+//    public PortalPair portalpairCache;
+    public boolean portal;
+    public int portalCount;
 
 
     /**
