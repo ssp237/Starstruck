@@ -1687,7 +1687,7 @@ public class GameController extends WorldController implements ContactListener {
 
         //Collect star
         if (collection) {
-            if (starCount >= winCount && !hasPlayedSound) {
+            if (starCount >= (winCount - 1) && !hasPlayedSound) {
                 SoundController.getInstance().play(OPEN_GOAL,OPEN_GOAL,false,0.4f);
                 starCache.deactivatePhysics(world);
                 removed.add(starCache);
