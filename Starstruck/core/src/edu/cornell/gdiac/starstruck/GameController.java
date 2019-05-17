@@ -86,7 +86,7 @@ public class GameController extends WorldController implements ContactListener {
     private FilmStrip deathSprite;
     private int deathAnimLoop = 0;
     /**Maximum animation loops for death */
-    private static int MAX_ANIM = 1;
+    private static int MAX_ANIM = 2;
     private Vector2 winPos;
     private FilmStrip winSprite;
     private int winAnimLoop;
@@ -674,6 +674,7 @@ public class GameController extends WorldController implements ContactListener {
         if (death != null && !replaying) {
             winPos = new Vector2(-death.getWidth(), 0);
             winAnimLoop = 0;
+            print(winPos);
         }
     }
 
@@ -1489,6 +1490,7 @@ public class GameController extends WorldController implements ContactListener {
             if (isFailure()) {
                 reset();
             } else if (isComplete()) {
+                //print(winPos);
                 listener.exitScreen(this, EXIT_SELECT, winSprite, winAnimLoop, winPos);
                 return false;
             }
@@ -2366,7 +2368,7 @@ public class GameController extends WorldController implements ContactListener {
                     (deathPos.y + cam.position.y ),0,1,1.0f);
             canvas.end();
             deathSprite.tick();
-            if (deathSprite.justReset()) deathAnimLoop++;
+            if (deathSprite.justReset()) deathAnimLoop += 2;
         }
 
         //Death phase 1: Move death screen into place
