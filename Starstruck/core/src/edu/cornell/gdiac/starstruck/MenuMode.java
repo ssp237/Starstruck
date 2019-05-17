@@ -346,11 +346,12 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             pressState = 1;
             currentButton = play;
             return false;
-        } else if (pressState == 0 && keycode == Input.Keys.P) {
-            pressState = 1;
-            currentButton = build;
-            return false;
-        }
+        } //else if (pressState == 0 && keycode == Input.Keys.P) {
+//            System.out.println("open level editor");
+//            pressState = 1;
+//            currentButton = build;
+//            return false;
+//        }
         return true;
     };
 
@@ -366,12 +367,14 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             currentButton = play;
             currentButton.pushed = true;
             return false;
-        } else if (pressState == 1 && keycode == Input.Keys.P) {
-            pressState = 2;
-            currentButton = build;
-            currentButton.pushed = true;
-            return false;
-        } else if (keycode == Input.Keys.ESCAPE) {
+        } //else if (pressState == 1 && keycode == Input.Keys.P) {
+//            System.out.println("open level editor2");
+//            pressState = 2;
+//            currentButton = build;
+//            currentButton.pushed = true;
+//            return false;
+        //}
+        else if (keycode == Input.Keys.ESCAPE) {
             pressState = 2;
             currentButton = showOverview ? close : quit;
             currentButton.pushed = true;
