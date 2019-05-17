@@ -227,7 +227,7 @@ public class EditController extends WorldController implements ContactListener {
         jsonReader = new JsonReader();
         loadFile = null;
         levelFormat = null;
-        galaxy = Galaxy.SOMBRERO;
+        galaxy = Galaxy.WHIRLPOOL;
         level.setGalaxy(galaxy);
         objects = level.objects;
         FISH_TEXTURES = WORM_TEXTURES;
@@ -369,7 +369,7 @@ public class EditController extends WorldController implements ContactListener {
             float h = (canvas.getHeight()/2 - input.yPos()) * (camera.zoom-1) / scale.y;
             Vector2 pos = input.getCrossHair();
             Bug bugger = new Bug(pos.x + camScaleX + w, pos.y + camScaleY + h,
-                JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class), scale);
+                JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class), scale, vectorWorld);
             ((Planet) current).setBug(bugger);
             bugger.setPlanet((Planet) current);
             level.add(bugger);
@@ -380,14 +380,14 @@ public class EditController extends WorldController implements ContactListener {
                 Bug b = p.getBug();
                 level.remove(b);
                 switch (b.getType()) {
-                    case BUG: b = new ColoredBug(b.getX(), b.getY(), scale, ModelColor.PINK);
+                    case BUG: b = new ColoredBug(b.getX(), b.getY(), scale, ModelColor.PINK, vectorWorld);
                         ((ColoredBug) b).setSleeping(false); ((ColoredBug) b).setSpeed(0.0001f); break;
                     case COLORED_BUG:
                         switch (((ColoredBug) b).getColor())  {
-                            case PINK: b = new ColoredBug(b.getX(), b.getY(), scale, ModelColor.BLUE);
+                            case PINK: b = new ColoredBug(b.getX(), b.getY(), scale, ModelColor.BLUE, vectorWorld);
                                 ((ColoredBug) b).setSleeping(false); ((ColoredBug) b).setSpeed(0.0001f); break;
                             case BLUE: b = new Bug(b.getX(), b.getY(),
-                                    JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class), scale); break;
+                                    JsonAssetManager.getInstance().getEntry("orange bug", FilmStrip.class), scale, vectorWorld); break;
                         }
                 }
                 System.out.println(b);
@@ -787,6 +787,11 @@ public class EditController extends WorldController implements ContactListener {
                     Vector2 pos = input.getCrossHair();
                     current = new AztecWheel(pos.x + camScaleX + w, pos.y + camScaleY + h, scale);
                     level.add(current);
+                } else if (galaxy == Galaxy.CIRCINUS) {
+                    Vector2 pos = input.getCrossHair();
+                    current = new FerisWheel(pos.x + camScaleX + w, pos.y + camScaleY + h, scale);
+                    System.out.println(current);
+                    level.add(current);
                 }
             }
             if (input.mouseDragged()) {
@@ -895,6 +900,10 @@ public class EditController extends WorldController implements ContactListener {
             }
 
             if (bd1.getType() == ObstacleType.AZTEC_WHEEL || bd2.getType() == ObstacleType.AZTEC_WHEEL) {
+                contact.setEnabled(false);
+            }
+
+            if (bd1.getType() == ObstacleType.FERIS_WHEEL || bd2.getType() == ObstacleType.FERIS_WHEEL) {
                 contact.setEnabled(false);
             }
 

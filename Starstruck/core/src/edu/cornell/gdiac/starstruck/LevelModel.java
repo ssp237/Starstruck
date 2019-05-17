@@ -370,10 +370,9 @@ public class LevelModel {
                     key = bug.get("color").asString();
                     FilmStrip sleeptexture = JsonAssetManager.getInstance().getEntry(key + " bug asleep", FilmStrip.class);
                     ModelColor modelColor = key.equals("pink") ? ModelColor.PINK : ModelColor.BLUE;
-                    buggy = new ColoredBug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, sleeptexture, scale, modelColor);
+                    buggy = new ColoredBug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, sleeptexture, scale, modelColor, vectorWorld);
                 } catch (Exception e) {
-                    buggy = new Bug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, scale);
-                    buggy.vectorWorld = vectorWorld;
+                    buggy = new Bug(x, y + radius + (bugtexture.getRegionHeight()/scale.y)/2 - 3/scale.y, bugtexture, scale, vectorWorld);
                 }
 
                 activate(buggy);
@@ -507,6 +506,15 @@ public class LevelModel {
                     wheels = wheels.next;
                     System.out.println(wheel);
                 }
+            } else if (galaxy == Galaxy.CIRCINUS) {
+                JsonValue wheels = levelFormat.get("feris wheels").child();
+                while (wheels != null) {
+                    FerisWheel wheel = FerisWheel.fromJSON(wheels, scale);
+                    activate(wheel);
+                    //enemies.add(octopuss);
+                    wheels = wheels.next;
+                    System.out.println(wheel);
+                }
             }
         }
 
@@ -560,6 +568,7 @@ public class LevelModel {
             case URCHIN: activate(obj); enemies.add((Urchin) obj); break;
             case OCTO_LEG: activate(obj); break;
             case AZTEC_WHEEL: activate(obj); break;
+            case FERIS_WHEEL: activate(obj); break;
             case TUTORIAL: activate(obj); break;
             case ICE_CREAM:
                 ((IceCream) obj).setUpBound(bounds.getHeight() * yPlay);
@@ -589,7 +598,8 @@ public class LevelModel {
             case PORTAL: deactivate(obj); break;
             case URCHIN: deactivate(obj); enemies.remove((Urchin) obj); break;
             case OCTO_LEG: deactivate(obj); break;
-            case AZTEC_WHEEL: deactivate(obj);
+            case AZTEC_WHEEL: deactivate(obj); break;
+            case FERIS_WHEEL: deactivate(obj); break;
             case TUTORIAL: deactivate(obj); break;
             case ICE_CREAM: deactivate(obj); enemies.remove((IceCream) obj); break;
             case TALKING_BOSS: deactivate(obj); talkingboss = null; break;
@@ -708,6 +718,7 @@ public class LevelModel {
         JsonValue iceCreams = new JsonValue(JsonValue.ValueType.array);
         JsonValue octolegs = new JsonValue(JsonValue.ValueType.array);
         JsonValue wheels = new JsonValue(JsonValue.ValueType.array);
+        JsonValue feriswheels = new JsonValue(JsonValue.ValueType.array);
 
         for (Obstacle obj : objects) {
             switch (obj.getType()) {
@@ -718,6 +729,7 @@ public class LevelModel {
                 case ICE_CREAM: iceCreams.addChild(((IceCream) obj).toJson()); break;
                 case OCTO_LEG: hasBoss = true; octolegs.addChild(((OctoLeg) obj).toJson()); break;
                 case AZTEC_WHEEL: hasBoss = true; wheels.addChild(((AztecWheel) obj).toJson()); break;
+                case FERIS_WHEEL: hasBoss = true; feriswheels.addChild(((FerisWheel) obj).toJson()); break;
             }
         }
 
@@ -753,6 +765,7 @@ public class LevelModel {
         if (hasBoss) {
             if (galaxy == Galaxy.WHIRLPOOL) out.addChild("octopus legs", octolegs);
             else if (galaxy == Galaxy.SOMBRERO) out.addChild("aztec wheels", wheels);
+            else if (galaxy == Galaxy.CIRCINUS) out.addChild("feris wheels", feriswheels);
         }
 
 
@@ -799,7 +812,7 @@ public class LevelModel {
 
         if (debug) {
             canvas.beginDebug();
-            talkingboss.drawDebug(canvas);
+            if (talkingboss != null) talkingboss.drawDebug(canvas);
             for(Planet p : planets.getPlanets()){
                 p.drawDebug(canvas);
             }
@@ -845,7 +858,6 @@ public class LevelModel {
         for (Enemy e: enemies) {
             e.draw(canvas);
         }
-        System.out.println("in here skgfh");
         canvas.end();
 
         if (debug) {

@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.JsonValue;
 import edu.cornell.gdiac.starstruck.GameCanvas;
+import edu.cornell.gdiac.starstruck.Gravity.VectorWorld;
 import edu.cornell.gdiac.starstruck.Obstacles.ObstacleType;
 import edu.cornell.gdiac.starstruck.Obstacles.Planet;
 import edu.cornell.gdiac.util.FilmStrip;
@@ -37,22 +38,22 @@ public class ColoredBug extends Bug {
      * @param x  		Initial x position of the avatar center
      * @param y  		Initial y position of the avatar center
      */
-    public ColoredBug(float x, float y, FilmStrip texture, FilmStrip sleepTexture, Vector2 scale, ModelColor color) {
-        super(x,y,texture, scale);
+    public ColoredBug(float x, float y, FilmStrip texture, FilmStrip sleepTexture, Vector2 scale, ModelColor color, VectorWorld world) {
+        super(x,y,texture, scale, world);
         this.color = color;
         setSleepingTexture(sleepTexture);
         sleeping = true;
         //System.out.println(this);
-        this.BUG_SPEED = 0.01f;
+        this.BUG_SPEED = 0.05f;
         String name = "cbug" + (color == ModelColor.PINK ? "pink" : "blue") + bugCount;
         bugCount++;
         setName(name);
     }
 
-    public void setPlanet (Planet p) {
-        super.setPlanet(p);
-        BUG_SPEED /= (5 - p.getInd()); 
-    }
+//    public void setPlanet (Planet p) {
+//        super.setPlanet(p);
+//        BUG_SPEED /= (5 - p.getInd());
+//    }
 
     /**
      * Set the speed of the bug (only for edit controller to make output useable)
@@ -75,9 +76,9 @@ public class ColoredBug extends Bug {
      * @param scale     Drawscale for this bug
      * @param color  	Color of this bug (PINK or BLUE)
      */
-    public ColoredBug(float x, float y, Vector2 scale, ModelColor color) {
+    public ColoredBug(float x, float y, Vector2 scale, ModelColor color, VectorWorld world) {
         this(x,y, JsonAssetManager.getInstance().getEntry(color.getName() + " bug awake", FilmStrip.class),
-                JsonAssetManager.getInstance().getEntry(color.getName() + " bug asleep", FilmStrip.class), scale, color);
+                JsonAssetManager.getInstance().getEntry(color.getName() + " bug asleep", FilmStrip.class), scale, color, world);
     }
 
     public void setSpeedSign( int i){

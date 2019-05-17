@@ -1541,7 +1541,7 @@ public class GameController extends WorldController implements ContactListener {
                 entry.remove();
             } else {
                 // Note that update is called last!
-                if (obj.getType() != ObstacleType.AZTEC_WHEEL || !justDead) {
+                if (obj.getType() != ObstacleType.AZTEC_WHEEL || obj.getType() != ObstacleType.FERIS_WHEEL || !justDead) {
                     obj.update(dt);
                 }
             }
@@ -2136,11 +2136,7 @@ public class GameController extends WorldController implements ContactListener {
                 contact.setEnabled(false);
             }
 
-            if ((bd1 == avatar2 && bd2N.contains("cbugblue")) || (bd2 == avatar2 && bd1N.contains("cbugblue"))) {
-                contact.setEnabled(false);
-            }
-
-            if ((bd1 == avatar && bd2N.contains("cbugpink")) || (bd2 == avatar && bd1N.contains("cbugpink"))) {
+            if (bd1.getType() == ObstacleType.FERIS_WHEEL || bd2.getType() == ObstacleType.FERIS_WHEEL) {
                 contact.setEnabled(false);
             }
 
@@ -2156,6 +2152,10 @@ public class GameController extends WorldController implements ContactListener {
             }
             //disable collisions with astronauts and buggy
             if ((bd1.getType() ==  ObstacleType.BUG || bd2.getType() ==  ObstacleType.BUG)
+                    && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))) {
+                contact.setEnabled(false);
+            }
+            if ((bd1.getType() ==  ObstacleType.COLORED_BUG || bd2.getType() ==  ObstacleType.COLORED_BUG)
                     && (bd1.getName().contains("avatar") || bd2.getName().contains("avatar"))) {
                 contact.setEnabled(false);
             }

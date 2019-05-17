@@ -354,7 +354,7 @@ public class Star extends BoxObstacle {
         }
 
         else if (getType() == ObstacleType.SPEECH_BUBBLE) {
-            System.out.println("in here star draw speech");
+            //System.out.println("in here star draw speech");
             canvas.draw(texture, Color.WHITE, origin.x, origin.y, getX() * drawScale.x, getY() * drawScale.x, getAngle(), starScale, starScale);
         }
     }
