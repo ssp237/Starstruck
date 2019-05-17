@@ -73,7 +73,7 @@ public class Anchor extends WheelObstacle {
      * @param radius
      */
     public Anchor(float x, float y, float radius) {
-        super(x,y, radius);
+        super(x,y, radius*1.5f);
         setName("anchor");
         animatedText = JsonAssetManager.getInstance().getEntry("anchor animated", FilmStrip.class);
 
