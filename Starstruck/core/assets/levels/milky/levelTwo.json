@@ -1,7 +1,7 @@
 {
 "physicsSize": [ 38.400001525878906, 21.600000381469727 ],
 "graphicSize": [ 1280, 720 ],
-"playSize": [ 1.5, 1.5 ],
+"playSize": [ 1.0, 1.0 ],
 "win": "0.5",
 "galaxy": "milky way",
 "has boss": false,
