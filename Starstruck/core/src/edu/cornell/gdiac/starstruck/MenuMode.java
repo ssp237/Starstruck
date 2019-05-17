@@ -323,7 +323,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 //         If we use sound, we must remember this.
         SoundController.getInstance().update();
 
-//        if (!dont_play_music) {
+        if (!dont_play_music) {
             if (!music.isPlaying()) {
                 //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
                 music.play();
@@ -332,7 +332,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 
                 //music_name = "menu";
             }
-////        }
+       }
     }
 
     /** Called when a key was pressed
