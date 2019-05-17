@@ -96,6 +96,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 
     /** Current selected button */
     private Button currentButton = null;
+    private int curInd = 0;
 
     /** Buttons to display upon winning a level */
     private PooledList<Button> buttons;
@@ -361,6 +362,28 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
             pressState = 2;
             currentButton = quit;
             return false;
+        }
+
+        if (keycode == Input.Keys.DOWN) {
+            if (currentButton != null) currentButton.setActive(false);
+            buttons.get(curInd).setActive(false);
+            curInd = (curInd + 1) % buttons.size();
+            currentButton = buttons.get(curInd);
+            currentButton.setActive(true);
+        } else if (keycode == Input.Keys.UP) {
+            if (currentButton != null) currentButton.setActive(false);
+            buttons.get(curInd).setActive(false);
+            curInd = (curInd - 1) % buttons.size();
+            if (curInd < 0) {
+                curInd += buttons.size();
+            }
+            currentButton = buttons.get(curInd);
+            currentButton.setActive(true);
+        } else if (keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) {
+            if (currentButton != null) {
+                currentButton.pushed = true; 
+                pressState = 2;
+            }
         }
         return true;
     };
