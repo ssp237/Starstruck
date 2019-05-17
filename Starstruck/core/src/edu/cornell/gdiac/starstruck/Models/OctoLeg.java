@@ -112,10 +112,10 @@ public class OctoLeg extends Enemy {
         float x, y;
         if (getOrientation() == Orientation.VERTICAL) {
             x = getX();
-            y = getY() - getHeight()/2 + ((float) textures[0].getRegionHeight()/4)/drawScale.y;
+            y = getY() - getHeight()/2 + ((float) textures[0].getRegionHeight()/9)/drawScale.y;
         } else {
             y = getY();
-            x = getX() - getWidth()/2 + ((float) textures[0].getRegionHeight()/4)/drawScale.x;
+            x = getX() - getWidth()/2 + ((float) textures[0].getRegionHeight()/9)/drawScale.x;
         }
         return new Vector2(x,y);
     }
@@ -128,10 +128,10 @@ public class OctoLeg extends Enemy {
         float x, y;
         if (getOrientation() == Orientation.VERTICAL) {
             x = getX();
-            y = getY() + getHeight()/2 - ((float) textures[0].getRegionHeight()/4)/drawScale.y;
+            y = getY() + getHeight()/2 - ((float) textures[0].getRegionHeight()/9)/drawScale.y;
         } else {
             y = getY();
-            x = getX() + getWidth()/2 - ((float) textures[0].getRegionHeight()/4)/drawScale.x;
+            x = getX() + getWidth()/2 - ((float) textures[0].getRegionHeight()/9)/drawScale.x;
         }
         return new Vector2(x,y);
     }
@@ -211,10 +211,7 @@ public class OctoLeg extends Enemy {
         if (length == 1 ) {
             throw new IndexOutOfBoundsException("OctoLeg needs at least 2 chunks!!");
         } // more than one chunk
-        height = (textures[0].getRegionHeight() + textures[2].getRegionWidth()) /  scale.y;
-        for (int i = 2; i < length; i++) {
-            height += textures[1].getRegionHeight() / scale.y;
-        }
+        height = textures[0].getRegionHeight() / scale.y + Math.max(0, length - 2)*textures[1].getRegionHeight() /scale.y + textures[2].getRegionHeight()/scale.y;
         OctoLeg u = new OctoLeg(json.get("x").asFloat(), json.get("y").asFloat(), width, height, scale, length, orientation);
         if (orientation == Orientation.VERTICAL) return u;
 

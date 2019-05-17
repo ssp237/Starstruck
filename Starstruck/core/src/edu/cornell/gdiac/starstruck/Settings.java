@@ -242,10 +242,10 @@ public class Settings extends WorldController implements Screen, InputProcessor,
             b.pushed = false;
         }
 
-        if (music != null) {
-            music.stop();
-            music.dispose();
-        }
+//        if (music != null) {
+//            music.stop();
+//            music.dispose();
+//        }
 
         if (GameController.getMusic() != null) {
             GameController.getMusic().stop();

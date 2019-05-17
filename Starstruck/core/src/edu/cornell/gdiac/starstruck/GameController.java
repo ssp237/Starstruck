@@ -1706,6 +1706,9 @@ public class GameController extends WorldController implements ContactListener {
 
         }
         if (starCount >= winCount && !openGoal) { //&& tutorialpoints.isEmpty()
+            //SOUNDS
+            //COME HERE
+            SoundController.getInstance().play(SWITCH_FILE,SWITCH_FILE,false,EFFECT_VOLUME);
             openGoal = true;
             goal.getPortal1().setOpen(true);
         }
@@ -1830,7 +1833,7 @@ public class GameController extends WorldController implements ContactListener {
         //MUSIC
 
         if (level.getGalaxy() == Galaxy.DEFAULT) {
-            if (music != null && music_name != "tutorial") {
+            if (music != null && !music_name.equals("tutorial")) {
                 music.stop();
                 music.dispose();
                 music = null;
@@ -1842,7 +1845,7 @@ public class GameController extends WorldController implements ContactListener {
                 music_name = "tutorial";
             }
         } else if (level.getGalaxy() == Galaxy.WHIRLPOOL) {
-            if (music != null && music_name != "whirlpool") {
+            if (music != null && !music_name.equals("whirlpool")) {
                 music.stop();
                 music.dispose();
                 music = null;
@@ -1855,7 +1858,7 @@ public class GameController extends WorldController implements ContactListener {
             }
 
         } else if (level.getGalaxy() == Galaxy.MILKYWAY) {
-            if (music != null && music_name != "milkyway") {
+            if (music != null && !music_name.equals("milkyway")) {
                 music.stop();
                 music.dispose();
                 music = null;
@@ -1867,7 +1870,7 @@ public class GameController extends WorldController implements ContactListener {
                 music_name = "milkyway";
             }
         } else if (level.getGalaxy() == Galaxy.SOMBRERO) {
-            if (music != null && music_name != "sombrero") {
+            if (music != null && !music_name.equals("sombrero")) {
                 music.stop();
                 music.dispose();
                 music = null;
