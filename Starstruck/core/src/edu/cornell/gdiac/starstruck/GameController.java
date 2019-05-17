@@ -753,7 +753,7 @@ public class GameController extends WorldController implements ContactListener {
         avatar1.setAngularVelocity(0);
         //avatar2.setUnAnchored();
         //avatar2.setActive(true);
-        SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,0.6f);
+        SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,0.4f);
     }
 
     /**
