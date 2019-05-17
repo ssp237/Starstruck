@@ -93,6 +93,11 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
     private Button build;
     /** Background texture for start-up */
     private Texture background;
+    private Texture title;
+
+    private Button close;
+    private Texture overview;
+    private boolean showOverview;
 
     /** Current selected button */
     private Button currentButton = null;
@@ -120,6 +125,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         super.loadContent(manager);
 
         background = JsonAssetManager.getInstance().getEntry("menu background", Texture.class);
+        title = JsonAssetManager.getInstance().getEntry("title", Texture.class);
 
         buttons = new PooledList<Button>();
 
@@ -154,6 +160,11 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         buttons.add(help);
         buttons.add(build);
 
+        overview = JsonAssetManager.getInstance().getEntry("overview", Texture.class);
+        levelButton = JsonAssetManager.getInstance().getEntry("done", TextureRegion.class);
+        close = new Button(canvas.getWidth() / 2 + overview.getWidth() / 2 - levelButton.getRegionWidth()/2, 80, levelButton.getRegionWidth(), levelButton.getRegionHeight(), levelButton,
+                world, new Vector2(1,1), JsonAssetManager.getInstance().getEntry("done glow", TextureRegion.class), "build");
+
         Gdx.input.setInputProcessor(this);
         // Let ANY connected controller start the game.
         for(Controller controller : Controllers.getControllers()) {
@@ -182,6 +193,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 
         pressState = 0;
         active = false;
+        showOverview =  false;
     }
 
 
@@ -233,21 +245,15 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         currentButton = null;
         pressState = 0;
         camOffsetX = 0;
+        showOverview = false;
 
         for (Button b : buttons) {
             b.setActive(false);
             b.pushed = false;
         }
 
-//        if (music != null) {
-////            music.stop();
-////            music.dispose();
-////        }
-
-//        if (GameController.getMusic() != null) {
-////            GameController.getMusic().stop();
-////            GameController.getMusic().dispose();
-////        }
+        close.setActive(false);
+        close.pushed = false;
     }
 
     /**
@@ -355,38 +361,52 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         if (pressState == 1 && keycode == Input.Keys.N) {
             pressState = 2;
             currentButton = play;
+            currentButton.pushed = true;
             return false;
         } else if (pressState == 1 && keycode == Input.Keys.P) {
             pressState = 2;
             currentButton = build;
+            currentButton.pushed = true;
             return false;
         } else if (keycode == Input.Keys.ESCAPE) {
             pressState = 2;
-            currentButton = quit;
-            quit.pushed = true;
+            currentButton = showOverview ? close : quit;
+            print(currentButton);
+            currentButton.pushed = true;
             return false;
         }
-
-        if (keycode == Input.Keys.DOWN) {
-            if (currentButton != null) currentButton.setActive(false);
-            buttons.get(curInd).setActive(false);
-            curInd = (curInd + 1) % buttons.size();
-            currentButton = buttons.get(curInd);
-            currentButton.setActive(true);
-        } else if (keycode == Input.Keys.UP) {
-            if (currentButton != null) currentButton.setActive(false);
-            buttons.get(curInd).setActive(false);
-            curInd = (curInd - 1) % buttons.size();
-            if (curInd < 0) {
-                curInd += buttons.size();
-            }
-            currentButton = buttons.get(curInd);
-            currentButton.setActive(true);
-        } else if (keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) {
-            if (currentButton != null) {
-                currentButton.pushed = true;
-                currentButton.setActive(false);
+        if (showOverview) {
+            if (keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) {
                 pressState = 2;
+                currentButton = close;
+                close.pushed = true;
+            }
+        } else {
+            if (keycode == Input.Keys.DOWN) {
+                if (currentButton != null) currentButton.setActive(false);
+                buttons.get(curInd).setActive(false);
+                curInd = (curInd + 1) % buttons.size();
+                currentButton = buttons.get(curInd);
+                currentButton.setActive(true);
+            } else if (keycode == Input.Keys.UP) {
+                if (currentButton != null) currentButton.setActive(false);
+                buttons.get(curInd).setActive(false);
+                curInd = (curInd - 1) % buttons.size();
+                if (curInd < 0) {
+                    curInd += buttons.size();
+                }
+                currentButton = buttons.get(curInd);
+                currentButton.setActive(true);
+            } else if (keycode == Input.Keys.SPACE || keycode == Input.Keys.ENTER) {
+                if (currentButton != null) {
+                    currentButton.pushed = true;
+                    currentButton.setActive(false);
+                    pressState = 2;
+                } else {
+                    play.pushed = true;
+                    play.setActive(true);
+                    pressState = 2;
+                }
             }
         }
         return true;
@@ -448,11 +468,19 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         screenY = heightY - screenY;
 
         currentButton = null;
-        for (Button b : buttons) {
-            b.setActive(false);
-            if (b.isIn(screenX,screenY)) {
-                currentButton = b;
-                b.setActive(true);
+        if (showOverview) {
+            close.setActive(false);
+            if(close.isIn(screenX, screenY)) {
+                currentButton = close;
+                close.setActive(true);
+            }
+        } else {
+            for (Button b : buttons) {
+                b.setActive(false);
+                if (b.isIn(screenX, screenY)) {
+                    currentButton = b;
+                    b.setActive(true);
+                }
             }
         }
         return true;
@@ -486,10 +514,16 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
                 listener.exitScreen(this, WorldController.EXIT_SETTINGS);
             } else if (isReady() && quit.pushed) {
                 listener.exitScreen(this, WorldController.EXIT_QUIT);
-            } else if (isReady() && help.pushed) {
-                listener.exitScreen(this, WorldController.EXIT_PLAY);
             } else if (isReady() && build.pushed) {
                 listener.exitScreen(this, WorldController.EXIT_EDIT);
+            } else if (isReady() && help.pushed) {
+                showOverview = !showOverview;
+                pressState = 0;
+                help.pushed = false;
+            } else if (isReady() && close.pushed) {
+                close.pushed = false;
+                pressState = 0;
+                showOverview = !showOverview;
             }
         }
     }
@@ -624,8 +658,14 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 
         canvas.begin();
         canvas.draw(background, 0, 0);
-        for (Button b : buttons) {
-            b.draw(canvas);
+        if (showOverview) {
+            canvas.draw(overview, canvas.getWidth() / 2 - overview.getWidth() / 2, 130);
+            close.draw(canvas);
+        } else {
+            for (Button b : buttons) {
+                b.draw(canvas);
+            }
+            canvas.draw(title, canvas.getWidth() / 2 - title.getWidth() / 2, canvas.getHeight() * 4 / 5);
         }
         canvas.end();
 

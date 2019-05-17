@@ -176,6 +176,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
         level.populate(levelFormat);
         levels = level.getLevels();
 
+        lastLevel = level.firstLevel;
+        nextLevel = lastLevel.nextLevel;
 
         Gdx.input.setInputProcessor(this);
         // Let ANY connected controller start the game.
@@ -215,6 +217,8 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      * @return Return a reference to the primary avatar.
      */
     public AstronautModel getAvatar() { return avatar; }
+
+    public Level getFirstLevel() { return level.firstLevel; }
 
     /**
      * Creates and initialize a new instance of the platformer game

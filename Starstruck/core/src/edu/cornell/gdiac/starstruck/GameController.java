@@ -114,7 +114,7 @@ public class GameController extends WorldController implements ContactListener {
     /** Width of the rounded cap on left*/
     private static int PROGRESS_CAP_LEFT = 80;
     /** Width of the rounded cap on right*/
-    private static int PROGRESS_CAP_RIGHT = 10;
+    private static int PROGRESS_CAP_RIGHT = 11;
     /** Width of the middle portion in texture atlas */
     private static int PROGRESS_MIDDLE = 338;
 
@@ -1097,7 +1097,6 @@ public class GameController extends WorldController implements ContactListener {
                     float vertMove = input.getVertical();
                     avatar.setPlanetMove(contactDir.scl((float)Math.sqrt(move * move + vertMove * vertMove)));
                     if (Math.abs(contactDir.angle(dir)) > 90) {
-                        //print("here");
                         avatar.setPlanetMove(contactDir.cpy().scl(-1));
                     }
                 }
@@ -1107,7 +1106,6 @@ public class GameController extends WorldController implements ContactListener {
                 avatar.moving = true;
             }
             if (anchord() && !auto && !testC) {
-                //print(contactPoint);
                 avatar.curJumping = true;
                 avatar.setJumping(true);
                 SoundController.getInstance().play(JUMP_FILE, JUMP_FILE, false, EFFECT_VOLUME);
@@ -1156,7 +1154,6 @@ public class GameController extends WorldController implements ContactListener {
                 }
                 if (input.didXbox()) {
                     Vector2 dir = new Vector2(1,0).rotateRad(input.getAngle());
-                    //print(dir.scl(10));
                     avatar.setPlanetMove(dir);
                     avatar.moving = true;
                     boolean vertical = avatar.getAngle() <= 0 && input.xboxDown();
@@ -1168,7 +1165,6 @@ public class GameController extends WorldController implements ContactListener {
                 }
                 if (input.didPrimary()) {
                     avatar.curJumping = true;
-                    //print(contactPoint);
                     avatar.setJumping(true);
                     SoundController.getInstance().play(JUMP_FILE, JUMP_FILE, false, EFFECT_VOLUME);
                     contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
@@ -1269,7 +1265,6 @@ public class GameController extends WorldController implements ContactListener {
             avatar.setOnPlanet(false);
             avatar.setUnAnchored();
             Vector2 dir = portalpairCache.trailPortal.getPosition().cpy().sub(avatar.getPosition());
-            print(dir);
             dir.setLength(portalAvatar.portalVel.len()*2);
             avatar.setLinearVelocity(dir);
             portalAvatar.setLinearVelocity(portalAvatar.portalVel);

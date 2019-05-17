@@ -345,6 +345,7 @@ public class Settings extends WorldController implements Screen, InputProcessor,
         if (buttons.getTail() == null) { return true; }
 
         if (keycode == Input.Keys.ESCAPE) {
+            active1.setActive(true);
             pressState = 2;
             play.pushed = true;
             return false;
@@ -366,10 +367,15 @@ public class Settings extends WorldController implements Screen, InputProcessor,
                 currentButton = play;
             }
             currentButton.setActive(true);
-        } else if (keycode == Input.Keys.ENTER || keycode == Input.Keys.SPACE) {            if (currentButton != null) {
+        } else if (keycode == Input.Keys.ENTER || keycode == Input.Keys.SPACE) {
+            if (currentButton != null) {
                 currentButton.pushed = true;
                 if (currentButton.equals(play)) currentButton.setActive(false);
                 pressState = 2;
+            } if (numPlayers == 0) {
+                active1.setActive(true);
+                pressState = 2;
+                play.pushed = true;
             }
         }
         return true;
@@ -470,10 +476,20 @@ public class Settings extends WorldController implements Screen, InputProcessor,
                 } else {
                     listener.exitScreen(this, WorldController.EXIT_PLAY, Integer.toString(numPlayers));
                 }
-            } else if (isReady() && currentButton == onePlayer && onePlayer.pushed) {
-                numPlayers = 1;
-            } else if (isReady() && currentButton == twoPlayer && twoPlayer.pushed) {
-                numPlayers = 2;
+            } else if (numPlayers == 0) {
+                if (isReady() && currentButton == onePlayer && onePlayer.pushed) {
+                    numPlayers = 1;
+                    listener.exitScreen(this, WorldController.EXIT_QUIT, Integer.toString(numPlayers));
+                } else if (isReady() && currentButton == twoPlayer && twoPlayer.pushed) {
+                    numPlayers = 2;
+                    listener.exitScreen(this, WorldController.EXIT_QUIT, Integer.toString(numPlayers));
+                }
+            } else {
+                if (isReady() && currentButton == onePlayer && onePlayer.pushed) {
+                    numPlayers = 1;
+                } else if (isReady() && currentButton == twoPlayer && twoPlayer.pushed) {
+                    numPlayers = 2;
+                }
             }
         }
     }

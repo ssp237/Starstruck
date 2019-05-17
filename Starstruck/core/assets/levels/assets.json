@@ -670,6 +670,14 @@
     "starglow" : {
       "file": "default/star_glow.png",
       "wrap": false
+    },
+    "title" : {
+      "file": "shared/starstruck text.png",
+      "wrap": false
+    },
+    "overview" : {
+      "file": "shared/overview.png",
+      "wrap": false
     }
   },
   "filmstrips" : {
