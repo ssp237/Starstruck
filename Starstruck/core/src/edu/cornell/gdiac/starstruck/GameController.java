@@ -188,9 +188,15 @@ public class GameController extends WorldController implements ContactListener {
 
         canvas.draw(statusFrgLeft, tinge, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
         if (starCount > 0 && starCount != totalStars) {
-            float span = starCount * ((PROGRESS_MIDDLE - 2 * PROGRESS_CAP_RIGHT)) / totalStars;
-            //canvas.draw(statusFrgRight, tinge, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + span/scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
-            canvas.draw(statusFrgMiddle, tinge, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, span, PROGRESS_HEIGHT);
+            //float span = starCount * ((PROGRESS_MIDDLE - 2 * PROGRESS_CAP_RIGHT)) / totalStars;
+            float span = starCount * (((PROGRESS_MIDDLE - 10) - 2*PROGRESS_CAP_RIGHT)) / totalStars;
+//            if (span > PROGRESS_MIDDLE - 10) {
+//                canvas.draw(statusFrgRight, tinge, centerX - widthBar / (2*scale.x) + PROGRESS_CAP_LEFT, centerY, span, PROGRESS_HEIGHT);
+//
+//            } else {
+                //canvas.draw(statusFrgRight, tinge, initCenterX*scale.x + (camera.position.x - (float) canvas.getWidth()/2) + span/scale.x, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
+                canvas.draw(statusFrgMiddle, tinge, centerX - widthBar / (2 * scale.x) + PROGRESS_CAP_LEFT, centerY, span, PROGRESS_HEIGHT);
+            //}
         } else if (starCount == totalStars) {
             canvas.draw(statusFrgLeft, tinge, centerX - widthBar / (2*scale.x), centerY, PROGRESS_CAP_LEFT, PROGRESS_HEIGHT);
             canvas.draw(statusFrgRight, tinge, centerX + statusBkgMiddle.getRegionWidth() + 23, centerY, PROGRESS_CAP_RIGHT, PROGRESS_HEIGHT);
