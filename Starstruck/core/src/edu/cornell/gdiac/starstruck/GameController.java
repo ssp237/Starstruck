@@ -1599,9 +1599,9 @@ public class GameController extends WorldController implements ContactListener {
                 return;
             }
         }
-        if (InputController.getInstance().shiftHeld() && InputController.getInstance().didO()) {
-            Gdx.input.getTextInput(loader, "Load...", "level.json", "");
-        }
+//        if (InputController.getInstance().shiftHeld() && InputController.getInstance().didO()) {
+//            Gdx.input.getTextInput(loader, "Load...", "level.json", "");
+//        }
 
         //updateSettings();
 
