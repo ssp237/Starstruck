@@ -473,8 +473,13 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
      */
     public void update(float dt) {
         if (winPos == null) {
+            curButton = -1;
             updateCamera();
         } else {
+            if (curButton == -1) {
+                curButton = winButtons.size() - 1;
+                winButtons.get(curButton).setActive(true);
+            }
             //(winPos);
         }
 //        updateCamera();
@@ -743,6 +748,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
             } else if (replayButton.pushed && lastLevel != null) {
                 Vector2 temp = winPos.cpy();
                 winPos = null;
+                curButton = -1;
                 winSprite.reset();
                 listener.exitScreen(this, WorldController.EXIT_PLAY, temp, lastLevel.jsonFile);
             } else if (nextButton.pushed && nextLevel != null) {
@@ -750,6 +756,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 nextLevel = lastLevel.nextLevel;
                 Vector2 temp = winPos.cpy();
                 winPos = null;
+                curButton = -1;
                 winSprite.reset();
                 //print(lastLevel.jsonFile);
                 listener.exitScreen(this, WorldController.EXIT_PLAY, temp, lastLevel.jsonFile);
