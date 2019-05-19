@@ -508,7 +508,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 
         //if (!dont_play_music) {
             //System.out.println("in here");
-        if (!MenuMode.getMusic().isPlaying() && Settings.getMusic().isPlaying()) {
+        if (!MenuMode.getMusic().isPlaying() && !Settings.getMusic().isPlaying()) {
 
             if (!music.isPlaying()) {
                 //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
