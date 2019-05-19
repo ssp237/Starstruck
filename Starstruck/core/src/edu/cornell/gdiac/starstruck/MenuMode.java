@@ -79,11 +79,11 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
     private static final String MUSIC_FILE = "audio/loading_screen.mp3";
     public static boolean menuIsPlaying() {return music.isPlaying();}
 
-    public static Music music = Settings.getMusic(); //Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
+    public static Music music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
 
     public static Music getMusic() {return music;}
 
-    private boolean dont_play_music = false;
+    //private boolean dont_play_music = Settings.getDontPlayMusic();
 
     private Button play;
     private Button levels;
@@ -323,7 +323,8 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 //         If we use sound, we must remember this.
         SoundController.getInstance().update();
 
-        if (!dont_play_music) {
+
+        if (!Settings.getMusic().isPlaying()) {
             if (!music.isPlaying()) {
                 //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
                 music.play();
@@ -513,6 +514,15 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
 
             if (isReady() && play.pushed) {
                 listener.exitScreen(this, WorldController.EXIT_PLAY);
+                if (music.isPlaying()) {
+                    music.stop();
+                    music.dispose();
+                }
+                if (Settings.getMusic().isPlaying()){
+                    Settings.getMusic().stop();
+                    Settings.getMusic().dispose();
+                }
+
             } else if (isReady() && levels.pushed) {
                 listener.exitScreen(this, WorldController.EXIT_SELECT);
             } else if (isReady() && settings.pushed) {

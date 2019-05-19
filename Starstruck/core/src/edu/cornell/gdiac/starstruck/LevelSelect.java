@@ -506,8 +506,10 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
 //         If we use sound, we must remember this.
         SoundController.getInstance().update();
 
-        if (!dont_play_music) {
+        //if (!dont_play_music) {
             //System.out.println("in here");
+        if (!MenuMode.getMusic().isPlaying() && Settings.getMusic().isPlaying()) {
+
             if (!music.isPlaying()) {
                 //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
                 //System.out.println("in here if");
@@ -745,6 +747,19 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 lastLevel = currentLevel;
                 nextLevel = currentLevel.nextLevel;
                 listener.exitScreen(this, WorldController.EXIT_PLAY, currentLevel.getFile());
+                if (music.isPlaying()) {
+                    music.stop();
+                    music.dispose();
+                }
+                if (Settings.getMusic().isPlaying()) {
+                    Settings.getMusic().stop();
+                    Settings.getMusic().dispose();
+                }
+                if (MenuMode.getMusic().isPlaying()){
+                    MenuMode.getMusic().stop();
+                    MenuMode.getMusic().dispose();
+                }
+
             } else if (replayButton.pushed && lastLevel != null) {
                 Vector2 temp = winPos.cpy();
                 winPos = null;

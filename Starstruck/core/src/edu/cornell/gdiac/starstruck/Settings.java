@@ -79,13 +79,14 @@ public class Settings extends WorldController implements Screen, InputProcessor,
     private boolean active;
 
     private static final String MUSIC_FILE = "audio/loading_screen.mp3";
-    public static boolean settingsIsPlaying() {return music.isPlaying();}
+    public boolean settingsIsPlaying() {return music.isPlaying();}
 
     public static Music music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
 
     public static Music getMusic() {return music;}
 
     private boolean dont_play_music = false;
+    public boolean getDontPlayMusic() {return dont_play_music;}
 
     private Button onePlayer;
     private Button twoPlayer;
@@ -285,10 +286,11 @@ public class Settings extends WorldController implements Screen, InputProcessor,
             b.pushed = false;
         }
 
-        if (GameController.getMusic() != null) {
-            GameController.getMusic().stop();
-            GameController.getMusic().dispose();
-        }
+//        if (GameController.getMusic() != null) {
+////            GameController.getMusic().stop();
+////            GameController.getMusic().dispose();
+////        }
+
     }
 
     /**
@@ -355,13 +357,16 @@ public class Settings extends WorldController implements Screen, InputProcessor,
 //         If we use sound, we must remember this.
         SoundController.getInstance().update();
 
-        if (!dont_play_music) {
-            if (!music.isPlaying()) {
-                //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
-                music.play();
-                music.setLooping(true);
-                //music_name = "menu";
-            }
+        if (!MenuMode.getMusic().isPlaying() && !LevelSelect.getMusic().isPlaying()) {
+            //if (!dont_play_music) {
+                if (!music.isPlaying()) {
+                    //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
+                    music.play();
+                    music.setLooping(true);
+                    //dont_play_music = true;
+                    //music_name = "menu";
+                }
+            //}
         }
     }
 
