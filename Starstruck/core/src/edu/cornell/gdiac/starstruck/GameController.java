@@ -541,10 +541,10 @@ public class GameController extends WorldController implements ContactListener {
 ////            music = null;
 ////        }
 
-//        if (MenuMode.getMusic() != null) {
-//            MenuMode.getMusic().stop();
-//            MenuMode.getMusic().dispose();
-//        }
+        if (MenuMode.getMusic() != null) {
+            MenuMode.getMusic().stop();
+            MenuMode.getMusic().dispose();
+        }
 
         if (LevelSelect.getMusic() != null) {
             LevelSelect.getMusic().stop();
