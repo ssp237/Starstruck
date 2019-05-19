@@ -324,7 +324,7 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
         SoundController.getInstance().update();
 
 
-        if (!Settings.getMusic().isPlaying()) {
+        if (!Settings.getMusic().isPlaying() && !LevelSelect.getMusic().isPlaying()) {
             if (!music.isPlaying()) {
                 //music = Gdx.audio.newMusic(Gdx.files.internal(MUSIC_FILE));
                 music.play();
@@ -522,6 +522,10 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
                     Settings.getMusic().stop();
                     Settings.getMusic().dispose();
                 }
+//                if (LevelSelect.getMusic().isPlaying()){
+//                    LevelSelect.getMusic().stop();
+//                    LevelSelect.getMusic().dispose();
+//                }
 
             } else if (isReady() && levels.pushed) {
                 listener.exitScreen(this, WorldController.EXIT_SELECT);
