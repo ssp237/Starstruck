@@ -522,10 +522,10 @@ public class MenuMode extends WorldController implements Screen, InputProcessor,
                     Settings.getMusic().stop();
                     Settings.getMusic().dispose();
                 }
-//                if (LevelSelect.getMusic().isPlaying()){
-//                    LevelSelect.getMusic().stop();
-//                    LevelSelect.getMusic().dispose();
-//                }
+                if (LevelSelect.getMusic().isPlaying()){
+                    LevelSelect.getMusic().stop();
+                    LevelSelect.getMusic().dispose();
+                }
 
             } else if (isReady() && levels.pushed) {
                 listener.exitScreen(this, WorldController.EXIT_SELECT);
