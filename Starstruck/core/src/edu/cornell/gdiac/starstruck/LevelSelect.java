@@ -299,10 +299,7 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
             b.pushed = false;
         }
 
-        if (MenuMode.menuIsPlaying()) {
-            dont_play_music = true;
-        }
-        else if (GameController.getMusic() != null) {
+        if (GameController.getMusic() != null) {
             GameController.getMusic().stop();
             GameController.getMusic().dispose();
             music.play();
