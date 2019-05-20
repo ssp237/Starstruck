@@ -1870,6 +1870,18 @@ public class GameController extends WorldController implements ContactListener {
         //MUSIC
 
         if (level.getGalaxy() == Galaxy.DEFAULT) {
+            if (MenuMode.getMusic().isPlaying()) {
+                MenuMode.getMusic().stop();
+                MenuMode.getMusic().dispose();
+            }
+            if (LevelSelect.getMusic().isPlaying()){
+                LevelSelect.getMusic().stop();
+                LevelSelect.getMusic().dispose();
+            }
+            if (Settings.getMusic().isPlaying()){
+                Settings.getMusic().stop();
+                Settings.getMusic().dispose();
+            }
             if (music != null && !music_name.equals("tutorial")) {
                 music.stop();
                 music.dispose();
@@ -1883,6 +1895,18 @@ public class GameController extends WorldController implements ContactListener {
                 music_name = "tutorial";
             }
         } else if (level.getGalaxy() == Galaxy.WHIRLPOOL) {
+            if (MenuMode.getMusic().isPlaying()) {
+                MenuMode.getMusic().stop();
+                MenuMode.getMusic().dispose();
+            }
+            if (LevelSelect.getMusic().isPlaying()){
+                LevelSelect.getMusic().stop();
+                LevelSelect.getMusic().dispose();
+            }
+            if (Settings.getMusic().isPlaying()){
+                Settings.getMusic().stop();
+                Settings.getMusic().dispose();
+            }
             if (music != null && !music_name.equals("whirlpool")) {
                 music.stop();
                 music.dispose();
@@ -1897,6 +1921,18 @@ public class GameController extends WorldController implements ContactListener {
             }
 
         } else if (level.getGalaxy() == Galaxy.MILKYWAY) {
+            if (MenuMode.getMusic().isPlaying()) {
+                MenuMode.getMusic().stop();
+                MenuMode.getMusic().dispose();
+            }
+            if (LevelSelect.getMusic().isPlaying()){
+                LevelSelect.getMusic().stop();
+                LevelSelect.getMusic().dispose();
+            }
+            if (Settings.getMusic().isPlaying()){
+                Settings.getMusic().stop();
+                Settings.getMusic().dispose();
+            }
             if (music != null && !music_name.equals("milkyway")) {
                 music.stop();
                 music.dispose();
@@ -1910,6 +1946,18 @@ public class GameController extends WorldController implements ContactListener {
                 music_name = "milkyway";
             }
         } else if (level.getGalaxy() == Galaxy.SOMBRERO) {
+            if (MenuMode.getMusic().isPlaying()) {
+                MenuMode.getMusic().stop();
+                MenuMode.getMusic().dispose();
+            }
+            if (LevelSelect.getMusic().isPlaying()){
+                LevelSelect.getMusic().stop();
+                LevelSelect.getMusic().dispose();
+            }
+            if (Settings.getMusic().isPlaying()){
+                Settings.getMusic().stop();
+                Settings.getMusic().dispose();
+            }
             if (music != null && !music_name.equals("sombrero")) {
                 music.stop();
                 music.dispose();
@@ -1923,6 +1971,18 @@ public class GameController extends WorldController implements ContactListener {
                 music_name = "sombrero";
             }
         } else if (level.getGalaxy() == Galaxy.CIRCINUS) {
+            if (MenuMode.getMusic().isPlaying()) {
+                MenuMode.getMusic().stop();
+                MenuMode.getMusic().dispose();
+            }
+            if (LevelSelect.getMusic().isPlaying()){
+                LevelSelect.getMusic().stop();
+                LevelSelect.getMusic().dispose();
+            }
+            if (Settings.getMusic().isPlaying()){
+                Settings.getMusic().stop();
+                Settings.getMusic().dispose();
+            }
             if (music != null && !music_name.equals("circinus")) {
                 music.stop();
                 music.dispose();
