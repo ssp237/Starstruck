@@ -977,7 +977,7 @@ public class GameController extends WorldController implements ContactListener {
             InputController input = InputController.getInstance();
             Vector2 dir = avatar.getPosition().cpy().sub(avatarAnchor.getPosition());
             if (!twoplayer){
-                if (input.getHorizontal() != 0) {
+                if (input.getHorizontal() != 0 && !(input.rightPrevious() || input.leftPrevious())) { //if (input.getHorizontal() != 0) {
                     int flip = (int)input.getHorizontal();
                     if (dir.y > 0) flip = -flip;
                     dir.rotate90(flip);
@@ -990,12 +990,12 @@ public class GameController extends WorldController implements ContactListener {
                 }
             }
             else { //twoplayer
-                if (avatar == this.avatar && input.getHorizontal() != 0) {
+                if (avatar == this.avatar && input.getHorizontal() != 0 && !(input.rightPrevious() || input.leftPrevious())) { //input.getHorizontal() != 0
                     int flip = (int)input.getHorizontal();
                     if (dir.y > 0) flip = -flip;
                     dir.rotate90(flip);
                 }
-                else if (avatar == this.avatar2 && input.getHorizontal2() != 0) {
+                else if (avatar == this.avatar2 && input.getHorizontal2() != 0 && !(input.aPrevious() || input.dPrevious())) { //input.getHorizontal2() != 0
                     int flip = (int)input.getHorizontal2();
                     if (dir.y > 0) flip = -flip;
                     dir.rotate90(flip);
