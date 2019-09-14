@@ -92,6 +92,9 @@ public class GameController extends WorldController implements ContactListener {
     private int winAnimLoop;
     private boolean replaying = false;
 
+    /** Mute */
+    private boolean mute = false;
+
     /** pause screen stuff */
     private boolean paused;
     private Texture pauseBackground;
@@ -744,6 +747,10 @@ public class GameController extends WorldController implements ContactListener {
         return InputController.getInstance().heldS() || InputController.getInstance().didS();
     }
 
+    private boolean muted() {
+        return InputController.getInstance().didM();
+    }
+
     /**
      * print method
      *
@@ -766,7 +773,8 @@ public class GameController extends WorldController implements ContactListener {
         avatar1.setAngularVelocity(0);
         //avatar2.setUnAnchored();
         //avatar2.setActive(true);
-        SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,0.25f);
+        if (!mute)
+            SoundController.getInstance().play(ANCHOR_FILE,ANCHOR_FILE,false,0.25f);
     }
 
     /**
@@ -977,8 +985,9 @@ public class GameController extends WorldController implements ContactListener {
             InputController input = InputController.getInstance();
             Vector2 dir = avatar.getPosition().cpy().sub(avatarAnchor.getPosition());
             if (!twoplayer){
-                if (input.getHorizontal() != 0 && !(input.rightPrevious() || input.leftPrevious())) { //if (input.getHorizontal() != 0) {
-                    int flip = (int)input.getHorizontal();
+                if (input.getHorizontal() != 0 && !(input.rightPrevious() || input.leftPrevious()
+                        || input.xboxRightPrev() || input.xboxLeftPrev())) { //if (input.getHorizontal() != 0) {
+                    int flip = (int)(input.getHorizontal()*10);
                     if (dir.y > 0) flip = -flip;
                     dir.rotate90(flip);
                 }
@@ -990,12 +999,14 @@ public class GameController extends WorldController implements ContactListener {
                 }
             }
             else { //twoplayer
-                if (avatar == this.avatar && input.getHorizontal() != 0 && !(input.rightPrevious() || input.leftPrevious())) { //input.getHorizontal() != 0
-                    int flip = (int)input.getHorizontal();
+                if (avatar == this.avatar && input.getHorizontal() != 0 && !(input.rightPrevious() || input.leftPrevious()
+                        || input.xboxLeftPrev() || input.xboxRightPrev())) { //input.getHorizontal() != 0
+                    int flip = (int)(input.getHorizontal()*10);
                     if (dir.y > 0) flip = -flip;
                     dir.rotate90(flip);
                 }
-                else if (avatar == this.avatar2 && input.getHorizontal2() != 0 && !(input.aPrevious() || input.dPrevious())) { //input.getHorizontal2() != 0
+                else if (avatar == this.avatar2 && input.getHorizontal2() != 0 && !(input.aPrevious() || input.dPrevious()
+                        || input.xboxLeftPrev2() || input.xboxRightPrev2())) { //input.getHorizontal2() != 0
                     int flip = (int)input.getHorizontal2();
                     if (dir.y > 0) flip = -flip;
                     dir.rotate90(flip);
@@ -1115,7 +1126,8 @@ public class GameController extends WorldController implements ContactListener {
             if (anchord() && !auto && !testC) {
                 avatar.curJumping = true;
                 avatar.setJumping(true);
-                SoundController.getInstance().play(JUMP_FILE, JUMP_FILE, false, EFFECT_VOLUME);
+                if (!mute)
+                    SoundController.getInstance().play(JUMP_FILE, JUMP_FILE, false, EFFECT_VOLUME);
                 contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
                 avatar.setPlanetJump(contactDir);
                 avatar.setOnPlanet(false);
@@ -1145,7 +1157,8 @@ public class GameController extends WorldController implements ContactListener {
                 if (input.didW()) {
                     avatar.curJumping = true;
                     avatar.setJumping(true);
-                    SoundController.getInstance().play(JUMP_FILE, JUMP_FILE, false, EFFECT_VOLUME);
+                    if (!mute)
+                        SoundController.getInstance().play(JUMP_FILE, JUMP_FILE, false, EFFECT_VOLUME);
                     contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
                     avatar.setPlanetJump(contactDir);
                     avatar.setOnPlanet(false);
@@ -1173,7 +1186,8 @@ public class GameController extends WorldController implements ContactListener {
                 if (input.didPrimary()) {
                     avatar.curJumping = true;
                     avatar.setJumping(true);
-                    SoundController.getInstance().play(JUMP_FILE, JUMP_FILE, false, EFFECT_VOLUME);
+                    if (!mute)
+                        SoundController.getInstance().play(JUMP_FILE, JUMP_FILE, false, EFFECT_VOLUME);
                     contactDir.set(avatar.getPosition().cpy().sub(curPlanet.getPosition()));
                     avatar.setPlanetJump(contactDir);
                     avatar.setOnPlanet(false);
@@ -1258,7 +1272,8 @@ public class GameController extends WorldController implements ContactListener {
             portalpairCache = findPortalPair(portalAvatar.portalCache);
             if (!portalpairCache.isGoal() || portalpairCache.isGoal() && openGoal) {
                 portalpairCache.teleport(world, portalAvatar, rope);
-                SoundController.getInstance().play(PORTAL_FILE, PORTAL_FILE,false,0.7f);
+                if (!mute)
+                    SoundController.getInstance().play(PORTAL_FILE, PORTAL_FILE,false,0.7f);
                 portalAvatar.portalCount = 5;
             }
             result = true;
@@ -1610,6 +1625,9 @@ public class GameController extends WorldController implements ContactListener {
 
         updateTutorial();
 
+//        if (muted())
+//            mute = !mute;
+
         if (switched()) {
             avatar.setActive(!avatar.isActive());
             avatar2.setActive(!avatar2.isActive());
@@ -1709,13 +1727,14 @@ public class GameController extends WorldController implements ContactListener {
         //Collect star
         if (collection) {
             if (starCount >= (winCount - 1) && !hasPlayedSound) {
-                SoundController.getInstance().play(OPEN_GOAL,OPEN_GOAL,false,0.4f);
+                if (!mute)
+                    SoundController.getInstance().play(OPEN_GOAL, OPEN_GOAL, false, 0.4f);
                 starCache.deactivatePhysics(world);
                 removed.add(starCache);
                 hasPlayedSound = true;
-            }
-            else {
-                SoundController.getInstance().play(SWITCH_FILE, SWITCH_FILE, false, 0.7f);
+            } else {
+                if (!mute)
+                    SoundController.getInstance().play(SWITCH_FILE, SWITCH_FILE, false, 0.7f);
                 starCache.deactivatePhysics(world);
                 removed.add(starCache);
             }
@@ -1868,132 +1887,133 @@ public class GameController extends WorldController implements ContactListener {
 
 
         //MUSIC
+        if (!mute) {
+            if (level.getGalaxy() == Galaxy.DEFAULT) {
+                if (MenuMode.getMusic().isPlaying()) {
+                    MenuMode.getMusic().stop();
+                    MenuMode.getMusic().dispose();
+                }
+                if (LevelSelect.getMusic().isPlaying()) {
+                    LevelSelect.getMusic().stop();
+                    LevelSelect.getMusic().dispose();
+                }
+                if (Settings.getMusic().isPlaying()) {
+                    Settings.getMusic().stop();
+                    Settings.getMusic().dispose();
+                }
+                if (music != null && !music_name.equals("tutorial")) {
+                    music.stop();
+                    music.dispose();
+                    music = null;
+                }
+                if (music == null || !music.isPlaying()) {
+                    music = Gdx.audio.newMusic(Gdx.files.internal("audio/tutorial_music.mp3"));
+                    music.play();
+                    music.setLooping(true);
+                    music.setVolume(0.6f);
+                    music_name = "tutorial";
+                }
+            } else if (level.getGalaxy() == Galaxy.WHIRLPOOL) {
+                if (MenuMode.getMusic().isPlaying()) {
+                    MenuMode.getMusic().stop();
+                    MenuMode.getMusic().dispose();
+                }
+                if (LevelSelect.getMusic().isPlaying()) {
+                    LevelSelect.getMusic().stop();
+                    LevelSelect.getMusic().dispose();
+                }
+                if (Settings.getMusic().isPlaying()) {
+                    Settings.getMusic().stop();
+                    Settings.getMusic().dispose();
+                }
+                if (music != null && !music_name.equals("whirlpool")) {
+                    music.stop();
+                    music.dispose();
+                    music = null;
+                }
+                if (music == null || !music.isPlaying()) {
+                    music = Gdx.audio.newMusic(Gdx.files.internal("audio/whirlpool_music.mp3"));
+                    music.play();
+                    music.setLooping(true);
+                    music.setVolume(0.6f);
+                    music_name = "whirlpool";
+                }
 
-        if (level.getGalaxy() == Galaxy.DEFAULT) {
-            if (MenuMode.getMusic().isPlaying()) {
-                MenuMode.getMusic().stop();
-                MenuMode.getMusic().dispose();
-            }
-            if (LevelSelect.getMusic().isPlaying()){
-                LevelSelect.getMusic().stop();
-                LevelSelect.getMusic().dispose();
-            }
-            if (Settings.getMusic().isPlaying()){
-                Settings.getMusic().stop();
-                Settings.getMusic().dispose();
-            }
-            if (music != null && !music_name.equals("tutorial")) {
-                music.stop();
-                music.dispose();
-                music = null;
-            }
-            if (music == null || !music.isPlaying()) {
-                music = Gdx.audio.newMusic(Gdx.files.internal("audio/tutorial_music.mp3"));
-                music.play();
-                music.setLooping(true);
-                music.setVolume(0.6f);
-                music_name = "tutorial";
-            }
-        } else if (level.getGalaxy() == Galaxy.WHIRLPOOL) {
-            if (MenuMode.getMusic().isPlaying()) {
-                MenuMode.getMusic().stop();
-                MenuMode.getMusic().dispose();
-            }
-            if (LevelSelect.getMusic().isPlaying()){
-                LevelSelect.getMusic().stop();
-                LevelSelect.getMusic().dispose();
-            }
-            if (Settings.getMusic().isPlaying()){
-                Settings.getMusic().stop();
-                Settings.getMusic().dispose();
-            }
-            if (music != null && !music_name.equals("whirlpool")) {
-                music.stop();
-                music.dispose();
-                music = null;
-            }
-            if (music == null || !music.isPlaying()) {
-                music = Gdx.audio.newMusic(Gdx.files.internal("audio/whirlpool_music.mp3"));
-                music.play();
-                music.setLooping(true);
-                music.setVolume(0.6f);
-                music_name = "whirlpool";
-            }
-
-        } else if (level.getGalaxy() == Galaxy.MILKYWAY) {
-            if (MenuMode.getMusic().isPlaying()) {
-                MenuMode.getMusic().stop();
-                MenuMode.getMusic().dispose();
-            }
-            if (LevelSelect.getMusic().isPlaying()){
-                LevelSelect.getMusic().stop();
-                LevelSelect.getMusic().dispose();
-            }
-            if (Settings.getMusic().isPlaying()){
-                Settings.getMusic().stop();
-                Settings.getMusic().dispose();
-            }
-            if (music != null && !music_name.equals("milkyway")) {
-                music.stop();
-                music.dispose();
-                music = null;
-            }
-            if (music == null || !music.isPlaying()) {
-                music = Gdx.audio.newMusic(Gdx.files.internal("audio/milky_way.mp3"));
-                music.play();
-                music.setLooping(true);
-                music.setVolume(0.6f);
-                music_name = "milkyway";
-            }
-        } else if (level.getGalaxy() == Galaxy.SOMBRERO) {
-            if (MenuMode.getMusic().isPlaying()) {
-                MenuMode.getMusic().stop();
-                MenuMode.getMusic().dispose();
-            }
-            if (LevelSelect.getMusic().isPlaying()){
-                LevelSelect.getMusic().stop();
-                LevelSelect.getMusic().dispose();
-            }
-            if (Settings.getMusic().isPlaying()){
-                Settings.getMusic().stop();
-                Settings.getMusic().dispose();
-            }
-            if (music != null && !music_name.equals("sombrero")) {
-                music.stop();
-                music.dispose();
-                music = null;
-            }
-            if (music == null || !music.isPlaying()) {
-                music = Gdx.audio.newMusic(Gdx.files.internal("audio/sombrero_beat.mp3"));
-                music.play();
-                music.setLooping(true);
-                music.setVolume(0.6f);
-                music_name = "sombrero";
-            }
-        } else if (level.getGalaxy() == Galaxy.CIRCINUS) {
-            if (MenuMode.getMusic().isPlaying()) {
-                MenuMode.getMusic().stop();
-                MenuMode.getMusic().dispose();
-            }
-            if (LevelSelect.getMusic().isPlaying()){
-                LevelSelect.getMusic().stop();
-                LevelSelect.getMusic().dispose();
-            }
-            if (Settings.getMusic().isPlaying()){
-                Settings.getMusic().stop();
-                Settings.getMusic().dispose();
-            }
-            if (music != null && !music_name.equals("circinus")) {
-                music.stop();
-                music.dispose();
-                music = null;
-            }
-            if (music == null || !music.isPlaying()) {
-                music = Gdx.audio.newMusic(Gdx.files.internal("audio/circinus_song.mp3"));
-                music.play();
-                music.setLooping(true);
-                music.setVolume(0.6f);
-                music_name = "circinus";
+            } else if (level.getGalaxy() == Galaxy.MILKYWAY) {
+                if (MenuMode.getMusic().isPlaying()) {
+                    MenuMode.getMusic().stop();
+                    MenuMode.getMusic().dispose();
+                }
+                if (LevelSelect.getMusic().isPlaying()) {
+                    LevelSelect.getMusic().stop();
+                    LevelSelect.getMusic().dispose();
+                }
+                if (Settings.getMusic().isPlaying()) {
+                    Settings.getMusic().stop();
+                    Settings.getMusic().dispose();
+                }
+                if (music != null && !music_name.equals("milkyway")) {
+                    music.stop();
+                    music.dispose();
+                    music = null;
+                }
+                if (music == null || !music.isPlaying()) {
+                    music = Gdx.audio.newMusic(Gdx.files.internal("audio/milky_way.mp3"));
+                    music.play();
+                    music.setLooping(true);
+                    music.setVolume(0.6f);
+                    music_name = "milkyway";
+                }
+            } else if (level.getGalaxy() == Galaxy.SOMBRERO) {
+                if (MenuMode.getMusic().isPlaying()) {
+                    MenuMode.getMusic().stop();
+                    MenuMode.getMusic().dispose();
+                }
+                if (LevelSelect.getMusic().isPlaying()) {
+                    LevelSelect.getMusic().stop();
+                    LevelSelect.getMusic().dispose();
+                }
+                if (Settings.getMusic().isPlaying()) {
+                    Settings.getMusic().stop();
+                    Settings.getMusic().dispose();
+                }
+                if (music != null && !music_name.equals("sombrero")) {
+                    music.stop();
+                    music.dispose();
+                    music = null;
+                }
+                if (music == null || !music.isPlaying()) {
+                    music = Gdx.audio.newMusic(Gdx.files.internal("audio/sombrero_beat.mp3"));
+                    music.play();
+                    music.setLooping(true);
+                    music.setVolume(0.6f);
+                    music_name = "sombrero";
+                }
+            } else if (level.getGalaxy() == Galaxy.CIRCINUS) {
+                if (MenuMode.getMusic().isPlaying()) {
+                    MenuMode.getMusic().stop();
+                    MenuMode.getMusic().dispose();
+                }
+                if (LevelSelect.getMusic().isPlaying()) {
+                    LevelSelect.getMusic().stop();
+                    LevelSelect.getMusic().dispose();
+                }
+                if (Settings.getMusic().isPlaying()) {
+                    Settings.getMusic().stop();
+                    Settings.getMusic().dispose();
+                }
+                if (music != null && !music_name.equals("circinus")) {
+                    music.stop();
+                    music.dispose();
+                    music = null;
+                }
+                if (music == null || !music.isPlaying()) {
+                    music = Gdx.audio.newMusic(Gdx.files.internal("audio/circinus_song.mp3"));
+                    music.play();
+                    music.setLooping(true);
+                    music.setVolume(0.6f);
+                    music_name = "circinus";
+                }
             }
         }
 

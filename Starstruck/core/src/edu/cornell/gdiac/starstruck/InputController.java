@@ -129,12 +129,16 @@ public class InputController {
     private boolean tPrevious;
     private boolean xboxLeft;
     private boolean xboxRight;
+    private boolean xboxLeftPrev;
+    private boolean xboxRightPrev;
     private boolean xboxUp;
     private boolean xboxDown;
     private boolean xboxUp2;
     private boolean xboxDown2;
     private boolean xboxLeft2;
     private boolean xboxRight2;
+    private boolean xboxLeftPrev2;
+    private boolean xboxRightPrev2;
     private boolean bPressed;
     private boolean bPrevious;
     private boolean iPressed;
@@ -149,6 +153,8 @@ public class InputController {
     private boolean selRightPrev;
     private boolean selectPressed;
     private boolean selectPrevious;
+    private boolean mPressed;
+    private boolean mPrevious;
 
     /** Mouse's current position*/
     private float x_pos;
@@ -284,6 +290,7 @@ public class InputController {
 
     public boolean didT() { return tPressed && !tPrevious; }
 
+    public boolean didM() { return mPressed && !mPrevious; }
 
     /**
      * Returns true if the tertiary action button was pressed.
@@ -452,6 +459,10 @@ public class InputController {
 
     public boolean xboxRight() { return xboxRight; }
 
+    public boolean xboxLeftPrev() { return xboxLeftPrev; }
+
+    public boolean xboxRightPrev() { return xboxRightPrev; }
+
     public boolean didXbox() {
         return xboxRight || xboxLeft || xboxUp || xboxDown;
     }
@@ -463,6 +474,10 @@ public class InputController {
     public boolean xboxLeft2(){ return xboxLeft2; }
 
     public boolean xboxRight2() { return xboxRight2; }
+
+    public boolean xboxLeftPrev2() { return xboxLeftPrev2; }
+
+    public boolean xboxRightPrev2() { return xboxRightPrev2; }
 
     public boolean didXbox2() {
         return xboxLeft2 || xboxRight2 || xboxUp2 || xboxDown2;
@@ -602,6 +617,11 @@ public class InputController {
         selLeftPrev = selLeft;
         selRightPrev = selRight;
         selectPrevious = selectPressed;
+        mPrevious = mPressed;
+        xboxLeftPrev = xboxLeft;
+        xboxRightPrev = xboxRight;
+        xboxLeftPrev2 = xboxLeft2;
+        xboxRightPrev2 = xboxRight2;
 
         // Check to see if a GamePad is connected
         if (xbox.isConnected() && xbox2.isConnected()) { // Both controllers connected
@@ -773,6 +793,7 @@ public class InputController {
         selLeft = (secondary && selLeft) || (input.isKeyPressed(Input.Keys.LEFT));
         selRight = (secondary && selRight) || (input.isKeyPressed(Input.Keys.RIGHT));
         selectPressed = (secondary && selectPressed) || (input.isKeyPressed(Input.Keys.SPACE));
+        mPressed = (input.isKeyPressed(Input.Keys.M)); //NO XBOX support
         //ONLY FOR XBOX
         xboxLeft = secondary && xboxLeft; //|| false;
         xboxRight = secondary && xboxRight; //|| false;
