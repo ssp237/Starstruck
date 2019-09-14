@@ -887,12 +887,12 @@ public class LevelSelect extends WorldController implements Screen, InputProcess
                 animLoop ++;
                 return false;
             }
-            else if (buttonCode == Xbox.START) {
-                if (nextLevel != null) {
-                    curButton = 2;
-                    nextButton.pushed = true;
-                }
-            }
+//            else if (buttonCode == Xbox.START) {
+//                if (nextLevel != null) {
+//                    curButton = 2;
+//                    nextButton.pushed = true;
+//                }
+//            }
         }
 
         return true;
